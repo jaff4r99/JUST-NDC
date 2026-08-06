@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNU-EHS FAST Team | JUST-NDC: Assessing Transformative Climate Justice in NDC 3.0</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <style>
+        :root {
+            --apple-bg: #f5f5f7;
+            --apple-card: rgba(255, 255, 255, 0.8);
+            --apple-glass: rgba(255, 255, 255, 0.65);
+            --apple-sidebar: rgba(240, 240, 243, 0.75);
+            --primary: #0066cc; /* Apple Blue */
+            --secondary: #5ac8fa; 
+            --accent: #34c759; /* Apple Green */
+            --pending: #FDBE02; /* Mango */
+            --text-dark: #1d1d1f;
+            --text-muted: #86868b;
+            --border-light: rgba(0, 0, 0, 0.08);
+            --apple-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #e8e8ed; 
+            color: var(--text-dark); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* macOS Window Container */
+        .mac-window {
+            width: 95vw;
+            max-width: 1500px;
+            height: 92vh;
+            background: var(--apple-bg);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* macOS Title Bar */
+        .mac-titlebar {
+            height: 42px;
+            background: rgba(235, 235, 240, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            user-select: none;
+            z-index: 100;
+        }
+
+        .traffic-lights { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .dot-close { background-color: #ff5f56; border: 1px solid #e0443e; }
+        .dot-minimize { background-color: #ffbd2e; border: 1px solid #dea123; }
+        .dot-maximize { background-color: #27c93f; border: 1px solid #1aab29; }
+
+        .window-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #424245;
+            letter-spacing: -0.01em;
+            margin-right: 52px; /* Balance traffic lights */
+        }
+
+        .app-body { display: flex; flex-grow: 1; height: calc(100% - 42px); overflow: hidden; }
+
+        /* macOS Glassmorphism Sidebar */
+        .sidebar { 
+            width: 280px; 
+            background-color: var(--apple-sidebar); 
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 25px 15px; 
+            box-sizing: border-box; 
+            border-right: 1px solid var(--border-light); 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 15px;
+            padding-left: 10px;
+        }
+
+        .sidebar button { 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%; 
+            padding: 10px 14px; 
+            margin-bottom: 6px; 
+            border: none; 
+            background: transparent; 
+            cursor: pointer; 
+            text-align: left; 
+            border-radius: 10px; 
+            font-size: 0.95rem; 
+            color: var(--text-dark); 
+            font-weight: 500;
+            transition: all 0.15s ease; 
+        }
+
+        .sidebar button:hover { background: rgba(0, 0, 0, 0.04); }
+        .sidebar button.active-btn { background: var(--primary); color: #ffffff; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.25); }
+
+        /* Main Workspace */
+        .content { 
+            flex-grow: 1; 
+            padding: 40px 50px; 
+            box-sizing: border-box; 
+            overflow-y: auto; 
+            background: var(--apple-bg);
+        }
+
+        .page { display: none; animation: macFade 0.3s ease-out; }
+        .page.active { display: block; }
+        @keyframes macFade { from { opacity: 0; transform: scale(0.99); } to { opacity: 1; transform: scale(1); } }
+
+        h1 { font-size: 2.1rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 0; color: var(--text-dark); }
+        h2 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text-dark); margin-top: 35px; }
+        p { line-height: 1.55; font-size: 1.05rem; color: #333336; }
+
+        /* Apple UI Cards */
+        .ui-box { 
+            background: var(--apple-card); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 28px; 
+            border-radius: 18px; 
+            box-shadow: var(--apple-shadow); 
+            margin-top: 22px; 
+            border: 1px solid rgba(255, 255, 255, 0.8); 
+        }
+
+        .lang-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 25px; }
+        .lang-card { 
+            padding: 16px; 
+            border-radius: 14px; 
+            background: #fff; 
+            text-align: center; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            border: 1px solid var(--border-light); 
+        }
+        .lang-card h2 { margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 700; }
+        .lang-card p { margin: 3px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); text-align: left; vertical-align: middle; font-size: 0.95rem; }
+        .sticky-th th { background-color: rgba(245, 245, 247, 0.9); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; }
+        .table-container { max-height: 380px; overflow-y: auto; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-light); }
+
+        .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; user-select: none; display: inline-block; transition: all 0.15s; }
+        .badge-done { background: rgba(52, 199, 89, 0.15); color: #248a3d; }
+        .badge-pending { background: rgba(253, 190, 2, 0.2); color: #8a6d0b; }
+
+        .download-btn { background-color: rgba(0, 102, 204, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.15s; border: none; cursor: pointer; }
+        .download-btn:hover { background-color: var(--primary); color: #fff; }
+
+        .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: 12px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; background: rgba(255,255,255,0.9); }
+        .search-box:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,102,204,0.15); }
+
+        /* Timeline & Framework Styles */
+        .timeline-list { list-style: none; padding-left: 0; }
+        .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
+        .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
+
+        .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+        .framework-box { padding: 24px; border-radius: 16px; color: #fff; box-shadow: var(--apple-shadow); }
+        .box-recognitional { background: linear-gradient(135deg, #63986a, #4e7a53); }
+        .box-procedural { background: linear-gradient(135deg, #427255, #2e523b); }
+        .box-distributive { background: linear-gradient(135deg, #8c5042, #6e3c32); }
+        .box-restorative { background: linear-gradient(135deg, #bb6e4b, #965337); }
+        .box-transformative { background: linear-gradient(135deg, #001f3f, #001026); color: #fff; padding: 28px; border-radius: 16px; text-align: center; margin-top: 16px; }
+
+        .example-box { padding: 20px; border-radius: 14px; margin-bottom: 18px; background: #fff; border-left: 5px solid; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .ex-tokenistic { border-left-color: #d48b71; }
+        .ex-partial { border-left-color: #c9c05e; }
+        .ex-embedded { border-left-color: #88b08d; }
+    </style>
+</head>
+<body>
+
+    <div class="mac-window">
+        <!-- macOS Title Bar -->
+        <div class="mac-titlebar">
+            <div class="traffic-lights">
+                <span class="dot dot-close"></span>
+                <span class="dot dot-minimize"></span>
+                <span class="dot dot-maximize"></span>
+            </div>
+            <div class="window-title">JUST-NDC — Assessing Transformative Climate Justice in NDC 3.0</div>
+        </div>
+
+        <div class="app-body">
+            <!-- macOS Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">Navigation</div>
+                <button id="btn-dashboard" class="active-btn" onclick="showPage('dashboard', this)"><span>📊</span> Project Tracker</button>
+                <button id="btn-methodology" onclick="showPage('methodology', this)"><span>📘</span> Framework & Method</button>
+                <button id="btn-map" onclick="showPage('map', this)"><span>🗺️</span> Global Map & Status</button>
+                <button id="btn-repository" onclick="showPage('repository', this)"><span>💡</span> Coding Examples</button>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="content">
+                <!-- PAGE 1: DASHBOARD -->
+                <div id="dashboard" class="page active">
+                    <h1>JUST-NDC Project Roadmap</h1>
+                    <p>Evaluating transformative climate justice across 120 NDC submissions (+2 Annexes). Target velocity: 2 NDCs per working day.</p>
+                    
+                    <div class="ui-box" style="border-left: 5px solid var(--primary); background: rgba(0,102,204,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                            <div>
+                                <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">📍 Current Timeline Marker</span>
+                                <h3 id="current-date-display" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.3rem;">August 5, 2026</h3>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Active Phase</span>
+                                <h3 id="current-phase-display" style="margin: 4px 0 0 0; color: var(--accent); font-size: 1.2rem;">Data Execution and Initial Mapping</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-box">
+                        <div id="gantt_chart" style="width: 100%; height: 310px;"></div>
+                    </div>
+                    
+                    <div class="ui-box">
+                        <h3>Detailed Project Roadmap</h3>
+                        <ul class="timeline-list">
+                            <li><span class="timeline-date">July 20 – July 31: Project Setup and Calibration</span>Translating the transformative climate justice framework into structured AI prompts. Includes the July 30th UN-Habitat meeting to align technical parameters and pilot testing.</li>
+                            <li><span class="timeline-date">August 1 – August 31: Data Execution and Initial Mapping</span>Locking document corpus (pre-Aug 1 deadline), running full dataset through NLP extraction, and packaging data for October synthesis.</li>
+                            <li><span class="timeline-date">September 1 – September 30: Paternity Leave</span>Jaffar out of office. Andreia leads human verification of analyzed texts.</li>
+                            <li><span class="timeline-date">October 1 – October 31: Synthesis, Drafting and Visualization</span>Synthesizing results, evaluating risks of procedural "justice-washing", drafting report recommendations, and finalizing heatmaps.</li>
+                            <li><span class="timeline-date">November 1 – November 8: Final Dissemination</span>Final blind cross-review on AI outputs. Publishing report and presentation assets ahead of COP 31 on November 9th.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- PAGE 2: METHODOLOGY -->
+                <div id="methodology" class="page">
+                    <h1>Framework & Methodology</h1>
+                    <p>Instructional manual for the line-by-line coding process evaluated against four justice dimensions and four commitment tiers.</p>
+                    
+                    <div class="framework-grid">
+                        <div class="framework-box box-recognitional"><h3 style="margin:0 0 10px 0;">Recognitional Justice</h3><p style="margin:0; font-size:0.9rem;">Acknowledges marginalized groups, Indigenous rights, diverse values and knowledge systems, addressing exclusion.</p></div>
+                        <div class="framework-box box-procedural"><h3 style="margin:0 0 10px 0;">Procedural Justice</h3><p style="margin:0; font-size:0.9rem;">Ensures transparent, inclusive and fair decision-making processes with meaningful participation.</p></div>
+                        <div class="framework-box box-distributive"><h3 style="margin:0 0 10px 0;">Distributive Justice</h3><p style="margin:0; font-size:0.9rem;">Equitably shares benefits and burdens of climate actions and impacts across groups and generations.</p></div>
+                        <div class="framework-box box-restorative"><h3 style="margin:0 0 10px 0;">Restorative Justice</h3><p style="margin:0; font-size:0.9rem;">Recognizes and seeks to address past climate injustices through reparative measures and responses.</p></div>
+                    </div>
+                    
+                    <div class="box-transformative">
+                        <h3 style="margin:0 0 6px 0;">Transformative Climate Justice</h3>
+                        <p style="margin:0; font-size:0.95rem;">Addressing the root causes of climate change and social injustice.</p>
+                    </div>
+
+                    <div class="ui-box">
+                        <h3>Coding Workflow</h3>
+                        <ol style="line-height: 1.8; margin-bottom: 0;">
+                            <li><strong>AI Paragraph Scrape:</strong> NLP identifies explicit and implicit references to justice in NDC documents.</li>
+                            <li><strong>Dimension Assignment:</strong> Code statements into Recognitional, Procedural, Distributive, or Restorative justice.</li>
+                            <li><strong>Commitment Grading:</strong> Rate commitments from <em>No Mention</em> up to <em>Embedded</em> (backed by law, target, budget, and accountability).</li>
+                            <li><strong>Blind Cross-Review:</strong> Secondary verification to guarantee cross-coder reliability.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- PAGE 3: GLOBAL MAP -->
+                <div id="map" class="page">
+                    <h1>Global Analysis Status</h1>
+                    <p>Interactive tracking across 146 covered countries (119 individual NDCs + 27 EU member states).</p>
+
+                    <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                            <div>
+                                <h2 style="color: white; margin: 0 0 4px 0; font-size: 1.3rem;">Completion Tracker</h2>
+                                <p style="margin: 0; opacity: 0.85; font-size: 0.9rem;">Real-time dataset progress</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span id="progress-ratio" style="font-size: 2.2rem; font-weight: 700; display: block; line-height: 1;">0 / 146</span>
+                                <span id="progress-percent" style="font-size: 1rem; opacity: 0.9;">0.0% Completed</span>
+                            </div>
+                        </div>
+                        <div style="width: 100%; background: rgba(255,255,255,0.2); height: 10px; border-radius: 5px; margin-top: 15px; overflow: hidden;">
+                            <div id="progress-bar-fill" style="width: 0%; background: #34c759; height: 100%; transition: width 0.4s ease;"></div>
+                        </div>
+                    </div>
+
+                    <div class="ui-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <label for="regionSelect"><strong>Region Preset:</strong></label>
+                                <select id="regionSelect" class="search-box" style="width: auto; margin-bottom: 0; padding: 6px 12px;" onchange="drawRegionsMap()">
+                                    <option value="world">World Overview</option>
+                                    <option value="029">Caribbean (Island States)</option>
+                                    <option value="009">Oceania / Pacific Islands</option>
+                                    <option value="150">Europe</option>
+                                    <option value="002">Africa</option>
+                                    <option value="142">Asia</option>
+                                    <option value="019">Americas</option>
+                                </select>
+                            </div>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">💡 Pinch/scroll to zoom, click any country to toggle status.</span>
+                        </div>
+                        <div id="regions_div" style="width: 100%; height: 420px; overflow: hidden; position: relative;"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="margin:0;">Document Index</h3>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Click status to toggle</span>
+                        </div>
+                        <input type="text" id="searchInput" class="search-box" placeholder="Search country or language..." onkeyup="filterTable('countryTable')">
+                        <div class="table-container">
+                            <table id="countryTable" class="sticky-th">
+                                <thead>
+                                    <tr>
+                                        <th onclick="sortTable(0, 'countryTable')">Country</th>
+                                        <th onclick="sortTable(1, 'countryTable')">Language</th>
+                                        <th onclick="sortTable(2, 'countryTable')">Page</th>
+                                        <th onclick="sortTable(3, 'countryTable')">Status</th>
+                                        <th class="no-sort">File</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE 4: EXAMPLES -->
+                <div id="repository" class="page">
+                    <h1>Coding Examples & Reference</h1>
+                    <p>Reference guide illustrating the practical application of our qualitative coding methodology.</p>
+                    <div id="examples-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultNdcData = [
+            { c: "Andorra", l: "Spanish", s: 1, p: 18, mapTarget: "AD", f: "18 ANDORRA ESP.pdf" }, { c: "Belize", l: "English", s: 1, p: 128, mapTarget: "BZ", f: "128 BELIZE.pdf" }, { c: "Brazil", l: "English", s: 1, p: 44, mapTarget: "BR", f: "44 Brazil.pdf" }, 
+            { c: "Canada", l: "English", s: 1, p: 188, mapTarget: "CA", f: "188 Canada.pdf" }, { c: "Cuba", l: "Spanish", s: 1, p: 42, mapTarget: "CU", f: "42 CUBA ESP.pdf" }, { c: "Ecuador", l: "Spanish", s: 1, p: 118, mapTarget: "EC", f: "118 Ecuador ESP.pdf" }, 
+            { c: "Japan", l: "English", s: 1, p: 15, mapTarget: "JP", f: "15 Japan.pdf" }, { c: "Kenya", l: "English", s: 1, p: 21, mapTarget: "KE", f: "21 KENYA.pdf" }, { c: "Maldives", l: "English", s: 1, p: 50, mapTarget: "MV", f: "50 Maldives.pdf" }, 
+            { c: "Marshall Islands", l: "English", s: 1, p: 39, mapTarget: "MH", f: "39 Marshall Islands.pdf" }, { c: "Moldova", l: "English", s: 1, p: 81, mapTarget: "MD", f: "81 Moldova.pdf" }, { c: "Monaco", l: "French", s: 1, p: 52, mapTarget: "MC", f: "52 Monaco FR.pdf" }, 
+            { c: "Montenegro", l: "English", s: 1, p: 14, mapTarget: "ME", f: "14 Montenegro.pdf" }, { c: "Nepal", l: "English", s: 1, p: 40, mapTarget: "NP", f: "40 Nepal NDC3.pdf" }, { c: "New Zealand", l: "English", s: 1, p: 34, mapTarget: "NZ", f: "34 New Zealand.pdf" }, 
+            { c: "Niue", l: "English", s: 1, p: 40, mapTarget: "NU", f: "40 NIUE.pdf" }, { c: "Norway", l: "English", s: 1, p: 16, mapTarget: "NO", f: "16 Norway.pdf" }, { c: "Saint Lucia", l: "English", s: 1, p: 35, mapTarget: "LC", f: "35 Saint Lucia.pdf" }, 
+            { c: "Singapore", l: "English", s: 1, p: 31, mapTarget: "SG", f: "31 Singapore.pdf" }, { c: "Somalia", l: "English", s: 1, p: 58, mapTarget: "SO", f: "58 Somalia NDC 3.0.pdf" }, { c: "Switzerland", l: "English", s: 1, p: 23, mapTarget: "CH", f: "23 Switzerland.pdf" }, 
+            { c: "United Arab Emirates", l: "English", s: 1, p: 101, mapTarget: "AE", f: "101 UAE.pdf" }, { c: "United Kingdom", l: "English", s: 1, p: 74, mapTarget: "GB", f: "74 United Kingdom.pdf" }, { c: "United States", l: "English", s: 1, p: 33, mapTarget: "US", f: "33 United States.pdf" }, 
+            { c: "Uruguay", l: "Spanish", s: 1, p: 77, mapTarget: "UY", f: "77 Uruguay ESP.pdf" }, { c: "Zambia", l: "English", s: 1, p: 38, mapTarget: "ZM", f: "38 Final Submission of Zambia NDC 3.0.pdf" }, { c: "Zimbabwe", l: "English", s: 1, p: 42, mapTarget: "ZW", f: "42 Zimbabwe.pdf" },
+            { c: "Angola", l: "English", s: 0, p: 114, mapTarget: "AO", f: "114 Angola.pdf" }, { c: "Armenia", l: "English", s: 0, p: 43, mapTarget: "AM", f: "43Armenia's NDC 3.0.pdf" }, { c: "Australia", l: "English", s: 0, p: 36, mapTarget: "AU", f: "36 Australia NDC.pdf" }, 
+            { c: "Azerbaijan", l: "English", s: 0, p: 96, mapTarget: "AZ", f: "96 Azerbaijan.pdf" }, { c: "Bahrain", l: "English", s: 0, p: 32, mapTarget: "BH", f: "32 Bahrain.pdf" }, { c: "Bangladesh", l: "English", s: 0, p: 80, mapTarget: "BD", f: "80 Bangladesh.pdf" }, 
+            { c: "Barbados", l: "English", s: 0, p: 52, mapTarget: "BB", f: "52 Barbados NDC.pdf" }, { c: "Belarus", l: "English", s: 0, p: 25, mapTarget: "BY", f: "25 Belarus RUSS.pdf" }, { c: "Bhutan", l: "English", s: 0, p: 30, mapTarget: "BT", f: "30 Bhutan.pdf" }, 
+            { c: "Brunei Darussalam", l: "English", s: 0, p: 27, mapTarget: "BN", f: "27 Brunei Darussalam.pdf" }, { c: "Cabo Verde", l: "English", s: 0, p: 94, mapTarget: "CV", f: "94 NDC 3.0 Cabo Verde.pdf" }, { c: "Cambodia", l: "English", s: 0, p: 158, mapTarget: "KH", f: "158 Cambodia.pdf" }, 
+            { c: "Ethiopia", l: "English", s: 0, p: 29, mapTarget: "ET", f: "29 Ethiopia.pdf" }, { c: "European Union", l: "English", s: 0, p: 47, mapTarget: "EU_EXPAND", f: "47 European Union (27 Countries).pdf" }, 
+            { c: "Fiji", l: "English", s: 0, p: 76, mapTarget: "FJ", f: "76 Fiji NDC3.0_Final.pdf" }, { c: "Georgia", l: "English", s: 0, p: 37, mapTarget: "GE", f: "37 NDC_3.0_Georgia.pdf" }, { c: "Guyana", l: "English", s: 0, p: 17, mapTarget: "GY", f: "17 Guyanas NDC 2025-2035.pdf" }, 
+            { c: "Holy See", l: "English", s: 0, p: 6, mapTarget: "VA", f: "6 Holy See.pdf" }, { c: "Iceland", l: "English", s: 0, p: 13, mapTarget: "IS", f: "13 Iceland's 2035 NDC.pdf" }, { c: "India", l: "English", s: 0, p: 34, mapTarget: "IN", f: "34 INDIA.pdf" }, 
+            { c: "Indonesia", l: "English", s: 0, p: 56, mapTarget: "ID", f: "56 Indonesia_Second NDC_2025.10.24.pdf" }, { c: "Jamaica", l: "English", s: 0, p: 23, mapTarget: "JM", f: "23 Jamaica.pdf" }, { c: "Saudi Arabia", l: "English", s: 0, p: 27, mapTarget: "SA", f: "27 Saudi Arabia.pdf" }, 
+            { c: "Lebanon", l: "English", s: 0, p: 102, mapTarget: "LB", f: "102 Lebanon.pdf" }, { c: "Liberia", l: "English", s: 0, p: 61, mapTarget: "LR", f: "61 Liberia.pdf" }, { c: "Liechtenstein", l: "English", s: 0, p: 15, mapTarget: "LI", f: "15 Liechtenstein.pdf" }, 
+            { c: "Malawi", l: "English", s: 0, p: 95, mapTarget: "MW", f: "95 NDC3.0 Malawi.pdf" }, { c: "Malaysia", l: "English", s: 0, p: 16, mapTarget: "MY", f: "16 Malaysia NDC 3.0 to UNFCCC 2025 final.pdf" }, { c: "Mauritius", l: "English", s: 0, p: 51, mapTarget: "MU", f: "51 Mauritius.pdf" }, 
+            { c: "Micronesia", l: "English", s: 0, p: 68, mapTarget: "FM", f: "68 Micronesia.pdf" }, { c: "Mongolia", l: "English", s: 0, p: 36, mapTarget: "MN", f: "36 Mongolia.pdf" }, { c: "Mozambique", l: "English", s: 0, p: 25, mapTarget: "MZ", f: "25 Mozambique.pdf" }, 
+            { c: "Nauru", l: "English", s: 0, p: 63, mapTarget: "NR", f: "63Nauru NDC 3.pdf" }, { c: "Nigeria", l: "English", s: 0, p: 70, mapTarget: "NG", f: "70 Nigeria NDC 3.0.pdf" }, 
+            { c: "Oman", l: "English", s: 0, p: 67, mapTarget: "OM", url: "https://unfccc.int/sites/default/files/2026-07/The%20Sultanate%20of%20Omans%20Third%20Nationally%20Determined%20Contributions%20%20%28NDC%203.0%29.pdf" },
+            { c: "Pakistan", l: "English", s: 0, p: 59, mapTarget: "PK", f: "59 Pakistan.pdf" }, { c: "Palau", l: "English", s: 0, p: 58, mapTarget: "PW", f: "58 Palau.pdf" }, { c: "Qatar", l: "English", s: 0, p: 39, mapTarget: "QA", f: "39 Qatar NDC 3.0.pdf" }, { c: "Republic of Korea", l: "English", s: 0, p: 28, mapTarget: "KR", f: "28The Republic of Koreas 2035 NDC.pdf" }, 
+            { c: "Rwanda", l: "English", s: 0, p: 152, mapTarget: "RW", f: "152 Rwanda NDC3.0 Final.pdf" }, { c: "Samoa", l: "English", s: 0, p: 45, mapTarget: "WS", f: "45Samoa NDC3.0_FINAL.pdf" }, { c: "Sao Tome and Principe", l: "English", s: 0, p: 79, mapTarget: "ST", f: "79 Sao Tome and Principe.pdf" }, 
+            { c: "Serbia", l: "English", s: 0, p: 13, mapTarget: "RS", f: "13 Serbia.pdf" }, { c: "Seychelles", l: "English", s: 0, p: 40, mapTarget: "SC", f: "40 Seychelles.pdf" }, { c: "Sierra Leone", l: "English", s: 0, p: 147, mapTarget: "SL", f: "147 Sierra Leone NDC 3.0.pdf" }, 
+            { c: "Solomon Islands", l: "English", s: 0, p: 34, mapTarget: "SB", f: "34 Solomon Islands.pdf" }, { c: "South Africa", l: "English", s: 0, p: 50, mapTarget: "ZA", f: "50 South Africa's.pdf" }, { c: "Sri Lanka", l: "English", s: 0, p: 114, mapTarget: "LK", f: "114 Sri Lanka.pdf" }, 
+            { c: "Suriname", l: "English", s: 0, p: 166, mapTarget: "SR", f: "166 Suriname.pdf" }, { c: "Thailand", l: "English", s: 0, p: 15, mapTarget: "TH", f: "15 Thailand NDC 3.0.pdf" }, { c: "The Bahamas", l: "English", s: 0, p: 153, mapTarget: "BS", f: "153 The Bahamas NDC 3.0.pdf" }, 
+            { c: "Timor-Leste", l: "English", s: 0, p: 137, mapTarget: "TL", f: "137 Timor-Leste Updated NDC 3.0.pdf" }, { c: "Tonga", l: "English", s: 0, p: 92, mapTarget: "TO", f: "92 Tonga.pdf" }, { c: "Trinidad and Tobago", l: "English", s: 0, p: 21, mapTarget: "TT", f: "21Trinidad and Tobago Second NDC.pdf" }, 
+            { c: "Türkiye", l: "English", s: 0, p: 21, mapTarget: "TR", f: "21 Türkiye.pdf" }, { c: "Tuvalu", l: "English", s: 0, p: 33, mapTarget: "TV", f: "33 Tuvalu.pdf" }, { c: "Vanuatu", l: "English", s: 0, p: 146, mapTarget: "VU", f: "146 Vanuatu NDC 3.0.pdf" }, 
+            { c: "Yemen", l: "English", s: 0, p: 13, mapTarget: "YE", f: "13 Yemens NDC3.0 Vision.pdf" }, { c: "Eswatini", l: "English", s: 0, p: 42, mapTarget: "SZ", f: "42 Eswatini.pdf" }, { c: "Eritrea", l: "English", s: 0, p: 71, mapTarget: "ER", f: "71 Eritrea.pdf" },
+            { c: "Bolivia", l: "Spanish", s: 0, p: 112, mapTarget: "BO", f: "112 Bolivia ESP.pdf" }, { c: "Colombia", l: "Spanish", s: 0, p: 458, mapTarget: "CO", f: "458 Colombia ESP.pdf" }, { c: "Costa Rica", l: "Spanish", s: 0, p: 157, mapTarget: "CR", f: "157 Costa Rica ESP.pdf" }, 
+            { c: "Dominican Republic", l: "Spanish", s: 0, p: 222, mapTarget: "DO", f: "222 Dominican Republic ESP.pdf" }, { c: "El Salvador", l: "Spanish", s: 0, p: 82, mapTarget: "SV", f: "82NDC de El Salvador 2025 ESP.pdf" }, { c: "Honduras", l: "Spanish", s: 0, p: 72, mapTarget: "HN", f: "72HON NDC 3.0 2026 Oficial ESP.pdf" }, 
+            { c: "Mexico", l: "Spanish", s: 0, p: 157, mapTarget: "MX", f: "157 NDC 3.0 México ESP.pdf" }, { c: "Nicaragua", l: "Spanish", s: 0, p: 92, mapTarget: "NI", f: "92 NICARAGUA ESP.pdf" }, { c: "Panama", l: "Spanish", s: 0, p: 39, mapTarget: "PA", f: "39 PANAMA ESP.pdf" }, 
+            { c: "Paraguay", l: "Spanish", s: 0, p: 138, mapTarget: "PY", f: "138 Paraguay NDC 3.0 ESP.pdf" }, { c: "Peru", l: "Spanish", s: 0, p: 87, mapTarget: "PE", f: "87 PERU ESP.pdf" }, { c: "Venezuela", l: "Spanish", s: 0, p: 302, mapTarget: "VE", f: "302 Venezuela ESP.pdf" },
+            { c: "Algeria", l: "French", s: 0, p: 45, mapTarget: "DZ", f: "45 Algeria FR.pdf" }, { c: "Benin", l: "French", s: 0, p: 179, mapTarget: "BJ", f: "179 BENIN FR.pdf" }, { c: "Burkina Faso", l: "French", s: 0, p: 91, mapTarget: "BF", f: "91BKF-CDN 3.0_BURKINA FASO FR.pdf" }, 
+            { c: "Burundi", l: "French", s: 0, p: 92, mapTarget: "BI", f: "92 CDN3.0_BURUNDI FR.pdf" }, { c: "Cameroon", l: "French", s: 0, p: 65, mapTarget: "CM", f: "65 Cameroon FR.pdf" }, { c: "Central African Republic", l: "French", s: 0, p: 66, mapTarget: "CF", f: "66 Central African Republic FR.pdf" }, 
+            { c: "Comoros", l: "French", s: 0, p: 135, mapTarget: "KM", f: "135 Comoros FR.pdf" }, { c: "Congo", l: "French", s: 0, p: 100, mapTarget: "CG", f: "100 Congo FR.pdf" }, { c: "Côte d'Ivoire", l: "French", s: 0, p: 132, mapTarget: "CI", f: "132 COTE D'IVOIRE FR.pdf" }, 
+            { c: "Gabon", l: "French", s: 0, p: 110, mapTarget: "GA", f: "110 Gabon FR.pdf" }, { c: "Guinea", l: "French", s: 0, p: 37, mapTarget: "GN", f: "37 Guinea FR.pdf" }, { c: "Mauritania", l: "French", s: 0, p: 137, mapTarget: "MR", f: "137 Mauritania FR.pdf" }, 
+            { c: "Morocco", l: "French", s: 0, p: 110, mapTarget: "MA", f: "110 Morocco FR.pdf" }, { c: "Tunisia", l: "French", s: 0, p: 67, mapTarget: "TN", f: "67 Tunisia FR.pdf" },
+            { c: "Kazakhstan", l: "Russian", s: 0, p: 102, mapTarget: "KZ", f: "102 NDC Kazakhstan 3.0 RUSS.pdf" }, { c: "Kyrgyzstan", l: "Russian", s: 0, p: 99, mapTarget: "KG", f: "99 Kyrgyzstan RUSS.pdf" }, { c: "Russia", l: "Russian", s: 0, p: 48, mapTarget: "RU", f: "48 RUSSIA RUSS.pdf" }, { c: "Uzbekistan", l: "Russian", s: 0, p: 68, mapTarget: "UZ", f: "68 Uzbekistan Third NDC RUSS.pdf" },
+            { c: "Iraq", l: "Arabic", s: 0, p: 50, mapTarget: "IQ", f: "50 IRAQ ARB.pdf" }, { c: "China", l: "Chinese", s: 0, p: 35, mapTarget: "CN", f: "35 China CN.pdf" }, { c: "Ukraine", l: "Ukrainian", s: 0, p: 24, mapTarget: "UA", f: "24 Ukraine UKR.pdf" }
+        ];
+
+        const defaultAnnexData = [
+            { c: "France (Annex)", l: "French", p: "-", f: "10 France ANNEX.pdf" },
+            { c: "Switzerland (Annex)", l: "English", p: "-", f: "8 Switzerland Annex.pdf" }
+        ];
+
+        const defaultExamples = [
+            { level: "Tokenistic", statement: "Supporting workers and communities is crucial for facilitating an equitable just transition that is centered around people.", analysis: "General aspiration with no mechanism, target group, timeline, budget or accountable actor." },
+            { level: "Partial", statement: "Develop, strengthen and integrate the inclusion of people with disabilities in national climate decision-making processes...", analysis: "Mentions participation and support, but lacks enacted law, designated authority, or monitoring mechanisms." },
+            { level: "Embedded", statement: "In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration...", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating an action plan with an accountable actor." }
+        ];
+
+        let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
+        let codingExamples = JSON.parse(JSON.stringify(defaultExamples));
+        
+        const savedNdcData = localStorage.getItem('ndcTrackerState');
+        if (savedNdcData) {
+            const parsed = JSON.parse(savedNdcData);
+            ndcData.forEach(item => {
+                const match = parsed.find(p => p.c === item.c);
+                if (match && match.s !== undefined) item.s = match.s;
+            });
+        }
+
+        const euCountries = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"];
+
+        function toggleStatus(countryName) {
+            const country = ndcData.find(c => c.c === countryName);
+            if(country) {
+                country.s = country.s === 1 ? 0 : 1;
+                localStorage.setItem('ndcTrackerState', JSON.stringify(ndcData.map(i => ({ c: i.c, s: i.s }))));
+                loadTables();
+                drawRegionsMap(); 
+            }
+        }
+
+        function updateProgressMetrics() {
+            let total = 0, analyzed = 0;
+            ndcData.forEach(item => {
+                const w = (item.c === "European Union") ? 27 : 1;
+                total += w;
+                if (item.s === 1) analyzed += w;
+            });
+            const pct = ((analyzed / total) * 100).toFixed(1);
+            document.getElementById('progress-ratio').innerText = `${analyzed} / ${total}`;
+            document.getElementById('progress-percent').innerText = `${pct}% Completed`;
+            document.getElementById('progress-bar-fill').style.width = `${pct}%`;
+        }
+
+        function loadTables() {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+            const hfBaseUrl = "https://huggingface.co/spaces/jaff4r/Climate-Justice-in-NDCs/resolve/main/ndcs/";
+            ndcData.forEach(item => {
+                const badgeClass = item.s === 1 ? 'badge-done' : 'badge-pending';
+                const badgeText = item.s === 1 ? 'Analyzed ✓' : 'Pending ⟳';
+                const badge = `<span class="status-badge ${badgeClass}" onclick="toggleStatus('${item.c}')">${badgeText}</span>`;
+                const fileUrl = item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f);
+                const dlBtn = `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>`;
+                html += `<tr><td>${item.c}</td><td>${item.l}</td><td>${item.p}</td><td>${badge}</td><td>${dlBtn}</td></tr>`;
+            });
+            tbody.innerHTML = html;
+            updateProgressMetrics();
+        }
+
+        function showPage(pageId, btnElement) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.sidebar button').forEach(b => btn.classList.remove('active-btn'));
+            document.getElementById(pageId).classList.add('active');
+            btnElement.classList.add('active-btn');
+            if(pageId === 'dashboard') drawGantt();
+            if(pageId === 'map') drawRegionsMap();
+        }
+
+        google.charts.load('current', {'packages':['gantt', 'geochart']});
+        google.charts.setOnLoadCallback(() => { loadTables(); drawGantt(); drawRegionsMap(); });
+
+        function drawGantt() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Task ID'); data.addColumn('string', 'Task Name'); data.addColumn('string', 'Resource');
+            data.addColumn('date', 'Start Date'); data.addColumn('date', 'End Date'); data.addColumn('number', 'Duration');
+            data.addColumn('number', 'Percent Complete'); data.addColumn('string', 'Dependencies');
+
+            data.addRows([
+                ['Setup', 'Project Setup & Calibration', 'Phase', new Date(2026, 6, 20), new Date(2026, 6, 31), null, 100, null],
+                ['Mtg1', 'UN-Habitat Meeting', 'Meeting', new Date(2026, 6, 30), new Date(2026, 6, 31), null, 100, null],
+                ['Data', 'Data Execution & Mapping', 'Analysis', new Date(2026, 7, 1), new Date(2026, 7, 31), null, 15, null],
+                ['Leave', 'Paternity Leave', 'Leave', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
+                ['Verify', 'Andreia Verification', 'Verification', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
+                ['Synth', 'Synthesis & Drafting', 'Phase', new Date(2026, 9, 1), new Date(2026, 9, 31), null, 0, null],
+                ['Final', 'Final Dissemination', 'Phase', new Date(2026, 10, 1), new Date(2026, 10, 8), null, 0, null],
+                ['COP', 'COP 31 Begins', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 10), null, 0, null]
+            ]);
+
+            var chart = new google.visualization.Gantt(document.getElementById('gantt_chart'));
+            chart.draw(data, { height: 310, gantt: { trackHeight: 32, palette: [{ "color": "#0066cc" }, { "color": "#34c759" }, { "color": "#5ac8fa" }] } });
+        }
+
+        var panZoomInstance = null;
+        function drawRegionsMap() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Country');
+            data.addColumn('number', 'Value');
+            data.addColumn({type: 'string', role: 'tooltip'});
+
+            ndcData.forEach(item => {
+                const statusText = item.s === 1 ? 'Analyzed' : 'Pending';
+                if(item.mapTarget === "EU_EXPAND") {
+                    euCountries.forEach(euC => data.addRow([euC, item.s, `EU Member State\nStatus: ${statusText}`]));
+                } else if (item.mapTarget !== null) {
+                    data.addRow([item.mapTarget, item.s, `${item.c}\nStatus: ${statusText}`]);
+                }
+            });
+
+            var regionVal = document.getElementById('regionSelect') ? document.getElementById('regionSelect').value : 'world';
+            var chartContainer = document.getElementById('regions_div');
+            var chart = new google.visualization.GeoChart(chartContainer);
+
+            google.visualization.events.addListener(chart, 'select', function() {
+                var selection = chart.getSelection();
+                if (selection.length > 0) {
+                    var geoCode = data.getValue(selection[0].row, 0);
+                    var matched = ndcData.find(item => item.mapTarget === geoCode || (item.mapTarget === "EU_EXPAND" && euCountries.includes(geoCode)));
+                    if (matched) toggleStatus(matched.c);
+                }
+            });
+
+            google.visualization.events.addListener(chart, 'ready', function() {
+                setTimeout(() => {
+                    var svgElem = chartContainer.querySelector('svg');
+                    if (svgElem) {
+                        if (panZoomInstance) panZoomInstance.destroy();
+                        panZoomInstance = svgPanZoom(svgElem, { zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true, minZoom: 1, maxZoom: 15 });
+                    }
+                }, 100);
+            });
+
+            chart.draw(data, {
+                region: regionVal,
+                colorAxis: { colors: ['#FDBE02', '#34c759'], minValue: 0, maxValue: 1 },
+                backgroundColor: 'transparent',
+                datalessRegionColor: '#e0e0e0',
+                defaultColor: '#e0e0e0',
+                legend: 'none'
+            });
+        }
+    </script>
+</body>
+</html>
