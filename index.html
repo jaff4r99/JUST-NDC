@@ -88,8 +88,15 @@
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); text-align: left; vertical-align: middle; font-size: 0.95rem; }
-        .sticky-th th { background-color: rgba(245, 245, 247, 0.9); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; }
+        .sticky-th th { background-color: rgba(245, 245, 247, 0.9); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; user-select: none; }
         .table-container { max-height: 400px; overflow-y: auto; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border-light); background: #fff; }
+
+        /* Sorting Indicators */
+        .sticky-th th::after { content: ' \21D5'; font-size: 0.8rem; color: #aaa; margin-left: 5px; }
+        .sticky-th th.sort-asc::after { content: ' \2191'; color: var(--primary); }
+        .sticky-th th.sort-desc::after { content: ' \2193'; color: var(--primary); }
+        .sticky-th th.no-sort::after { content: none; }
+        .sticky-th th.no-sort { cursor: default; }
 
         .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; user-select: none; display: inline-block; transition: all 0.15s; }
         .badge-done { background: rgba(52, 199, 89, 0.15); color: #248a3d; }
@@ -114,6 +121,7 @@
         .box-restorative { background-color: #bb6e4b; }
         .box-transformative { background-color: #001f3f; color: #fff; padding: 28px; border-radius: 12px; text-align: center; margin-top: 16px; box-shadow: var(--apple-shadow); }
 
+        /* Restored Matrix Styling */
         .matrix-table { margin-top: 20px; border: 1px solid var(--border-light); background: #fff; border-radius: 8px; overflow: hidden; }
         .matrix-table th, .matrix-table td { border: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; color: #333; }
         .col-dim { font-weight: 700; background-color: #f9f9f9; width: 15%; }
@@ -123,15 +131,18 @@
         .col-strong { background-color: #94bd99; color: #000; width: 24%; }
         .matrix-header th { font-weight: 700; font-size: 0.95rem; padding: 14px; }
 
-        .example-box { padding: 20px; border-radius: 14px; margin-bottom: 18px; background: #fff; border-left: 5px solid; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .ex-tokenistic { border-left-color: #e69a84; }
-        .ex-partial { border-left-color: #d8ce6e; }
-        .ex-embedded { border-left-color: #94bd99; }
-        .ex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px; }
-        .ex-badge { padding: 5px 12px; border-radius: 6px; font-weight: bold; color: #000; font-size: 0.85rem; text-transform: uppercase;}
-        .badge-tok { background: #e69a84; }
-        .badge-par { background: #d8ce6e; }
-        .badge-emb { background: #94bd99; }
+        /* Restored Coding Examples Styling */
+        .example-box { padding: 20px; border-radius: 12px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; overflow: hidden; }
+        .example-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; }
+        .ex-tokenistic::before { background-color: #df9e85; }
+        .ex-partial::before { background-color: #d1ca74; }
+        .ex-embedded::before { background-color: #92b998; }
+        .ex-badge { padding: 6px 12px; border-radius: 6px; font-weight: 700; color: #333; font-size: 0.8rem; text-transform: uppercase; display: inline-block; margin-bottom: 15px;}
+        .badge-tok { background: #df9e85; }
+        .badge-par { background: #d1ca74; }
+        .badge-emb { background: #92b998; }
+        .ex-content strong { display: block; margin-bottom: 5px; color: var(--primary); }
+        .ex-content p { margin-top: 0; font-size: 0.95rem; }
 
         /* Analyzer Styles */
         .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 12px; height: 350px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
@@ -190,56 +201,72 @@
                     <div class="ui-box">
                         <h3>Detailed Project Roadmap</h3>
                         <ul class="timeline-list">
-                            <li><span class="timeline-date">July 20 – July 31: Project Setup and Calibration</span>Translating the transformative climate justice framework into structured AI prompts. Includes the July 30th UN-Habitat meeting to align technical parameters and pilot testing.</li>
-                            <li><span class="timeline-date">August 1 – August 31: Data Execution and Initial Mapping</span>Locking document corpus (pre-Aug 1 deadline), running full dataset through NLP extraction, and packaging data for October synthesis.</li>
-                            <li><span class="timeline-date">September 1 – September 30: Paternity Leave</span>Jaffar out of office. Andreia leads human verification of analyzed texts.</li>
-                            <li><span class="timeline-date">October 1 – October 31: Synthesis, Drafting and Visualization</span>Synthesizing results, evaluating risks of procedural "justice-washing", drafting report recommendations, and finalizing heatmaps.</li>
-                            <li><span class="timeline-date">November 1 – November 8: Final Dissemination</span>Final blind cross-review on AI outputs. Publishing report and presentation assets ahead of COP 31 on November 9th.</li>
+                            <li><span class="timeline-date">July 20 – July 31: Project Setup and Calibration</span>Translating the transformative climate justice framework into structured AI prompts. Includes the July 30th UN-Habitat meeting to align technical parameters and pilot testing on early NDC 3.0 submissions to calibrate "tokenistic" vs. "embedded" distinctions.</li>
+                            <li><span class="timeline-date">August 1 – August 31: Data Execution and Initial Mapping</span>Locking the document corpus (pre-Aug 1 deadline). Running the full dataset through the AI tool to extract statements, mapping results onto the two-axis matrix, and packaging all data for seamless October transition.</li>
+                            <li><span class="timeline-date">September 1 – September 30: Paternity Leave</span>Jaffar disconnected. Andreia leads human verification of analyzed texts.</li>
+                            <li><span class="timeline-date">October 1 – October 31: Synthesis, Drafting and Visualization</span>Synthesizing AI-generated results, evaluating data for procedural over-reliance ("justice-washing"), drafting core findings and recommendations, and finalizing visual heatmap assets.</li>
+                            <li><span class="timeline-date">November 1 – November 8: Final Polish and Pre-COP Dissemination</span>Final blind cross-review on AI outputs. Publishing the report and preparing presentation materials before COP 31 begins on November 9th.</li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- PAGE 2: METHODOLOGY -->
                 <div id="methodology" class="page">
-                    <h1>Framework & Methodology</h1>
-                    <p>Instructional manual for the line-by-line coding process evaluated against four justice dimensions and four commitment tiers.</p>
+                    <h1>Framework & Methodology Instruction Manual</h1>
+                    <p>Welcome to the UNU-EHS FAST team's NDC evaluation hub. If you are new to this project (e.g., incoming researchers or student assistants), this page outlines exactly how we conduct our line-by-line analysis of NDC 3.0 documents to evaluate their commitments to transformative climate justice.</p>
                     
-                    <div class="framework-grid">
-                        <div class="framework-box box-recognitional"><h3 style="margin:0 0 10px 0;">Recognitional Justice</h3><p style="margin:0; font-size:0.9rem;">Acknowledges marginalized groups, Indigenous rights, diverse values and knowledge systems, addressing exclusion.</p></div>
-                        <div class="framework-box box-procedural"><h3 style="margin:0 0 10px 0;">Procedural Justice</h3><p style="margin:0; font-size:0.9rem;">Ensures transparent, inclusive and fair decision-making processes with meaningful participation.</p></div>
-                        <div class="framework-box box-distributive"><h3 style="margin:0 0 10px 0;">Distributive Justice</h3><p style="margin:0; font-size:0.9rem;">Equitably shares benefits and burdens of climate actions and impacts across groups and generations.</p></div>
-                        <div class="framework-box box-restorative"><h3 style="margin:0 0 10px 0;">Restorative Justice</h3><p style="margin:0; font-size:0.9rem;">Recognizes and seeks to address past climate injustices through reparative measures and responses.</p></div>
-                    </div>
-                    <div class="box-transformative">
-                        <h3 style="margin:0 0 6px 0;">Transformative Climate Justice</h3>
-                        <p style="margin:0; font-size:0.95rem;">Addressing the root causes of climate change and social injustice.</p>
+                    <h2 style="color: var(--secondary);">1. The Transformative Climate Justice Framework</h2>
+                    <div class="framework-diagram">
+                        <div class="framework-grid">
+                            <div class="framework-box box-recognitional"><h3 style="margin:0 0 10px 0;">Recognitional Justice</h3><p style="margin:0; font-size:0.9rem;">Acknowledges marginalized groups, Indigenous rights, diverse values and knowledge systems, addressing exclusion and power imbalances.</p></div>
+                            <div class="framework-box box-procedural"><h3 style="margin:0 0 10px 0;">Procedural Justice</h3><p style="margin:0; font-size:0.9rem;">Ensures transparent, inclusive and fair decision-making processes with meaningful participation for all affected groups.</p></div>
+                            <div class="framework-box box-distributive"><h3 style="margin:0 0 10px 0;">Distributive Justice</h3><p style="margin:0; font-size:0.9rem;">Equitably shares the benefits and burdens of climate actions and impacts across groups, scales and generations.</p></div>
+                            <div class="framework-box box-restorative"><h3 style="margin:0 0 10px 0;">Restorative Justice</h3><p style="margin:0; font-size:0.9rem;">Recognizes and seeks to address past climate injustices or historical responsibilities through reparative measures and responses.</p></div>
+                        </div>
+                        <div class="transformative-container">
+                            <div class="arrow-down">⬇</div>
+                            <div class="box-transformative">
+                                <h3 style="margin:0 0 6px 0;">Transformative Climate Justice</h3>
+                                <p style="margin:0; font-size:0.95rem;">Addressing the root causes of climate change and social injustice.</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="ui-box" style="padding: 10px 25px 25px 25px;">
-                        <table class="matrix-table">
-                            <thead>
-                                <tr class="matrix-header">
-                                    <th class="col-dim">Justice dimension</th>
-                                    <th class="col-absent" style="background:#f4f4f4;">No mention (absent)</th>
-                                    <th class="col-weak">Tokenistic justice (weak commitment)</th>
-                                    <th class="col-mod">Partial justice (moderate commitment)</th>
-                                    <th class="col-strong">Embedded justice (strong commitment)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="col-dim">Recognitional justice</td><td class="col-absent">No explicit mention of marginalized or vulnerable groups.</td><td class="col-weak">Mentions marginalized or vulnerable groups but without specifying any measures to address their needs.</td><td class="col-mod">Mentions marginalized or vulnerable groups and specifies concrete measures, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Recognition and measures for marginalized or vulnerable groups are backed by formal institutional structures or legal frameworks, with clear accountability and enforcement mechanisms.</td></tr>
-                                <tr><td class="col-dim">Procedural justice</td><td class="col-absent">No mention of participatory governance, transparency or stakeholder involvement.</td><td class="col-weak">Mentions participation, transparency or stakeholder engagement but without specifying solid mechanisms for implementation.</td><td class="col-mod">Specifies participatory governance, transparency or stakeholder engagement mechanisms, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Participatory governance, transparency and stakeholder engagement mechanisms are backed by formal institutional structures or legal frameworks, with guaranteed implementation and accountability.</td></tr>
-                                <tr><td class="col-dim">Distributive justice</td><td class="col-absent">No mention of equitable allocation of resources, finance or benefits.</td><td class="col-weak">Broadly references equity or allocation of resources or finance but without specifying any mechanisms to ensure delivery.</td><td class="col-mod">Specifies allocation mechanisms for resources, finance or benefits, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Equitable allocation of resources, finance or benefits is backed by formal institutional structures or legal frameworks, with monitoring and accountability mechanisms.</td></tr>
-                                <tr><td class="col-dim">Restorative justice</td><td class="col-absent">No mention of addressing historical injustices, loss and damage, or reparative measures.</td><td class="col-weak">Acknowledges historical injustices, loss and damage, or reparative needs but without specifying concrete measures.</td><td class="col-mod">Specifies reparative measures or loss and damage actions, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Reparative measures and loss and damage actions are backed by formal institutional structures or legal frameworks, with dedicated funding, accountability and monitoring mechanisms.</td></tr>
-                            </tbody>
-                        </table>
+                    <h2 style="color: var(--secondary);">2. The Line-by-Line Coding Guide</h2>
+                    <div class="ui-box" style="margin-top: 15px;">
+                        <p style="margin-top: 0;">To process our corpus of 120 NDC documents at scale while maintaining rigorous qualitative standards, we follow a strict hybrid workflow. Here is what you need to do step-by-step:</p>
+                        <ol style="line-height: 1.8; margin-bottom: 0;">
+                            <li><strong>Review the Extracted Text:</strong> Instead of reading hundreds of pages manually, an AI (NLP) tool will scrape the PDFs and pre-flag paragraphs containing implicit or explicit mentions of justice. Your job begins with reviewing these flagged text excerpts.</li>
+                            <li><strong>Interpret & Categorize the Dimension:</strong> Read the specific statement carefully. Use the four definitions listed in the framework diagram above to decide which dimension of climate justice (Recognitional, Procedural, Distributive, or Restorative) the text aligns with.</li>
+                            <li><strong>Assess the Level of Commitment:</strong> Next, you must grade how strong the policy commitment actually is. We use a four-tier grading scale. Evaluate the excerpt against the Matrix Table below to see if it qualifies as <em>No Mention</em>, <em>Tokenistic</em>, <em>Partial</em>, or <em>Embedded</em>. Pay special attention to whether the statement is just a vague aspiration (Tokenistic) or backed by a legally binding institutional framework (Embedded).</li>
+                            <li><strong>Log the Data & Cross-Review:</strong> Once categorized and graded, log the entry into our shared output repository. To ensure reliability and prevent "justice-washing", your coded entries will undergo a secondary, blind cross-verification by another team member.</li>
+                        </ol>
                     </div>
+                    
+                    <h2 style="color: var(--secondary);">3. Commitment Grading Matrix</h2>
+                    <table class="matrix-table" style="margin-top: 15px;">
+                        <thead>
+                            <tr class="matrix-header">
+                                <th class="col-dim">Justice dimension</th>
+                                <th class="col-absent" style="background:#f4f4f4;">No mention (absent)</th>
+                                <th class="col-weak">Tokenistic justice (weak commitment)</th>
+                                <th class="col-mod">Partial justice (moderate commitment)</th>
+                                <th class="col-strong">Embedded justice (strong commitment)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="col-dim">Recognitional justice</td><td class="col-absent">No explicit mention of marginalized or vulnerable groups.</td><td class="col-weak">Mentions marginalized or vulnerable groups but without specifying any measures to address their needs.</td><td class="col-mod">Mentions marginalized or vulnerable groups and specifies concrete measures, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Recognition and measures for marginalized or vulnerable groups are backed by formal institutional structures or legal frameworks, with clear accountability and enforcement mechanisms.</td></tr>
+                            <tr><td class="col-dim">Procedural justice</td><td class="col-absent">No mention of participatory governance, transparency or stakeholder involvement.</td><td class="col-weak">Mentions participation, transparency or stakeholder engagement but without specifying solid mechanisms for implementation.</td><td class="col-mod">Specifies participatory governance, transparency or stakeholder engagement mechanisms, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Participatory governance, transparency and stakeholder engagement mechanisms are backed by formal institutional structures or legal frameworks, with guaranteed implementation and accountability.</td></tr>
+                            <tr><td class="col-dim">Distributive justice</td><td class="col-absent">No mention of equitable allocation of resources, finance or benefits.</td><td class="col-weak">Broadly references equity or allocation of resources or finance but without specifying any mechanisms to ensure delivery.</td><td class="col-mod">Specifies allocation mechanisms for resources, finance or benefits, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Equitable allocation of resources, finance or benefits is backed by formal institutional structures or legal frameworks, with monitoring and accountability mechanisms.</td></tr>
+                            <tr><td class="col-dim">Restorative justice</td><td class="col-absent">No mention of addressing historical injustices, loss and damage, or reparative measures.</td><td class="col-weak">Acknowledges historical injustices, loss and damage, or reparative needs but without specifying concrete measures.</td><td class="col-mod">Specifies reparative measures or loss and damage actions, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Reparative measures and loss and damage actions are backed by formal institutional structures or legal frameworks, with dedicated funding, accountability and monitoring mechanisms.</td></tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <!-- PAGE 3: GLOBAL MAP -->
                 <div id="map" class="page">
                     <h1>Global Analysis Status</h1>
-                    <p>Interactive tracking across 146 covered countries (119 NDCs + 27 EU states).</p>
+                    <p>Interactive tracking across 146 covered countries (119 individual NDCs + 27 EU member states).</p>
 
                     <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
@@ -332,9 +359,32 @@
 
                 <!-- PAGE 4: EXAMPLES -->
                 <div id="repository" class="page">
-                    <h1>Coding Examples & Reference</h1>
-                    <p>Reference guide illustrating the practical application of our qualitative coding methodology.</p>
+                    <h1>Coding Examples & Analysis</h1>
+                    <p style="font-size: 1.05rem; margin-bottom: 30px;">Welcome to the Coding Examples & Analysis hub. This section serves as a practical reference guide for our coding methodology. It illustrates how we interpret and grade real-world policy statements extracted from NDCs to maintain analytical consistency. Review the examples below to understand the nuanced differences between a mere tokenistic mention and a fully embedded commitment. You can also practice applying the framework by submitting and categorizing your own examples at the bottom of the page.</p>
                     <div id="examples-list"></div>
+
+                    <div class="ui-box" style="background: #f8f9fa; border: 1px dashed #ccc;">
+                        <h3 style="margin-top: 0; color: var(--primary);">Submit a New Coding Example</h3>
+                        <p style="font-size: 0.9rem; color: #555;">Use this form to test your coding skills. Submitted examples will be saved locally to your browser for review.</p>
+                        
+                        <div class="form-group">
+                            <label for="new-level">Commitment Level:</label>
+                            <select id="new-level" class="search-box" style="width: auto; min-width: 200px;">
+                                <option value="Tokenistic">Tokenistic</option>
+                                <option value="Partial">Partial</option>
+                                <option value="Embedded">Embedded</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-statement">Policy Statement Extracted from NDC:</label>
+                            <textarea id="new-statement" class="search-box" rows="3" placeholder='e.g., "The government commits to supporting vulnerable communities..."'></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-analysis">Your Analysis / Justification:</label>
+                            <textarea id="new-analysis" class="search-box" rows="3" placeholder="Explain why this statement fits the selected commitment level..."></textarea>
+                        </div>
+                        <button onclick="submitExample()" class="download-btn">Save Example to Hub</button>
+                    </div>
                 </div>
 
                 <!-- PAGE 5: AI ANALYZER -->
@@ -416,17 +466,17 @@
         ];
 
         const defaultExamples = [
-            { level: "Tokenistic", statement: "Supporting workers and communities is crucial for facilitating an equitable just transition that is centered around people.", analysis: "General aspiration with no mechanism, target group, timeline, budget or accountable actor." },
-            { level: "Partial", statement: "Develop, strengthen and integrate the inclusion of people with disabilities in national climate decision-making processes...", analysis: "Mentions participation and support, but lacks enacted law, designated authority, or monitoring mechanisms." },
-            { level: "Embedded", statement: "In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration...", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating an action plan with an accountable actor." }
+            { level: "Tokenistic", statement: "Supporting workers and communities is crucial for facilitating an equitable just transition that is centered around people.", analysis: "The statement is a general aspiration with no mechanism, target group definition, timeline, budget or accountable actor. Reads as signalling support rather than a deliverable policy step." },
+            { level: "Partial", statement: "Develop, strengthen and integrate the inclusion of people with disabilities in national climate decision-making processes (involving planning and programme implementation) which directly and indirectly affect their lives. This includes identifying barriers to adapting to climate change, enhancing access and applying an integrated approach to ensure appropriate support networks are in place for their families and community.", analysis: "Mentions participation and support for persons with disabilities, but does not cite any enacted law, designated authority, timeline or monitoring." },
+            { level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
-        // AI Analyzer Concept Map (For robust implicit matching without a backend server)
+        // AI Analyzer Concept Map (For robust implicit matching)
         const conceptMap = {
-            "vulnerable": ["vulnerable", "at-risk", "susceptible", "disadvantaged", "fragile"],
-            "marginalized": ["marginalized", "minority", "excluded", "discrimination", "underrepresented", "poor"],
-            "justice": ["justice", "rights", "just", "human rights", "legal"],
-            "equity": ["equity", "equitable", "equality", "equal"],
+            "vulnerable": ["vulnerable", "at-risk", "susceptible", "disadvantaged", "fragile", "poor"],
+            "marginalized": ["marginalized", "minority", "excluded", "discrimination", "underrepresented"],
+            "justice": ["justice", "rights", "just", "human rights", "legal", "law"],
+            "equity": ["equity", "equitable", "equality", "equal", "balance"],
             "indigenous": ["indigenous", "traditional", "native", "tribe", "tribal", "first nations"],
             "women": ["women", "gender", "female", "girls", "maternal", "mothers"],
             "participation": ["participation", "engage", "involve", "consult", "stakeholder", "community", "transparent"],
@@ -439,7 +489,10 @@
         const hfBaseUrl = "https://huggingface.co/spaces/jaff4r/Climate-Justice-in-NDCs/resolve/main/ndcs/";
         
         document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById('current-date-display').innerText = "August 6, 2026";
+            // Set dynamic Date accurately
+            const now = new Date();
+            document.getElementById('current-date-display').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            
             const select = document.getElementById('ai-ndc-select');
             select.innerHTML = '<option value="" disabled selected>Select an NDC document...</option>';
             ndcData.forEach(ndc => {
@@ -458,10 +511,13 @@
                 if (match && match.s !== undefined) item.s = match.s;
             });
         }
+        
+        const savedExamples = localStorage.getItem('codingExamplesState');
+        if (savedExamples) codingExamples = JSON.parse(savedExamples);
 
         const euCountries = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"];
+        
         let currentSort = { table: null, col: null, asc: true };
-
         function sortTable(colIndex, tableId) {
             const table = document.getElementById(tableId);
             const tbody = table.tBodies[0];
@@ -475,7 +531,6 @@
             rows.sort((a, b) => {
                 let valA = a.cells[colIndex].innerText.trim();
                 let valB = b.cells[colIndex].innerText.trim();
-
                 if (colIndex === 2) {
                     valA = parseInt(valA) || 0;
                     valB = parseInt(valB) || 0;
@@ -532,6 +587,13 @@
             abody.innerHTML = aHtml;
 
             updateProgressMetrics();
+            
+            // Re-apply sorting if previously sorted
+            if(currentSort.table === 'countryTable') {
+                let tempAsc = currentSort.asc;
+                currentSort.asc = !tempAsc; // Flip so click restores correct order
+                sortTable(currentSort.col, 'countryTable');
+            }
         }
 
         function renderExamples() {
@@ -614,9 +676,22 @@
                 ['COP', 'COP 31 Begins', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 10), null, 0, null]
             ]);
 
-            // Removed custom palette array to prevent Google Charts missing-hex-color crash
+            // Explicit 6-color palette mapped to the 6 Resource categories to prevent crash
             var chart = new google.visualization.Gantt(document.getElementById('gantt_chart'));
-            chart.draw(data, { height: 310, gantt: { trackHeight: 32 } });
+            chart.draw(data, { 
+                height: 310, 
+                gantt: { 
+                    trackHeight: 32, 
+                    palette: [
+                        { color: '#0066cc', dark: '#004d80' }, // Phase
+                        { color: '#34c759', dark: '#2e7d32' }, // Meeting
+                        { color: '#5ac8fa', dark: '#009edb' }, // Analysis
+                        { color: '#5856d6', dark: '#3b39a3' }, // Leave
+                        { color: '#34c759', dark: '#2e7d32' }, // Verification
+                        { color: '#ff9500', dark: '#cc7700' }  // Milestone
+                    ] 
+                } 
+            });
         }
 
         var panZoomInstance = null;
