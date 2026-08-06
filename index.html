@@ -150,14 +150,14 @@
         .analyzer-terminal p { margin: 6px 0; color: #f8f8f2; }
         .analyzer-terminal .sys-msg { color: #66d9ef; font-weight: bold; }
         .analyzer-terminal .err-msg { color: #f92672; font-weight: bold; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); }
 
-        /* Metric Grid for Evaluator */
         .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
         .metric-box { padding: 18px; border-radius: 12px; background: #fff; border: 1px solid var(--border-light); text-align: center; }
         .metric-box h3 { margin: 0; font-size: 1.8rem; color: var(--primary); }
         .metric-box p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -178,9 +178,9 @@
                 <button id="btn-dashboard" class="active-btn" onclick="showPage('dashboard', this)"><span>📊</span> Project Tracker</button>
                 <button id="btn-methodology" onclick="showPage('methodology', this)"><span>📘</span> Framework & Method</button>
                 <button id="btn-map" onclick="showPage('map', this)"><span>🗺️</span> Global Map & Status</button>
-                <button id="btn-evaluator" onclick="showPage('evaluator', this)"><span>⚖️</span> Country Evaluator</button>
                 <button id="btn-repository" onclick="showPage('repository', this)"><span>💡</span> Coding Examples</button>
                 <button id="btn-analyzer" onclick="showPage('analyzer', this)"><span>🧠</span> AI Text Scraper</button>
+                <button id="btn-evaluator" onclick="showPage('evaluator', this)"><span>⚖️</span> Country Evaluator</button>
             </div>
 
             <div class="content">
@@ -288,7 +288,7 @@
                 <!-- PAGE 3: GLOBAL MAP -->
                 <div id="map" class="page">
                     <h1>Global Analysis Status</h1>
-                    <p>Interactive tracking across 146 covered countries (119 NDCs + 27 EU member states).</p>
+                    <p>Interactive tracking across 146 covered countries from 120 NDCs (27 EU member states have 1 NDC).</p>
 
                     <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
@@ -357,7 +357,6 @@
                         </div>
                     </div>
 
-                    <!-- Distinct Annex Box -->
                     <div class="ui-box" style="background: rgba(0, 102, 204, 0.03); border: 1px solid rgba(0, 102, 204, 0.2);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <h3 style="margin:0; color: var(--primary);">Supplemental Annex Index</h3>
@@ -379,55 +378,7 @@
                     </div>
                 </div>
 
-                <!-- PAGE 4: COUNTRY EVALUATOR & SYNTHESIS -->
-                <div id="evaluator" class="page">
-                    <h1>Automated Country Evaluator & Synthesis</h1>
-                    <p>Select any NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine classifies every statement into its dimension and commitment tier to generate an overall country decree.</p>
-
-                    <div class="ui-box">
-                        <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
-                            <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                                <label for="eval-country-select">Select Country NDC to Evaluate:</label>
-                                <select id="eval-country-select" class="search-box" style="margin-bottom: 0;">
-                                    <option value="" disabled selected>Loading countries...</option>
-                                </select>
-                            </div>
-                            <button onclick="runFullCountryEvaluation()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 12px 20px;">Run Comprehensive Synthesis</button>
-                        </div>
-                    </div>
-
-                    <!-- Synthesis Output Container -->
-                    <div id="eval-results-container" style="display: none;">
-                        <!-- Decreed Verdict Banner -->
-                        <div class="ui-box" id="verdict-banner" style="border-left: 6px solid var(--accent); background: #ffffff;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                                <div>
-                                    <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Overall NDC Decree Verdict</span>
-                                    <h2 id="verdict-title" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.6rem;">Evaluating...</h2>
-                                </div>
-                                <button onclick="exportEvaluationDocx()" class="download-btn" style="background-color: var(--accent); color: #fff;">📥 Export Synthesis Report (.docx)</button>
-                            </div>
-                            <p id="verdict-summary" style="margin-top: 10px; font-size: 0.95rem; color: #444;"></p>
-                        </div>
-
-                        <!-- Statement Tally Metrics -->
-                        <div class="metric-grid">
-                            <div class="metric-box"><h3 id="stat-total">0</h3><p>Total Flagged Statements</p></div>
-                            <div class="metric-box" style="border-bottom: 4px solid var(--embedded);"><h3 id="stat-embedded">0</h3><p>Embedded Commitments</p></div>
-                            <div class="metric-box" style="border-bottom: 4px solid var(--partial);"><h3 id="stat-partial">0</h3><p>Partial Commitments</p></div>
-                            <div class="metric-box" style="border-bottom: 4px solid var(--tokenistic);"><h3 id="stat-tokenistic">0</h3><p>Tokenistic Mentions</p></div>
-                        </div>
-
-                        <!-- Full Statement Ledger -->
-                        <div class="ui-box">
-                            <h3 style="margin-top: 0;">Extracted Policy Statement Ledger</h3>
-                            <p style="font-size: 0.9rem; color: var(--text-muted);">Below is the full catalog of statements derived from the document, categorized by justice type and commitment grade.</p>
-                            <div id="eval-statement-ledger"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PAGE 5: EXAMPLES -->
+                <!-- PAGE 4: CODING EXAMPLES -->
                 <div id="repository" class="page">
                     <h1>Coding Examples & Analysis</h1>
                     <p style="font-size: 1.05rem; margin-bottom: 30px;">Welcome to the Coding Examples & Analysis hub. This section serves as a practical reference guide for our coding methodology. It illustrates how we interpret and grade real-world policy statements extracted from NDCs to maintain analytical consistency. Review the examples below to understand the nuanced differences between a mere tokenistic mention and a fully embedded commitment. You can also practice applying the framework by submitting and categorizing your own examples at the bottom of the page.</p>
@@ -462,10 +413,10 @@
                     </div>
                 </div>
 
-                <!-- PAGE 6: AI ANALYZER -->
+                <!-- PAGE 5: AI TEXT SCRAPER -->
                 <div id="analyzer" class="page">
                     <h1>AI Text Scraper & Query Engine</h1>
-                    <p>Select an NDC document from the repository to extract all raw text or perform custom keyword/concept querying across all pages.</p>
+                    <p>Select an NDC document from the repository to extract relevant text or perform custom keyword/concept querying across all pages.</p>
                     
                     <div class="ui-box" style="background: #ffffff;">
                         <div class="form-group">
@@ -477,7 +428,7 @@
                         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                             <div class="form-group" style="flex-grow: 1;">
                                 <label for="ai-query">Policy Query / Focus Area (Comma separated):</label>
-                                <input type="text" id="ai-query" class="search-box" value="vulnerable groups, marginalized, justice, equity, indigenous, women, participation, fairness">
+                                <input type="text" id="ai-query" class="search-box" value="vulnerable groups, marginalized, justice, equity, indigenous, women, participation, fairness, GEDSI, fair & ambitious">
                             </div>
                             <div class="form-group" style="width: 180px;">
                                 <label for="ai-depth">Result Depth:</label>
@@ -490,12 +441,56 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff; padding: 10px 18px;">Run Keyword/Concept Query</button>
-                            <button onclick="downloadFullTextDocx()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 10px 18px;">Export Full Text as Word (.docx)</button>
+                            <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff; padding: 10px 18px;">Check for Justice Mentions</button>
+                            <button onclick="downloadFullTextDocx()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 10px 18px;">Export Scraped Text as Word (.docx)</button>
                         </div>
                         
                         <div id="ai-terminal" class="analyzer-terminal">
                             <p class="sys-msg">System: Ready. Select a document to analyze or export.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE 6: COUNTRY EVALUATOR & SYNTHESIS -->
+                <div id="evaluator" class="page">
+                    <h1>Automated Country Evaluator & Synthesis</h1>
+                    <p>Select any NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine classifies every statement into its dimension and commitment tier to generate an overall country decree.</p>
+
+                    <div class="ui-box">
+                        <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                            <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
+                                <label for="eval-country-select">Select Country NDC to Evaluate:</label>
+                                <select id="eval-country-select" class="search-box" style="margin-bottom: 0;">
+                                    <option value="" disabled selected>Loading countries...</option>
+                                </select>
+                            </div>
+                            <button onclick="runFullCountryEvaluation()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 12px 20px;">Run Comprehensive Synthesis</button>
+                        </div>
+                    </div>
+
+                    <div id="eval-results-container" style="display: none;">
+                        <div class="ui-box" id="verdict-banner" style="border-left: 6px solid var(--accent); background: #ffffff;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                                <div>
+                                    <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Overall NDC Decree Verdict</span>
+                                    <h2 id="verdict-title" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.6rem;">Evaluating...</h2>
+                                </div>
+                                <button onclick="exportEvaluationDocx()" class="download-btn" style="background-color: var(--accent); color: #fff;">📥 Export Synthesis Report (.docx)</button>
+                            </div>
+                            <p id="verdict-summary" style="margin-top: 10px; font-size: 0.95rem; color: #444;"></p>
+                        </div>
+
+                        <div class="metric-grid">
+                            <div class="metric-box"><h3 id="stat-total">0</h3><p>Total Flagged Statements</p></div>
+                            <div class="metric-box" style="border-bottom: 4px solid var(--embedded);"><h3 id="stat-embedded">0</h3><p>Embedded Commitments</p></div>
+                            <div class="metric-box" style="border-bottom: 4px solid var(--partial);"><h3 id="stat-partial">0</h3><p>Partial Commitments</p></div>
+                            <div class="metric-box" style="border-bottom: 4px solid var(--tokenistic);"><h3 id="stat-tokenistic">0</h3><p>Tokenistic Mentions</p></div>
+                        </div>
+
+                        <div class="ui-box">
+                            <h3 style="margin-top: 0;">Extracted Policy Statement Ledger</h3>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Below is the full catalog of statements derived from the document, categorized by justice type and commitment grade.</p>
+                            <div id="eval-statement-ledger"></div>
                         </div>
                     </div>
                 </div>
@@ -559,14 +554,15 @@
             { country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
+        // Expanded AI Analyzer Concept Map
         const conceptMap = {
-            "vulnerable": ["vulnerable", "at-risk", "susceptible", "disadvantaged", "fragile", "poor"],
+            "vulnerable": ["vulnerable", "at-risk", "susceptible", "disadvantaged", "fragile", "poor", "marginalized"],
             "marginalized": ["marginalized", "minority", "excluded", "discrimination", "underrepresented"],
-            "justice": ["justice", "rights", "just", "human rights", "legal", "law"],
-            "equity": ["equity", "equitable", "equality", "equal", "balance"],
-            "indigenous": ["indigenous", "traditional", "native", "tribe", "tribal", "first nations"],
-            "women": ["women", "gender", "female", "girls", "maternal", "mothers"],
-            "participation": ["participation", "engage", "involve", "consult", "stakeholder", "community", "transparent"],
+            "justice": ["justice", "rights", "just", "human rights", "legal", "law", "fair & ambitious"],
+            "equity": ["equity", "equitable", "equality", "equal", "balance", "fairness", "cbdr"],
+            "indigenous": ["indigenous", "traditional", "native", "tribe", "tribal", "first nations", "local communities"],
+            "women": ["women", "gender", "female", "girls", "maternal", "mothers", "gedsi"],
+            "participation": ["participation", "engage", "involve", "consult", "stakeholder", "community", "transparent", "inclusion"],
             "fairness": ["fairness", "fair", "impartial", "balanced"]
         };
 
@@ -574,6 +570,8 @@
         let annexData = JSON.parse(JSON.stringify(defaultAnnexData));
         let codingExamples = JSON.parse(JSON.stringify(defaultExamples));
         let lastEvaluatedResults = null;
+        let lastScrapedResults = [];
+        let lastScrapedCountry = "";
         let editingIndex = -1;
 
         const hfBaseUrl = "https://huggingface.co/spaces/jaff4r/Climate-Justice-in-NDCs/resolve/main/ndcs/";
@@ -916,24 +914,22 @@
                     }
                 }
 
-                // Heuristic Classification Rules
                 let embeddedCount = 0, partialCount = 0, tokenisticCount = 0;
                 let statementLedger = [];
 
                 passages.forEach(item => {
                     const lower = item.text.toLowerCase();
                     
-                    // Check if statement relates to climate justice
                     let isJustice = false;
                     for (const [key, synonyms] of Object.entries(conceptMap)) {
-                        if (synonyms.some(syn => lower.includes(concept))) isJustice = true;
+                        if (synonyms.some(syn => lower.includes(syn))) isJustice = true;
                     }
 
                     if(isJustice) {
                         let dim = "Recognitional";
-                        if(lower.includes("participation") || lower.includes("consult") || lower.includes("transparent")) dim = "Procedural";
-                        else if(lower.includes("finance") || lower.includes("allocat") || lower.includes("benefit") || lower.includes("fund")) dim = "Distributive";
-                        else if(lower.includes("loss") || lower.includes("damage") || lower.includes("historical") || lower.includes("repar")) dim = "Restorative";
+                        if(lower.includes("participation") || lower.includes("consult") || lower.includes("transparent") || lower.includes("involve") || lower.includes("engage")) dim = "Procedural";
+                        else if(lower.includes("finance") || lower.includes("allocat") || lower.includes("benefit") || lower.includes("fund") || lower.includes("distribut") || lower.includes("resource")) dim = "Distributive";
+                        else if(lower.includes("loss") || lower.includes("damage") || lower.includes("historical") || lower.includes("repar") || lower.includes("compensat")) dim = "Restorative";
 
                         let tier = "Tokenistic";
                         if(lower.includes("law") || lower.includes("act") || lower.includes("legisla") || lower.includes("target") || lower.includes("mandate")) {
@@ -956,7 +952,6 @@
                 document.getElementById('stat-partial').innerText = partialCount;
                 document.getElementById('stat-tokenistic').innerText = tokenisticCount;
 
-                // Decreed Verdict Calculation
                 const banner = document.getElementById('verdict-banner');
                 const vTitle = document.getElementById('verdict-title');
                 const vSummary = document.getElementById('verdict-summary');
@@ -979,7 +974,6 @@
                     banner.style.borderLeftColor = "var(--tokenistic)";
                 }
 
-                // Render Statement Ledger
                 let ledgerHtml = '';
                 statementLedger.forEach((st, idx) => {
                     let boxClass = st.tier === "Tokenistic" ? "ex-tokenistic" : (st.tier === "Partial" ? "ex-partial" : "ex-embedded");
@@ -1009,7 +1003,6 @@
             }
         }
 
-        // Export Evaluation as .docx / HTML Doc
         function exportEvaluationDocx() {
             if(!lastEvaluatedResults) return;
             const res = lastEvaluatedResults;
@@ -1049,11 +1042,11 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `JUST-NDC_Evaluation_${res.country}.doc`;
+            a.download = `JUST-NDC_Evaluation_${res.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
             a.click();
         }
 
-        // AI Text Scraper & Full Text Word Export
+        // --- AI Text Scraper Engine ---
         async function runBrowserAnalysis() {
             const fileUrl = document.getElementById('ai-ndc-select').value;
             const queryStr = document.getElementById('ai-query').value.toLowerCase();
@@ -1112,6 +1105,10 @@
 
                 scoredPassages.sort((a, b) => b.score - a.score);
                 const finalResults = scoredPassages.slice(0, resultLimit);
+                
+                lastScrapedResults = finalResults;
+                const sel = document.getElementById('ai-ndc-select');
+                lastScrapedCountry = sel.options[sel.selectedIndex].text;
 
                 if(finalResults.length === 0) {
                     term.innerHTML += `<p class="err-msg">Result: No significant passages found matching the query concepts.</p>`;
@@ -1136,24 +1133,22 @@
         }
 
         async function downloadFullTextDocx() {
-            const fileUrl = document.getElementById('ai-ndc-select').value;
             const term = document.getElementById('ai-terminal');
-            if(!fileUrl) { alert("Please select an NDC document first."); return; }
+            if(lastScrapedResults.length === 0) { 
+                term.innerHTML += `<p class="err-msg">Error: Please run 'Check for Justice Mentions' first.</p>`; 
+                term.scrollTop = term.scrollHeight;
+                return; 
+            }
 
-            term.innerHTML += `<p class="sys-msg">System: Extracting full text for Word export...</p>`;
+            term.innerHTML += `<p class="sys-msg">System: Exporting scraped passages to Word...</p>`;
+            term.scrollTop = term.scrollHeight;
 
             try {
-                const loadingTask = pdfjsLib.getDocument(fileUrl);
-                const pdf = await loadingTask.promise;
-                
-                let docContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><title>Extracted NDC Text</title></head><body style='font-family:Arial;'><h1>Extracted NDC Document Text</h1><hr/>`;
+                let docContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><title>Scraped Mentions</title></head><body style='font-family:Arial;'><h1>Scraped Justice Mentions: ${lastScrapedCountry}</h1><hr/>`;
 
-                for(let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    const text = content.items.map(it => it.str).join(" ");
-                    docContent += `<h3>--- Page ${i} ---</h3><p>${text}</p><br/>`;
-                }
+                lastScrapedResults.forEach((res, idx) => {
+                    docContent += `<h3>[Excerpt ${idx + 1}] Page ${res.pageNum}</h3><p>${res.text}</p><br/>`;
+                });
 
                 docContent += `</body></html>`;
 
@@ -1161,13 +1156,14 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `Extracted_NDC_FullText.doc`;
+                a.download = `Scraped_Mentions_${lastScrapedCountry.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
                 a.click();
                 
-                term.innerHTML += `<p class="sys-msg">Success: Full text Word document downloaded.</p>`;
+                term.innerHTML += `<p class="sys-msg">Success: Scraped text Word document downloaded.</p>`;
+                term.scrollTop = term.scrollHeight;
             } catch(err) {
                 console.error(err);
-                term.innerHTML += `<p class="err-msg">Error exporting full text.</p>`;
+                term.innerHTML += `<p class="err-msg">Error exporting text.</p>`;
             }
         }
     </script>
