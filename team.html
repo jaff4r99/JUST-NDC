@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUST-NDC (Team Edition): Assessing Transformative Climate Justice in NDC 3.0</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <!-- PDF.js for Client-Side AI Analyzer Text Extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+    <!-- Supabase Client for Real-Time Collaboration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --apple-bg: #f5f5f7;
+            --apple-card: #ffffff;
+            --apple-sidebar: rgba(240, 240, 243, 0.85);
+            --primary: #0066cc; 
+            --secondary: #5ac8fa; 
+            --accent: #34c759; 
+            --pending: #FDBE02; 
+            --tokenistic: #e99883;
+            --partial: #d6cc68;
+            --embedded: #8fbc97;
+            --text-dark: #1d1d1f;
+            --text-muted: #86868b;
+            --border-light: rgba(0, 0, 0, 0.08);
+            --apple-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+            margin: 0; padding: 0; background-color: #e8e8ed; color: var(--text-dark); 
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .mac-window {
+            width: 96vw; max-width: 1600px; height: 94vh; background: var(--apple-bg);
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
+        }
+
+        .mac-titlebar {
+            height: 42px; background: rgba(235, 235, 240, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light); display: flex; align-items: center; padding: 0 16px; user-select: none; z-index: 100;
+        }
+
+        .traffic-lights { display: flex; gap: 8px; flex-shrink: 0;}
+        .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .dot-close { background-color: #ff5f56; border: 1px solid #e0443e; }
+        .dot-minimize { background-color: #ffbd2e; border: 1px solid #dea123; }
+        .dot-maximize { background-color: #27c93f; border: 1px solid #1aab29; }
+
+        .mobile-menu-btn { display: none; cursor: pointer; padding: 5px; align-items: center; justify-content: center; }
+
+        .window-title { flex-grow: 1; text-align: center; font-size: 0.85rem; font-weight: 600; color: #424245; letter-spacing: -0.01em; margin-right: 52px; }
+
+        .app-body { display: flex; flex-grow: 1; height: calc(100% - 42px); overflow: hidden; position: relative; }
+
+        .sidebar-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 150; opacity: 0; transition: opacity 0.3s; }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        .sidebar { 
+            width: 250px; min-width: 250px; flex-shrink: 0; background-color: var(--apple-sidebar); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            padding: 25px 15px; box-sizing: border-box; border-right: 1px solid var(--border-light); display: flex; flex-direction: column; overflow-y: auto;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-header { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 15px; padding-left: 10px; }
+
+        .sidebar button { 
+            display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 14px; margin-bottom: 6px; border: none; 
+            background: transparent; cursor: pointer; text-align: left; border-radius: 8px; font-size: 0.95rem; color: var(--text-dark); font-weight: 500; transition: all 0.1s ease; 
+        }
+
+        .sidebar button:hover { background: rgba(0, 0, 0, 0.05); }
+        .sidebar button.active-btn { background: var(--primary); color: #ffffff; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.25); }
+
+        .content { flex-grow: 1; flex-shrink: 1; min-width: 0; padding: 40px 50px; box-sizing: border-box; overflow-y: auto; background: var(--apple-bg); scroll-behavior: smooth; }
+
+        .page { display: none; animation: macFade 0.2s ease-out; }
+        .page.active { display: block; }
+        @keyframes macFade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-size: 2.1rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 0; color: var(--text-dark); }
+        h2 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text-dark); margin-top: 35px; }
+        p { line-height: 1.55; font-size: 1.05rem; color: #333336; }
+
+        .ui-box { background: var(--apple-card); padding: 28px; border-radius: 12px; box-shadow: var(--apple-shadow); margin-top: 22px; border: 1px solid rgba(0, 0, 0, 0.05); }
+
+        .lang-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-bottom: 25px; }
+        .lang-card { padding: 16px; border-radius: 10px; background: #fff; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid var(--border-light); transition: transform 0.2s; }
+        .lang-card:hover { transform: translateY(-2px); }
+        .lang-card h2 { margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 700; }
+        .lang-card p { margin: 3px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); text-align: left; vertical-align: middle; font-size: 0.95rem; }
+        .sticky-th th { background-color: rgba(245, 245, 247, 0.95); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; user-select: none; backdrop-filter: blur(5px); }
+        .table-container { max-height: 400px; overflow-y: auto; overflow-x: auto; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--border-light); background: #fff; }
+
+        .sticky-th th::after { content: ' \21D5'; font-size: 0.8rem; color: #aaa; margin-left: 5px; }
+        .sticky-th th.sort-asc::after { content: ' \2191'; color: var(--primary); }
+        .sticky-th th.sort-desc::after { content: ' \2193'; color: var(--primary); }
+        .sticky-th th.no-sort::after { content: none; }
+        .sticky-th th.no-sort { cursor: default; }
+
+        .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; user-select: none; display: inline-block; transition: all 0.15s; }
+        .status-badge:active { transform: scale(0.95); }
+        .badge-done { background: rgba(52, 199, 89, 0.15); color: #248a3d; }
+        .badge-pending { background: rgba(253, 190, 2, 0.2); color: #8a6d0b; }
+
+        .download-btn { background-color: rgba(0, 102, 204, 0.1); color: var(--primary); padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: all 0.15s; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .download-btn:hover { background-color: var(--primary); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,102,204,0.2); }
+        .download-btn:active { transform: translateY(0); }
+
+        .btn-danger { background-color: rgba(255, 59, 48, 0.1) !important; color: #ff3b30 !important; }
+        .btn-danger:hover { background-color: #ff3b30 !important; color: #fff !important; box-shadow: 0 4px 10px rgba(255,59,48,0.2) !important; }
+
+        .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; background: rgba(255,255,255,0.9); transition: border 0.2s; }
+        .search-box:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,102,204,0.15); }
+
+        .timeline-list { list-style: none; padding-left: 0; }
+        .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
+        .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
+
+        /* Framework Design */
+        .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+        .framework-box { padding: 24px; border-radius: 12px; box-shadow: var(--apple-shadow); transition: transform 0.2s; }
+        .framework-box:hover { transform: translateY(-2px); }
+        .box-recognitional { background-color: #659b6c; }
+        .box-procedural { background-color: #427356; }
+        .box-distributive { background-color: #8f5242; }
+        .box-restorative { background-color: #ca734f; }
+        .box-transformative { background-color: #001f40; color: #fff; padding: 28px; border-radius: 12px; text-align: center; box-shadow: var(--apple-shadow); margin: 0 auto; width: 100%; box-sizing: border-box; transition: transform 0.2s; }
+        .box-transformative:hover { transform: translateY(-2px); }
+
+        /* Matrix Styling */
+        .matrix-table-wrapper { overflow-x: auto; width: 100%; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; margin-top: 20px; background: #fff; }
+        .matrix-table { margin-top: 0; border: none; min-width: 850px; }
+        .matrix-table th, .matrix-table td { border: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; color: #333; }
+        .col-dim { font-weight: 700; background-color: #ffffff; width: 15%; }
+        .col-absent { background-color: #ffffff; width: 15%; }
+        .col-weak { background-color: var(--tokenistic); color: #000; width: 22%; }
+        .col-mod { background-color: var(--partial); color: #000; width: 24%; }
+        .col-strong { background-color: var(--embedded); color: #000; width: 24%; }
+        .matrix-header th { font-weight: 700; font-size: 0.95rem; padding: 14px; }
+        
+        .header-light-blue { color: #5ac8fa !important; }
+
+        /* Ledger Styling */
+        .example-box { padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; overflow: hidden; transition: transform 0.2s; }
+        .example-box:hover { transform: translateY(-2px); box-shadow: var(--apple-shadow); }
+        .example-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; }
+        .ex-tokenistic::before { background-color: var(--tokenistic); }
+        .ex-partial::before { background-color: var(--partial); }
+        .ex-embedded::before { background-color: var(--embedded); }
+        .ex-badge { padding: 6px 12px; border-radius: 6px; font-weight: 700; color: #333; font-size: 0.8rem; text-transform: uppercase; display: inline-block; margin-bottom: 10px;}
+        .badge-tok { background: var(--tokenistic); }
+        .badge-par { background: var(--partial); }
+        .badge-emb { background: var(--embedded); }
+        .ex-content strong { display: block; margin-bottom: 5px; color: var(--primary); }
+        .ex-content p { margin-top: 0; font-size: 0.95rem; }
+
+        /* Analyzer Styles */
+        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 8px; height: 400px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+        .analyzer-terminal p { margin: 8px 0; color: #f8f8f2; word-wrap: break-word; }
+        .analyzer-terminal .sys-msg { color: #66d9ef; font-weight: bold; }
+        .analyzer-terminal .err-msg { color: #f92672; font-weight: bold; }
+
+        .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .metric-box { padding: 18px; border-radius: 10px; background: #fff; border: 1px solid var(--border-light); text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .metric-box h3 { margin: 0; font-size: 2rem; color: var(--primary); font-weight: 700; }
+        .metric-box p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: var(--primary); }
+
+        .tooltip { position: relative; display: inline-block; border-bottom: 1px dotted var(--primary); cursor: help; color: var(--primary); font-weight: 600; }
+        .tooltip .tooltiptext { visibility: hidden; width: 480px; background-color: #2c2c2e; color: #fff; text-align: left; border-radius: 8px; padding: 18px; position: absolute; z-index: 1000; bottom: 125%; left: 0; opacity: 0; transition: opacity 0.3s; font-size: 0.85rem; line-height: 1.6; font-weight: normal; font-family: -apple-system, sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+        .tooltip .tooltiptext strong { color: var(--secondary); font-size: 0.9rem; }
+        
+        .connection-status { margin-left: auto; margin-right: 15px; font-size: 0.8rem; font-weight: bold; color: #ffbd2e; display: flex; align-items: center; gap: 5px; }
+        .connection-status.live { color: #34c759; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: #ffbd2e; }
+        .connection-status.live .status-dot { background-color: #34c759; box-shadow: 0 0 6px rgba(52, 199, 89, 0.6); }
+
+        /* Responsive Mobile Layout Fixes */
+        @media (max-width: 850px) {
+            .mac-window { width: 100vw; height: 100vh; max-width: none; border-radius: 0; border: none; }
+            .mac-titlebar { padding: 0 12px; }
+            .traffic-lights { display: none; }
+            .mobile-menu-btn { display: flex; margin-right: 12px; }
+            .window-title { margin-right: 0; text-align: left; padding-left: 0; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
+            
+            .sidebar { position: absolute; top: 0; left: -280px; height: 100%; z-index: 200; box-shadow: 5px 0 20px rgba(0,0,0,0.2); }
+            .sidebar.open { left: 0; }
+            
+            .content { padding: 20px 15px; width: 100%; min-width: 100vw; }
+            .ui-box { padding: 20px 15px; }
+            
+            .framework-grid { grid-template-columns: 1fr; }
+            .lang-container { grid-template-columns: repeat(3, 1fr); }
+            .metric-grid { grid-template-columns: 1fr 1fr; }
+            
+            h1 { font-size: 1.6rem; }
+            h2 { font-size: 1.2rem; }
+            
+            .search-box { min-width: 100% !important; }
+            .form-group { width: 100% !important; }
+            .analyzer-terminal { height: 300px; }
+            .tooltip .tooltiptext { width: 300px; left: -100px; }
+        }
+        @media (max-width: 480px) {
+            .metric-grid { grid-template-columns: 1fr; }
+            .lang-container { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mac-window">
+        <div class="mac-titlebar">
+            <div class="mobile-menu-btn" onclick="toggleSidebar()">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#424245" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </div>
+            <div class="traffic-lights">
+                <span class="dot dot-close"></span>
+                <span class="dot dot-minimize"></span>
+                <span class="dot dot-maximize"></span>
+            </div>
+            <div class="window-title">JUST-NDC — Team Workspace (Live Sync)</div>
+            <div class="connection-status" id="db-status"><div class="status-dot"></div> Connecting to Cloud...</div>
+        </div>
+
+        <div class="app-body">
+            <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+            <div class="sidebar">
+                <div class="sidebar-header">Navigation</div>
+                <button id="btn-dashboard" class="active-btn" onclick="showPage('dashboard', this)"><span>📊</span> Project Tracker</button>
+                <button id="btn-methodology" onclick="showPage('methodology', this)"><span>📘</span> Framework & Method</button>
+                <button id="btn-map" onclick="showPage('map', this)"><span>🗺️</span> Global Map & Status</button>
+                <button id="btn-repository" onclick="showPage('repository', this)"><span>💡</span> Coding Examples</button>
+                <button id="btn-analyzer" onclick="showPage('analyzer', this)"><span>🧠</span> AI Text Scraper</button>
+                <button id="btn-evaluator" onclick="showPage('evaluator', this)"><span>⚖️</span> Country Evaluator</button>
+            </div>
+
+            <div class="content" id="main-content-area">
+                <!-- PAGE 1: DASHBOARD -->
+                <div id="dashboard" class="page active">
+                    <h1 style="color: #1d1d1f;">JUST-NDC Project Roadmap</h1>
+                    <p>Evaluating transformative climate justice across 120 NDC submissions (+2 Annexes). Target velocity: 2 NDCs per working day.</p>
+                    
+                    <div class="ui-box" style="border-left: 5px solid var(--primary); background: rgba(0,102,204,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                            <div>
+                                <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">📍 Current Timeline Marker</span>
+                                <h3 id="current-date-display" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.3rem;">Loading...</h3>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Active Phase</span>
+                                <h3 id="current-phase-display" style="margin: 4px 0 0 0; color: var(--accent); font-size: 1.2rem;">Data Execution and Initial Mapping</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-box" style="overflow-x: auto;">
+                        <div id="gantt_chart" style="width: 100%; min-width: 600px; height: 310px;"></div>
+                    </div>
+                    
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">Detailed Project Roadmap</h3>
+                        <ul class="timeline-list">
+                            <li><span class="timeline-date">July 20 – July 31: Project Setup and Calibration</span>Translating the transformative climate justice framework into structured AI prompts. Includes the July 30th UN-Habitat meeting to align technical parameters and pilot testing on early NDC 3.0 submissions to calibrate "tokenistic" vs. "embedded" distinctions.</li>
+                            <li><span class="timeline-date">August 1 – August 31: Data Execution and Initial Mapping</span>Locking the document corpus (pre-Aug 1 deadline). Running the full dataset through the AI tool to extract statements, mapping results onto the two-axis matrix, and packaging all data for seamless October transition.</li>
+                            <li><span class="timeline-date">September 1 – September 30: Paternity Leave</span>Jaffar disconnected. Andreia leads human verification of analyzed texts.</li>
+                            <li><span class="timeline-date">October 1 – October 31: Synthesis, Drafting and Visualization</span>Synthesizing AI-generated results, evaluating data for procedural over-reliance ("justice-washing"), drafting core findings and recommendations, and finalizing visual heatmap assets.</li>
+                            <li><span class="timeline-date">November 1 – November 8: Final Polish and Pre-COP Dissemination</span>Final blind cross-review on AI outputs. Publishing the report and preparing presentation materials before COP 31 begins on November 9th.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- PAGE 2: METHODOLOGY -->
+                <div id="methodology" class="page">
+                    <h1 class="header-light-blue" style="font-size: 2.1rem; margin-bottom: 10px;">Framework & Methodology Instruction Manual</h1>
+                    <p style="margin-top: 0;">Welcome to the UNU-EHS FAST team's NDC evaluation hub. If you are new to this project (e.g., incoming researchers or student assistants), this page outlines exactly how we conduct our line-by-line analysis of NDC 3.0 documents to evaluate their commitments to transformative climate justice.</p>
+                    
+                    <h2 class="header-light-blue">1. The Transformative Climate Justice Framework</h2>
+                    
+                    <div class="framework-grid">
+                        <div class="framework-box box-recognitional">
+                            <h3 style="margin:0 0 10px 0; color: #ffffff; text-transform: uppercase; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px;">Recognitional Justice</h3>
+                            <p style="margin:0; font-size:0.95rem; color: #ffffff;">Acknowledges marginalized groups, Indigenous rights, diverse values and knowledge systems, addressing exclusion and power imbalances.</p>
+                        </div>
+                        <div class="framework-box box-procedural">
+                            <h3 style="margin:0 0 10px 0; color: #ffffff; text-transform: uppercase; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px;">Procedural Justice</h3>
+                            <p style="margin:0; font-size:0.95rem; color: #ffffff;">Ensures transparent, inclusive and fair decision-making processes with meaningful participation for all affected groups.</p>
+                        </div>
+                        <div class="framework-box box-distributive">
+                            <h3 style="margin:0 0 10px 0; color: #ffffff; text-transform: uppercase; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px;">Distributive Justice</h3>
+                            <p style="margin:0; font-size:0.95rem; color: #ffffff;">Equitably shares the benefits and burdens of climate actions and impacts across groups, scales and generations.</p>
+                        </div>
+                        <div class="framework-box box-restorative">
+                            <h3 style="margin:0 0 10px 0; color: #ffffff; text-transform: uppercase; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px;">Restorative Justice</h3>
+                            <p style="margin:0; font-size:0.95rem; color: #ffffff;">Recognizes and seeks to address past climate injustices or historical responsibilities through reparative measures and responses.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#001f40" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+                            <path d="M12 4v16M19 13l-7 7-7-7"/>
+                        </svg>
+                        <div class="box-transformative">
+                            <h3 style="margin:0 0 10px 0; color: #ffffff; text-transform: uppercase; font-size: 1.4rem; font-weight: 800; letter-spacing: 0.5px;">Transformative Climate Justice</h3>
+                            <p style="margin:0; font-size:1.05rem; color: #ffffff;">Addressing the root causes of climate change and social injustice.</p>
+                        </div>
+                    </div>
+
+                    <h2 class="header-light-blue">2. The Line-by-Line Coding Guide</h2>
+                    <div class="ui-box" style="margin-top: 15px;">
+                        <p style="margin-top: 0;">To process our corpus of 120 NDC documents at scale while maintaining rigorous qualitative standards, we follow a strict hybrid workflow. Here is what you need to do step-by-step:</p>
+                        <ol style="line-height: 1.8; margin-bottom: 0;">
+                            <li><strong>Review the Extracted Text:</strong> Instead of reading hundreds of pages manually, an AI (NLP) tool will scrape the PDFs and pre-flag paragraphs containing implicit or explicit mentions of justice. Your job begins with reviewing these flagged text excerpts.</li>
+                            <li><strong>Interpret & Categorize the Dimension:</strong> Read the specific statement carefully. Use the four definitions listed in the framework diagram above to decide which dimension of climate justice (Recognitional, Procedural, Distributive, or Restorative) the text aligns with.</li>
+                            <li><strong>Assess the Level of Commitment:</strong> Next, you must grade how strong the policy commitment actually is. We use a four-tier grading scale. Evaluate the excerpt against the Matrix Table below to see if it qualifies as <em>No Mention</em>, <em>Tokenistic</em>, <em>Partial</em>, or <em>Embedded</em>. Pay special attention to whether the statement is just a vague aspiration (Tokenistic) or backed by a legally binding institutional framework (Embedded).</li>
+                            <li><strong>Log the Data & Cross-Review:</strong> Once categorized and graded, log the entry into our shared output repository. To ensure reliability and prevent "justice-washing", your coded entries will undergo a secondary, blind cross-verification by another team member.</li>
+                        </ol>
+                    </div>
+                    
+                    <h2 class="header-light-blue">3. Commitment Grading Matrix</h2>
+                    <div class="matrix-table-wrapper">
+                        <table class="matrix-table">
+                            <thead>
+                                <tr class="matrix-header">
+                                    <th class="col-dim">Justice dimension</th>
+                                    <th class="col-absent">No mention (absent)</th>
+                                    <th class="col-weak">Tokenistic justice (weak commitment)</th>
+                                    <th class="col-mod">Partial justice (moderate commitment)</th>
+                                    <th class="col-strong">Embedded justice (strong commitment)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="col-dim">Recognitional justice</td><td class="col-absent">No explicit mention of marginalized or vulnerable groups.</td><td class="col-weak">Mentions marginalized or vulnerable groups but without specifying any measures to address their needs.</td><td class="col-mod">Mentions marginalized or vulnerable groups and specifies concrete measures, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Recognition and measures for marginalized or vulnerable groups are backed by formal institutional structures or legal frameworks, with clear accountability and enforcement mechanisms.</td></tr>
+                                <tr><td class="col-dim">Procedural justice</td><td class="col-absent">No mention of participatory governance, transparency or stakeholder involvement.</td><td class="col-weak">Mentions participation, transparency or stakeholder engagement but without specifying solid mechanisms for implementation.</td><td class="col-mod">Specifies participatory governance, transparency or stakeholder engagement mechanisms, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Participatory governance, transparency and stakeholder engagement mechanisms are backed by formal institutional structures or legal frameworks, with guaranteed implementation and accountability.</td></tr>
+                                <tr><td class="col-dim">Distributive justice</td><td class="col-absent">No mention of equitable allocation of resources, finance or benefits.</td><td class="col-weak">Broadly references equity or allocation of resources or finance but without specifying any mechanisms to ensure delivery.</td><td class="col-mod">Specifies allocation mechanisms for resources, finance or benefits, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Equitable allocation of resources, finance or benefits is backed by formal institutional structures or legal frameworks, with monitoring and accountability mechanisms.</td></tr>
+                                <tr><td class="col-dim">Restorative justice</td><td class="col-absent">No mention of addressing historical injustices, loss and damage, or reparative measures.</td><td class="col-weak">Acknowledges historical injustices, loss and damage, or reparative needs but without specifying concrete measures.</td><td class="col-mod">Specifies reparative measures or loss and damage actions, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Reparative measures and loss and damage actions are backed by formal institutional structures or legal frameworks, with dedicated funding, accountability and monitoring mechanisms.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAGE 3: GLOBAL MAP -->
+                <div id="map" class="page">
+                    <h1 style="color: #1d1d1f;">Global Analysis Status</h1>
+                    <p>Interactive tracking across 146 covered countries from 120 NDCs (27 EU member states have 1 NDC).</p>
+
+                    <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                            <div>
+                                <h2 style="color: white; margin: 0 0 4px 0; font-size: 1.3rem;">Completion Tracker</h2>
+                                <p style="margin: 0; opacity: 0.85; font-size: 0.9rem;">Real-time dataset progress</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span id="progress-ratio" style="font-size: 2.2rem; font-weight: 700; display: block; line-height: 1;">0 / 146</span>
+                                <span id="progress-percent" style="font-size: 1rem; opacity: 0.9;">0.0% Completed</span>
+                            </div>
+                        </div>
+                        <div style="width: 100%; background: rgba(255,255,255,0.2); height: 10px; border-radius: 5px; margin-top: 15px; overflow: hidden;">
+                            <div id="progress-bar-fill" style="width: 0%; background: #34c759; height: 100%; transition: width 0.4s ease;"></div>
+                        </div>
+                    </div>
+
+                    <div class="lang-container" style="margin-top: 25px;">
+                        <div class="lang-card"><h2>82</h2><p>English</p></div>
+                        <div class="lang-card"><h2>16</h2><p>Spanish</p></div>
+                        <div class="lang-card"><h2>15</h2><p>French</p></div>
+                        <div class="lang-card"><h2>4</h2><p>Russian</p></div>
+                        <div class="lang-card"><h2>1</h2><p>Arabic</p></div>
+                        <div class="lang-card"><h2>1</h2><p>Chinese</p></div>
+                        <div class="lang-card"><h2>1</h2><p>Ukrainian</p></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <label for="regionSelect"><strong>Region Preset:</strong></label>
+                                <select id="regionSelect" class="search-box" style="width: auto; margin-bottom: 0; padding: 6px 12px;" onchange="drawRegionsMap()">
+                                    <option value="world">World Overview</option>
+                                    <option value="029">Caribbean (Island States)</option>
+                                    <option value="009">Oceania / Pacific Islands</option>
+                                    <option value="150">Europe</option>
+                                    <option value="002">Africa</option>
+                                    <option value="142">Asia</option>
+                                    <option value="019">Americas</option>
+                                </select>
+                            </div>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">💡 Pinch/scroll to zoom, click any country to toggle status.</span>
+                        </div>
+                        <div style="width: 100%; overflow-x: auto;">
+                            <div id="regions_div" style="width: 100%; min-width: 600px; height: 420px; position: relative;"></div>
+                        </div>
+                    </div>
+
+                    <div class="ui-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="margin:0;">Document Index</h3>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Click status to toggle</span>
+                        </div>
+                        <input type="text" id="searchInput" class="search-box" placeholder="Search country or language..." onkeyup="filterTable('countryTable')">
+                        <div class="table-container">
+                            <table id="countryTable" class="sticky-th">
+                                <thead>
+                                    <tr>
+                                        <th onclick="sortTable(0, 'countryTable')">Country</th>
+                                        <th onclick="sortTable(1, 'countryTable')">Language</th>
+                                        <th onclick="sortTable(2, 'countryTable')">Page</th>
+                                        <th onclick="sortTable(3, 'countryTable')">Status</th>
+                                        <th class="no-sort">File</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="ui-box" style="background: rgba(0, 102, 204, 0.03); border: 1px solid rgba(0, 102, 204, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="margin:0; color: var(--primary);">Supplemental Annex Index</h3>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Isolated from Global Map</span>
+                        </div>
+                        <div class="table-container" style="max-height: 200px; margin-bottom: 0;">
+                            <table id="annexTable" class="sticky-th">
+                                <thead>
+                                    <tr>
+                                        <th onclick="sortTable(0, 'annexTable')">Annex</th>
+                                        <th onclick="sortTable(1, 'annexTable')">Language</th>
+                                        <th onclick="sortTable(2, 'annexTable')">Page</th>
+                                        <th class="no-sort">File</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="annexBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE 4: CODING EXAMPLES -->
+                <div id="repository" class="page">
+                    <h1 style="color: #1d1d1f;">Coding Examples & Analysis</h1>
+                    <p style="font-size: 1.05rem; margin-bottom: 30px;">Welcome to the Coding Examples & Analysis hub. This section serves as a practical reference guide for our coding methodology. It illustrates how we interpret and grade real-world policy statements extracted from NDCs to maintain analytical consistency. Review the examples below to understand the nuanced differences between a mere tokenistic mention and a fully embedded commitment. You can also practice applying the framework by submitting and categorizing your own examples at the bottom of the page.</p>
+                    
+                    <div id="examples-list"></div>
+
+                    <div class="ui-box" style="background: #f8f9fa; border: 1px dashed #ccc;">
+                        <h3 style="margin-top: 0; color: var(--primary);">Submit / Edit Coding Example</h3>
+                        <p style="font-size: 0.9rem; color: #555;">Use this form to add a new coding example to the shared team database.</p>
+                        
+                        <div class="form-group">
+                            <label for="new-country">Country Name:</label>
+                            <input type="text" id="new-country" class="search-box" style="width: auto; min-width: 250px;" placeholder="e.g., Canada, Saint Lucia...">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-level">Commitment Level:</label>
+                            <select id="new-level" class="search-box" style="width: auto; min-width: 200px;">
+                                <option value="Tokenistic">Tokenistic</option>
+                                <option value="Partial">Partial</option>
+                                <option value="Embedded">Embedded</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-statement">Policy Statement Extracted from NDC:</label>
+                            <textarea id="new-statement" class="search-box" rows="3" placeholder='e.g., "The government commits to supporting vulnerable communities..."'></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-analysis">Your Analysis / Justification:</label>
+                            <textarea id="new-analysis" class="search-box" rows="3" placeholder="Explain why this statement fits the selected commitment level..."></textarea>
+                        </div>
+                        <button id="submit-example-btn" onclick="submitExample()" class="download-btn" style="background: var(--primary); color:#fff;">Save Example to Cloud Database</button>
+                    </div>
+                </div>
+
+                <!-- PAGE 5: AI TEXT SCRAPER -->
+                <div id="analyzer" class="page">
+                    <h1 style="color: #1d1d1f;">AI Text Scraper & Query Engine</h1>
+                    <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system utilizes an expanded multilingual dictionary and a context-aware heuristic filter to maximize accurate extraction recall while minimizing false positives.</p>
+                    
+                    <div class="ui-box" style="background: #ffffff;">
+                        <div class="form-group">
+                            <label for="ai-ndc-select">Select NDC Document to Analyze:</label>
+                            <select id="ai-ndc-select" class="search-box">
+                                <option value="" disabled selected>Loading available NDCs...</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
+                                <label>Target Query Parameters: 
+                                    <span class="tooltip">Hover for Justice Taxonomy
+                                      <span class="tooltiptext">
+                                        <strong>1. Recognitional:</strong> Women, gender, youth, vulnerable, dignity, indigenous, agency, GEDSI, ancestral domains, customary land, traditional knowledge, social inclusion, epistemic justice, human rights.<br><br>
+                                        <strong>2. Procedural:</strong> Consultation, stakeholder, participation, FPIC, bottom-up planning, grievance mechanisms, co-governance, decision-making autonomy.<br><br>
+                                        <strong>3. Distributive:</strong> Equitable sharing, burden/benefit sharing, just transition, social safety nets, progressive taxation, spatial justice, urban equity, CBDR.<br><br>
+                                        <strong>4. Restorative:</strong> Past harms, compensation, loss and damage, NELD, rehabilitation, climate mobility, displacement, historical responsibilities, ecological debt.<br><br>
+                                        <strong>5. Transformative:</strong> Climate justice, environmental justice, root causes, systemic change, structural inequalities, decolonization, degrowth, fossil fuel phase-out, buen vivir.
+                                      </span>
+                                    </span>
+                                </label>
+                                <input type="text" class="search-box" value="System automatically scans across all 5 Justice Dimensions and 3 Commitment Tiers." disabled style="background:#f0f0f0; color:#555;">
+                            </div>
+                            <div class="form-group" style="width: 180px; margin-bottom: 0;">
+                                <label for="ai-depth">Result Depth:</label>
+                                <select id="ai-depth" class="search-box">
+                                    <option value="5">Top 5 Passages</option>
+                                    <option value="15">Top 15 Passages</option>
+                                    <option value="30">Top 30 Passages</option>
+                                    <option value="999" selected>All Relevant Matches</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                            <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff; padding: 10px 18px;">Check for Justice Mentions</button>
+                            <button onclick="exportScrapedDocx()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 10px 18px;">Export Scraped Text as Word (.docx)</button>
+                        </div>
+                        
+                        <div id="ai-terminal" class="analyzer-terminal">
+                            <p class="sys-msg">System: Ready. Select a document to analyze or export.</p>
+                            <p class="sys-msg">Note: Engine uses Context-Aware filtering to distinguish between generic verbs (e.g., 'sectors involved') and true justice participation ('communities involved').</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE 6: COUNTRY EVALUATOR & SYNTHESIS -->
+                <div id="evaluator" class="page">
+                    <h1 style="color: #1d1d1f;">Automated Country Evaluator & Synthesis</h1>
+                    <p>Select an NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine classifies extracted contextual statements into their dimension and commitment tier.</p>
+
+                    <div class="ui-box">
+                        <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                            <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
+                                <label for="eval-country-select">Select Country NDC to Evaluate:</label>
+                                <select id="eval-country-select" class="search-box" style="margin-bottom: 0;">
+                                    <option value="" disabled selected>Loading countries...</option>
+                                </select>
+                            </div>
+                            <button onclick="runFullCountryEvaluation()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 12px 20px;">Run Comprehensive Synthesis</button>
+                        </div>
+                    </div>
+
+                    <div id="eval-results-container" style="display: none;">
+                        <div class="ui-box" id="verdict-banner" style="border-left: 6px solid var(--accent); background: #ffffff;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                                <div>
+                                    <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Overall NDC Decree Verdict</span>
+                                    <h2 id="verdict-title" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.6rem;">Evaluating...</h2>
+                                </div>
+                                <button onclick="exportEvaluationDocx()" class="download-btn" style="background-color: var(--accent); color: #fff;">📥 Export Synthesis Report (.docx)</button>
+                            </div>
+                            <p id="verdict-summary" style="margin-top: 10px; font-size: 0.95rem; color: #444;"></p>
+                        </div>
+
+                        <div class="metric-grid">
+                            <div class="metric-box"><h3 id="stat-total">0</h3><p>Total Flagged Statements</p></div>
+                            <div class="metric-box" style="border-bottom: 4px solid var(--embedded);"><h3 id="stat-embedded">0</h3><p>Embedded Commitments</p></div>
+                            <div class="metric-box" style="border-bottom: 4px solid var(--partial);"><h3 id="stat-partial">0</h3><p>Partial Commitments</p></div>
+                            <div class="metric-box" style="border-bottom: 4px solid var(--tokenistic);"><h3 id="stat-tokenistic">0</h3><p>Tokenistic Mentions</p></div>
+                        </div>
+
+                        <div class="ui-box">
+                            <h3 style="margin-top: 0;">Extracted Policy Statement Ledger</h3>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Below is the full catalog of paragraph blocks derived from the document, contextually mapped by justice type and commitment grade.</p>
+                            <div id="eval-statement-ledger"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- SUPABASE CONFIGURATION ---
+        const SUPABASE_URL = 'https://lqxrvquhwglodgallheu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxeHJ2cXVod2dsb2RnYWxsaGV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwMzA3NTEsImV4cCI6MjEwMTYwNjc1MX0.y0VwtOtwT4kJPyxnrGmfz6fxtcmJv6Fkbxv6B-oEDT0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const defaultNdcData = [
+            { c: "Andorra", l: "Spanish", s: 1, p: 18, mapTarget: "AD", f: "18 ANDORRA ESP.pdf" }, { c: "Belize", l: "English", s: 1, p: 128, mapTarget: "BZ", f: "128 BELIZE.pdf" }, { c: "Brazil", l: "English", s: 1, p: 44, mapTarget: "BR", f: "44 Brazil.pdf" }, 
+            { c: "Canada", l: "English", s: 1, p: 188, mapTarget: "CA", f: "188 Canada.pdf" }, { c: "Cuba", l: "Spanish", s: 1, p: 42, mapTarget: "CU", f: "42 CUBA ESP.pdf" }, { c: "Ecuador", l: "Spanish", s: 1, p: 118, mapTarget: "EC", f: "118 Ecuador ESP.pdf" }, 
+            { c: "Japan", l: "English", s: 1, p: 15, mapTarget: "JP", f: "15 Japan.pdf" }, { c: "Kenya", l: "English", s: 1, p: 21, mapTarget: "KE", f: "21 KENYA.pdf" }, { c: "Maldives", l: "English", s: 1, p: 50, mapTarget: "MV", f: "50 Maldives.pdf" }, 
+            { c: "Marshall Islands", l: "English", s: 1, p: 39, mapTarget: "MH", f: "39 Marshall Islands.pdf" }, { c: "Moldova", l: "English", s: 1, p: 81, mapTarget: "MD", f: "81 Moldova.pdf" }, { c: "Monaco", l: "French", s: 1, p: 52, mapTarget: "MC", f: "52 Monaco FR.pdf" }, 
+            { c: "Montenegro", l: "English", s: 1, p: 14, mapTarget: "ME", f: "14 Montenegro.pdf" }, { c: "Nepal", l: "English", s: 1, p: 40, mapTarget: "NP", f: "40 Nepal NDC3.pdf" }, { c: "New Zealand", l: "English", s: 1, p: 34, mapTarget: "NZ", f: "34 New Zealand.pdf" }, 
+            { c: "Niue", l: "English", s: 1, p: 40, mapTarget: "NU", f: "40 NIUE.pdf" }, { c: "Norway", l: "English", s: 1, p: 16, mapTarget: "NO", f: "16 Norway.pdf" }, { c: "Saint Lucia", l: "English", s: 1, p: 35, mapTarget: "LC", f: "35 Saint Lucia.pdf" }, 
+            { c: "Singapore", l: "English", s: 1, p: 31, mapTarget: "SG", f: "31 Singapore.pdf" }, { c: "Somalia", l: "English", s: 1, p: 58, mapTarget: "SO", f: "58 Somalia NDC 3.0.pdf" }, { c: "Switzerland", l: "English", s: 1, p: 23, mapTarget: "CH", f: "23 Switzerland.pdf" }, 
+            { c: "United Arab Emirates", l: "English", s: 1, p: 101, mapTarget: "AE", f: "101 UAE.pdf" }, { c: "United Kingdom", l: "English", s: 1, p: 74, mapTarget: "GB", f: "74 United Kingdom.pdf" }, { c: "United States", l: "English", s: 1, p: 33, mapTarget: "US", f: "33 United States.pdf" }, 
+            { c: "Uruguay", l: "Spanish", s: 1, p: 77, mapTarget: "UY", f: "77 Uruguay ESP.pdf" }, { c: "Zambia", l: "English", s: 1, p: 38, mapTarget: "ZM", f: "38 Final Submission of Zambia NDC 3.0.pdf" }, { c: "Zimbabwe", l: "English", s: 1, p: 42, mapTarget: "ZW", f: "42 Zimbabwe.pdf" },
+            { c: "Angola", l: "English", s: 0, p: 114, mapTarget: "AO", f: "114 Angola.pdf" }, { c: "Armenia", l: "English", s: 0, p: 43, mapTarget: "AM", f: "43Armenia's NDC 3.0.pdf" }, { c: "Australia", l: "English", s: 0, p: 36, mapTarget: "AU", f: "36 Australia NDC.pdf" }, 
+            { c: "Azerbaijan", l: "English", s: 0, p: 96, mapTarget: "AZ", f: "96 Azerbaijan.pdf" }, { c: "Bahrain", l: "English", s: 0, p: 32, mapTarget: "BH", f: "32 Bahrain.pdf" }, { c: "Bangladesh", l: "English", s: 0, p: 80, mapTarget: "BD", f: "80 Bangladesh.pdf" }, 
+            { c: "Barbados", l: "English", s: 0, p: 52, mapTarget: "BB", f: "52 Barbados NDC.pdf" }, { c: "Belarus", l: "English", s: 0, p: 25, mapTarget: "BY", f: "25 Belarus RUSS.pdf" }, { c: "Bhutan", l: "English", s: 0, p: 30, mapTarget: "BT", f: "30 Bhutan.pdf" }, 
+            { c: "Brunei Darussalam", l: "English", s: 0, p: 27, mapTarget: "BN", f: "27 Brunei Darussalam.pdf" }, { c: "Cabo Verde", l: "English", s: 0, p: 94, mapTarget: "CV", f: "94 NDC 3.0 Cabo Verde.pdf" }, { c: "Cambodia", l: "English", s: 0, p: 158, mapTarget: "KH", f: "158 Cambodia.pdf" }, 
+            { c: "Ethiopia", l: "English", s: 0, p: 29, mapTarget: "ET", f: "29 Ethiopia.pdf" }, { c: "European Union", l: "English", s: 0, p: 47, mapTarget: "EU_EXPAND", f: "47 European Union (27 Countries).pdf" }, 
+            { c: "Fiji", l: "English", s: 0, p: 76, mapTarget: "FJ", f: "76 Fiji NDC3.0_Final.pdf" }, { c: "Georgia", l: "English", s: 0, p: 37, mapTarget: "GE", f: "37 NDC_3.0_Georgia.pdf" }, { c: "Guyana", l: "English", s: 0, p: 17, mapTarget: "GY", f: "17 Guyanas NDC 2025-2035.pdf" }, 
+            { c: "Holy See", l: "English", s: 0, p: 6, mapTarget: "VA", f: "6 Holy See.pdf" }, { c: "Iceland", l: "English", s: 0, p: 13, mapTarget: "IS", f: "13 Iceland's 2035 NDC.pdf" }, { c: "India", l: "English", s: 0, p: 34, mapTarget: "IN", f: "34 INDIA.pdf" }, 
+            { c: "Indonesia", l: "English", s: 0, p: 56, mapTarget: "ID", f: "56 Indonesia_Second NDC_2025.10.24.pdf" }, { c: "Jamaica", l: "English", s: 0, p: 23, mapTarget: "JM", f: "23 Jamaica.pdf" }, { c: "Saudi Arabia", l: "English", s: 0, p: 27, mapTarget: "SA", f: "27 Saudi Arabia.pdf" }, 
+            { c: "Lebanon", l: "English", s: 0, p: 102, mapTarget: "LB", f: "102 Lebanon.pdf" }, { c: "Liberia", l: "English", s: 0, p: 61, mapTarget: "LR", f: "61 Liberia.pdf" }, { c: "Liechtenstein", l: "English", s: 0, p: 15, mapTarget: "LI", f: "15 Liechtenstein.pdf" }, 
+            { c: "Malawi", l: "English", s: 0, p: 95, mapTarget: "MW", f: "95 NDC3.0 Malawi.pdf" }, { c: "Malaysia", l: "English", s: 0, p: 16, mapTarget: "MY", f: "16 Malaysia NDC 3.0 to UNFCCC 2025 final.pdf" }, { c: "Mauritius", l: "English", s: 0, p: 51, mapTarget: "MU", f: "51 Mauritius.pdf" }, 
+            { c: "Micronesia", l: "English", s: 0, p: 68, mapTarget: "FM", f: "68 Micronesia.pdf" }, { c: "Mongolia", l: "English", s: 0, p: 36, mapTarget: "MN", f: "36 Mongolia.pdf" }, { c: "Mozambique", l: "English", s: 0, p: 25, mapTarget: "MZ", f: "25 Mozambique.pdf" }, 
+            { c: "Nauru", l: "English", s: 0, p: 63, mapTarget: "NR", f: "63Nauru NDC 3.pdf" }, { c: "Nigeria", l: "English", s: 0, p: 70, mapTarget: "NG", f: "70 Nigeria NDC 3.0.pdf" }, 
+            { c: "Oman", l: "English", s: 0, p: 67, mapTarget: "OM", url: "https://unfccc.int/sites/default/files/2026-07/The%20Sultanate%20of%20Omans%20Third%20Nationally%20Determined%20Contributions%20%20%28NDC%203.0%29.pdf" },
+            { c: "Pakistan", l: "English", s: 0, p: 59, mapTarget: "PK", f: "59 Pakistan.pdf" }, { c: "Palau", l: "English", s: 0, p: 58, mapTarget: "PW", f: "58 Palau.pdf" }, { c: "Qatar", l: "English", s: 0, p: 39, mapTarget: "QA", f: "39 Qatar NDC 3.0.pdf" }, { c: "Republic of Korea", l: "English", s: 0, p: 28, mapTarget: "KR", f: "28The Republic of Koreas 2035 NDC.pdf" }, 
+            { c: "Rwanda", l: "English", s: 0, p: 152, mapTarget: "RW", f: "152 Rwanda NDC3.0 Final.pdf" }, { c: "Samoa", l: "English", s: 0, p: 45, mapTarget: "WS", f: "45Samoa NDC3.0_FINAL.pdf" }, { c: "Sao Tome and Principe", l: "English", s: 0, p: 79, mapTarget: "ST", f: "79 Sao Tome and Principe.pdf" }, 
+            { c: "Serbia", l: "English", s: 0, p: 13, mapTarget: "RS", f: "13 Serbia.pdf" }, { c: "Seychelles", l: "English", s: 0, p: 40, mapTarget: "SC", f: "40 Seychelles.pdf" }, { c: "Sierra Leone", l: "English", s: 0, p: 147, mapTarget: "SL", f: "147 Sierra Leone NDC 3.0.pdf" }, 
+            { c: "Solomon Islands", l: "English", s: 0, p: 34, mapTarget: "SB", f: "34 Solomon Islands.pdf" }, { c: "South Africa", l: "English", s: 0, p: 50, mapTarget: "ZA", f: "50 South Africa's.pdf" }, { c: "Sri Lanka", l: "English", s: 0, p: 114, mapTarget: "LK", f: "114 Sri Lanka.pdf" }, 
+            { c: "Suriname", l: "English", s: 0, p: 166, mapTarget: "SR", f: "166 Suriname.pdf" }, { c: "Thailand", l: "English", s: 0, p: 15, mapTarget: "TH", f: "15 Thailand NDC 3.0.pdf" }, { c: "The Bahamas", l: "English", s: 0, p: 153, mapTarget: "BS", f: "153 The Bahamas NDC 3.0.pdf" }, 
+            { c: "Timor-Leste", l: "English", s: 0, p: 137, mapTarget: "TL", f: "137 Timor-Leste Updated NDC 3.0.pdf" }, { c: "Tonga", l: "English", s: 0, p: 92, mapTarget: "TO", f: "92 Tonga.pdf" }, { c: "Trinidad and Tobago", l: "English", s: 0, p: 21, mapTarget: "TT", f: "21Trinidad and Tobago Second NDC.pdf" }, 
+            { c: "Türkiye", l: "English", s: 0, p: 21, mapTarget: "TR", f: "21 Türkiye.pdf" }, { c: "Tuvalu", l: "English", s: 0, p: 33, mapTarget: "TV", f: "33 Tuvalu.pdf" }, { c: "Vanuatu", l: "English", s: 0, p: 146, mapTarget: "VU", f: "146 Vanuatu NDC 3.0.pdf" }, 
+            { c: "Yemen", l: "English", s: 0, p: 13, mapTarget: "YE", f: "13 Yemens NDC3.0 Vision.pdf" }, { c: "Eswatini", l: "English", s: 0, p: 42, mapTarget: "SZ", f: "42 Eswatini.pdf" }, { c: "Eritrea", l: "English", s: 0, p: 71, mapTarget: "ER", f: "71 Eritrea.pdf" },
+            { c: "Bolivia", l: "Spanish", s: 0, p: 112, mapTarget: "BO", f: "112 Bolivia ESP.pdf" }, { c: "Colombia", l: "Spanish", s: 0, p: 458, mapTarget: "CO", f: "458 Colombia ESP.pdf" }, { c: "Costa Rica", l: "Spanish", s: 0, p: 157, mapTarget: "CR", f: "157 Costa Rica ESP.pdf" }, 
+            { c: "Dominican Republic", l: "Spanish", s: 0, p: 222, mapTarget: "DO", f: "222 Dominican Republic ESP.pdf" }, { c: "El Salvador", l: "Spanish", s: 0, p: 82, mapTarget: "SV", f: "82NDC de El Salvador 2025 ESP.pdf" }, { c: "Honduras", l: "Spanish", s: 0, p: 72, mapTarget: "HN", f: "72HON NDC 3.0 2026 Oficial ESP.pdf" }, 
+            { c: "Mexico", l: "Spanish", s: 0, p: 157, mapTarget: "MX", f: "157 NDC 3.0 México ESP.pdf" }, { c: "Nicaragua", l: "Spanish", s: 0, p: 92, mapTarget: "NI", f: "92 NICARAGUA ESP.pdf" }, { c: "Panama", l: "Spanish", s: 0, p: 39, mapTarget: "PA", f: "39 PANAMA ESP.pdf" }, 
+            { c: "Paraguay", l: "Spanish", s: 0, p: 138, mapTarget: "PY", f: "138 Paraguay NDC 3.0 ESP.pdf" }, { c: "Peru", l: "Spanish", s: 0, p: 87, mapTarget: "PE", f: "87 PERU ESP.pdf" }, { c: "Venezuela", l: "Spanish", s: 0, p: 302, mapTarget: "VE", f: "302 Venezuela ESP.pdf" },
+            { c: "Algeria", l: "French", s: 0, p: 45, mapTarget: "DZ", f: "45 Algeria FR.pdf" }, { c: "Benin", l: "French", s: 0, p: 179, mapTarget: "BJ", f: "179 BENIN FR.pdf" }, { c: "Burkina Faso", l: "French", s: 0, p: 91, mapTarget: "BF", f: "91BKF-CDN 3.0_BURKINA FASO FR.pdf" }, 
+            { c: "Burundi", l: "French", s: 0, p: 92, mapTarget: "BI", f: "92 CDN3.0_BURUNDI FR.pdf" }, { c: "Cameroon", l: "French", s: 0, p: 65, mapTarget: "CM", f: "65 Cameroon FR.pdf" }, { c: "Central African Republic", l: "French", s: 0, p: 66, mapTarget: "CF", f: "66 Central African Republic FR.pdf" }, 
+            { c: "Comoros", l: "French", s: 0, p: 135, mapTarget: "KM", f: "135 Comoros FR.pdf" }, { c: "Congo", l: "French", s: 0, p: 100, mapTarget: "CG", f: "100 Congo FR.pdf" }, { c: "Côte d'Ivoire", l: "French", s: 0, p: 132, mapTarget: "CI", f: "132 COTE D'IVOIRE FR.pdf" }, 
+            { c: "Gabon", l: "French", s: 0, p: 110, mapTarget: "GA", f: "110 Gabon FR.pdf" }, { c: "Guinea", l: "French", s: 0, p: 37, mapTarget: "GN", f: "37 Guinea FR.pdf" }, { c: "Mauritania", l: "French", s: 0, p: 137, mapTarget: "MR", f: "137 Mauritania FR.pdf" }, 
+            { c: "Morocco", l: "French", s: 0, p: 110, mapTarget: "MA", f: "110 Morocco FR.pdf" }, { c: "Tunisia", l: "French", s: 0, p: 67, mapTarget: "TN", f: "67 Tunisia FR.pdf" },
+            { c: "Kazakhstan", l: "Russian", s: 0, p: 102, mapTarget: "KZ", f: "102 NDC Kazakhstan 3.0 RUSS.pdf" }, { c: "Kyrgyzstan", l: "Russian", s: 0, p: 99, mapTarget: "KG", f: "99 Kyrgyzstan RUSS.pdf" }, { c: "Russia", l: "Russian", s: 0, p: 48, mapTarget: "RU", f: "48 RUSSIA RUSS.pdf" }, { c: "Uzbekistan", l: "Russian", s: 0, p: 68, mapTarget: "UZ", f: "68 Uzbekistan Third NDC RUSS.pdf" },
+            { c: "Iraq", l: "Arabic", s: 0, p: 50, mapTarget: "IQ", f: "50 IRAQ ARB.pdf" }, { c: "China", l: "Chinese", s: 0, p: 35, mapTarget: "CN", f: "35 China CN.pdf" }, { c: "Ukraine", l: "Ukrainian", s: 0, p: 24, mapTarget: "UA", f: "24 Ukraine UKR.pdf" }
+        ];
+
+        const defaultAnnexData = [
+            { c: "France (Annex)", l: "French", p: "-", f: "10 France ANNEX.pdf" },
+            { c: "Switzerland (Annex)", l: "English", p: "-", f: "8 Switzerland Annex.pdf" }
+        ];
+
+        const defaultExamples = [
+            { id: "default-1", country: "Global Policy Reference", level: "Tokenistic", statement: "Supporting workers and communities is crucial for facilitating an equitable just transition that is centered around people.", analysis: "The statement is a general aspiration with no mechanism, target group definition, timeline, budget or accountable actor. Reads as signalling support rather than a deliverable policy step." },
+            { id: "default-2", country: "National Action Plan", level: "Partial", statement: "Develop, strengthen and integrate the inclusion of people with disabilities in national climate decision-making processes (involving planning and programme implementation) which directly and indirectly affect their lives. This includes identifying barriers to adapting to climate change, enhancing access and applying an integrated approach to ensure appropriate support networks are in place for their families and community.", analysis: "Mentions participation and support for persons with disabilities, but does not cite any enacted law, designated authority, timeline or monitoring." },
+            { id: "default-3", country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
+        ];
+
+        // Expanded Multilingual Concept Map
+        const conceptMap = {
+            "Recognitional": {
+                unambiguous: ["marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "gedsi", "epistemic justice", "self-determination", "structural recognition", "decolonial recognition", "women", "gender", "female", "youth", "empowerment", "dignity", "agency", "local communities", "grupos marginados", "derechos indígenas", "pueblos indígenas", "conocimientos tradicionales", "saberes ancestrales", "desequilibrios de poder", "exclusión social", "enfoque de género", "interseccionalidad", "groupes marginalisés", "droits des peuples autochtones", "savoirs traditionnels", "déséquilibres de pouvoir", "exclusion sociale", "approche sensible au genre", "intersectionnalité", "droits des autochtones", "groupes vulnérables", "маргинализированные", "коренных народов", "традиционные знания", "гендерно-ориентированный", "социальная изоляция", "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "توازن القوى", "الإقصاء الاجتماعي", "المنظور الجنساني", "الفئات الضعيفة", "边缘化群体", "原住民权利", "传统知识", "权力失衡", "社会排斥", "社会包容", "性别响应", "弱势群体", "маргіналізовані", "корінних народів", "традиційні знання", "гендерно-чутливий", "соціальне відчуження"],
+                ambiguous: ["vulnerable", "fairness", "empower"]
+            },
+            "Procedural": {
+                unambiguous: ["transparent process", "inclusive decision", "fair process", "procedural rights", "prior and informed consent", "fpic", "bottom-up planning", "decentralized governance", "grievance mechanism", "co-production", "participatory planning", "access to information", "accountability mechanism", "co-governance", "decision-making autonomy", "institutionalized public participation", "structural power redistribution", "democratized governance", "procesos transparentes", "decisiones inclusiva", "participación significativa", "consentimiento libre previo e informado", "mecanismos de reclamación", "gobernanza descentralizada", "mecanismos de queja", "processus transparents", "décision inclusive", "participation significative", "consentement préalable", "mécanismes de recours", "gouvernance décentralisée", "прозрачные процессы", "инклюзивное", "значимое участие", "осознанное согласие", "механизмы рассмотрения жалоб", "общественные консультации", "предварительное согласие", "عمليات شفافة", "صنع قرار شامل", "مشاركة مجدية", "الموافقة المسبقة", "آليات التظلم", "اللامركزية", "مشاورات عامة", "透明过程", "包容性决策", "有意义的参与", "事先知情同意", "利益相关方磋商", "申诉机制", "权力下放", "公众咨询", "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"],
+                ambiguous: ["consultation", "stakeholder", "participation", "public consultation", "engage", "involve", "involved", "community", "communities", "multi-stakeholder", "transparent", "transparency", "consulta pública", "consultation publique"]
+            },
+            "Distributive": {
+                unambiguous: ["equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "spatial justice", "urban equity", "vulnerability-based targeting", "technology transfer", "differentiated impacts", "just transition", "structural redistribution", "systemic equity", "wealth taxation", "post-extractivist distribution", "equitable climate action", "cbdr", "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza", "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses", "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты", "التقاسم العادل", "تقاسم الأعباء", "تقاسم المنافع", "الإنصاف بين الأجيال", "انتقال عادل", "الأمان الاجتماعي", "公平分享", "责任分担", "利益共享", "代际公平", "公正转型", "社会安全网", "справедливий розподіл", "розподіл тягаря", "розподіл вигод", "міжпоколінна справедливість", "справедливий перехід", "соціального захисту"],
+                ambiguous: ["allocation", "resource", "fair & ambitious", "equitable outcomes", "targeted support"]
+            },
+            "Restorative": {
+                unambiguous: ["past climate injustice", "historical responsibilities", "reparative justice", "restorative", "past harms", "loss and damage", "neld", "non-economic loss", "ecological debt", "climate reparations", "climate mobility", "climate refugees", "forced migration", "planned relocation", "disaster displacement", "warsaw international mechanism", "common but differentiated responsibilities", "trapped populations", "climate immobility", "historical loss evaluation", "injusticias climáticas pasadas", "responsabilidades históricas", "medidas reparadoras", "pérdidas y daños", "responsabilidades comunes pero diferenciadas", "deuda ecológica", "movilidad climática", "daños no económicos", "injustices climatiques passées", "responsabilités historiques", "mesures de réparation", "pertes et préjudices", "responsabilités communes mais différenciées", "dette écologique", "mobilité climatique", "préjudices non économiques", "прошлые климатические", "историческая ответственность", "потери и ущерб", "неэкономические потери", "общая но дифференцированная", "экологический долг", "климатическая миграция", "المظالم المناخية", "المسؤوليات التاريخية", "تدابير جبر الضرر", "الخسائر والأضرار", "الخسائر غير الاقتصادية", "المسؤوليات المشتركة", "التنقل المناخي", "历史气候不公", "历史责任", "补救措施", "损失与损害", "非经济损失", "共同但有区别的责任", "生态债务", "气候流动性", "минулі кліматичні", "історична відповідальність", "втрати та збитки", "неекономічні втрати", "спільна але диференційована", "кліматична міграція"],
+                ambiguous: ["remediation", "compensation", "rehabilitation", "relocation", "resettlement", "displacement", "human mobility"]
+            },
+            "Transformative": {
+                unambiguous: ["climate justice", "environmental justice", "social justice", "urban climate justice", "root causes", "systemic change", "structural inequalities", "systemic reform", "deep decarbonization", "dismantling patriarchy", "decolonization", "degrowth", "post-growth", "well-being economy", "post-extractivism", "buen vivir", "post-capitalism", "paradigm shift", "anti-growth", "post-development", "fossil fuel phase-out", "causas profundas", "cambio sistémico", "desigualdades estructurales", "descolonización", "decrecimiento", "postcrecimiento", "economía del bienestar", "post-extractivismo", "vivir bien", "combustibles fósiles", "causas subyacentes", "causes profondes", "changement systémique", "inégalités structurelles", "décolonisation", "décroissance", "post-croissance", "économie du bien-être", "énergies fossiles", "коренные причины", "системные изменения", "структурное неравенство", "деколонизация", "антирост", "дерост", "пост-экстрактивизм", "отказ от ископаемого", "الأسباب الجذرية", "التغيير المنهجي", "عدم المساواة الهيكلية", "إنهاء الاستعمار", "تراجع النمو", "ما بعد النمو", "اقتصاد الرفاه", "الوقود الأحفوري", "根本原因", "系统性变革", "结构性不平等", "非殖民化", "去增长", "后增长", "福祉经济", "化石燃料", "першопричини", "системні зміни", "структурна нерівність", "деколонізація", "антизростання", "викопного палива", "докорінні причини"],
+                ambiguous: ["transformative action", "circular economy"]
+            }
+        };
+
+        const humanContextMarkers = [
+            "people", "citizen", "public", "women", "youth", "indigenous", "marginalized", "society", 
+            "group", "population", "resident", "worker", "farmer", "household", "minority", "actor", "social",
+            "decision", "rights", "justice", "equity", "equitable", "fair",
+            "pueblo", "público", "comunidad", "groupe", "citoyen", "население", "مجتمع"
+        ];
+
+        function isValidContext(term, text) {
+            let isAmbiguous = false;
+            for (let dim in conceptMap) {
+                if (conceptMap[dim].ambiguous && conceptMap[dim].ambiguous.includes(term)) isAmbiguous = true;
+            }
+            if (!isAmbiguous) return true; 
+            const lowerText = text.toLowerCase();
+            return humanContextMarkers.some(marker => lowerText.includes(marker));
+        }
+
+        let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
+        let annexData = JSON.parse(JSON.stringify(defaultAnnexData));
+        let codingExamples = JSON.parse(JSON.stringify(defaultExamples));
+        let lastEvaluatedResults = null;
+        let lastScrapedResults = [];
+        let lastScrapedCountry = "";
+
+        // --- Database Sync Functions ---
+        async function loadSupabaseData() {
+            try {
+                // Fetch NDC Map Statuses
+                const { data: statusData, error: statusErr } = await supabaseClient.from('ndc_status').select('*');
+                if (statusData && !statusErr) {
+                    statusData.forEach(dbItem => {
+                        let match = ndcData.find(item => item.c === dbItem.country);
+                        if (match) match.s = dbItem.status;
+                    });
+                }
+                
+                // Fetch Coding Examples
+                const { data: exampleData, error: exampleErr } = await supabaseClient.from('coding_examples').select('*');
+                if (exampleData && exampleData.length > 0 && !exampleErr) {
+                    codingExamples = [...defaultExamples, ...exampleData];
+                }
+                
+                document.getElementById('db-status').classList.add('live');
+                document.getElementById('db-status').innerHTML = '<div class="status-dot"></div> Live Cloud Sync';
+                
+                loadTables();
+                drawRegionsMap();
+                renderExamples();
+            } catch(e) {
+                console.error("Cloud fetch failed", e);
+                document.getElementById('db-status').innerHTML = '<div class="status-dot" style="background:#ff3b30;"></div> Offline';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const now = new Date();
+            document.getElementById('current-date-display').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            const selectAi = document.getElementById('ai-ndc-select');
+            const selectEval = document.getElementById('eval-country-select');
+            
+            selectAi.innerHTML = '<option value="" disabled selected>Select an NDC document...</option>';
+            selectEval.innerHTML = '<option value="" disabled selected>Select an NDC document...</option>';
+
+            ndcData.forEach(ndc => {
+                const targetUrl = ndc.url ? ndc.url : hfBaseUrl + encodeURIComponent(ndc.f);
+                
+                let opt1 = document.createElement('option');
+                opt1.value = targetUrl;
+                opt1.textContent = `${ndc.c} (${ndc.l})`;
+                selectAi.appendChild(opt1);
+
+                let opt2 = document.createElement('option');
+                opt2.value = JSON.stringify({ c: ndc.c, url: targetUrl });
+                opt2.textContent = `${ndc.c} (${ndc.l})`;
+                selectEval.appendChild(opt2);
+            });
+
+            // Initialize DB Load
+            loadSupabaseData();
+        });
+
+        const euCountries = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"];
+        
+        let currentSort = { table: null, col: null, asc: true };
+        function sortTable(colIndex, tableId) {
+            const table = document.getElementById(tableId);
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const isAsc = currentSort.table === tableId && currentSort.col === colIndex ? !currentSort.asc : true;
+            currentSort = { table: tableId, col: colIndex, asc: isAsc };
+
+            table.querySelectorAll('th').forEach(th => { th.classList.remove('sort-asc', 'sort-desc'); });
+            table.querySelectorAll('th')[colIndex].classList.add(isAsc ? 'sort-asc' : 'sort-desc');
+
+            rows.sort((a, b) => {
+                let valA = a.cells[colIndex].innerText.trim();
+                let valB = b.cells[colIndex].innerText.trim();
+                if (colIndex === 2) {
+                    valA = parseInt(valA) || 0;
+                    valB = parseInt(valB) || 0;
+                    return isAsc ? valA - valB : valB - valA;
+                }
+                return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            });
+            tbody.append(...rows);
+        }
+
+        async function toggleStatus(countryName) {
+            const country = ndcData.find(c => c.c === countryName);
+            if(country) {
+                country.s = country.s === 1 ? 0 : 1;
+                
+                // Write to Supabase Cloud
+                await supabaseClient.from('ndc_status').upsert({ country: countryName, status: country.s });
+
+                loadTables();
+                drawRegionsMap(); 
+            }
+        }
+
+        function updateProgressMetrics() {
+            let total = 0, analyzed = 0;
+            ndcData.forEach(item => {
+                const w = (item.c === "European Union") ? 27 : 1;
+                total += w;
+                if (item.s === 1) analyzed += w;
+            });
+            const pct = ((analyzed / total) * 100).toFixed(1);
+            document.getElementById('progress-ratio').innerText = `${analyzed} / ${total}`;
+            document.getElementById('progress-percent').innerText = `${pct}% Completed`;
+            document.getElementById('progress-bar-fill').style.width = `${pct}%`;
+        }
+
+        function loadTables() {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+            ndcData.forEach(item => {
+                const badgeClass = item.s === 1 ? 'badge-done' : 'badge-pending';
+                const badgeText = item.s === 1 ? 'Analyzed ✓' : 'Pending ⟳';
+                const badge = `<span class="status-badge ${badgeClass}" onclick="toggleStatus('${item.c}')">${badgeText}</span>`;
+                const fileUrl = item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f);
+                const dlBtn = `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>`;
+                html += `<tr><td>${item.c}</td><td>${item.l}</td><td>${item.p}</td><td>${badge}</td><td>${dlBtn}</td></tr>`;
+            });
+            tbody.innerHTML = html;
+
+            const abody = document.getElementById('annexBody');
+            let aHtml = '';
+            annexData.forEach(item => {
+                const fileUrl = item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f);
+                const dlBtn = `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>`;
+                aHtml += `<tr><td>${item.c}</td><td>${item.l}</td><td>${item.p}</td><td>${dlBtn}</td></tr>`;
+            });
+            abody.innerHTML = aHtml;
+
+            updateProgressMetrics();
+            if(currentSort.table === 'countryTable') {
+                let tempAsc = currentSort.asc;
+                currentSort.asc = !tempAsc;
+                sortTable(currentSort.col, 'countryTable');
+            }
+        }
+
+        function renderExamples() {
+            const container = document.getElementById('examples-list');
+            let html = '';
+            codingExamples.forEach((ex) => {
+                let boxClass = ex.level === "Tokenistic" ? "ex-tokenistic" : (ex.level === "Partial" ? "ex-partial" : "ex-embedded");
+                let badgeClass = ex.level === "Tokenistic" ? "badge-tok" : (ex.level === "Partial" ? "badge-par" : "badge-emb");
+                let countryName = ex.country || "Unspecified Country";
+                
+                let actionButtons = '';
+                if(ex.id && !ex.id.toString().startsWith("default")) {
+                    actionButtons = `
+                        <button onclick="editExample('${ex.id}')" class="download-btn" style="padding: 4px 10px; margin-right: 5px;">Edit</button>
+                        <button onclick="deleteExample('${ex.id}')" class="download-btn btn-danger" style="padding: 4px 10px;">Delete</button>
+                    `;
+                } else {
+                    actionButtons = `<span style="font-size:0.8rem; color:#aaa; font-weight:bold;">(Base Reference)</span>`;
+                }
+
+                html += `
+                <div class="example-box ${boxClass}">
+                    <div class="ex-header">
+                        <div>
+                            <span class="ex-badge ${badgeClass}">${ex.level} Commitment</span>
+                            <span style="font-weight: 700; color: var(--primary); margin-left: 10px; font-size: 0.9rem;">📍 ${countryName}</span>
+                        </div>
+                        <div>${actionButtons}</div>
+                    </div>
+                    <div class="ex-content">
+                        <strong>Statement:</strong>
+                        <p style="font-family: Georgia, serif; font-style: italic;">"${ex.statement}"</p>
+                        <strong>Analysis:</strong>
+                        <p>${ex.analysis}</p>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        async function submitExample() {
+            const country = document.getElementById('new-country').value.trim() || "Unspecified Country";
+            const level = document.getElementById('new-level').value;
+            const statement = document.getElementById('new-statement').value.trim();
+            const analysis = document.getElementById('new-analysis').value.trim();
+
+            if (!statement || !analysis) { alert("Please fill in both the statement and analysis fields."); return; }
+            document.getElementById('submit-example-btn').innerText = "Syncing to Cloud...";
+
+            if (editingIndex !== -1) {
+                // Update DB
+                await supabaseClient.from('coding_examples').update({ country, level, statement, analysis }).eq('id', editingIndex);
+                editingIndex = -1;
+                document.getElementById('submit-example-btn').innerText = "Save Example to Cloud Database";
+            } else {
+                // Insert DB
+                await supabaseClient.from('coding_examples').insert([{ country, level, statement, analysis }]);
+            }
+
+            document.getElementById('new-country').value = '';
+            document.getElementById('new-statement').value = '';
+            document.getElementById('new-analysis').value = '';
+            
+            // Refresh from DB
+            loadSupabaseData();
+            document.getElementById('submit-example-btn').innerText = "Save Example to Cloud Database";
+        }
+
+        function editExample(id) {
+            const ex = codingExamples.find(e => e.id == id);
+            if(ex) {
+                document.getElementById('new-country').value = ex.country || '';
+                document.getElementById('new-level').value = ex.level;
+                document.getElementById('new-statement').value = ex.statement;
+                document.getElementById('new-analysis').value = ex.analysis;
+                editingIndex = id;
+                document.getElementById('submit-example-btn').innerText = "Update Cloud Example";
+                document.getElementById('new-statement').focus();
+            }
+        }
+
+        async function deleteExample(id) {
+            if(confirm("Are you sure you want to delete this cloud example?")) {
+                await supabaseClient.from('coding_examples').delete().eq('id', id);
+                loadSupabaseData();
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('open');
+            if(sidebar.classList.contains('open')) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
+        }
+
+        function showPage(pageId, btnElement) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-btn'));
+            document.getElementById(pageId).classList.add('active');
+            btnElement.classList.add('active-btn');
+            
+            if(window.innerWidth <= 850) {
+                document.querySelector('.sidebar').classList.remove('open');
+                document.querySelector('.sidebar-overlay').classList.remove('active');
+            }
+            
+            if(pageId === 'dashboard') { setTimeout(drawGantt, 50); }
+            if(pageId === 'map') { setTimeout(drawRegionsMap, 50); }
+        }
+
+        function filterTable(tableId) {
+            let input = document.getElementById("searchInput").value.toUpperCase();
+            let tr = document.getElementById(tableId).getElementsByTagName("tr");
+            for (let i = 1; i < tr.length; i++) {
+                let textMatch = false;
+                for (let j = 0; j < 3; j++) {
+                    let td = tr[i].getElementsByTagName("td")[j];
+                    if (td) {
+                        if ((td.textContent || td.innerText).toUpperCase().indexOf(input) > -1) {
+                            textMatch = true; break;
+                        }
+                    }
+                }
+                tr[i].style.display = textMatch ? "" : "none";
+            }
+        }
+
+        google.charts.load('current', {'packages':['gantt', 'geochart']});
+        google.charts.setOnLoadCallback(() => { loadTables(); drawGantt(); drawRegionsMap(); renderExamples(); });
+
+        function drawGantt() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Task ID'); data.addColumn('string', 'Task Name'); data.addColumn('string', 'Resource');
+            data.addColumn('date', 'Start Date'); data.addColumn('date', 'End Date'); data.addColumn('number', 'Duration');
+            data.addColumn('number', 'Percent Complete'); data.addColumn('string', 'Dependencies');
+
+            data.addRows([
+                ['Setup', 'Project Setup & Calibration', 'Phase', new Date(2026, 6, 20), new Date(2026, 6, 31), null, 100, null],
+                ['Mtg1', 'UN-Habitat Meeting', 'Meeting', new Date(2026, 6, 30), new Date(2026, 6, 31), null, 100, null],
+                ['Data', 'Data Execution & Mapping', 'Analysis', new Date(2026, 7, 1), new Date(2026, 7, 31), null, 15, null],
+                ['Leave', 'Paternity Leave', 'Leave', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
+                ['Verify', 'Andreia Verification', 'Verification', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
+                ['Synth', 'Synthesis & Drafting', 'Phase', new Date(2026, 9, 1), new Date(2026, 9, 31), null, 0, null],
+                ['Final', 'Final Dissemination', 'Phase', new Date(2026, 10, 1), new Date(2026, 10, 8), null, 0, null],
+                ['COP', 'COP 31 Begins', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 10), null, 0, null]
+            ]);
+
+            var chart = new google.visualization.Gantt(document.getElementById('gantt_chart'));
+            chart.draw(data, { 
+                height: 310, 
+                gantt: { 
+                    trackHeight: 32, 
+                    palette: [
+                        { color: '#0066cc', dark: '#004d80' }, 
+                        { color: '#34c759', dark: '#2e7d32' }, 
+                        { color: '#5ac8fa', dark: '#009edb' }, 
+                        { color: '#5856d6', dark: '#3b39a3' }, 
+                        { color: '#34c759', dark: '#2e7d32' }, 
+                        { color: '#ff9500', dark: '#cc7700' }  
+                    ] 
+                } 
+            });
+        }
+
+        var panZoomInstance = null;
+        function drawRegionsMap() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Country');
+            data.addColumn('number', 'Value');
+            data.addColumn({type: 'string', role: 'tooltip'});
+
+            ndcData.forEach(item => {
+                const statusText = item.s === 1 ? 'Analyzed' : 'Pending';
+                if(item.mapTarget === "EU_EXPAND") {
+                    euCountries.forEach(euC => data.addRow([euC, item.s, `EU Member State\nStatus: ${statusText}`]));
+                } else if (item.mapTarget !== null) {
+                    data.addRow([item.mapTarget, item.s, `${item.c}\nStatus: ${statusText}`]);
+                }
+            });
+
+            var regionVal = document.getElementById('regionSelect') ? document.getElementById('regionSelect').value : 'world';
+            var chartContainer = document.getElementById('regions_div');
+            var chart = new google.visualization.GeoChart(chartContainer);
+
+            google.visualization.events.addListener(chart, 'select', function() {
+                var selection = chart.getSelection();
+                if (selection.length > 0) {
+                    var geoCode = data.getValue(selection[0].row, 0);
+                    var matched = ndcData.find(item => item.mapTarget === geoCode || (item.mapTarget === "EU_EXPAND" && euCountries.includes(geoCode)));
+                    if (matched) toggleStatus(matched.c);
+                }
+            });
+
+            google.visualization.events.addListener(chart, 'ready', function() {
+                setTimeout(() => {
+                    var svgElem = chartContainer.querySelector('svg');
+                    if (svgElem) {
+                        if (panZoomInstance) panZoomInstance.destroy();
+                        panZoomInstance = svgPanZoom(svgElem, { zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true, minZoom: 1, maxZoom: 15 });
+                    }
+                }, 100);
+            });
+
+            chart.draw(data, {
+                region: regionVal,
+                colorAxis: { colors: ['#FDBE02', '#34c759'], minValue: 0, maxValue: 1 },
+                backgroundColor: 'transparent',
+                datalessRegionColor: '#e0e0e0',
+                defaultColor: '#e0e0e0',
+                legend: 'none'
+            });
+        }
+
+        async function extractPassagesFromPDF(fileUrl, termNode) {
+            const loadingTask = pdfjsLib.getDocument(fileUrl);
+            const pdf = await loadingTask.promise;
+            termNode.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting contextual text blocks from ${pdf.numPages} pages...</p>`;
+            
+            let pagePassages = [];
+            for(let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                const pageText = content.items.map(it => it.str).join(" ").replace(/\s+/g, " ").trim();
+                
+                if(pageText.length > 30) {
+                    const sents = pageText.match(/[^.!?]+[.!?]+/g) || [pageText];
+                    for(let j = 0; j < sents.length; j++) {
+                        let chunk = sents[j].trim();
+                        if(chunk.length > 20) {
+                            let prev = (j > 0) ? sents[j-1].trim() : "";
+                            let next = (j < sents.length - 1) ? sents[j+1].trim() : "";
+                            let fullContext = `${prev} ${chunk} ${next}`.trim();
+                            pagePassages.push({ page: i, text: fullContext });
+                        }
+                    }
+                }
+            }
+            return pagePassages;
+        }
+
+        function assignDimensionAndTier(text, conceptsMatched) {
+            const lower = text.toLowerCase();
+            let dim = "Recognitional"; 
+
+            if (conceptsMatched.some(c => conceptMap["Transformative"].unambiguous.includes(c) || (conceptMap["Transformative"].ambiguous && conceptMap["Transformative"].ambiguous.includes(c)))) dim = "Transformative";
+            else if (conceptsMatched.some(c => conceptMap["Restorative"].unambiguous.includes(c) || (conceptMap["Restorative"].ambiguous && conceptMap["Restorative"].ambiguous.includes(c)))) dim = "Restorative";
+            else if (conceptsMatched.some(c => conceptMap["Distributive"].unambiguous.includes(c) || (conceptMap["Distributive"].ambiguous && conceptMap["Distributive"].ambiguous.includes(c)))) dim = "Distributive";
+            else if (conceptsMatched.some(c => conceptMap["Procedural"].unambiguous.includes(c) || (conceptMap["Procedural"].ambiguous && conceptMap["Procedural"].ambiguous.includes(c)))) dim = "Procedural";
+
+            let tier = "Tokenistic";
+            const embeddedRegex = /\b(legislation|statutory|legally binding|enforcement|accountability mechanism|formal framework|budget allocation|decree|act of parliament|constitution|ley|loi|законодавство)\b/i;
+            const partialRegex = /\b(measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|політика)\b/i;
+
+            if (embeddedRegex.test(text)) {
+                tier = "Embedded";
+            } else if (partialRegex.test(text)) {
+                tier = "Partial";
+            }
+
+            return { dim, tier };
+        }
+
+        async function runFullCountryEvaluation() {
+            const rawVal = document.getElementById('eval-country-select').value;
+            if(!rawVal) { alert("Please select a country NDC first."); return; }
+            const config = JSON.parse(rawVal);
+            
+            const resultsContainer = document.getElementById('eval-results-container');
+            const ledger = document.getElementById('eval-statement-ledger');
+            
+            resultsContainer.style.display = "block";
+            ledger.innerHTML = "<p style='color: var(--primary); font-weight:bold;'>System: Extracting full document context blocks and running qualitative synthesis...</p>";
+
+            try {
+                const passages = await extractPassagesFromPDF(config.url, ledger);
+                
+                let embeddedCount = 0, partialCount = 0, tokenisticCount = 0;
+                let statementLedger = [];
+                let seenPassages = new Set(); 
+
+                passages.forEach(item => {
+                    const lowerText = item.text.toLowerCase();
+                    let matchedTerms = [];
+                    let isJustice = false;
+
+                    for (const [dim, categories] of Object.entries(conceptMap)) {
+                        categories.unambiguous.forEach(phrase => {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText)) {
+                                isJustice = true;
+                                matchedTerms.push(phrase);
+                            }
+                        });
+                        categories.ambiguous.forEach(phrase => {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText) && isValidContext(phrase, lowerText)) {
+                                isJustice = true;
+                                matchedTerms.push(phrase);
+                            }
+                        });
+                    }
+
+                    if(isJustice && !seenPassages.has(item.text)) {
+                        seenPassages.add(item.text);
+                        const { dim, tier } = assignDimensionAndTier(item.text, matchedTerms);
+                        
+                        if(tier === "Embedded") embeddedCount++;
+                        else if(tier === "Partial") partialCount++;
+                        else tokenisticCount++;
+
+                        statementLedger.push({ page: item.page, text: item.text, dimension: dim, tier: tier });
+                    }
+                });
+
+                const totalFound = statementLedger.length;
+                document.getElementById('stat-total').innerText = totalFound;
+                document.getElementById('stat-embedded').innerText = embeddedCount;
+                document.getElementById('stat-partial').innerText = partialCount;
+                document.getElementById('stat-tokenistic').innerText = tokenisticCount;
+
+                const banner = document.getElementById('verdict-banner');
+                const vTitle = document.getElementById('verdict-title');
+                const vSummary = document.getElementById('verdict-summary');
+
+                if(totalFound === 0) {
+                    vTitle.innerText = "No Explicit Climate Justice Statements Found";
+                    vSummary.innerText = "The document does not contain explicit or implicit references matching the climate justice evaluation framework.";
+                    banner.style.borderLeftColor = "var(--text-muted)";
+                } else if(embeddedCount >= 4 || (embeddedCount / totalFound) > 0.25) {
+                    vTitle.innerText = `Transformative Climate Justice Achieved (${config.c})`;
+                    vSummary.innerText = `The ${config.c} NDC demonstrates strong, legally backed, and institutionalized commitments. Out of ${totalFound} flagged statement blocks, ${embeddedCount} are fully embedded in policy, finance, or legislative frameworks.`;
+                    banner.style.borderLeftColor = "var(--embedded)";
+                } else if(partialCount > tokenisticCount) {
+                    vTitle.innerText = `Partial Justice Commitment (${config.c})`;
+                    vSummary.innerText = `The ${config.c} NDC contains actionable planning measures, but lacks binding statutory enforcement. Moderate risk of justice-washing (${partialCount}/${totalFound} partial commitments).`;
+                    banner.style.borderLeftColor = "var(--pending)";
+                } else {
+                    vTitle.innerText = `Predominantly Tokenistic / High Justice-Washing Risk (${config.c})`;
+                    vSummary.innerText = `Statements in the ${config.c} NDC consist primarily of aspirational language without binding mechanisms, strategic plans, or budget allocations (${tokenisticCount}/${totalFound} tokenistic mentions).`;
+                    banner.style.borderLeftColor = "var(--tokenistic)";
+                }
+
+                let ledgerHtml = '';
+                statementLedger.forEach((st, idx) => {
+                    let boxClass = st.tier === "Tokenistic" ? "ex-tokenistic" : (st.tier === "Partial" ? "ex-partial" : "ex-embedded");
+                    let badgeClass = st.tier === "Tokenistic" ? "badge-tok" : (st.tier === "Partial" ? "badge-par" : "badge-emb");
+                    
+                    ledgerHtml += `
+                    <div class="example-box ${boxClass}">
+                        <div class="ex-header">
+                            <div>
+                                <span class="ex-badge ${badgeClass}">${st.tier}</span>
+                                <span style="font-weight: 700; color: var(--primary); margin-left: 10px; font-size: 0.85rem;">${st.dimension} Justice</span>
+                            </div>
+                            <span style="font-size: 0.85rem; font-weight:bold; color: var(--text-muted);">Page ${st.page}</span>
+                        </div>
+                        <div class="ex-content">
+                            <p style="font-family: Georgia, serif; font-style: italic; margin:0;">"${st.text}"</p>
+                        </div>
+                    </div>`;
+                });
+                ledger.innerHTML = ledgerHtml;
+
+                lastEvaluatedResults = { country: config.c, verdict: vTitle.innerText, summary: vSummary.innerText, total: totalFound, embedded: embeddedCount, partial: partialCount, tokenistic: tokenisticCount, ledger: statementLedger };
+
+            } catch(err) {
+                console.error(err);
+                ledger.innerHTML = "<p class='err-msg'>Error running country evaluation. Ensure file availability.</p>";
+            }
+        }
+
+        function exportEvaluationDocx() {
+            if(!lastEvaluatedResults) return;
+            const res = lastEvaluatedResults;
+            
+            let docContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><title>JUST-NDC Evaluation Report - ${res.country}</title></head>
+            <body style='font-family: Arial, sans-serif;'>
+                <h1 style='color:#0066cc;'>JUST-NDC Qualitative Synthesis Report</h1>
+                <h2>Country: ${res.country}</h2>
+                <hr/>
+                <h3>Decreed Verdict: ${res.verdict}</h3>
+                <p><strong>Summary:</strong> ${res.summary}</p>
+                <br/>
+                <h3>Statement Breakdown Metrics</h3>
+                <ul>
+                    <li><strong>Total Flagged Statements:</strong> ${res.total}</li>
+                    <li><strong>Embedded Commitments:</strong> ${res.embedded}</li>
+                    <li><strong>Partial Commitments:</strong> ${res.partial}</li>
+                    <li><strong>Tokenistic Mentions:</strong> ${res.tokenistic}</li>
+                </ul>
+                <br/>
+                <h3>Extracted Policy Statement Ledger</h3>
+            `;
+
+            res.ledger.forEach((item, idx) => {
+                docContent += `
+                <div style='margin-bottom: 15px; padding: 10px; border-left: 4px solid #0066cc; background: #f9f9f9;'>
+                    <p><strong>[Excerpt ${idx + 1}] Page ${item.page} | ${item.dimension} Justice | Grade: ${item.tier}</strong></p>
+                    <p style='font-style: italic;'>"${item.text}"</p>
+                </div>`;
+            });
+
+            docContent += `</body></html>`;
+
+            const blob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `JUST-NDC_Evaluation_${res.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
+            a.click();
+        }
+
+        async function runBrowserAnalysis() {
+            const fileUrl = document.getElementById('ai-ndc-select').value;
+            const resultLimit = parseInt(document.getElementById('ai-depth').value, 10) || 15;
+            const term = document.getElementById('ai-terminal');
+            
+            if(!fileUrl) { term.innerHTML += `<p class="err-msg">Error: Please select an NDC document first.</p>`; return; }
+
+            term.innerHTML = `<p class="sys-msg">System: Fetching document from Hugging Face CDN...</p>`;
+            
+            try {
+                const passages = await extractPassagesFromPDF(fileUrl, term);
+                term.innerHTML += `<p class="sys-msg">System: Extracted context blocks. Running global multilingual concept matching & context-aware heuristic filter...</p>`;
+                
+                let scoredPassages = [];
+                let seenTexts = new Set();
+
+                passages.forEach(item => {
+                    let score = 0;
+                    let lowerText = item.text.toLowerCase();
+                    let matchedTerms = [];
+
+                    for (const [dim, categories] of Object.entries(conceptMap)) {
+                        categories.unambiguous.forEach(phrase => {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText)) {
+                                score += 1;
+                                matchedTerms.push(phrase);
+                            }
+                        });
+                        categories.ambiguous.forEach(phrase => {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText) && isValidContext(phrase, lowerText)) {
+                                score += 1;
+                                matchedTerms.push(phrase);
+                            }
+                        });
+                    }
+
+                    if(score > 0 && !seenTexts.has(item.text)) {
+                        seenTexts.add(item.text);
+                        scoredPassages.push({ pageNum: item.page, text: item.text, score: score, matches: [...new Set(matchedTerms)] });
+                    }
+                });
+
+                scoredPassages.sort((a, b) => b.score - a.score);
+                const finalResults = scoredPassages.slice(0, resultLimit);
+                
+                lastScrapedResults = finalResults;
+                const sel = document.getElementById('ai-ndc-select');
+                lastScrapedCountry = sel.options[sel.selectedIndex].text;
+
+                if(finalResults.length === 0) {
+                    term.innerHTML += `<p class="err-msg">Result: No significant passages found implicitly or explicitly matching justice concepts.</p>`;
+                } else {
+                    term.innerHTML += `<br><p style="color:#34c759; font-weight:bold;">--- Retrieved ${finalResults.length} Relevant Passages (Max Limit: ${resultLimit}) ---</p>`;
+                    finalResults.forEach((res, idx) => {
+                        let highlightedText = res.text;
+                        res.matches.forEach(concept => {
+                            const regex = new RegExp(`(^|[\\s\\W_])(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})([\\s\\W_]|$)`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
+                        });
+                        term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
+                    });
+                    term.innerHTML += `<p class="sys-msg">System: Analysis complete. Found ${scoredPassages.length} total distinct concept matches in document.</p>`;
+                }
+                term.scrollTop = term.scrollHeight;
+
+            } catch (err) {
+                console.error(err);
+                term.innerHTML += `<p class="err-msg">Error parsing document. Verify file availability.</p>`;
+            }
+        }
+
+        async function exportScrapedDocx() {
+            const term = document.getElementById('ai-terminal');
+            if(lastScrapedResults.length === 0) { 
+                term.innerHTML += `<p class="err-msg">Error: Please run 'Check for Justice Mentions' first.</p>`; 
+                term.scrollTop = term.scrollHeight;
+                return; 
+            }
+
+            term.innerHTML += `<p class="sys-msg">System: Exporting scraped passages to Word...</p>`;
+            term.scrollTop = term.scrollHeight;
+
+            try {
+                let docContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><title>Scraped Mentions</title></head><body style='font-family:Arial;'><h1>Scraped Justice Mentions: ${lastScrapedCountry}</h1><hr/>`;
+
+                lastScrapedResults.forEach((res, idx) => {
+                    docContent += `<h3>[Excerpt ${idx + 1}] Page ${res.pageNum}</h3><p>${res.text}</p><br/>`;
+                });
+
+                docContent += `</body></html>`;
+
+                const blob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Scraped_Mentions_${lastScrapedCountry.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
+                a.click();
+                
+                term.innerHTML += `<p class="sys-msg">Success: Scraped text Word document downloaded.</p>`;
+                term.scrollTop = term.scrollHeight;
+            } catch(err) {
+                console.error(err);
+                term.innerHTML += `<p class="err-msg">Error exporting text.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
