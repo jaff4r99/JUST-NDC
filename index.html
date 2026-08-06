@@ -19,6 +19,9 @@
             --secondary: #5ac8fa; 
             --accent: #34c759; 
             --pending: #FDBE02; 
+            --tokenistic: #df9e85;
+            --partial: #d1ca74;
+            --embedded: #92b998;
             --text-dark: #1d1d1f;
             --text-muted: #86868b;
             --border-light: rgba(0, 0, 0, 0.08);
@@ -91,7 +94,6 @@
         .sticky-th th { background-color: rgba(245, 245, 247, 0.9); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; user-select: none; }
         .table-container { max-height: 400px; overflow-y: auto; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border-light); background: #fff; }
 
-        /* Sorting Indicators */
         .sticky-th th::after { content: ' \21D5'; font-size: 0.8rem; color: #aaa; margin-left: 5px; }
         .sticky-th th.sort-asc::after { content: ' \2191'; color: var(--primary); }
         .sticky-th th.sort-desc::after { content: ' \2193'; color: var(--primary); }
@@ -102,7 +104,7 @@
         .badge-done { background: rgba(52, 199, 89, 0.15); color: #248a3d; }
         .badge-pending { background: rgba(253, 190, 2, 0.2); color: #8a6d0b; }
 
-        .download-btn { background-color: rgba(0, 102, 204, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.15s; border: none; cursor: pointer; }
+        .download-btn { background-color: rgba(0, 102, 204, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.15s; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
         .download-btn:hover { background-color: var(--primary); color: #fff; }
 
         .btn-danger { background-color: rgba(255, 59, 48, 0.1) !important; color: #ff3b30 !important; }
@@ -115,7 +117,6 @@
         .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
         .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
 
-        /* Restored Methodology Design */
         .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
         .framework-box { padding: 24px; border-radius: 12px; box-shadow: var(--apple-shadow); }
         .box-recognitional { background-color: #63986a; }
@@ -124,7 +125,6 @@
         .box-restorative { background-color: #bb6e4b; }
         .box-transformative { background-color: #001f3f; color: #fff; padding: 28px; border-radius: 12px; text-align: center; box-shadow: var(--apple-shadow); margin: 0 auto; width: 100%; box-sizing: border-box; }
 
-        /* Restored Matrix Styling */
         .matrix-table { margin-top: 20px; border: 1px solid var(--border-light); background: #fff; border-radius: 8px; overflow: hidden; }
         .matrix-table th, .matrix-table td { border: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; color: #333; }
         .col-dim { font-weight: 700; background-color: #f9f9f9; width: 15%; }
@@ -134,7 +134,6 @@
         .col-strong { background-color: #94bd99; color: #000; width: 24%; }
         .matrix-header th { font-weight: 700; font-size: 0.95rem; padding: 14px; }
 
-        /* Restored Coding Examples Styling */
         .example-box { padding: 20px; border-radius: 12px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; overflow: hidden; }
         .example-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; }
         .ex-tokenistic::before { background-color: #df9e85; }
@@ -147,13 +146,18 @@
         .ex-content strong { display: block; margin-bottom: 5px; color: var(--primary); }
         .ex-content p { margin-top: 0; font-size: 0.95rem; }
 
-        /* Analyzer Styles */
-        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 12px; height: 380px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 12px; height: 350px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
         .analyzer-terminal p { margin: 6px 0; color: #f8f8f2; }
         .analyzer-terminal .sys-msg { color: #66d9ef; font-weight: bold; }
         .analyzer-terminal .err-msg { color: #f92672; font-weight: bold; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); }
+
+        /* Metric Grid for Evaluator */
+        .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .metric-box { padding: 18px; border-radius: 12px; background: #fff; border: 1px solid var(--border-light); text-align: center; }
+        .metric-box h3 { margin: 0; font-size: 1.8rem; color: var(--primary); }
+        .metric-box p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
     </style>
 </head>
 <body>
@@ -174,8 +178,9 @@
                 <button id="btn-dashboard" class="active-btn" onclick="showPage('dashboard', this)"><span>📊</span> Project Tracker</button>
                 <button id="btn-methodology" onclick="showPage('methodology', this)"><span>📘</span> Framework & Method</button>
                 <button id="btn-map" onclick="showPage('map', this)"><span>🗺️</span> Global Map & Status</button>
+                <button id="btn-evaluator" onclick="showPage('evaluator', this)"><span>⚖️</span> Country Evaluator</button>
                 <button id="btn-repository" onclick="showPage('repository', this)"><span>💡</span> Coding Examples</button>
-                <button id="btn-analyzer" onclick="showPage('analyzer', this)"><span>🧠</span> AI Policy Analyzer</button>
+                <button id="btn-analyzer" onclick="showPage('analyzer', this)"><span>🧠</span> AI Text Scraper</button>
             </div>
 
             <div class="content">
@@ -374,7 +379,55 @@
                     </div>
                 </div>
 
-                <!-- PAGE 4: EXAMPLES -->
+                <!-- PAGE 4: COUNTRY EVALUATOR & SYNTHESIS -->
+                <div id="evaluator" class="page">
+                    <h1>Automated Country Evaluator & Synthesis</h1>
+                    <p>Select any NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine classifies every statement into its dimension and commitment tier to generate an overall country decree.</p>
+
+                    <div class="ui-box">
+                        <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                            <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
+                                <label for="eval-country-select">Select Country NDC to Evaluate:</label>
+                                <select id="eval-country-select" class="search-box" style="margin-bottom: 0;">
+                                    <option value="" disabled selected>Loading countries...</option>
+                                </select>
+                            </div>
+                            <button onclick="runFullCountryEvaluation()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 12px 20px;">Run Comprehensive Synthesis</button>
+                        </div>
+                    </div>
+
+                    <!-- Synthesis Output Container -->
+                    <div id="eval-results-container" style="display: none;">
+                        <!-- Decreed Verdict Banner -->
+                        <div class="ui-box" id="verdict-banner" style="border-left: 6px solid var(--accent); background: #ffffff;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                                <div>
+                                    <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Overall NDC Decree Verdict</span>
+                                    <h2 id="verdict-title" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.6rem;">Evaluating...</h2>
+                                </div>
+                                <button onclick="exportEvaluationDocx()" class="download-btn" style="background-color: var(--accent); color: #fff;">📥 Export Synthesis Report (.docx)</button>
+                            </div>
+                            <p id="verdict-summary" style="margin-top: 10px; font-size: 0.95rem; color: #444;"></p>
+                        </div>
+
+                        <!-- Statement Tally Metrics -->
+                        <div class="metric-grid">
+                            <div class="metric-box"><h3 id="stat-total">0</h3><p>Total Flagged Statements</p></div>
+                            <div class="metric-box" style="border-bottom: 4px solid var(--embedded);"><h3 id="stat-embedded">0</h3><p>Embedded Commitments</p></div>
+                            <div class="metric-box" style="border-bottom: 4px solid var(--partial);"><h3 id="stat-partial">0</h3><p>Partial Commitments</p></div>
+                            <div class="metric-box" style="border-bottom: 4px solid var(--tokenistic);"><h3 id="stat-tokenistic">0</h3><p>Tokenistic Mentions</p></div>
+                        </div>
+
+                        <!-- Full Statement Ledger -->
+                        <div class="ui-box">
+                            <h3 style="margin-top: 0;">Extracted Policy Statement Ledger</h3>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Below is the full catalog of statements derived from the document, categorized by justice type and commitment grade.</p>
+                            <div id="eval-statement-ledger"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE 5: EXAMPLES -->
                 <div id="repository" class="page">
                     <h1>Coding Examples & Analysis</h1>
                     <p style="font-size: 1.05rem; margin-bottom: 30px;">Welcome to the Coding Examples & Analysis hub. This section serves as a practical reference guide for our coding methodology. It illustrates how we interpret and grade real-world policy statements extracted from NDCs to maintain analytical consistency. Review the examples below to understand the nuanced differences between a mere tokenistic mention and a fully embedded commitment. You can also practice applying the framework by submitting and categorizing your own examples at the bottom of the page.</p>
@@ -409,10 +462,10 @@
                     </div>
                 </div>
 
-                <!-- PAGE 5: AI ANALYZER -->
+                <!-- PAGE 6: AI ANALYZER -->
                 <div id="analyzer" class="page">
-                    <h1>AI Policy Analyzer</h1>
-                    <p>Select an NDC document from the repository. The client-side conceptual engine will parse the PDF and extract passages relevant to your climate justice query instantly in your browser.</p>
+                    <h1>AI Text Scraper & Query Engine</h1>
+                    <p>Select an NDC document from the repository to extract all raw text or perform custom keyword/concept querying across all pages.</p>
                     
                     <div class="ui-box" style="background: #ffffff;">
                         <div class="form-group">
@@ -436,11 +489,13 @@
                                 </select>
                             </div>
                         </div>
-                        <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff;">Run Document Analysis</button>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff; padding: 10px 18px;">Run Keyword/Concept Query</button>
+                            <button onclick="downloadFullTextDocx()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 10px 18px;">Export Full Text as Word (.docx)</button>
+                        </div>
                         
                         <div id="ai-terminal" class="analyzer-terminal">
-                            <p class="sys-msg">System: Ready. Select a document and click 'Run Document Analysis' to begin parsing.</p>
-                            <p class="sys-msg">Note: Engine tracks page numbers and uses Expanded Conceptual Matching (e.g., 'women' auto-matches 'gender', 'female', 'girls').</p>
+                            <p class="sys-msg">System: Ready. Select a document to analyze or export.</p>
                         </div>
                     </div>
                 </div>
@@ -504,7 +559,6 @@
             { country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
-        // AI Analyzer Concept Map
         const conceptMap = {
             "vulnerable": ["vulnerable", "at-risk", "susceptible", "disadvantaged", "fragile", "poor"],
             "marginalized": ["marginalized", "minority", "excluded", "discrimination", "underrepresented"],
@@ -519,6 +573,7 @@
         let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
         let annexData = JSON.parse(JSON.stringify(defaultAnnexData));
         let codingExamples = JSON.parse(JSON.stringify(defaultExamples));
+        let lastEvaluatedResults = null;
         let editingIndex = -1;
 
         const hfBaseUrl = "https://huggingface.co/spaces/jaff4r/Climate-Justice-in-NDCs/resolve/main/ndcs/";
@@ -527,13 +582,24 @@
             const now = new Date();
             document.getElementById('current-date-display').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
             
-            const select = document.getElementById('ai-ndc-select');
-            select.innerHTML = '<option value="" disabled selected>Select an NDC document...</option>';
+            const selectAi = document.getElementById('ai-ndc-select');
+            const selectEval = document.getElementById('eval-country-select');
+            
+            selectAi.innerHTML = '<option value="" disabled selected>Select an NDC document...</option>';
+            selectEval.innerHTML = '<option value="" disabled selected>Select an NDC document...</option>';
+
             ndcData.forEach(ndc => {
-                let opt = document.createElement('option');
-                opt.value = ndc.url ? ndc.url : hfBaseUrl + encodeURIComponent(ndc.f);
-                opt.textContent = `${ndc.c} (${ndc.l})`;
-                select.appendChild(opt);
+                const targetUrl = ndc.url ? ndc.url : hfBaseUrl + encodeURIComponent(ndc.f);
+                
+                let opt1 = document.createElement('option');
+                opt1.value = targetUrl;
+                opt1.textContent = `${ndc.c} (${ndc.l})`;
+                selectAi.appendChild(opt1);
+
+                let opt2 = document.createElement('option');
+                opt2.value = JSON.stringify({ c: ndc.c, url: targetUrl });
+                opt2.textContent = `${ndc.c} (${ndc.l})`;
+                selectEval.appendChild(opt2);
             });
         });
 
@@ -820,17 +886,181 @@
             });
         }
 
-        // --- Client-Side AI Analyzer Engine with Page Tracking & Result Capping Dropdown ---
+        // --- Comprehensive Country Evaluator Engine ---
+        async function runFullCountryEvaluation() {
+            const rawVal = document.getElementById('eval-country-select').value;
+            if(!rawVal) { alert("Please select a country NDC first."); return; }
+            const config = JSON.parse(rawVal);
+            
+            const resultsContainer = document.getElementById('eval-results-container');
+            const ledger = document.getElementById('eval-statement-ledger');
+            
+            resultsContainer.style.display = "block";
+            ledger.innerHTML = "<p style='color: var(--primary); font-weight:bold;'>System: Extracting full document text and running qualitative synthesis...</p>";
+
+            try {
+                const loadingTask = pdfjsLib.getDocument(config.url);
+                const pdf = await loadingTask.promise;
+                
+                let passages = [];
+                for(let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    const text = content.items.map(it => it.str).join(" ").replace(/\s+/g, " ").trim();
+                    
+                    if(text.length > 30) {
+                        const sents = text.match(/[^.!?]+[.!?]+/g) || [text];
+                        sents.forEach(s => {
+                            if(s.trim().length > 35) passages.push({ page: i, text: s.trim() });
+                        });
+                    }
+                }
+
+                // Heuristic Classification Rules
+                let embeddedCount = 0, partialCount = 0, tokenisticCount = 0;
+                let statementLedger = [];
+
+                passages.forEach(item => {
+                    const lower = item.text.toLowerCase();
+                    
+                    // Check if statement relates to climate justice
+                    let isJustice = false;
+                    for (const [key, synonyms] of Object.entries(conceptMap)) {
+                        if (synonyms.some(syn => lower.includes(concept))) isJustice = true;
+                    }
+
+                    if(isJustice) {
+                        let dim = "Recognitional";
+                        if(lower.includes("participation") || lower.includes("consult") || lower.includes("transparent")) dim = "Procedural";
+                        else if(lower.includes("finance") || lower.includes("allocat") || lower.includes("benefit") || lower.includes("fund")) dim = "Distributive";
+                        else if(lower.includes("loss") || lower.includes("damage") || lower.includes("historical") || lower.includes("repar")) dim = "Restorative";
+
+                        let tier = "Tokenistic";
+                        if(lower.includes("law") || lower.includes("act") || lower.includes("legisla") || lower.includes("target") || lower.includes("mandate")) {
+                            tier = "Embedded";
+                            embeddedCount++;
+                        } else if(lower.includes("plan") || lower.includes("measure") || lower.includes("policy") || lower.includes("framework")) {
+                            tier = "Partial";
+                            partialCount++;
+                        } else {
+                            tokenisticCount++;
+                        }
+
+                        statementLedger.push({ page: item.page, text: item.text, dimension: dim, tier: tier });
+                    }
+                });
+
+                const totalFound = statementLedger.length;
+                document.getElementById('stat-total').innerText = totalFound;
+                document.getElementById('stat-embedded').innerText = embeddedCount;
+                document.getElementById('stat-partial').innerText = partialCount;
+                document.getElementById('stat-tokenistic').innerText = tokenisticCount;
+
+                // Decreed Verdict Calculation
+                const banner = document.getElementById('verdict-banner');
+                const vTitle = document.getElementById('verdict-title');
+                const vSummary = document.getElementById('verdict-summary');
+
+                if(totalFound === 0) {
+                    vTitle.innerText = "No Explicit Climate Justice Statements Found";
+                    vSummary.innerText = "The document does not contain explicit references matching the climate justice evaluation matrix.";
+                    banner.style.borderLeftColor = "var(--text-muted)";
+                } else if(embeddedCount >= 3 || (embeddedCount / totalFound) > 0.3) {
+                    vTitle.innerText = `Transformative Climate Justice Achieved (${config.c})`;
+                    vSummary.innerText = `The ${config.c} NDC demonstrates strong, legally backed, and institutionalized commitments. Out of ${totalFound} flagged statements, ${embeddedCount} are fully embedded in policy or legislative frameworks.`;
+                    banner.style.borderLeftColor = "var(--accent)";
+                } else if(partialCount > tokenisticCount) {
+                    vTitle.innerText = `Partial Justice Commitment (${config.c})`;
+                    vSummary.innerText = `The ${config.c} NDC contains actionable planning measures, but lacks binding statutory enforcement. High proportion of partial commitments (${partialCount}/${totalFound}).`;
+                    banner.style.borderLeftColor = "var(--pending)";
+                } else {
+                    vTitle.innerText = `Predominantly Tokenistic / High Justice-Washing Risk (${config.c})`;
+                    vSummary.innerText = `Statements in the ${config.c} NDC consist primarily of aspirational language without binding mechanisms or budget allocations (${tokenisticCount}/${totalFound} tokenistic mentions).`;
+                    banner.style.borderLeftColor = "var(--tokenistic)";
+                }
+
+                // Render Statement Ledger
+                let ledgerHtml = '';
+                statementLedger.forEach((st, idx) => {
+                    let boxClass = st.tier === "Tokenistic" ? "ex-tokenistic" : (st.tier === "Partial" ? "ex-partial" : "ex-embedded");
+                    let badgeClass = st.tier === "Tokenistic" ? "badge-tok" : (st.tier === "Partial" ? "badge-par" : "badge-emb");
+                    
+                    ledgerHtml += `
+                    <div class="example-box ${boxClass}">
+                        <div class="ex-header">
+                            <div>
+                                <span class="ex-badge ${badgeClass}">${st.tier}</span>
+                                <span style="font-weight: 700; color: var(--primary); margin-left: 10px; font-size: 0.85rem;">${st.dimension} Justice</span>
+                            </div>
+                            <span style="font-size: 0.85rem; font-weight:bold; color: var(--text-muted);">Page ${st.page}</span>
+                        </div>
+                        <div class="ex-content">
+                            <p style="font-family: Georgia, serif; font-style: italic; margin:0;">"${st.text}"</p>
+                        </div>
+                    </div>`;
+                });
+                ledger.innerHTML = ledgerHtml;
+
+                lastEvaluatedResults = { country: config.c, verdict: vTitle.innerText, summary: vSummary.innerText, total: totalFound, embedded: embeddedCount, partial: partialCount, tokenistic: tokenisticCount, ledger: statementLedger };
+
+            } catch(err) {
+                console.error(err);
+                ledger.innerHTML = "<p class='err-msg'>Error running country evaluation. Ensure file availability.</p>";
+            }
+        }
+
+        // Export Evaluation as .docx / HTML Doc
+        function exportEvaluationDocx() {
+            if(!lastEvaluatedResults) return;
+            const res = lastEvaluatedResults;
+            
+            let docContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><title>JUST-NDC Evaluation Report - ${res.country}</title></head>
+            <body style='font-family: Arial, sans-serif;'>
+                <h1 style='color:#0066cc;'>JUST-NDC Qualitative Synthesis Report</h1>
+                <h2>Country: ${res.country}</h2>
+                <hr/>
+                <h3>Decreed Verdict: ${res.verdict}</h3>
+                <p><strong>Summary:</strong> ${res.summary}</p>
+                <br/>
+                <h3>Statement Breakdown Metrics</h3>
+                <ul>
+                    <li><strong>Total Flagged Statements:</strong> ${res.total}</li>
+                    <li><strong>Embedded Commitments:</strong> ${res.embedded}</li>
+                    <li><strong>Partial Commitments:</strong> ${res.partial}</li>
+                    <li><strong>Tokenistic Mentions:</strong> ${res.tokenistic}</li>
+                </ul>
+                <br/>
+                <h3>Extracted Policy Statement Ledger</h3>
+            `;
+
+            res.ledger.forEach((item, idx) => {
+                docContent += `
+                <div style='margin-bottom: 15px; padding: 10px; border-left: 4px solid #0066cc; background: #f9f9f9;'>
+                    <p><strong>[Excerpt ${idx + 1}] Page ${item.page} | ${item.dimension} Justice | Grade: ${item.tier}</strong></p>
+                    <p style='font-style: italic;'>"${item.text}"</p>
+                </div>`;
+            });
+
+            docContent += `</body></html>`;
+
+            const blob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `JUST-NDC_Evaluation_${res.country}.doc`;
+            a.click();
+        }
+
+        // AI Text Scraper & Full Text Word Export
         async function runBrowserAnalysis() {
             const fileUrl = document.getElementById('ai-ndc-select').value;
             const queryStr = document.getElementById('ai-query').value.toLowerCase();
             const resultLimit = parseInt(document.getElementById('ai-depth').value, 10) || 15;
             const term = document.getElementById('ai-terminal');
             
-            if(!fileUrl) {
-                term.innerHTML += `<p class="err-msg">Error: Please select an NDC document first.</p>`;
-                return;
-            }
+            if(!fileUrl) { term.innerHTML += `<p class="err-msg">Error: Please select an NDC document first.</p>`; return; }
 
             term.innerHTML = `<p class="sys-msg">System: Fetching document from Hugging Face CDN...</p>`;
             
@@ -844,14 +1074,10 @@
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
                     const pageText = content.items.map(item => item.str).join(" ").replace(/\s+/g, " ").trim();
-                    
                     if(pageText.length > 25) {
-                        // Split page text into multi-sentence chunks (approx paragraph scale)
                         const sentences = pageText.match(/[^.!?]+[.!?]+/g) || [pageText];
                         sentences.forEach(sent => {
-                            if(sent.trim().length > 30) {
-                                pagePassages.push({ pageNum: i, text: sent.trim() });
-                            }
+                            if(sent.trim().length > 30) pagePassages.push({ pageNum: i, text: sent.trim() });
                         });
                     }
                 }
@@ -879,19 +1105,9 @@
                     let lowerText = item.text.toLowerCase();
                     let matchedTerms = [];
                     activeConcepts.forEach(concept => {
-                        if(lowerText.includes(concept)) {
-                            score += 1;
-                            matchedTerms.push(concept);
-                        }
+                        if(lowerText.includes(concept)) { score += 1; matchedTerms.push(concept); }
                     });
-                    if(score > 0) {
-                        scoredPassages.push({ 
-                            pageNum: item.pageNum, 
-                            text: item.text, 
-                            score: score,
-                            matches: [...new Set(matchedTerms)]
-                        });
-                    }
+                    if(score > 0) scoredPassages.push({ pageNum: item.pageNum, text: item.text, score: score, matches: [...new Set(matchedTerms)] });
                 });
 
                 scoredPassages.sort((a, b) => b.score - a.score);
@@ -900,7 +1116,7 @@
                 if(finalResults.length === 0) {
                     term.innerHTML += `<p class="err-msg">Result: No significant passages found matching the query concepts.</p>`;
                 } else {
-                    term.innerHTML += `<br><p style="color:#34c759; font-weight:bold;">--- Retrieved ${finalResults.length} Relevant Policy Passages (Max Limit: ${resultLimit}) ---</p>`;
+                    term.innerHTML += `<br><p style="color:#34c759; font-weight:bold;">--- Retrieved ${finalResults.length} Relevant Passages (Max Limit: ${resultLimit}) ---</p>`;
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
@@ -915,7 +1131,43 @@
 
             } catch (err) {
                 console.error(err);
-                term.innerHTML += `<p class="err-msg">Error parsing document. Verify CORS permissions or direct PDF URL availability.</p>`;
+                term.innerHTML += `<p class="err-msg">Error parsing document. Verify file availability.</p>`;
+            }
+        }
+
+        async function downloadFullTextDocx() {
+            const fileUrl = document.getElementById('ai-ndc-select').value;
+            const term = document.getElementById('ai-terminal');
+            if(!fileUrl) { alert("Please select an NDC document first."); return; }
+
+            term.innerHTML += `<p class="sys-msg">System: Extracting full text for Word export...</p>`;
+
+            try {
+                const loadingTask = pdfjsLib.getDocument(fileUrl);
+                const pdf = await loadingTask.promise;
+                
+                let docContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><title>Extracted NDC Text</title></head><body style='font-family:Arial;'><h1>Extracted NDC Document Text</h1><hr/>`;
+
+                for(let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    const text = content.items.map(it => it.str).join(" ");
+                    docContent += `<h3>--- Page ${i} ---</h3><p>${text}</p><br/>`;
+                }
+
+                docContent += `</body></html>`;
+
+                const blob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Extracted_NDC_FullText.doc`;
+                a.click();
+                
+                term.innerHTML += `<p class="sys-msg">Success: Full text Word document downloaded.</p>`;
+            } catch(err) {
+                console.error(err);
+                term.innerHTML += `<p class="err-msg">Error exporting full text.</p>`;
             }
         }
     </script>
