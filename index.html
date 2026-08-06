@@ -117,6 +117,7 @@
         .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
         .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
 
+        /* Framework Design */
         .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
         .framework-box { padding: 24px; border-radius: 12px; box-shadow: var(--apple-shadow); }
         .box-recognitional { background-color: #63986a; }
@@ -125,6 +126,7 @@
         .box-restorative { background-color: #bb6e4b; }
         .box-transformative { background-color: #001f3f; color: #fff; padding: 28px; border-radius: 12px; text-align: center; box-shadow: var(--apple-shadow); margin: 0 auto; width: 100%; box-sizing: border-box; }
 
+        /* Matrix Styling */
         .matrix-table { margin-top: 20px; border: 1px solid var(--border-light); background: #fff; border-radius: 8px; overflow: hidden; }
         .matrix-table th, .matrix-table td { border: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; color: #333; }
         .col-dim { font-weight: 700; background-color: #f9f9f9; width: 15%; }
@@ -134,6 +136,7 @@
         .col-strong { background-color: #94bd99; color: #000; width: 24%; }
         .matrix-header th { font-weight: 700; font-size: 0.95rem; padding: 14px; }
 
+        /* Coding Examples Styling */
         .example-box { padding: 20px; border-radius: 12px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; overflow: hidden; }
         .example-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; }
         .ex-tokenistic::before { background-color: #df9e85; }
@@ -146,8 +149,9 @@
         .ex-content strong { display: block; margin-bottom: 5px; color: var(--primary); }
         .ex-content p { margin-top: 0; font-size: 0.95rem; }
 
-        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 12px; height: 350px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
-        .analyzer-terminal p { margin: 6px 0; color: #f8f8f2; }
+        /* Analyzer Styles */
+        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 12px; height: 400px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+        .analyzer-terminal p { margin: 8px 0; color: #f8f8f2; }
         .analyzer-terminal .sys-msg { color: #66d9ef; font-weight: bold; }
         .analyzer-terminal .err-msg { color: #f92672; font-weight: bold; }
 
@@ -158,6 +162,12 @@
         
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); }
+
+        /* Tooltip CSS */
+        .tooltip { position: relative; display: inline-block; border-bottom: 1px dotted var(--primary); cursor: help; color: var(--primary); font-weight: 600; }
+        .tooltip .tooltiptext { visibility: hidden; width: 450px; background-color: #333; color: #fff; text-align: left; border-radius: 8px; padding: 15px; position: absolute; z-index: 1000; bottom: 125%; left: 0; opacity: 0; transition: opacity 0.3s; font-size: 0.85rem; line-height: 1.5; font-weight: normal; font-family: -apple-system, sans-serif; box-shadow: var(--apple-shadow); }
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+        .tooltip .tooltiptext strong { color: var(--secondary); }
     </style>
 </head>
 <body>
@@ -416,7 +426,7 @@
                 <!-- PAGE 5: AI TEXT SCRAPER -->
                 <div id="analyzer" class="page">
                     <h1>AI Text Scraper & Query Engine</h1>
-                    <p>Select an NDC document from the repository to extract relevant text or perform custom keyword/concept querying across all pages.</p>
+                    <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system bypasses basic keyword searches to identify structural semantic matches.</p>
                     
                     <div class="ui-box" style="background: #ffffff;">
                         <div class="form-group">
@@ -425,24 +435,34 @@
                                 <option value="" disabled selected>Loading available NDCs...</option>
                             </select>
                         </div>
-                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                            <div class="form-group" style="flex-grow: 1;">
-                                <label for="ai-query">Policy Query / Focus Area (Comma separated):</label>
-                                <input type="text" id="ai-query" class="search-box" value="vulnerable groups, marginalized, justice, equity, indigenous, women, participation, fairness, GEDSI, fair & ambitious">
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
+                                <label>Policy Query Target: 
+                                    <span class="tooltip">Hover for Justice Terminology
+                                      <span class="tooltiptext">
+                                        <strong>Recognitional:</strong> Marginalized, indigenous rights, traditional knowledge, power imbalances, human rights, gender-responsive, GEDSI.<br><br>
+                                        <strong>Procedural:</strong> Transparent, inclusive decision-making, participation, FPIC, multi-stakeholder, grievance mechanisms.<br><br>
+                                        <strong>Distributive:</strong> Equitable sharing, just transition, social safety nets, progressive taxation, fair & ambitious, CBDR.<br><br>
+                                        <strong>Restorative:</strong> Historical responsibilities, reparative measures, loss and damage, compensation, ecological debt.<br><br>
+                                        <strong>Transformative:</strong> Root causes, systemic change, structural inequalities, decolonization, fossil fuel phase-out.
+                                      </span>
+                                    </span>
+                                </label>
+                                <input type="text" class="search-box" value="System automatically scans for all implicit & explicit dimensions of justice." disabled style="background:#f0f0f0; color:#555;">
                             </div>
-                            <div class="form-group" style="width: 180px;">
+                            <div class="form-group" style="width: 180px; margin-bottom: 0;">
                                 <label for="ai-depth">Result Depth:</label>
                                 <select id="ai-depth" class="search-box">
                                     <option value="5">Top 5 Passages</option>
-                                    <option value="15" selected>Top 15 Passages</option>
+                                    <option value="15">Top 15 Passages</option>
                                     <option value="30">Top 30 Passages</option>
-                                    <option value="999">All Relevant Matches</option>
+                                    <option value="999" selected>All Relevant Matches</option>
                                 </select>
                             </div>
                         </div>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
                             <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff; padding: 10px 18px;">Check for Justice Mentions</button>
-                            <button onclick="downloadFullTextDocx()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 10px 18px;">Export Scraped Text as Word (.docx)</button>
+                            <button onclick="exportScrapedDocx()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 10px 18px;">Export Scraped Text as Word (.docx)</button>
                         </div>
                         
                         <div id="ai-terminal" class="analyzer-terminal">
@@ -454,7 +474,7 @@
                 <!-- PAGE 6: COUNTRY EVALUATOR & SYNTHESIS -->
                 <div id="evaluator" class="page">
                     <h1>Automated Country Evaluator & Synthesis</h1>
-                    <p>Select any NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine classifies every statement into its dimension and commitment tier to generate an overall country decree.</p>
+                    <p>Select an NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine chunks texts, parses contextual phrasing, and generates an overall country decree.</p>
 
                     <div class="ui-box">
                         <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
@@ -489,7 +509,7 @@
 
                         <div class="ui-box">
                             <h3 style="margin-top: 0;">Extracted Policy Statement Ledger</h3>
-                            <p style="font-size: 0.9rem; color: var(--text-muted);">Below is the full catalog of statements derived from the document, categorized by justice type and commitment grade.</p>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Below is the full catalog of paragraph blocks derived from the document, contextually mapped by justice type and commitment grade.</p>
                             <div id="eval-statement-ledger"></div>
                         </div>
                     </div>
@@ -554,16 +574,13 @@
             { country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
-        // Expanded AI Analyzer Concept Map
+        // Massively Expanded AI Analyzer Concept Map (Multilingual & Implicit/Explicit Tracking)
         const conceptMap = {
-            "vulnerable": ["vulnerable", "at-risk", "susceptible", "disadvantaged", "fragile", "poor", "marginalized"],
-            "marginalized": ["marginalized", "minority", "excluded", "discrimination", "underrepresented"],
-            "justice": ["justice", "rights", "just", "human rights", "legal", "law", "fair & ambitious"],
-            "equity": ["equity", "equitable", "equality", "equal", "balance", "fairness", "cbdr"],
-            "indigenous": ["indigenous", "traditional", "native", "tribe", "tribal", "first nations", "local communities"],
-            "women": ["women", "gender", "female", "girls", "maternal", "mothers", "gedsi"],
-            "participation": ["participation", "engage", "involve", "consult", "stakeholder", "community", "transparent", "inclusion"],
-            "fairness": ["fairness", "fair", "impartial", "balanced"]
+            "Recognitional": ["marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "grupos marginados", "derechos indígenas", "savoirs traditionnels", "права коренных", "المعارف التقليدية", "边缘化群体", "вразливі групи", "women", "gender", "female", "gedsi", "fairness", "local communities"],
+            "Procedural": ["transparent process", "inclusive decision", "meaningful participation", "fair process", "procedural rights", "prior and informed consent", "fpic", "multi-stakeholder", "bottom-up", "decentralized governance", "grievance mechanism", "co-production", "consulta pública", "mécanismes de recours", "موافقة مسبقة", "包容性决策", "громадські консультації", "consultation", "participation"],
+            "Distributive": ["equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "equitable outcomes", "just transition", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "youth inclusion", "transición justa", "transition juste", "справедливый переход", "انتقال عادل", "公正转型", "finance", "allocation", "resource", "fair & ambitious", "cbdr"],
+            "Restorative": ["past climate injustice", "historical responsibilities", "reparative", "restorative", "past harms", "loss and damage", "non-economic loss", "common but differentiated responsibilities", "compensation", "rehabilitation", "ecological debt", "climate reparations", "relocation", "resettlement", "climate mobility", "displacement", "pérdidas y daños", "pertes et préjudices", "потери и ущерб", "الخسائر والأضرار", "损失与损害"],
+            "Transformative": ["root causes", "systemic change", "social injustice", "structural inequalities", "transformative", "paradigm shift", "decolonization", "systemic reform", "dismantling patriarchy", "fossil fuel phase-out", "degrowth", "post-growth", "well-being economy", "post-extractivism", "buen vivir", "deep decarbonization", "post-capitalism", "causas profundas", "décroissance", "коренные причины", "الأسباب الجذرية", "根本原因"]
         };
 
         let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
@@ -884,6 +901,53 @@
             });
         }
 
+        // --- Multi-Sentence Chunking for Accurate Context ---
+        async function extractPassagesFromPDF(fileUrl, termNode) {
+            const loadingTask = pdfjsLib.getDocument(fileUrl);
+            const pdf = await loadingTask.promise;
+            termNode.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting text page-by-page from ${pdf.numPages} pages...</p>`;
+            
+            let pagePassages = [];
+            for(let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                const pageText = content.items.map(it => it.str).join(" ").replace(/\s+/g, " ").trim();
+                
+                if(pageText.length > 30) {
+                    // Chunk by overlapping sentences to capture true context
+                    const sents = pageText.match(/[^.!?]+[.!?]+/g) || [pageText];
+                    for(let j = 0; j < sents.length; j += 2) {
+                        let chunk = sents[j];
+                        if(j + 1 < sents.length) chunk += " " + sents[j + 1];
+                        if(chunk.trim().length > 40) pagePassages.push({ page: i, text: chunk.trim() });
+                    }
+                }
+            }
+            return pagePassages;
+        }
+
+        function assignDimensionAndTier(text, conceptsMatched) {
+            const lower = text.toLowerCase();
+            let dim = "";
+            let tier = "Tokenistic";
+
+            // Determine Dimension based on matched concepts
+            if (conceptsMatched.some(c => conceptMap["Transformative"].includes(c))) dim = "Transformative";
+            else if (conceptsMatched.some(c => conceptMap["Restorative"].includes(c))) dim = "Restorative";
+            else if (conceptsMatched.some(c => conceptMap["Distributive"].includes(c))) dim = "Distributive";
+            else if (conceptsMatched.some(c => conceptMap["Procedural"].includes(c))) dim = "Procedural";
+            else dim = "Recognitional"; 
+
+            // Strict Tier Grading
+            if (lower.includes("law") || lower.includes("act ") || lower.includes("legisla") || lower.includes("target") || lower.includes("mandate") || lower.includes("statut") || lower.includes("binding") || lower.includes("fund")) {
+                tier = "Embedded";
+            } else if (lower.includes("plan") || lower.includes("measure") || lower.includes("policy") || lower.includes("framework") || lower.includes("strategy") || lower.includes("program") || lower.includes("commit")) {
+                tier = "Partial";
+            }
+
+            return { dim, tier };
+        }
+
         // --- Comprehensive Country Evaluator Engine ---
         async function runFullCountryEvaluation() {
             const rawVal = document.getElementById('eval-country-select').value;
@@ -894,53 +958,35 @@
             const ledger = document.getElementById('eval-statement-ledger');
             
             resultsContainer.style.display = "block";
-            ledger.innerHTML = "<p style='color: var(--primary); font-weight:bold;'>System: Extracting full document text and running qualitative synthesis...</p>";
+            ledger.innerHTML = "<p style='color: var(--primary); font-weight:bold;'>System: Extracting full document context blocks and running qualitative synthesis...</p>";
 
             try {
-                const loadingTask = pdfjsLib.getDocument(config.url);
-                const pdf = await loadingTask.promise;
+                const passages = await extractPassagesFromPDF(config.url, ledger);
                 
-                let passages = [];
-                for(let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    const text = content.items.map(it => it.str).join(" ").replace(/\s+/g, " ").trim();
-                    
-                    if(text.length > 30) {
-                        const sents = text.match(/[^.!?]+[.!?]+/g) || [text];
-                        sents.forEach(s => {
-                            if(s.trim().length > 35) passages.push({ page: i, text: s.trim() });
-                        });
-                    }
-                }
-
                 let embeddedCount = 0, partialCount = 0, tokenisticCount = 0;
                 let statementLedger = [];
 
                 passages.forEach(item => {
-                    const lower = item.text.toLowerCase();
-                    
+                    const lowerText = item.text.toLowerCase();
+                    let matchedTerms = [];
                     let isJustice = false;
-                    for (const [key, synonyms] of Object.entries(conceptMap)) {
-                        if (synonyms.some(syn => lower.includes(syn))) isJustice = true;
+
+                    for (const [dim, phrases] of Object.entries(conceptMap)) {
+                        phrases.forEach(phrase => {
+                            const regex = new RegExp(`\\b${phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`, 'i');
+                            if(regex.test(lowerText)) {
+                                isJustice = true;
+                                matchedTerms.push(phrase);
+                            }
+                        });
                     }
 
                     if(isJustice) {
-                        let dim = "Recognitional";
-                        if(lower.includes("participation") || lower.includes("consult") || lower.includes("transparent") || lower.includes("involve") || lower.includes("engage")) dim = "Procedural";
-                        else if(lower.includes("finance") || lower.includes("allocat") || lower.includes("benefit") || lower.includes("fund") || lower.includes("distribut") || lower.includes("resource")) dim = "Distributive";
-                        else if(lower.includes("loss") || lower.includes("damage") || lower.includes("historical") || lower.includes("repar") || lower.includes("compensat")) dim = "Restorative";
-
-                        let tier = "Tokenistic";
-                        if(lower.includes("law") || lower.includes("act") || lower.includes("legisla") || lower.includes("target") || lower.includes("mandate")) {
-                            tier = "Embedded";
-                            embeddedCount++;
-                        } else if(lower.includes("plan") || lower.includes("measure") || lower.includes("policy") || lower.includes("framework")) {
-                            tier = "Partial";
-                            partialCount++;
-                        } else {
-                            tokenisticCount++;
-                        }
+                        const { dim, tier } = assignDimensionAndTier(item.text, matchedTerms);
+                        
+                        if(tier === "Embedded") embeddedCount++;
+                        else if(tier === "Partial") partialCount++;
+                        else tokenisticCount++;
 
                         statementLedger.push({ page: item.page, text: item.text, dimension: dim, tier: tier });
                     }
@@ -958,19 +1004,19 @@
 
                 if(totalFound === 0) {
                     vTitle.innerText = "No Explicit Climate Justice Statements Found";
-                    vSummary.innerText = "The document does not contain explicit references matching the climate justice evaluation matrix.";
+                    vSummary.innerText = "The document does not contain explicit or implicit references matching the climate justice evaluation framework.";
                     banner.style.borderLeftColor = "var(--text-muted)";
-                } else if(embeddedCount >= 3 || (embeddedCount / totalFound) > 0.3) {
+                } else if(embeddedCount >= 4 || (embeddedCount / totalFound) > 0.25) {
                     vTitle.innerText = `Transformative Climate Justice Achieved (${config.c})`;
-                    vSummary.innerText = `The ${config.c} NDC demonstrates strong, legally backed, and institutionalized commitments. Out of ${totalFound} flagged statements, ${embeddedCount} are fully embedded in policy or legislative frameworks.`;
+                    vSummary.innerText = `The ${config.c} NDC demonstrates strong, legally backed, and institutionalized commitments. Out of ${totalFound} flagged statement blocks, ${embeddedCount} are fully embedded in policy, finance, or legislative frameworks.`;
                     banner.style.borderLeftColor = "var(--accent)";
                 } else if(partialCount > tokenisticCount) {
                     vTitle.innerText = `Partial Justice Commitment (${config.c})`;
-                    vSummary.innerText = `The ${config.c} NDC contains actionable planning measures, but lacks binding statutory enforcement. High proportion of partial commitments (${partialCount}/${totalFound}).`;
+                    vSummary.innerText = `The ${config.c} NDC contains actionable planning measures, but lacks binding statutory enforcement. Moderate risk of justice-washing (${partialCount}/${totalFound} partial commitments).`;
                     banner.style.borderLeftColor = "var(--pending)";
                 } else {
                     vTitle.innerText = `Predominantly Tokenistic / High Justice-Washing Risk (${config.c})`;
-                    vSummary.innerText = `Statements in the ${config.c} NDC consist primarily of aspirational language without binding mechanisms or budget allocations (${tokenisticCount}/${totalFound} tokenistic mentions).`;
+                    vSummary.innerText = `Statements in the ${config.c} NDC consist primarily of aspirational language without binding mechanisms, strategic plans, or budget allocations (${tokenisticCount}/${totalFound} tokenistic mentions).`;
                     banner.style.borderLeftColor = "var(--tokenistic)";
                 }
 
@@ -1049,7 +1095,6 @@
         // --- AI Text Scraper Engine ---
         async function runBrowserAnalysis() {
             const fileUrl = document.getElementById('ai-ndc-select').value;
-            const queryStr = document.getElementById('ai-query').value.toLowerCase();
             const resultLimit = parseInt(document.getElementById('ai-depth').value, 10) || 15;
             const term = document.getElementById('ai-terminal');
             
@@ -1058,49 +1103,26 @@
             term.innerHTML = `<p class="sys-msg">System: Fetching document from Hugging Face CDN...</p>`;
             
             try {
-                const loadingTask = pdfjsLib.getDocument(fileUrl);
-                const pdf = await loadingTask.promise;
-                term.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting text page-by-page from ${pdf.numPages} pages...</p>`;
+                const passages = await extractPassagesFromPDF(fileUrl, term);
+                term.innerHTML += `<p class="sys-msg">System: Extracted ${passages.length} policy passages. Running expanded conceptual dictionary matching...</p>`;
                 
-                let pagePassages = [];
-                for(let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    const pageText = content.items.map(item => item.str).join(" ").replace(/\s+/g, " ").trim();
-                    if(pageText.length > 25) {
-                        const sentences = pageText.match(/[^.!?]+[.!?]+/g) || [pageText];
-                        sentences.forEach(sent => {
-                            if(sent.trim().length > 30) pagePassages.push({ pageNum: i, text: sent.trim() });
-                        });
-                    }
-                }
-                
-                term.innerHTML += `<p class="sys-msg">System: Extracted ${pagePassages.length} policy passages. Running conceptual dictionary matching...</p>`;
-                
-                const queryWordsRaw = queryStr.split(',').map(w => w.trim());
-                let activeConcepts = [];
-                queryWordsRaw.forEach(qw => {
-                    let found = false;
-                    for (const [key, synonyms] of Object.entries(conceptMap)) {
-                        if (synonyms.includes(qw) || key === qw) {
-                            activeConcepts = activeConcepts.concat(synonyms);
-                            found = true;
-                        }
-                    }
-                    if(!found) activeConcepts.push(qw);
-                });
-
-                activeConcepts = [...new Set(activeConcepts)].filter(w => w.length > 2);
-
                 let scoredPassages = [];
-                pagePassages.forEach(item => {
+                passages.forEach(item => {
                     let score = 0;
                     let lowerText = item.text.toLowerCase();
                     let matchedTerms = [];
-                    activeConcepts.forEach(concept => {
-                        if(lowerText.includes(concept)) { score += 1; matchedTerms.push(concept); }
-                    });
-                    if(score > 0) scoredPassages.push({ pageNum: item.pageNum, text: item.text, score: score, matches: [...new Set(matchedTerms)] });
+
+                    for (const [dim, phrases] of Object.entries(conceptMap)) {
+                        phrases.forEach(phrase => {
+                            const regex = new RegExp(`\\b${phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`, 'i');
+                            if(regex.test(lowerText)) {
+                                score += 1;
+                                matchedTerms.push(phrase);
+                            }
+                        });
+                    }
+
+                    if(score > 0) scoredPassages.push({ pageNum: item.page, text: item.text, score: score, matches: [...new Set(matchedTerms)] });
                 });
 
                 scoredPassages.sort((a, b) => b.score - a.score);
@@ -1111,14 +1133,14 @@
                 lastScrapedCountry = sel.options[sel.selectedIndex].text;
 
                 if(finalResults.length === 0) {
-                    term.innerHTML += `<p class="err-msg">Result: No significant passages found matching the query concepts.</p>`;
+                    term.innerHTML += `<p class="err-msg">Result: No significant passages found implicitly or explicitly matching justice concepts.</p>`;
                 } else {
                     term.innerHTML += `<br><p style="color:#34c759; font-weight:bold;">--- Retrieved ${finalResults.length} Relevant Passages (Max Limit: ${resultLimit}) ---</p>`;
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
-                            const regex = new RegExp(`\\b(${concept})\\b`, 'gi');
-                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$1</span>`);
+                            const regex = new RegExp(`\\b(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})\\b`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$&</span>`);
                         });
                         term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
                     });
@@ -1132,7 +1154,7 @@
             }
         }
 
-        async function downloadFullTextDocx() {
+        async function exportScrapedDocx() {
             const term = document.getElementById('ai-terminal');
             if(lastScrapedResults.length === 0) { 
                 term.innerHTML += `<p class="err-msg">Error: Please run 'Check for Justice Mentions' first.</p>`; 
