@@ -6,16 +6,20 @@
     <title>UNU-EHS FAST Team | JUST-NDC: Assessing Transformative Climate Justice in NDC 3.0</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <!-- PDF.js for Client-Side AI Analyzer Text Extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+    
     <style>
         :root {
             --apple-bg: #f5f5f7;
             --apple-card: rgba(255, 255, 255, 0.8);
             --apple-glass: rgba(255, 255, 255, 0.65);
             --apple-sidebar: rgba(240, 240, 243, 0.75);
-            --primary: #0066cc; /* Apple Blue */
+            --primary: #0066cc; 
             --secondary: #5ac8fa; 
-            --accent: #34c759; /* Apple Green */
-            --pending: #FDBE02; /* Mango */
+            --accent: #34c759; 
+            --pending: #FDBE02; 
             --text-dark: #1d1d1f;
             --text-muted: #86868b;
             --border-light: rgba(0, 0, 0, 0.08);
@@ -24,43 +28,20 @@
 
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background-color: #e8e8ed; 
-            color: var(--text-dark); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh;
+            margin: 0; padding: 0; background-color: #e8e8ed; color: var(--text-dark); 
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* macOS Window Container */
         .mac-window {
-            width: 95vw;
-            max-width: 1500px;
-            height: 92vh;
-            background: var(--apple-bg);
-            border-radius: 18px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
+            width: 95vw; max-width: 1500px; height: 92vh; background: var(--apple-bg);
+            border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
         }
 
-        /* macOS Title Bar */
         .mac-titlebar {
-            height: 42px;
-            background: rgba(235, 235, 240, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            user-select: none;
-            z-index: 100;
+            height: 42px; background: rgba(235, 235, 240, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light); display: flex; align-items: center; padding: 0 16px; user-select: none; z-index: 100;
         }
 
         .traffic-lights { display: flex; gap: 8px; }
@@ -69,70 +50,26 @@
         .dot-minimize { background-color: #ffbd2e; border: 1px solid #dea123; }
         .dot-maximize { background-color: #27c93f; border: 1px solid #1aab29; }
 
-        .window-title {
-            flex-grow: 1;
-            text-align: center;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #424245;
-            letter-spacing: -0.01em;
-            margin-right: 52px; /* Balance traffic lights */
-        }
+        .window-title { flex-grow: 1; text-align: center; font-size: 0.85rem; font-weight: 600; color: #424245; letter-spacing: -0.01em; margin-right: 52px; }
 
         .app-body { display: flex; flex-grow: 1; height: calc(100% - 42px); overflow: hidden; }
 
-        /* macOS Glassmorphism Sidebar */
         .sidebar { 
-            width: 280px; 
-            background-color: var(--apple-sidebar); 
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            padding: 25px 15px; 
-            box-sizing: border-box; 
-            border-right: 1px solid var(--border-light); 
-            display: flex;
-            flex-direction: column;
+            width: 280px; background-color: var(--apple-sidebar); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            padding: 25px 15px; box-sizing: border-box; border-right: 1px solid var(--border-light); display: flex; flex-direction: column; overflow-y: auto;
         }
 
-        .sidebar-header {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 15px;
-            padding-left: 10px;
-        }
+        .sidebar-header { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 15px; padding-left: 10px; }
 
         .sidebar button { 
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%; 
-            padding: 10px 14px; 
-            margin-bottom: 6px; 
-            border: none; 
-            background: transparent; 
-            cursor: pointer; 
-            text-align: left; 
-            border-radius: 10px; 
-            font-size: 0.95rem; 
-            color: var(--text-dark); 
-            font-weight: 500;
-            transition: all 0.15s ease; 
+            display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 14px; margin-bottom: 6px; border: none; 
+            background: transparent; cursor: pointer; text-align: left; border-radius: 10px; font-size: 0.95rem; color: var(--text-dark); font-weight: 500; transition: all 0.15s ease; 
         }
 
         .sidebar button:hover { background: rgba(0, 0, 0, 0.04); }
         .sidebar button.active-btn { background: var(--primary); color: #ffffff; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.25); }
 
-        /* Main Workspace */
-        .content { 
-            flex-grow: 1; 
-            padding: 40px 50px; 
-            box-sizing: border-box; 
-            overflow-y: auto; 
-            background: var(--apple-bg);
-        }
+        .content { flex-grow: 1; padding: 40px 50px; box-sizing: border-box; overflow-y: auto; background: var(--apple-bg); }
 
         .page { display: none; animation: macFade 0.3s ease-out; }
         .page.active { display: block; }
@@ -142,31 +79,13 @@
         h2 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text-dark); margin-top: 35px; }
         p { line-height: 1.55; font-size: 1.05rem; color: #333336; }
 
-        /* Apple UI Cards */
-        .ui-box { 
-            background: var(--apple-card); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 28px; 
-            border-radius: 18px; 
-            box-shadow: var(--apple-shadow); 
-            margin-top: 22px; 
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-        }
+        .ui-box { background: var(--apple-card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 28px; border-radius: 18px; box-shadow: var(--apple-shadow); margin-top: 22px; border: 1px solid rgba(255, 255, 255, 0.8); }
 
         .lang-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 25px; }
-        .lang-card { 
-            padding: 16px; 
-            border-radius: 14px; 
-            background: #fff; 
-            text-align: center; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
-            border: 1px solid var(--border-light); 
-        }
+        .lang-card { padding: 16px; border-radius: 14px; background: #fff; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light); }
         .lang-card h2 { margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 700; }
         .lang-card p { margin: 3px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
 
-        /* Tables */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); text-align: left; vertical-align: middle; font-size: 0.95rem; }
         .sticky-th th { background-color: rgba(245, 245, 247, 0.9); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; }
@@ -182,7 +101,6 @@
         .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: 12px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; background: rgba(255,255,255,0.9); }
         .search-box:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,102,204,0.15); }
 
-        /* Timeline & Framework Styles */
         .timeline-list { list-style: none; padding-left: 0; }
         .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
         .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
@@ -199,12 +117,19 @@
         .ex-tokenistic { border-left-color: #d48b71; }
         .ex-partial { border-left-color: #c9c05e; }
         .ex-embedded { border-left-color: #88b08d; }
+
+        /* Analyzer Styles */
+        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 12px; height: 300px; overflow-y: auto; font-size: 0.9rem; line-height: 1.5; margin-top: 15px; }
+        .analyzer-terminal p { margin: 5px 0; color: #f8f8f2; font-size: 0.9rem; }
+        .analyzer-terminal .sys-msg { color: #66d9ef; }
+        .analyzer-terminal .err-msg { color: #f92672; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); }
     </style>
 </head>
 <body>
 
     <div class="mac-window">
-        <!-- macOS Title Bar -->
         <div class="mac-titlebar">
             <div class="traffic-lights">
                 <span class="dot dot-close"></span>
@@ -215,16 +140,15 @@
         </div>
 
         <div class="app-body">
-            <!-- macOS Sidebar -->
             <div class="sidebar">
                 <div class="sidebar-header">Navigation</div>
                 <button id="btn-dashboard" class="active-btn" onclick="showPage('dashboard', this)"><span>📊</span> Project Tracker</button>
                 <button id="btn-methodology" onclick="showPage('methodology', this)"><span>📘</span> Framework & Method</button>
                 <button id="btn-map" onclick="showPage('map', this)"><span>🗺️</span> Global Map & Status</button>
                 <button id="btn-repository" onclick="showPage('repository', this)"><span>💡</span> Coding Examples</button>
+                <button id="btn-analyzer" onclick="showPage('analyzer', this)"><span>🧠</span> AI Policy Analyzer</button>
             </div>
 
-            <!-- Main Content Area -->
             <div class="content">
                 <!-- PAGE 1: DASHBOARD -->
                 <div id="dashboard" class="page active">
@@ -235,7 +159,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                             <div>
                                 <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">📍 Current Timeline Marker</span>
-                                <h3 id="current-date-display" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.3rem;">August 5, 2026</h3>
+                                <h3 id="current-date-display" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.3rem;">Loading...</h3>
                             </div>
                             <div style="text-align: right;">
                                 <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Active Phase</span>
@@ -244,9 +168,7 @@
                         </div>
                     </div>
 
-                    <div class="ui-box">
-                        <div id="gantt_chart" style="width: 100%; height: 310px;"></div>
-                    </div>
+                    <div class="ui-box"><div id="gantt_chart" style="width: 100%; height: 310px;"></div></div>
                     
                     <div class="ui-box">
                         <h3>Detailed Project Roadmap</h3>
@@ -271,20 +193,9 @@
                         <div class="framework-box box-distributive"><h3 style="margin:0 0 10px 0;">Distributive Justice</h3><p style="margin:0; font-size:0.9rem;">Equitably shares benefits and burdens of climate actions and impacts across groups and generations.</p></div>
                         <div class="framework-box box-restorative"><h3 style="margin:0 0 10px 0;">Restorative Justice</h3><p style="margin:0; font-size:0.9rem;">Recognizes and seeks to address past climate injustices through reparative measures and responses.</p></div>
                     </div>
-                    
                     <div class="box-transformative">
                         <h3 style="margin:0 0 6px 0;">Transformative Climate Justice</h3>
                         <p style="margin:0; font-size:0.95rem;">Addressing the root causes of climate change and social injustice.</p>
-                    </div>
-
-                    <div class="ui-box">
-                        <h3>Coding Workflow</h3>
-                        <ol style="line-height: 1.8; margin-bottom: 0;">
-                            <li><strong>AI Paragraph Scrape:</strong> NLP identifies explicit and implicit references to justice in NDC documents.</li>
-                            <li><strong>Dimension Assignment:</strong> Code statements into Recognitional, Procedural, Distributive, or Restorative justice.</li>
-                            <li><strong>Commitment Grading:</strong> Rate commitments from <em>No Mention</em> up to <em>Embedded</em> (backed by law, target, budget, and accountability).</li>
-                            <li><strong>Blind Cross-Review:</strong> Secondary verification to guarantee cross-coder reliability.</li>
-                        </ol>
                     </div>
                 </div>
 
@@ -307,6 +218,16 @@
                         <div style="width: 100%; background: rgba(255,255,255,0.2); height: 10px; border-radius: 5px; margin-top: 15px; overflow: hidden;">
                             <div id="progress-bar-fill" style="width: 0%; background: #34c759; height: 100%; transition: width 0.4s ease;"></div>
                         </div>
+                    </div>
+
+                    <div class="lang-container" style="margin-top: 25px;">
+                        <div class="lang-card"><h2>82</h2><p>English</p></div>
+                        <div class="lang-card"><h2>16</h2><p>Spanish</p></div>
+                        <div class="lang-card"><h2>15</h2><p>French</p></div>
+                        <div class="lang-card"><h2>4</h2><p>Russian</p></div>
+                        <div class="lang-card"><h2>1</h2><p>Arabic</p></div>
+                        <div class="lang-card"><h2>1</h2><p>Chinese</p></div>
+                        <div class="lang-card"><h2>1</h2><p>Ukrainian</p></div>
                     </div>
 
                     <div class="ui-box">
@@ -356,6 +277,30 @@
                     <h1>Coding Examples & Reference</h1>
                     <p>Reference guide illustrating the practical application of our qualitative coding methodology.</p>
                     <div id="examples-list"></div>
+                </div>
+
+                <!-- PAGE 5: AI ANALYZER -->
+                <div id="analyzer" class="page">
+                    <h1>AI Policy Analyzer</h1>
+                    <p>Select an NDC document from the repository. The client-side NLP engine will parse the PDF and extract passages relevant to your climate justice query instantly in your browser.</p>
+                    
+                    <div class="ui-box" style="background: #f8f9fa;">
+                        <div class="form-group">
+                            <label for="ai-ndc-select">Select NDC Document to Analyze:</label>
+                            <select id="ai-ndc-select" class="search-box">
+                                <option value="" disabled selected>Loading available NDCs...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ai-query">Policy Query / Focus Area:</label>
+                            <input type="text" id="ai-query" class="search-box" value="vulnerable groups, marginalized, justice, equity, indigenous, women, participation">
+                        </div>
+                        <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff;">Run Document Analysis</button>
+                        
+                        <div id="ai-terminal" class="analyzer-terminal">
+                            <p class="sys-msg">System: Ready. Select a document and click 'Run Document Analysis' to begin parsing.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -419,7 +364,25 @@
 
         let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
         let codingExamples = JSON.parse(JSON.stringify(defaultExamples));
+        const hfBaseUrl = "https://huggingface.co/spaces/jaff4r/Climate-Justice-in-NDCs/resolve/main/ndcs/";
         
+        // System Initializations
+        document.addEventListener("DOMContentLoaded", () => {
+            // Set dynamic Date
+            const now = new Date();
+            document.getElementById('current-date-display').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            // Populate Analyzer Dropdown
+            const select = document.getElementById('ai-ndc-select');
+            select.innerHTML = '<option value="" disabled selected>Select an NDC document...</option>';
+            ndcData.forEach(ndc => {
+                let opt = document.createElement('option');
+                opt.value = ndc.url ? ndc.url : hfBaseUrl + encodeURIComponent(ndc.f);
+                opt.textContent = `${ndc.c} (${ndc.l})`;
+                select.appendChild(opt);
+            });
+        });
+
         const savedNdcData = localStorage.getItem('ndcTrackerState');
         if (savedNdcData) {
             const parsed = JSON.parse(savedNdcData);
@@ -457,7 +420,6 @@
         function loadTables() {
             const tbody = document.getElementById('tableBody');
             let html = '';
-            const hfBaseUrl = "https://huggingface.co/spaces/jaff4r/Climate-Justice-in-NDCs/resolve/main/ndcs/";
             ndcData.forEach(item => {
                 const badgeClass = item.s === 1 ? 'badge-done' : 'badge-pending';
                 const badgeText = item.s === 1 ? 'Analyzed ✓' : 'Pending ⟳';
@@ -472,11 +434,13 @@
 
         function showPage(pageId, btnElement) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.sidebar button').forEach(b => btn.classList.remove('active-btn'));
+            document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-btn')); // Fix applied here!
             document.getElementById(pageId).classList.add('active');
             btnElement.classList.add('active-btn');
-            if(pageId === 'dashboard') drawGantt();
-            if(pageId === 'map') drawRegionsMap();
+            
+            // Timeout prevents Google Charts from crashing when drawing in a hidden div
+            if(pageId === 'dashboard') { setTimeout(drawGantt, 50); }
+            if(pageId === 'map') { setTimeout(drawRegionsMap, 50); }
         }
 
         google.charts.load('current', {'packages':['gantt', 'geochart']});
@@ -550,6 +514,79 @@
                 defaultColor: '#e0e0e0',
                 legend: 'none'
             });
+        }
+
+        // --- Client-Side AI Analyzer Engine ---
+        async function runBrowserAnalysis() {
+            const fileUrl = document.getElementById('ai-ndc-select').value;
+            const queryStr = document.getElementById('ai-query').value.toLowerCase();
+            const term = document.getElementById('ai-terminal');
+            
+            if(!fileUrl) {
+                term.innerHTML += `<p class="err-msg">Error: Please select an NDC document first.</p>`;
+                return;
+            }
+
+            term.innerHTML = `<p class="sys-msg">System: Fetching document from Hugging Face CDN...</p>`;
+            
+            try {
+                // Load PDF
+                const loadingTask = pdfjsLib.getDocument(fileUrl);
+                const pdf = await loadingTask.promise;
+                term.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting text from ${pdf.numPages} pages...</p>`;
+                
+                let fullText = "";
+                for(let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    const strings = content.items.map(item => item.str);
+                    fullText += strings.join(" ") + " ";
+                }
+                
+                term.innerHTML += `<p class="sys-msg">System: Text extracted. Segmenting sentences and running semantic keyword match...</p>`;
+                
+                // Clean and chunk text (Mocking Spacy/FAISS locally)
+                fullText = fullText.replace(/\s+/g, " ").trim();
+                const sentences = fullText.match(/[^.!?]+[.!?]+/g) || [];
+                const queryWords = queryStr.split(',').map(w => w.trim()).filter(w => w.length > 2);
+                
+                let scoredSentences = [];
+                sentences.forEach(sentence => {
+                    if(sentence.length < 25) return;
+                    let score = 0;
+                    let lowerSent = sentence.toLowerCase();
+                    queryWords.forEach(qw => {
+                        if(lowerSent.includes(qw)) score += 1;
+                    });
+                    if(score > 0) {
+                        scoredSentences.push({ text: sentence.trim(), score: score });
+                    }
+                });
+
+                scoredSentences.sort((a, b) => b.score - a.score);
+                const topResults = scoredSentences.slice(0, 3);
+
+                if(topResults.length === 0) {
+                    term.innerHTML += `<p class="err-msg">Result: No significant passages found matching the provided query terms.</p>`;
+                } else {
+                    term.innerHTML += `<br><p style="color:#f92672; font-weight:bold;">--- Retrieved High-Relevance Passages ---</p>`;
+                    topResults.forEach((res, idx) => {
+                        // Highlight matching words
+                        let highlightedText = res.text;
+                        queryWords.forEach(qw => {
+                            const regex = new RegExp(`(${qw})`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(249,38,114,0.3); color:#fff;">$1</span>`);
+                        });
+                        term.innerHTML += `<p>[Passage ${idx + 1}] ${highlightedText}</p><br>`;
+                    });
+                    term.innerHTML += `<p class="sys-msg">System: Ready for next query.</p>`;
+                }
+                term.scrollTop = term.scrollHeight;
+
+            } catch (err) {
+                console.error(err);
+                term.innerHTML += `<p class="err-msg">Error: CORS/Network block. Ensure Hugging Face repository files are public and accessible.</p>`;
+            }
         }
     </script>
 </body>
