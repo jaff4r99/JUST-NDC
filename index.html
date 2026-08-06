@@ -13,19 +13,19 @@
     <style>
         :root {
             --apple-bg: #f5f5f7;
-            --apple-card: rgba(255, 255, 255, 0.85);
+            --apple-card: #ffffff;
             --apple-sidebar: rgba(240, 240, 243, 0.85);
             --primary: #0066cc; 
             --secondary: #5ac8fa; 
             --accent: #34c759; 
             --pending: #FDBE02; 
-            --tokenistic: #df9e85;
-            --partial: #d1ca74;
-            --embedded: #92b998;
+            --tokenistic: #e99883;
+            --partial: #d6cc68;
+            --embedded: #8fbc97;
             --text-dark: #1d1d1f;
             --text-muted: #86868b;
             --border-light: rgba(0, 0, 0, 0.08);
-            --apple-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --apple-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         body { 
@@ -37,7 +37,7 @@
 
         .mac-window {
             width: 96vw; max-width: 1600px; height: 94vh; background: var(--apple-bg);
-            border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
             display: flex; flex-direction: column; overflow: hidden; position: relative;
         }
 
@@ -66,7 +66,7 @@
 
         .sidebar button { 
             display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 14px; margin-bottom: 6px; border: none; 
-            background: transparent; cursor: pointer; text-align: left; border-radius: 10px; font-size: 0.95rem; color: var(--text-dark); font-weight: 500; transition: all 0.15s ease; 
+            background: transparent; cursor: pointer; text-align: left; border-radius: 8px; font-size: 0.95rem; color: var(--text-dark); font-weight: 500; transition: all 0.1s ease; 
         }
 
         .sidebar button:hover { background: rgba(0, 0, 0, 0.05); }
@@ -74,25 +74,25 @@
 
         .content { flex-grow: 1; flex-shrink: 1; min-width: 0; padding: 40px 50px; box-sizing: border-box; overflow-y: auto; background: var(--apple-bg); }
 
-        .page { display: none; animation: macFade 0.3s ease-out; }
+        .page { display: none; animation: macFade 0.2s ease-out; }
         .page.active { display: block; }
-        @keyframes macFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes macFade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { font-size: 2.1rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 0; color: var(--text-dark); }
         h2 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text-dark); margin-top: 35px; }
         p { line-height: 1.55; font-size: 1.05rem; color: #333336; }
 
-        .ui-box { background: var(--apple-card); padding: 28px; border-radius: 16px; box-shadow: var(--apple-shadow); margin-top: 22px; border: 1px solid rgba(255, 255, 255, 0.8); }
+        .ui-box { background: var(--apple-card); padding: 28px; border-radius: 12px; box-shadow: var(--apple-shadow); margin-top: 22px; border: 1px solid rgba(0, 0, 0, 0.05); }
 
         .lang-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-bottom: 25px; }
-        .lang-card { padding: 16px; border-radius: 12px; background: #fff; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light); }
+        .lang-card { padding: 16px; border-radius: 10px; background: #fff; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid var(--border-light); }
         .lang-card h2 { margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 700; }
         .lang-card p { margin: 3px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); text-align: left; vertical-align: middle; font-size: 0.95rem; }
         .sticky-th th { background-color: rgba(245, 245, 247, 0.9); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; user-select: none; }
-        .table-container { max-height: 400px; overflow-y: auto; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border-light); background: #fff; }
+        .table-container { max-height: 400px; overflow-y: auto; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--border-light); background: #fff; }
 
         .sticky-th th::after { content: ' \21D5'; font-size: 0.8rem; color: #aaa; margin-left: 5px; }
         .sticky-th th.sort-asc::after { content: ' \2191'; color: var(--primary); }
@@ -104,66 +104,67 @@
         .badge-done { background: rgba(52, 199, 89, 0.15); color: #248a3d; }
         .badge-pending { background: rgba(253, 190, 2, 0.2); color: #8a6d0b; }
 
-        .download-btn { background-color: rgba(0, 102, 204, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.15s; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .download-btn { background-color: rgba(0, 102, 204, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.15s; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
         .download-btn:hover { background-color: var(--primary); color: #fff; }
 
         .btn-danger { background-color: rgba(255, 59, 48, 0.1) !important; color: #ff3b30 !important; }
         .btn-danger:hover { background-color: #ff3b30 !important; color: #fff !important; }
 
-        .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; background: rgba(255,255,255,0.9); }
+        .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; background: rgba(255,255,255,0.9); }
         .search-box:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,102,204,0.15); }
 
         .timeline-list { list-style: none; padding-left: 0; }
         .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
         .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
 
-        /* Framework Design */
+        /* Perfected Framework Design */
         .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
         .framework-box { padding: 24px; border-radius: 12px; box-shadow: var(--apple-shadow); }
-        .box-recognitional { background-color: #63986a; }
-        .box-procedural { background-color: #427255; }
-        .box-distributive { background-color: #8c5042; }
-        .box-restorative { background-color: #bb6e4b; }
-        .box-transformative { background-color: #001f3f; color: #fff; padding: 28px; border-radius: 12px; text-align: center; box-shadow: var(--apple-shadow); margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .box-recognitional { background-color: #659b6c; }
+        .box-procedural { background-color: #427356; }
+        .box-distributive { background-color: #8f5242; }
+        .box-restorative { background-color: #ca734f; }
+        .box-transformative { background-color: #001f40; color: #fff; padding: 28px; border-radius: 12px; text-align: center; box-shadow: var(--apple-shadow); margin: 0 auto; width: 100%; box-sizing: border-box; }
 
-        /* Matrix Styling */
-        .matrix-table { margin-top: 20px; border: 1px solid var(--border-light); background: #fff; border-radius: 8px; overflow: hidden; }
+        /* Perfected Matrix Styling */
+        .matrix-table { margin-top: 20px; border: 1px solid rgba(0,0,0,0.1); background: #fff; border-radius: 8px; overflow: hidden; }
         .matrix-table th, .matrix-table td { border: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; color: #333; }
-        .col-dim { font-weight: 700; background-color: #f9f9f9; width: 15%; }
+        .col-dim { font-weight: 700; background-color: #ffffff; width: 15%; }
         .col-absent { background-color: #ffffff; width: 15%; }
-        .col-weak { background-color: #e69a84; color: #000; width: 22%; }
-        .col-mod { background-color: #d8ce6e; color: #000; width: 24%; }
-        .col-strong { background-color: #94bd99; color: #000; width: 24%; }
+        .col-weak { background-color: var(--tokenistic); color: #000; width: 22%; }
+        .col-mod { background-color: var(--partial); color: #000; width: 24%; }
+        .col-strong { background-color: var(--embedded); color: #000; width: 24%; }
         .matrix-header th { font-weight: 700; font-size: 0.95rem; padding: 14px; }
+        
+        .header-light-blue { color: #5ac8fa !important; }
 
-        /* Coding Examples Styling */
-        .example-box { padding: 20px; border-radius: 12px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; overflow: hidden; }
+        /* Evaluator & Examples Ledger Styling */
+        .example-box { padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; overflow: hidden; }
         .example-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; }
-        .ex-tokenistic::before { background-color: #df9e85; }
-        .ex-partial::before { background-color: #d1ca74; }
-        .ex-embedded::before { background-color: #92b998; }
+        .ex-tokenistic::before { background-color: var(--tokenistic); }
+        .ex-partial::before { background-color: var(--partial); }
+        .ex-embedded::before { background-color: var(--embedded); }
         .ex-badge { padding: 6px 12px; border-radius: 6px; font-weight: 700; color: #333; font-size: 0.8rem; text-transform: uppercase; display: inline-block;}
-        .badge-tok { background: #df9e85; }
-        .badge-par { background: #d1ca74; }
-        .badge-emb { background: #92b998; }
+        .badge-tok { background: var(--tokenistic); }
+        .badge-par { background: var(--partial); }
+        .badge-emb { background: var(--embedded); }
         .ex-content strong { display: block; margin-bottom: 5px; color: var(--primary); }
         .ex-content p { margin-top: 0; font-size: 0.95rem; }
 
         /* Analyzer Styles */
-        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 12px; height: 400px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 8px; height: 400px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
         .analyzer-terminal p { margin: 8px 0; color: #f8f8f2; }
         .analyzer-terminal .sys-msg { color: #66d9ef; font-weight: bold; }
         .analyzer-terminal .err-msg { color: #f92672; font-weight: bold; }
 
         .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
-        .metric-box { padding: 18px; border-radius: 12px; background: #fff; border: 1px solid var(--border-light); text-align: center; }
+        .metric-box { padding: 18px; border-radius: 10px; background: #fff; border: 1px solid var(--border-light); text-align: center; }
         .metric-box h3 { margin: 0; font-size: 1.8rem; color: var(--primary); }
         .metric-box p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
         
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); }
 
-        /* Tooltip CSS */
         .tooltip { position: relative; display: inline-block; border-bottom: 1px dotted var(--primary); cursor: help; color: var(--primary); font-weight: 600; }
         .tooltip .tooltiptext { visibility: hidden; width: 450px; background-color: #333; color: #fff; text-align: left; border-radius: 8px; padding: 15px; position: absolute; z-index: 1000; bottom: 125%; left: 0; opacity: 0; transition: opacity 0.3s; font-size: 0.85rem; line-height: 1.5; font-weight: normal; font-family: -apple-system, sans-serif; box-shadow: var(--apple-shadow); }
         .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
@@ -196,7 +197,7 @@
             <div class="content">
                 <!-- PAGE 1: DASHBOARD -->
                 <div id="dashboard" class="page active">
-                    <h1>JUST-NDC Project Roadmap</h1>
+                    <h1 style="color: #000;">JUST-NDC Project Roadmap</h1>
                     <p>Evaluating transformative climate justice across 120 NDC submissions (+2 Annexes). Target velocity: 2 NDCs per working day.</p>
                     
                     <div class="ui-box" style="border-left: 5px solid var(--primary); background: rgba(0,102,204,0.03);">
@@ -217,7 +218,7 @@
                     </div>
                     
                     <div class="ui-box">
-                        <h3>Detailed Project Roadmap</h3>
+                        <h3 style="margin-top:0;">Detailed Project Roadmap</h3>
                         <ul class="timeline-list">
                             <li><span class="timeline-date">July 20 – July 31: Project Setup and Calibration</span>Translating the transformative climate justice framework into structured AI prompts. Includes the July 30th UN-Habitat meeting to align technical parameters and pilot testing on early NDC 3.0 submissions to calibrate "tokenistic" vs. "embedded" distinctions.</li>
                             <li><span class="timeline-date">August 1 – August 31: Data Execution and Initial Mapping</span>Locking the document corpus (pre-Aug 1 deadline). Running the full dataset through the AI tool to extract statements, mapping results onto the two-axis matrix, and packaging all data for seamless October transition.</li>
@@ -230,10 +231,10 @@
 
                 <!-- PAGE 2: METHODOLOGY -->
                 <div id="methodology" class="page">
-                    <h1 style="color: var(--primary); font-size: 2.1rem; margin-bottom: 10px;">Framework & Methodology Instruction Manual</h1>
+                    <h1 class="header-light-blue" style="font-size: 2.1rem; margin-bottom: 10px;">Framework & Methodology Instruction Manual</h1>
                     <p style="margin-top: 0;">Welcome to the UNU-EHS FAST team's NDC evaluation hub. If you are new to this project (e.g., incoming researchers or student assistants), this page outlines exactly how we conduct our line-by-line analysis of NDC 3.0 documents to evaluate their commitments to transformative climate justice.</p>
                     
-                    <h2 style="color: var(--secondary);">1. The Transformative Climate Justice Framework</h2>
+                    <h2 class="header-light-blue">1. The Transformative Climate Justice Framework</h2>
                     
                     <div class="framework-grid">
                         <div class="framework-box box-recognitional">
@@ -255,16 +256,16 @@
                     </div>
                     
                     <div style="text-align: center; margin-top: 20px;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#001f3f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#001f40" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
                             <path d="M12 4v16M19 13l-7 7-7-7"/>
                         </svg>
                         <div class="box-transformative">
-                            <h3 style="margin:0 0 10px 0; color: #ffffff; text-transform: uppercase; font-size: 1.3rem; font-weight: 800; letter-spacing: 0.5px;">Transformative Climate Justice</h3>
-                            <p style="margin:0; font-size:1rem; color: #ffffff;">Addressing the root causes of climate change and social injustice.</p>
+                            <h3 style="margin:0 0 10px 0; color: #ffffff; text-transform: uppercase; font-size: 1.4rem; font-weight: 800; letter-spacing: 0.5px;">Transformative Climate Justice</h3>
+                            <p style="margin:0; font-size:1.05rem; color: #ffffff;">Addressing the root causes of climate change and social injustice.</p>
                         </div>
                     </div>
 
-                    <h2 style="color: var(--secondary);">2. The Line-by-Line Coding Guide</h2>
+                    <h2 class="header-light-blue">2. The Line-by-Line Coding Guide</h2>
                     <div class="ui-box" style="margin-top: 15px;">
                         <p style="margin-top: 0;">To process our corpus of 120 NDC documents at scale while maintaining rigorous qualitative standards, we follow a strict hybrid workflow. Here is what you need to do step-by-step:</p>
                         <ol style="line-height: 1.8; margin-bottom: 0;">
@@ -275,12 +276,12 @@
                         </ol>
                     </div>
                     
-                    <h2 style="color: var(--secondary);">3. Commitment Grading Matrix</h2>
+                    <h2 class="header-light-blue">3. Commitment Grading Matrix</h2>
                     <table class="matrix-table" style="margin-top: 15px;">
                         <thead>
                             <tr class="matrix-header">
                                 <th class="col-dim">Justice dimension</th>
-                                <th class="col-absent" style="background:#f4f4f4;">No mention (absent)</th>
+                                <th class="col-absent">No mention (absent)</th>
                                 <th class="col-weak">Tokenistic justice (weak commitment)</th>
                                 <th class="col-mod">Partial justice (moderate commitment)</th>
                                 <th class="col-strong">Embedded justice (strong commitment)</th>
@@ -297,7 +298,7 @@
 
                 <!-- PAGE 3: GLOBAL MAP -->
                 <div id="map" class="page">
-                    <h1>Global Analysis Status</h1>
+                    <h1 style="color: #000;">Global Analysis Status</h1>
                     <p>Interactive tracking across 146 covered countries from 120 NDCs (27 EU member states have 1 NDC).</p>
 
                     <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
@@ -390,7 +391,7 @@
 
                 <!-- PAGE 4: CODING EXAMPLES -->
                 <div id="repository" class="page">
-                    <h1>Coding Examples & Analysis</h1>
+                    <h1 style="color: #000;">Coding Examples & Analysis</h1>
                     <p style="font-size: 1.05rem; margin-bottom: 30px;">Welcome to the Coding Examples & Analysis hub. This section serves as a practical reference guide for our coding methodology. It illustrates how we interpret and grade real-world policy statements extracted from NDCs to maintain analytical consistency. Review the examples below to understand the nuanced differences between a mere tokenistic mention and a fully embedded commitment. You can also practice applying the framework by submitting and categorizing your own examples at the bottom of the page.</p>
                     
                     <div id="examples-list"></div>
@@ -425,8 +426,8 @@
 
                 <!-- PAGE 5: AI TEXT SCRAPER -->
                 <div id="analyzer" class="page">
-                    <h1>AI Text Scraper & Query Engine</h1>
-                    <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system bypasses basic keyword searches to identify structural semantic matches.</p>
+                    <h1 style="color: #000;">AI Text Scraper & Query Engine</h1>
+                    <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system utilizes an expanded multilingual dictionary to maximize extraction recall.</p>
                     
                     <div class="ui-box" style="background: #ffffff;">
                         <div class="form-group">
@@ -437,7 +438,7 @@
                         </div>
                         <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
                             <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                                <label>Policy Query Target: 
+                                <label>Target Query Parameters: 
                                     <span class="tooltip">Hover for Justice Terminology
                                       <span class="tooltiptext">
                                         <strong>Recognitional:</strong> Marginalized, indigenous rights, traditional knowledge, power imbalances, human rights, gender-responsive, GEDSI.<br><br>
@@ -473,8 +474,8 @@
 
                 <!-- PAGE 6: COUNTRY EVALUATOR & SYNTHESIS -->
                 <div id="evaluator" class="page">
-                    <h1>Automated Country Evaluator & Synthesis</h1>
-                    <p>Select an NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine chunks texts, parses contextual phrasing, and generates an overall country decree.</p>
+                    <h1 style="color: #000;">Automated Country Evaluator & Synthesis</h1>
+                    <p>Select an NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine classifies extracted contextual statements into their dimension and commitment tier.</p>
 
                     <div class="ui-box">
                         <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
@@ -574,13 +575,53 @@
             { country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
-        // Massively Expanded AI Analyzer Concept Map (Multilingual & Implicit/Explicit Tracking)
+        // Expanded Multilingual Concept Map
         const conceptMap = {
-            "Recognitional": ["marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "grupos marginados", "derechos indígenas", "savoirs traditionnels", "права коренных", "المعارف التقليدية", "边缘化群体", "вразливі групи", "women", "gender", "female", "gedsi", "fairness", "local communities"],
-            "Procedural": ["transparent process", "inclusive decision", "meaningful participation", "fair process", "procedural rights", "prior and informed consent", "fpic", "multi-stakeholder", "bottom-up", "decentralized governance", "grievance mechanism", "co-production", "consulta pública", "mécanismes de recours", "موافقة مسبقة", "包容性决策", "громадські консультації", "consultation", "participation"],
-            "Distributive": ["equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "equitable outcomes", "just transition", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "youth inclusion", "transición justa", "transition juste", "справедливый переход", "انتقال عادل", "公正转型", "finance", "allocation", "resource", "fair & ambitious", "cbdr"],
-            "Restorative": ["past climate injustice", "historical responsibilities", "reparative", "restorative", "past harms", "loss and damage", "non-economic loss", "common but differentiated responsibilities", "compensation", "rehabilitation", "ecological debt", "climate reparations", "relocation", "resettlement", "climate mobility", "displacement", "pérdidas y daños", "pertes et préjudices", "потери и ущерб", "الخسائر والأضرار", "损失与损害"],
-            "Transformative": ["root causes", "systemic change", "social injustice", "structural inequalities", "transformative", "paradigm shift", "decolonization", "systemic reform", "dismantling patriarchy", "fossil fuel phase-out", "degrowth", "post-growth", "well-being economy", "post-extractivism", "buen vivir", "deep decarbonization", "post-capitalism", "causas profundas", "décroissance", "коренные причины", "الأسباب الجذرية", "根本原因"]
+            "Recognitional": [
+                "marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "vulnerable", "empower", "women", "gender", "female", "gedsi", "fairness", "local communities",
+                "grupos marginados", "derechos indígenas", "pueblos indígenas", "conocimientos tradicionales", "saberes ancestrales", "desequilibrios de poder", "exclusión social", "enfoque de género", "interseccionalidad",
+                "groupes marginalisés", "droits des peuples autochtones", "savoirs traditionnels", "déséquilibres de pouvoir", "exclusion sociale", "approche sensible au genre", "intersectionnalité", "droits des autochtones", "groupes vulnérables",
+                "маргинализированные", "коренных народов", "традиционные знания", "гендерно-ориентированный", "социальная изоляция", "уязвимые группы",
+                "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "توازن القوى", "الإقصاء الاجتماعي", "المنظور الجنساني", "الفئات الضعيفة",
+                "边缘化群体", "原住民权利", "传统知识", "权力失衡", "社会排斥", "社会包容", "性别响应", "弱势群体",
+                "маргіналізовані", "корінних народів", "традиційні знання", "гендерно-чутливий", "соціальне відчуження", "вразливі групи"
+            ],
+            "Procedural": [
+                "transparent process", "inclusive decision", "meaningful participation", "fair process", "procedural rights", "prior and informed consent", "fpic", "multi-stakeholder", "bottom-up", "decentralized governance", "grievance mechanism", "co-production", "consultation", "participation", "stakeholder", "public consultation", "engage", "involve", "commune", "community", "communities",
+                "procesos transparentes", "decisiones inclusiva", "participación significativa", "consentimiento libre previo e informado", "consulta pública", "mecanismos de reclamación", "gobernanza descentralizada", "mecanismos de queja",
+                "processus transparents", "décision inclusive", "participation significative", "consentement préalable", "consultation publique", "mécanismes de recours", "gouvernance décentralisée",
+                "прозрачные процессы", "инклюзивное", "значимое участие", "осознанное согласие", "механизмы рассмотрения жалоб", "общественные консультации", "предварительное согласие",
+                "عمليات شفافة", "صنع قرار شامل", "مشاركة مجدية", "الموافقة المسبقة", "آليات التظلم", "اللامركزية", "مشاورات عامة",
+                "透明过程", "包容性决策", "有意义的参与", "事先知情同意", "利益相关方磋商", "申诉机制", "权力下放", "公众咨询",
+                "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"
+            ],
+            "Distributive": [
+                "equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "equitable outcomes", "just transition", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "youth inclusion", "vulnerable populations", "finance", "allocation", "resource", "fair & ambitious", "cbdr",
+                "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza",
+                "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses",
+                "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты",
+                "التقاسم العادل", "تقاسم الأعباء", "تقاسم المنافع", "الإنصاف بين الأجيال", "انتقال عادل", "الأمان الاجتماعي",
+                "公平分享", "责任分担", "利益共享", "代际公平", "公正转型", "社会安全网",
+                "справедливий розподіл", "розподіл тягаря", "розподіл вигод", "міжпоколінна справедливість", "справедливий перехід", "соціального захисту"
+            ],
+            "Restorative": [
+                "past climate injustice", "historical responsibilities", "reparative", "restorative", "past harms", "loss and damage", "non-economic loss", "common but differentiated responsibilities", "compensation", "rehabilitation", "ecological debt", "climate reparations", "relocation", "resettlement", "climate mobility", "displacement",
+                "injusticias climáticas pasadas", "responsabilidades históricas", "medidas reparadoras", "pérdidas y daños", "responsabilidades comunes pero diferenciadas", "deuda ecológica", "movilidad climática", "daños no económicos",
+                "injustices climatiques passées", "responsabilités historiques", "mesures de réparation", "pertes et préjudices", "responsabilités communes mais différenciées", "dette écologique", "mobilité climatique", "préjudices non économiques",
+                "прошлые климатические", "историческая ответственность", "потери и ущерб", "неэкономические потери", "общая но дифференцированная", "экологический долг", "климатическая миграция",
+                "المظالم المناخية", "المسؤوليات التاريخية", "تدابير جبر الضرر", "الخسائر والأضرار", "الخسائر غير الاقتصادية", "المسؤوليات المشتركة", "التنقل المناخي",
+                "历史气候不公", "历史责任", "补救措施", "损失与损害", "非经济损失", "共同但有区别的责任", "生态债务", "气候流动性",
+                "минулі кліматичні", "історична відповідальність", "втрати та збитки", "неекономічні втрати", "спільна але диференційована", "кліматична міграція"
+            ],
+            "Transformative": [
+                "root causes", "systemic change", "social injustice", "structural inequalities", "transformative", "paradigm shift", "decolonization", "systemic reform", "dismantling patriarchy", "fossil fuel phase-out", "degrowth", "post-growth", "well-being economy", "post-extractivism", "buen vivir", "deep decarbonization", "post-capitalism",
+                "causas profundas", "cambio sistémico", "desigualdades estructurales", "descolonización", "decrecimiento", "postcrecimiento", "economía del bienestar", "post-extractivismo", "vivir bien", "combustibles fósiles", "causas subyacentes",
+                "causes profondes", "changement systémique", "inégalités structurelles", "décolonisation", "décroissance", "post-croissance", "économie du bien-être", "énergies fossiles",
+                "коренные причины", "системные изменения", "структурное неравенство", "деколонизация", "антирост", "дерост", "пост-экстрактивизм", "отказ от ископаемого",
+                "الأسباب الجذرية", "التغيير المنهجي", "عدم المساواة الهيكلية", "إنهاء الاستعمار", "تراجع النمو", "ما بعد النمو", "اقتصاد الرفاه", "الوقود الأحفوري",
+                "根本原因", "系统性变革", "结构性不平等", "非殖民化", "去增长", "后增长", "福祉经济", "化石燃料",
+                "першопричини", "системні зміни", "структурна нерівність", "деколонізація", "антизростання", "викопного палива", "докорінні причини"
+            ]
         };
 
         let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
@@ -901,11 +942,11 @@
             });
         }
 
-        // --- Multi-Sentence Chunking for Accurate Context ---
+        // --- Context Block Extractor Engine ---
         async function extractPassagesFromPDF(fileUrl, termNode) {
             const loadingTask = pdfjsLib.getDocument(fileUrl);
             const pdf = await loadingTask.promise;
-            termNode.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting text page-by-page from ${pdf.numPages} pages...</p>`;
+            termNode.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting contextual text blocks from ${pdf.numPages} pages...</p>`;
             
             let pagePassages = [];
             for(let i = 1; i <= pdf.numPages; i++) {
@@ -914,12 +955,16 @@
                 const pageText = content.items.map(it => it.str).join(" ").replace(/\s+/g, " ").trim();
                 
                 if(pageText.length > 30) {
-                    // Chunk by overlapping sentences to capture true context
                     const sents = pageText.match(/[^.!?]+[.!?]+/g) || [pageText];
-                    for(let j = 0; j < sents.length; j += 2) {
-                        let chunk = sents[j];
-                        if(j + 1 < sents.length) chunk += " " + sents[j + 1];
-                        if(chunk.trim().length > 40) pagePassages.push({ page: i, text: chunk.trim() });
+                    for(let j = 0; j < sents.length; j++) {
+                        let chunk = sents[j].trim();
+                        if(chunk.length > 20) {
+                            // Rebuild surrounding context for accurate extraction
+                            let prev = (j > 0) ? sents[j-1].trim() : "";
+                            let next = (j < sents.length - 1) ? sents[j+1].trim() : "";
+                            let fullContext = `${prev} ${chunk} ${next}`.trim();
+                            pagePassages.push({ page: i, text: fullContext });
+                        }
                     }
                 }
             }
@@ -928,27 +973,28 @@
 
         function assignDimensionAndTier(text, conceptsMatched) {
             const lower = text.toLowerCase();
-            let dim = "";
-            let tier = "Tokenistic";
+            let dim = "Recognitional"; 
 
-            // Determine Dimension based on matched concepts
             if (conceptsMatched.some(c => conceptMap["Transformative"].includes(c))) dim = "Transformative";
             else if (conceptsMatched.some(c => conceptMap["Restorative"].includes(c))) dim = "Restorative";
             else if (conceptsMatched.some(c => conceptMap["Distributive"].includes(c))) dim = "Distributive";
             else if (conceptsMatched.some(c => conceptMap["Procedural"].includes(c))) dim = "Procedural";
-            else dim = "Recognitional"; 
 
-            // Strict Tier Grading
-            if (lower.includes("law") || lower.includes("act ") || lower.includes("legisla") || lower.includes("target") || lower.includes("mandate") || lower.includes("statut") || lower.includes("binding") || lower.includes("fund")) {
+            let tier = "Tokenistic";
+            const embeddedWords = ["law", "legislation", "statutory", "mandate", "legally binding", "enforcement", "accountability mechanism", "formal framework", "budget allocation", "decree", "act of parliament", "constitution"];
+            const partialWords = ["plan ", "measure", "policy", "framework", "strategy", "program", "initiative", "commit", "roadmap", "target"];
+
+            // Look for strict boundaries to avoid false positives (like 'act' in 'action')
+            if (embeddedWords.some(w => new RegExp(`\\b${w}\\b`, 'i').test(lower))) {
                 tier = "Embedded";
-            } else if (lower.includes("plan") || lower.includes("measure") || lower.includes("policy") || lower.includes("framework") || lower.includes("strategy") || lower.includes("program") || lower.includes("commit")) {
+            } else if (partialWords.some(w => new RegExp(`\\b${w}\\b`, 'i').test(lower))) {
                 tier = "Partial";
             }
 
             return { dim, tier };
         }
 
-        // --- Comprehensive Country Evaluator Engine ---
+        // --- Country Evaluator & Synthesis ---
         async function runFullCountryEvaluation() {
             const rawVal = document.getElementById('eval-country-select').value;
             if(!rawVal) { alert("Please select a country NDC first."); return; }
@@ -965,6 +1011,7 @@
                 
                 let embeddedCount = 0, partialCount = 0, tokenisticCount = 0;
                 let statementLedger = [];
+                let seenPassages = new Set(); // Prevent context overlap duplicates
 
                 passages.forEach(item => {
                     const lowerText = item.text.toLowerCase();
@@ -973,7 +1020,8 @@
 
                     for (const [dim, phrases] of Object.entries(conceptMap)) {
                         phrases.forEach(phrase => {
-                            const regex = new RegExp(`\\b${phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`, 'i');
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
                             if(regex.test(lowerText)) {
                                 isJustice = true;
                                 matchedTerms.push(phrase);
@@ -981,7 +1029,8 @@
                         });
                     }
 
-                    if(isJustice) {
+                    if(isJustice && !seenPassages.has(item.text)) {
+                        seenPassages.add(item.text);
                         const { dim, tier } = assignDimensionAndTier(item.text, matchedTerms);
                         
                         if(tier === "Embedded") embeddedCount++;
@@ -1009,7 +1058,7 @@
                 } else if(embeddedCount >= 4 || (embeddedCount / totalFound) > 0.25) {
                     vTitle.innerText = `Transformative Climate Justice Achieved (${config.c})`;
                     vSummary.innerText = `The ${config.c} NDC demonstrates strong, legally backed, and institutionalized commitments. Out of ${totalFound} flagged statement blocks, ${embeddedCount} are fully embedded in policy, finance, or legislative frameworks.`;
-                    banner.style.borderLeftColor = "var(--accent)";
+                    banner.style.borderLeftColor = "var(--embedded)";
                 } else if(partialCount > tokenisticCount) {
                     vTitle.innerText = `Partial Justice Commitment (${config.c})`;
                     vSummary.innerText = `The ${config.c} NDC contains actionable planning measures, but lacks binding statutory enforcement. Moderate risk of justice-washing (${partialCount}/${totalFound} partial commitments).`;
@@ -1049,50 +1098,7 @@
             }
         }
 
-        function exportEvaluationDocx() {
-            if(!lastEvaluatedResults) return;
-            const res = lastEvaluatedResults;
-            
-            let docContent = `
-            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-            <head><title>JUST-NDC Evaluation Report - ${res.country}</title></head>
-            <body style='font-family: Arial, sans-serif;'>
-                <h1 style='color:#0066cc;'>JUST-NDC Qualitative Synthesis Report</h1>
-                <h2>Country: ${res.country}</h2>
-                <hr/>
-                <h3>Decreed Verdict: ${res.verdict}</h3>
-                <p><strong>Summary:</strong> ${res.summary}</p>
-                <br/>
-                <h3>Statement Breakdown Metrics</h3>
-                <ul>
-                    <li><strong>Total Flagged Statements:</strong> ${res.total}</li>
-                    <li><strong>Embedded Commitments:</strong> ${res.embedded}</li>
-                    <li><strong>Partial Commitments:</strong> ${res.partial}</li>
-                    <li><strong>Tokenistic Mentions:</strong> ${res.tokenistic}</li>
-                </ul>
-                <br/>
-                <h3>Extracted Policy Statement Ledger</h3>
-            `;
-
-            res.ledger.forEach((item, idx) => {
-                docContent += `
-                <div style='margin-bottom: 15px; padding: 10px; border-left: 4px solid #0066cc; background: #f9f9f9;'>
-                    <p><strong>[Excerpt ${idx + 1}] Page ${item.page} | ${item.dimension} Justice | Grade: ${item.tier}</strong></p>
-                    <p style='font-style: italic;'>"${item.text}"</p>
-                </div>`;
-            });
-
-            docContent += `</body></html>`;
-
-            const blob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `JUST-NDC_Evaluation_${res.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
-            a.click();
-        }
-
-        // --- AI Text Scraper Engine ---
+        // --- AI Text Scraper & Query Engine ---
         async function runBrowserAnalysis() {
             const fileUrl = document.getElementById('ai-ndc-select').value;
             const resultLimit = parseInt(document.getElementById('ai-depth').value, 10) || 15;
@@ -1104,9 +1110,11 @@
             
             try {
                 const passages = await extractPassagesFromPDF(fileUrl, term);
-                term.innerHTML += `<p class="sys-msg">System: Extracted ${passages.length} policy passages. Running expanded conceptual dictionary matching...</p>`;
+                term.innerHTML += `<p class="sys-msg">System: Extracted context blocks. Running global multilingual concept matching...</p>`;
                 
                 let scoredPassages = [];
+                let seenTexts = new Set();
+
                 passages.forEach(item => {
                     let score = 0;
                     let lowerText = item.text.toLowerCase();
@@ -1114,7 +1122,8 @@
 
                     for (const [dim, phrases] of Object.entries(conceptMap)) {
                         phrases.forEach(phrase => {
-                            const regex = new RegExp(`\\b${phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`, 'i');
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
                             if(regex.test(lowerText)) {
                                 score += 1;
                                 matchedTerms.push(phrase);
@@ -1122,7 +1131,10 @@
                         });
                     }
 
-                    if(score > 0) scoredPassages.push({ pageNum: item.page, text: item.text, score: score, matches: [...new Set(matchedTerms)] });
+                    if(score > 0 && !seenTexts.has(item.text)) {
+                        seenTexts.add(item.text);
+                        scoredPassages.push({ pageNum: item.page, text: item.text, score: score, matches: [...new Set(matchedTerms)] });
+                    }
                 });
 
                 scoredPassages.sort((a, b) => b.score - a.score);
@@ -1139,12 +1151,12 @@
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
-                            const regex = new RegExp(`\\b(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})\\b`, 'gi');
-                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$&</span>`);
+                            const regex = new RegExp(`(^|[\\s\\W_])(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})([\\s\\W_]|$)`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
                         });
                         term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
                     });
-                    term.innerHTML += `<p class="sys-msg">System: Analysis complete. Found ${scoredPassages.length} total concept matches in document.</p>`;
+                    term.innerHTML += `<p class="sys-msg">System: Analysis complete. Found ${scoredPassages.length} total distinct concept matches in document.</p>`;
                 }
                 term.scrollTop = term.scrollHeight;
 
