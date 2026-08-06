@@ -120,7 +120,7 @@
         .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
         .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
 
-        /* Perfected Framework Design */
+        /* Framework Design */
         .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
         .framework-box { padding: 24px; border-radius: 12px; box-shadow: var(--apple-shadow); transition: transform 0.2s; }
         .framework-box:hover { transform: translateY(-2px); }
@@ -131,7 +131,7 @@
         .box-transformative { background-color: #001f40; color: #fff; padding: 28px; border-radius: 12px; text-align: center; box-shadow: var(--apple-shadow); margin: 0 auto; width: 100%; box-sizing: border-box; transition: transform 0.2s; }
         .box-transformative:hover { transform: translateY(-2px); }
 
-        /* Perfected Matrix Styling */
+        /* Matrix Styling */
         .matrix-table { margin-top: 20px; border: 1px solid rgba(0,0,0,0.1); background: #fff; border-radius: 8px; overflow: hidden; }
         .matrix-table th, .matrix-table td { border: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; color: #333; }
         .col-dim { font-weight: 700; background-color: #ffffff; width: 15%; }
@@ -143,7 +143,7 @@
         
         .header-light-blue { color: #5ac8fa !important; }
 
-        /* Evaluator & Examples Ledger Styling */
+        /* Ledger Styling */
         .example-box { padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; overflow: hidden; transition: transform 0.2s; }
         .example-box:hover { transform: translateY(-2px); box-shadow: var(--apple-shadow); }
         .example-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; }
@@ -172,7 +172,7 @@
         .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: var(--primary); }
 
         .tooltip { position: relative; display: inline-block; border-bottom: 1px dotted var(--primary); cursor: help; color: var(--primary); font-weight: 600; }
-        .tooltip .tooltiptext { visibility: hidden; width: 450px; background-color: #2c2c2e; color: #fff; text-align: left; border-radius: 8px; padding: 18px; position: absolute; z-index: 1000; bottom: 125%; left: 0; opacity: 0; transition: opacity 0.3s; font-size: 0.85rem; line-height: 1.6; font-weight: normal; font-family: -apple-system, sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .tooltip .tooltiptext { visibility: hidden; width: 480px; background-color: #2c2c2e; color: #fff; text-align: left; border-radius: 8px; padding: 18px; position: absolute; z-index: 1000; bottom: 125%; left: 0; opacity: 0; transition: opacity 0.3s; font-size: 0.85rem; line-height: 1.6; font-weight: normal; font-family: -apple-system, sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
         .tooltip .tooltiptext strong { color: var(--secondary); font-size: 0.9rem; }
     </style>
@@ -433,7 +433,7 @@
                 <!-- PAGE 5: AI TEXT SCRAPER -->
                 <div id="analyzer" class="page">
                     <h1 style="color: #1d1d1f;">AI Text Scraper & Query Engine</h1>
-                    <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system utilizes an expanded multilingual dictionary to maximize extraction recall.</p>
+                    <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system utilizes an expanded 3-tier multilingual dictionary to maximize extraction recall.</p>
                     
                     <div class="ui-box" style="background: #ffffff;">
                         <div class="form-group">
@@ -445,17 +445,17 @@
                         <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
                             <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
                                 <label>Target Query Parameters: 
-                                    <span class="tooltip">Hover for Justice Terminology
+                                    <span class="tooltip">Hover for Justice Taxonomy
                                       <span class="tooltiptext">
-                                        <strong>Recognitional:</strong> Marginalized, indigenous rights, traditional knowledge, power imbalances, human rights, gender-responsive, GEDSI, agency, dignity, urban equity.<br><br>
-                                        <strong>Procedural:</strong> Transparent, inclusive decision-making, participation, FPIC, multi-stakeholder, grievance mechanisms.<br><br>
-                                        <strong>Distributive:</strong> Equitable sharing, just transition, social safety nets, progressive taxation, fair & ambitious, CBDR.<br><br>
-                                        <strong>Restorative:</strong> Historical responsibilities, reparative measures, loss and damage, human mobility, forced migration, climate refugees.<br><br>
-                                        <strong>Transformative:</strong> Climate justice, environmental justice, social justice, root causes, systemic change, structural inequalities, decolonization, fossil fuel phase-out.
+                                        <strong>1. Recognitional:</strong> Women, gender, youth, vulnerable, dignity, indigenous, agency, GEDSI, ancestral domains, customary land, traditional knowledge, social inclusion, epistemic justice, human rights.<br><br>
+                                        <strong>2. Procedural:</strong> Consultation, stakeholder, participation, FPIC, bottom-up planning, grievance mechanisms, co-governance, decision-making autonomy.<br><br>
+                                        <strong>3. Distributive:</strong> Equitable sharing, burden/benefit sharing, just transition, social safety nets, progressive taxation, spatial justice, urban equity, CBDR.<br><br>
+                                        <strong>4. Restorative:</strong> Past harms, compensation, loss and damage, NELD, rehabilitation, climate mobility, displacement, historical responsibilities, ecological debt.<br><br>
+                                        <strong>5. Transformative:</strong> Climate justice, environmental justice, root causes, systemic change, structural inequalities, decolonization, degrowth, fossil fuel phase-out, buen vivir.
                                       </span>
                                     </span>
                                 </label>
-                                <input type="text" class="search-box" value="System automatically scans for all implicit & explicit dimensions of justice." disabled style="background:#f0f0f0; color:#555;">
+                                <input type="text" class="search-box" value="System automatically scans across all 5 Justice Dimensions and 3 Commitment Tiers." disabled style="background:#f0f0f0; color:#555;">
                             </div>
                             <div class="form-group" style="width: 180px; margin-bottom: 0;">
                                 <label for="ai-depth">Result Depth:</label>
@@ -986,12 +986,12 @@
             else if (conceptsMatched.some(c => conceptMap["Procedural"].includes(c))) dim = "Procedural";
 
             let tier = "Tokenistic";
-            const embeddedRegex = /\b(law|legislation|statutory|legally binding|enforcement|accountability mechanism|formal framework|budget allocation|decree|act of parliament|constitution|ley|loi|закон|قانون|法律|законодавство)\b/i;
-            const partialRegex = /\b(plan|measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|політика)\b/i;
+            const embeddedWords = ["law", "legislation", "statutory", "legally binding", "enforcement", "accountability mechanism", "formal framework", "budget allocation", "decree", "act of parliament", "constitution", "ley", "loi", "закон", "قانون", "法律", "законодавство"];
+            const partialWords = ["plan ", "measure", "policy", "framework", "strategy", "program", "initiative", "commit", "roadmap", "target", "plan ", "medida", "política", "stratégie", "политика", "سياسة", "政策", "політика"];
 
-            if (embeddedRegex.test(text)) {
+            if (embeddedWords.some(w => lower.includes(w))) {
                 tier = "Embedded";
-            } else if (partialRegex.test(text)) {
+            } else if (partialWords.some(w => lower.includes(w))) {
                 tier = "Partial";
             }
 
@@ -1024,9 +1024,7 @@
 
                     for (const [dim, phrases] of Object.entries(conceptMap)) {
                         phrases.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText)) {
+                            if(lowerText.includes(phrase)) {
                                 isJustice = true;
                                 matchedTerms.push(phrase);
                             }
@@ -1169,9 +1167,7 @@
 
                     for (const [dim, phrases] of Object.entries(conceptMap)) {
                         phrases.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText)) {
+                            if(lowerText.includes(phrase)) {
                                 score += 1;
                                 matchedTerms.push(phrase);
                             }
@@ -1198,8 +1194,8 @@
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
-                            const regex = new RegExp(`(^|[\\s\\W_])(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})([\\s\\W_]|$)`, 'gi');
-                            highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
+                            const regex = new RegExp(`(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$1</span>`);
                         });
                         term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
                     });
