@@ -72,7 +72,7 @@
         .sidebar button:hover { background: rgba(0, 0, 0, 0.05); }
         .sidebar button.active-btn { background: var(--primary); color: #ffffff; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.25); }
 
-        .content { flex-grow: 1; flex-shrink: 1; min-width: 0; padding: 40px 50px; box-sizing: border-box; overflow-y: auto; background: var(--apple-bg); }
+        .content { flex-grow: 1; flex-shrink: 1; min-width: 0; padding: 40px 50px; box-sizing: border-box; overflow-y: auto; background: var(--apple-bg); scroll-behavior: smooth; }
 
         .page { display: none; animation: macFade 0.2s ease-out; }
         .page.active { display: block; }
@@ -85,13 +85,14 @@
         .ui-box { background: var(--apple-card); padding: 28px; border-radius: 12px; box-shadow: var(--apple-shadow); margin-top: 22px; border: 1px solid rgba(0, 0, 0, 0.05); }
 
         .lang-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-bottom: 25px; }
-        .lang-card { padding: 16px; border-radius: 10px; background: #fff; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid var(--border-light); }
+        .lang-card { padding: 16px; border-radius: 10px; background: #fff; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid var(--border-light); transition: transform 0.2s; }
+        .lang-card:hover { transform: translateY(-2px); }
         .lang-card h2 { margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 700; }
         .lang-card p { margin: 3px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); text-align: left; vertical-align: middle; font-size: 0.95rem; }
-        .sticky-th th { background-color: rgba(245, 245, 247, 0.9); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; user-select: none; }
+        .sticky-th th { background-color: rgba(245, 245, 247, 0.95); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; user-select: none; backdrop-filter: blur(5px); }
         .table-container { max-height: 400px; overflow-y: auto; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--border-light); background: #fff; }
 
         .sticky-th th::after { content: ' \21D5'; font-size: 0.8rem; color: #aaa; margin-left: 5px; }
@@ -101,30 +102,36 @@
         .sticky-th th.no-sort { cursor: default; }
 
         .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; user-select: none; display: inline-block; transition: all 0.15s; }
+        .status-badge:active { transform: scale(0.95); }
         .badge-done { background: rgba(52, 199, 89, 0.15); color: #248a3d; }
         .badge-pending { background: rgba(253, 190, 2, 0.2); color: #8a6d0b; }
 
-        .download-btn { background-color: rgba(0, 102, 204, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.15s; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-        .download-btn:hover { background-color: var(--primary); color: #fff; }
+        .download-btn { background-color: rgba(0, 102, 204, 0.1); color: var(--primary); padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: all 0.15s; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .download-btn:hover { background-color: var(--primary); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,102,204,0.2); }
+        .download-btn:active { transform: translateY(0); }
 
         .btn-danger { background-color: rgba(255, 59, 48, 0.1) !important; color: #ff3b30 !important; }
-        .btn-danger:hover { background-color: #ff3b30 !important; color: #fff !important; }
+        .btn-danger:hover { background-color: #ff3b30 !important; color: #fff !important; box-shadow: 0 4px 10px rgba(255,59,48,0.2) !important; }
 
-        .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; background: rgba(255,255,255,0.9); }
+        .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; background: rgba(255,255,255,0.9); transition: border 0.2s; }
         .search-box:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,102,204,0.15); }
 
         .timeline-list { list-style: none; padding-left: 0; }
         .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
         .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
 
+        /* Perfected Framework Design */
         .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
-        .framework-box { padding: 24px; border-radius: 12px; box-shadow: var(--apple-shadow); }
+        .framework-box { padding: 24px; border-radius: 12px; box-shadow: var(--apple-shadow); transition: transform 0.2s; }
+        .framework-box:hover { transform: translateY(-2px); }
         .box-recognitional { background-color: #659b6c; }
         .box-procedural { background-color: #427356; }
         .box-distributive { background-color: #8f5242; }
         .box-restorative { background-color: #ca734f; }
-        .box-transformative { background-color: #001f40; color: #fff; padding: 28px; border-radius: 12px; text-align: center; box-shadow: var(--apple-shadow); margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .box-transformative { background-color: #001f40; color: #fff; padding: 28px; border-radius: 12px; text-align: center; box-shadow: var(--apple-shadow); margin: 0 auto; width: 100%; box-sizing: border-box; transition: transform 0.2s; }
+        .box-transformative:hover { transform: translateY(-2px); }
 
+        /* Perfected Matrix Styling */
         .matrix-table { margin-top: 20px; border: 1px solid rgba(0,0,0,0.1); background: #fff; border-radius: 8px; overflow: hidden; }
         .matrix-table th, .matrix-table td { border: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; color: #333; }
         .col-dim { font-weight: 700; background-color: #ffffff; width: 15%; }
@@ -136,7 +143,9 @@
         
         .header-light-blue { color: #5ac8fa !important; }
 
-        .example-box { padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; overflow: hidden; }
+        /* Evaluator & Examples Ledger Styling */
+        .example-box { padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; overflow: hidden; transition: transform 0.2s; }
+        .example-box:hover { transform: translateY(-2px); box-shadow: var(--apple-shadow); }
         .example-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; }
         .ex-tokenistic::before { background-color: var(--tokenistic); }
         .ex-partial::before { background-color: var(--partial); }
@@ -148,23 +157,24 @@
         .ex-content strong { display: block; margin-bottom: 5px; color: var(--primary); }
         .ex-content p { margin-top: 0; font-size: 0.95rem; }
 
+        /* Analyzer Styles */
         .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 8px; height: 400px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
         .analyzer-terminal p { margin: 8px 0; color: #f8f8f2; }
         .analyzer-terminal .sys-msg { color: #66d9ef; font-weight: bold; }
         .analyzer-terminal .err-msg { color: #f92672; font-weight: bold; }
 
         .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
-        .metric-box { padding: 18px; border-radius: 10px; background: #fff; border: 1px solid var(--border-light); text-align: center; }
-        .metric-box h3 { margin: 0; font-size: 1.8rem; color: var(--primary); }
-        .metric-box p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .metric-box { padding: 18px; border-radius: 10px; background: #fff; border: 1px solid var(--border-light); text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .metric-box h3 { margin: 0; font-size: 2rem; color: var(--primary); font-weight: 700; }
+        .metric-box p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: var(--primary); }
 
         .tooltip { position: relative; display: inline-block; border-bottom: 1px dotted var(--primary); cursor: help; color: var(--primary); font-weight: 600; }
-        .tooltip .tooltiptext { visibility: hidden; width: 450px; background-color: #333; color: #fff; text-align: left; border-radius: 8px; padding: 15px; position: absolute; z-index: 1000; bottom: 125%; left: 0; opacity: 0; transition: opacity 0.3s; font-size: 0.85rem; line-height: 1.5; font-weight: normal; font-family: -apple-system, sans-serif; box-shadow: var(--apple-shadow); }
+        .tooltip .tooltiptext { visibility: hidden; width: 450px; background-color: #2c2c2e; color: #fff; text-align: left; border-radius: 8px; padding: 18px; position: absolute; z-index: 1000; bottom: 125%; left: 0; opacity: 0; transition: opacity 0.3s; font-size: 0.85rem; line-height: 1.6; font-weight: normal; font-family: -apple-system, sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
-        .tooltip .tooltiptext strong { color: var(--secondary); }
+        .tooltip .tooltiptext strong { color: var(--secondary); font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -190,10 +200,10 @@
                 <button id="btn-evaluator" onclick="showPage('evaluator', this)"><span>⚖️</span> Country Evaluator</button>
             </div>
 
-            <div class="content">
+            <div class="content" id="main-content-area">
                 <!-- PAGE 1: DASHBOARD -->
                 <div id="dashboard" class="page active">
-                    <h1 style="color: #000;">JUST-NDC Project Roadmap</h1>
+                    <h1 style="color: #1d1d1f;">JUST-NDC Project Roadmap</h1>
                     <p>Evaluating transformative climate justice across 120 NDC submissions (+2 Annexes). Target velocity: 2 NDCs per working day.</p>
                     
                     <div class="ui-box" style="border-left: 5px solid var(--primary); background: rgba(0,102,204,0.03);">
@@ -294,7 +304,7 @@
 
                 <!-- PAGE 3: GLOBAL MAP -->
                 <div id="map" class="page">
-                    <h1 style="color: #000;">Global Analysis Status</h1>
+                    <h1 style="color: #1d1d1f;">Global Analysis Status</h1>
                     <p>Interactive tracking across 146 covered countries from 120 NDCs (27 EU member states have 1 NDC).</p>
 
                     <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
@@ -387,7 +397,7 @@
 
                 <!-- PAGE 4: CODING EXAMPLES -->
                 <div id="repository" class="page">
-                    <h1 style="color: #000;">Coding Examples & Analysis</h1>
+                    <h1 style="color: #1d1d1f;">Coding Examples & Analysis</h1>
                     <p style="font-size: 1.05rem; margin-bottom: 30px;">Welcome to the Coding Examples & Analysis hub. This section serves as a practical reference guide for our coding methodology. It illustrates how we interpret and grade real-world policy statements extracted from NDCs to maintain analytical consistency. Review the examples below to understand the nuanced differences between a mere tokenistic mention and a fully embedded commitment. You can also practice applying the framework by submitting and categorizing your own examples at the bottom of the page.</p>
                     
                     <div id="examples-list"></div>
@@ -422,7 +432,7 @@
 
                 <!-- PAGE 5: AI TEXT SCRAPER -->
                 <div id="analyzer" class="page">
-                    <h1 style="color: #000;">AI Text Scraper & Query Engine</h1>
+                    <h1 style="color: #1d1d1f;">AI Text Scraper & Query Engine</h1>
                     <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system utilizes an expanded multilingual dictionary to maximize extraction recall.</p>
                     
                     <div class="ui-box" style="background: #ffffff;">
@@ -470,7 +480,7 @@
 
                 <!-- PAGE 6: COUNTRY EVALUATOR & SYNTHESIS -->
                 <div id="evaluator" class="page">
-                    <h1 style="color: #000;">Automated Country Evaluator & Synthesis</h1>
+                    <h1 style="color: #1d1d1f;">Automated Country Evaluator & Synthesis</h1>
                     <p>Select an NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine classifies extracted contextual statements into their dimension and commitment tier.</p>
 
                     <div class="ui-box">
@@ -592,7 +602,7 @@
                 "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"
             ],
             "Distributive": [
-                "equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "equitable outcomes", "just transition", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "youth inclusion", "vulnerable populations", "finance", "allocation", "resource", "fair & ambitious", "cbdr", "spatial justice", "urban equity",
+                "equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "equitable outcomes", "just transition", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "youth inclusion", "vulnerable populations", "fair & ambitious", "cbdr", "spatial justice", "urban equity",
                 "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza",
                 "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses",
                 "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты",
@@ -976,12 +986,12 @@
             else if (conceptsMatched.some(c => conceptMap["Procedural"].includes(c))) dim = "Procedural";
 
             let tier = "Tokenistic";
-            const embeddedWords = ["law", "legislation", "statutory", "legally binding", "enforcement", "accountability mechanism", "formal framework", "budget allocation", "decree", "act of parliament", "constitution", "ley", "loi", "закон", "قانون", "法律", "законодавство"];
-            const partialWords = ["plan ", "measure", "policy", "framework", "strategy", "program", "initiative", "commit", "roadmap", "target", "plan ", "medida", "política", "stratégie", "политика", "سياسة", "政策", "політика"];
+            const embeddedRegex = /\b(law|legislation|statutory|legally binding|enforcement|accountability mechanism|formal framework|budget allocation|decree|act of parliament|constitution|ley|loi|закон|قانون|法律|законодавство)\b/i;
+            const partialRegex = /\b(plan|measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|політика)\b/i;
 
-            if (embeddedWords.some(w => lower.includes(w))) {
+            if (embeddedRegex.test(text)) {
                 tier = "Embedded";
-            } else if (partialWords.some(w => lower.includes(w))) {
+            } else if (partialRegex.test(text)) {
                 tier = "Partial";
             }
 
@@ -1014,7 +1024,9 @@
 
                     for (const [dim, phrases] of Object.entries(conceptMap)) {
                         phrases.forEach(phrase => {
-                            if(lowerText.includes(phrase)) {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText)) {
                                 isJustice = true;
                                 matchedTerms.push(phrase);
                             }
@@ -1157,7 +1169,9 @@
 
                     for (const [dim, phrases] of Object.entries(conceptMap)) {
                         phrases.forEach(phrase => {
-                            if(lowerText.includes(phrase)) {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText)) {
                                 score += 1;
                                 matchedTerms.push(phrase);
                             }
@@ -1184,8 +1198,8 @@
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
-                            const regex = new RegExp(`(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
-                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$1</span>`);
+                            const regex = new RegExp(`(^|[\\s\\W_])(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})([\\s\\W_]|$)`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
                         });
                         term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
                     });
