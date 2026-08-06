@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNU-EHS FAST Team | JUST-NDC: Assessing Transformative Climate Justice in NDC 3.0</title>
+    <title>JUST-NDC: Assessing Transformative Climate Justice in NDC 3.0</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
     <!-- PDF.js for Client-Side AI Analyzer Text Extraction -->
@@ -14,8 +14,7 @@
         :root {
             --apple-bg: #f5f5f7;
             --apple-card: rgba(255, 255, 255, 0.8);
-            --apple-glass: rgba(255, 255, 255, 0.65);
-            --apple-sidebar: rgba(240, 240, 243, 0.75);
+            --apple-sidebar: rgba(240, 240, 243, 0.85);
             --primary: #0066cc; 
             --secondary: #5ac8fa; 
             --accent: #34c759; 
@@ -34,7 +33,7 @@
         }
 
         .mac-window {
-            width: 95vw; max-width: 1500px; height: 92vh; background: var(--apple-bg);
+            width: 96vw; max-width: 1600px; height: 94vh; background: var(--apple-bg);
             border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
             display: flex; flex-direction: column; overflow: hidden; position: relative;
         }
@@ -44,7 +43,7 @@
             border-bottom: 1px solid var(--border-light); display: flex; align-items: center; padding: 0 16px; user-select: none; z-index: 100;
         }
 
-        .traffic-lights { display: flex; gap: 8px; }
+        .traffic-lights { display: flex; gap: 8px; flex-shrink: 0;}
         .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
         .dot-close { background-color: #ff5f56; border: 1px solid #e0443e; }
         .dot-minimize { background-color: #ffbd2e; border: 1px solid #dea123; }
@@ -55,7 +54,8 @@
         .app-body { display: flex; flex-grow: 1; height: calc(100% - 42px); overflow: hidden; }
 
         .sidebar { 
-            width: 280px; background-color: var(--apple-sidebar); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            width: 250px; min-width: 250px; flex-shrink: 0; background-color: var(--apple-sidebar); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             padding: 25px 15px; box-sizing: border-box; border-right: 1px solid var(--border-light); display: flex; flex-direction: column; overflow-y: auto;
         }
 
@@ -66,30 +66,30 @@
             background: transparent; cursor: pointer; text-align: left; border-radius: 10px; font-size: 0.95rem; color: var(--text-dark); font-weight: 500; transition: all 0.15s ease; 
         }
 
-        .sidebar button:hover { background: rgba(0, 0, 0, 0.04); }
+        .sidebar button:hover { background: rgba(0, 0, 0, 0.05); }
         .sidebar button.active-btn { background: var(--primary); color: #ffffff; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.25); }
 
-        .content { flex-grow: 1; padding: 40px 50px; box-sizing: border-box; overflow-y: auto; background: var(--apple-bg); }
+        .content { flex-grow: 1; flex-shrink: 1; min-width: 0; padding: 40px 50px; box-sizing: border-box; overflow-y: auto; background: var(--apple-bg); }
 
         .page { display: none; animation: macFade 0.3s ease-out; }
         .page.active { display: block; }
-        @keyframes macFade { from { opacity: 0; transform: scale(0.99); } to { opacity: 1; transform: scale(1); } }
+        @keyframes macFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { font-size: 2.1rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 0; color: var(--text-dark); }
         h2 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text-dark); margin-top: 35px; }
         p { line-height: 1.55; font-size: 1.05rem; color: #333336; }
 
-        .ui-box { background: var(--apple-card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 28px; border-radius: 18px; box-shadow: var(--apple-shadow); margin-top: 22px; border: 1px solid rgba(255, 255, 255, 0.8); }
+        .ui-box { background: var(--apple-card); padding: 28px; border-radius: 16px; box-shadow: var(--apple-shadow); margin-top: 22px; border: 1px solid rgba(255, 255, 255, 0.8); }
 
-        .lang-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 25px; }
-        .lang-card { padding: 16px; border-radius: 14px; background: #fff; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light); }
+        .lang-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-bottom: 25px; }
+        .lang-card { padding: 16px; border-radius: 12px; background: #fff; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light); }
         .lang-card h2 { margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 700; }
-        .lang-card p { margin: 3px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+        .lang-card p { margin: 3px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); text-align: left; vertical-align: middle; font-size: 0.95rem; }
         .sticky-th th { background-color: rgba(245, 245, 247, 0.9); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; cursor: pointer; }
-        .table-container { max-height: 380px; overflow-y: auto; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-light); }
+        .table-container { max-height: 400px; overflow-y: auto; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border-light); background: #fff; }
 
         .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; user-select: none; display: inline-block; transition: all 0.15s; }
         .badge-done { background: rgba(52, 199, 89, 0.15); color: #248a3d; }
@@ -98,31 +98,46 @@
         .download-btn { background-color: rgba(0, 102, 204, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.15s; border: none; cursor: pointer; }
         .download-btn:hover { background-color: var(--primary); color: #fff; }
 
-        .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: 12px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; background: rgba(255,255,255,0.9); }
+        .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; background: rgba(255,255,255,0.9); }
         .search-box:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,102,204,0.15); }
 
         .timeline-list { list-style: none; padding-left: 0; }
         .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
         .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
 
+        /* Restored Methodology Design */
         .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
-        .framework-box { padding: 24px; border-radius: 16px; color: #fff; box-shadow: var(--apple-shadow); }
-        .box-recognitional { background: linear-gradient(135deg, #63986a, #4e7a53); }
-        .box-procedural { background: linear-gradient(135deg, #427255, #2e523b); }
-        .box-distributive { background: linear-gradient(135deg, #8c5042, #6e3c32); }
-        .box-restorative { background: linear-gradient(135deg, #bb6e4b, #965337); }
-        .box-transformative { background: linear-gradient(135deg, #001f3f, #001026); color: #fff; padding: 28px; border-radius: 16px; text-align: center; margin-top: 16px; }
+        .framework-box { padding: 24px; border-radius: 12px; color: #fff; box-shadow: var(--apple-shadow); }
+        .box-recognitional { background-color: #63986a; }
+        .box-procedural { background-color: #427255; }
+        .box-distributive { background-color: #8c5042; }
+        .box-restorative { background-color: #bb6e4b; }
+        .box-transformative { background-color: #001f3f; color: #fff; padding: 28px; border-radius: 12px; text-align: center; margin-top: 16px; box-shadow: var(--apple-shadow); }
+
+        .matrix-table { margin-top: 20px; border: 1px solid var(--border-light); background: #fff; border-radius: 8px; overflow: hidden; }
+        .matrix-table th, .matrix-table td { border: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; color: #333; }
+        .col-dim { font-weight: 700; background-color: #f9f9f9; width: 15%; }
+        .col-absent { background-color: #ffffff; width: 15%; }
+        .col-weak { background-color: #e69a84; color: #000; width: 22%; }
+        .col-mod { background-color: #d8ce6e; color: #000; width: 24%; }
+        .col-strong { background-color: #94bd99; color: #000; width: 24%; }
+        .matrix-header th { font-weight: 700; font-size: 0.95rem; padding: 14px; }
 
         .example-box { padding: 20px; border-radius: 14px; margin-bottom: 18px; background: #fff; border-left: 5px solid; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .ex-tokenistic { border-left-color: #d48b71; }
-        .ex-partial { border-left-color: #c9c05e; }
-        .ex-embedded { border-left-color: #88b08d; }
+        .ex-tokenistic { border-left-color: #e69a84; }
+        .ex-partial { border-left-color: #d8ce6e; }
+        .ex-embedded { border-left-color: #94bd99; }
+        .ex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px; }
+        .ex-badge { padding: 5px 12px; border-radius: 6px; font-weight: bold; color: #000; font-size: 0.85rem; text-transform: uppercase;}
+        .badge-tok { background: #e69a84; }
+        .badge-par { background: #d8ce6e; }
+        .badge-emb { background: #94bd99; }
 
         /* Analyzer Styles */
-        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 12px; height: 300px; overflow-y: auto; font-size: 0.9rem; line-height: 1.5; margin-top: 15px; }
-        .analyzer-terminal p { margin: 5px 0; color: #f8f8f2; font-size: 0.9rem; }
-        .analyzer-terminal .sys-msg { color: #66d9ef; }
-        .analyzer-terminal .err-msg { color: #f92672; }
+        .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 12px; height: 350px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+        .analyzer-terminal p { margin: 6px 0; color: #f8f8f2; }
+        .analyzer-terminal .sys-msg { color: #66d9ef; font-weight: bold; }
+        .analyzer-terminal .err-msg { color: #f92672; font-weight: bold; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); }
     </style>
@@ -168,7 +183,9 @@
                         </div>
                     </div>
 
-                    <div class="ui-box"><div id="gantt_chart" style="width: 100%; height: 310px;"></div></div>
+                    <div class="ui-box">
+                        <div id="gantt_chart" style="width: 100%; height: 310px;"></div>
+                    </div>
                     
                     <div class="ui-box">
                         <h3>Detailed Project Roadmap</h3>
@@ -197,12 +214,32 @@
                         <h3 style="margin:0 0 6px 0;">Transformative Climate Justice</h3>
                         <p style="margin:0; font-size:0.95rem;">Addressing the root causes of climate change and social injustice.</p>
                     </div>
+
+                    <div class="ui-box" style="padding: 10px 25px 25px 25px;">
+                        <table class="matrix-table">
+                            <thead>
+                                <tr class="matrix-header">
+                                    <th class="col-dim">Justice dimension</th>
+                                    <th class="col-absent" style="background:#f4f4f4;">No mention (absent)</th>
+                                    <th class="col-weak">Tokenistic justice (weak commitment)</th>
+                                    <th class="col-mod">Partial justice (moderate commitment)</th>
+                                    <th class="col-strong">Embedded justice (strong commitment)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="col-dim">Recognitional justice</td><td class="col-absent">No explicit mention of marginalized or vulnerable groups.</td><td class="col-weak">Mentions marginalized or vulnerable groups but without specifying any measures to address their needs.</td><td class="col-mod">Mentions marginalized or vulnerable groups and specifies concrete measures, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Recognition and measures for marginalized or vulnerable groups are backed by formal institutional structures or legal frameworks, with clear accountability and enforcement mechanisms.</td></tr>
+                                <tr><td class="col-dim">Procedural justice</td><td class="col-absent">No mention of participatory governance, transparency or stakeholder involvement.</td><td class="col-weak">Mentions participation, transparency or stakeholder engagement but without specifying solid mechanisms for implementation.</td><td class="col-mod">Specifies participatory governance, transparency or stakeholder engagement mechanisms, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Participatory governance, transparency and stakeholder engagement mechanisms are backed by formal institutional structures or legal frameworks, with guaranteed implementation and accountability.</td></tr>
+                                <tr><td class="col-dim">Distributive justice</td><td class="col-absent">No mention of equitable allocation of resources, finance or benefits.</td><td class="col-weak">Broadly references equity or allocation of resources or finance but without specifying any mechanisms to ensure delivery.</td><td class="col-mod">Specifies allocation mechanisms for resources, finance or benefits, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Equitable allocation of resources, finance or benefits is backed by formal institutional structures or legal frameworks, with monitoring and accountability mechanisms.</td></tr>
+                                <tr><td class="col-dim">Restorative justice</td><td class="col-absent">No mention of addressing historical injustices, loss and damage, or reparative measures.</td><td class="col-weak">Acknowledges historical injustices, loss and damage, or reparative needs but without specifying concrete measures.</td><td class="col-mod">Specifies reparative measures or loss and damage actions, but these are not backed by formal institutional structures or legal frameworks.</td><td class="col-strong">Reparative measures and loss and damage actions are backed by formal institutional structures or legal frameworks, with dedicated funding, accountability and monitoring mechanisms.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- PAGE 3: GLOBAL MAP -->
                 <div id="map" class="page">
                     <h1>Global Analysis Status</h1>
-                    <p>Interactive tracking across 146 covered countries (119 individual NDCs + 27 EU member states).</p>
+                    <p>Interactive tracking across 146 covered countries (119 NDCs + 27 EU states).</p>
 
                     <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
@@ -270,6 +307,27 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- Distinct Annex Box -->
+                    <div class="ui-box" style="background: rgba(0, 102, 204, 0.03); border: 1px solid rgba(0, 102, 204, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="margin:0; color: var(--primary);">Supplemental Annex Index</h3>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Isolated from Global Map</span>
+                        </div>
+                        <div class="table-container" style="max-height: 200px; margin-bottom: 0;">
+                            <table id="annexTable" class="sticky-th">
+                                <thead>
+                                    <tr>
+                                        <th onclick="sortTable(0, 'annexTable')">Annex</th>
+                                        <th onclick="sortTable(1, 'annexTable')">Language</th>
+                                        <th onclick="sortTable(2, 'annexTable')">Page</th>
+                                        <th class="no-sort">File</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="annexBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- PAGE 4: EXAMPLES -->
@@ -282,9 +340,9 @@
                 <!-- PAGE 5: AI ANALYZER -->
                 <div id="analyzer" class="page">
                     <h1>AI Policy Analyzer</h1>
-                    <p>Select an NDC document from the repository. The client-side NLP engine will parse the PDF and extract passages relevant to your climate justice query instantly in your browser.</p>
+                    <p>Select an NDC document from the repository. The client-side conceptual engine will parse the PDF and extract passages relevant to your climate justice query instantly in your browser.</p>
                     
-                    <div class="ui-box" style="background: #f8f9fa;">
+                    <div class="ui-box" style="background: #ffffff;">
                         <div class="form-group">
                             <label for="ai-ndc-select">Select NDC Document to Analyze:</label>
                             <select id="ai-ndc-select" class="search-box">
@@ -292,13 +350,14 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ai-query">Policy Query / Focus Area:</label>
-                            <input type="text" id="ai-query" class="search-box" value="vulnerable groups, marginalized, justice, equity, indigenous, women, participation">
+                            <label for="ai-query">Policy Query / Focus Area (Comma separated):</label>
+                            <input type="text" id="ai-query" class="search-box" value="vulnerable groups, marginalized, justice, equity, indigenous, women, participation, fairness">
                         </div>
                         <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff;">Run Document Analysis</button>
                         
                         <div id="ai-terminal" class="analyzer-terminal">
                             <p class="sys-msg">System: Ready. Select a document and click 'Run Document Analysis' to begin parsing.</p>
+                            <p class="sys-msg">Note: Engine uses Expanded Conceptual Matching (e.g. 'women' auto-matches 'gender', 'female', 'girls').</p>
                         </div>
                     </div>
                 </div>
@@ -362,17 +421,25 @@
             { level: "Embedded", statement: "In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration...", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating an action plan with an accountable actor." }
         ];
 
+        // AI Analyzer Concept Map (For robust implicit matching without a backend server)
+        const conceptMap = {
+            "vulnerable": ["vulnerable", "at-risk", "susceptible", "disadvantaged", "fragile"],
+            "marginalized": ["marginalized", "minority", "excluded", "discrimination", "underrepresented", "poor"],
+            "justice": ["justice", "rights", "just", "human rights", "legal"],
+            "equity": ["equity", "equitable", "equality", "equal"],
+            "indigenous": ["indigenous", "traditional", "native", "tribe", "tribal", "first nations"],
+            "women": ["women", "gender", "female", "girls", "maternal", "mothers"],
+            "participation": ["participation", "engage", "involve", "consult", "stakeholder", "community", "transparent"],
+            "fairness": ["fairness", "fair", "impartial", "balanced"]
+        };
+
         let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
+        let annexData = JSON.parse(JSON.stringify(defaultAnnexData));
         let codingExamples = JSON.parse(JSON.stringify(defaultExamples));
         const hfBaseUrl = "https://huggingface.co/spaces/jaff4r/Climate-Justice-in-NDCs/resolve/main/ndcs/";
         
-        // System Initializations
         document.addEventListener("DOMContentLoaded", () => {
-            // Set dynamic Date
-            const now = new Date();
-            document.getElementById('current-date-display').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            
-            // Populate Analyzer Dropdown
+            document.getElementById('current-date-display').innerText = "August 6, 2026";
             const select = document.getElementById('ai-ndc-select');
             select.innerHTML = '<option value="" disabled selected>Select an NDC document...</option>';
             ndcData.forEach(ndc => {
@@ -393,6 +460,31 @@
         }
 
         const euCountries = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"];
+        let currentSort = { table: null, col: null, asc: true };
+
+        function sortTable(colIndex, tableId) {
+            const table = document.getElementById(tableId);
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const isAsc = currentSort.table === tableId && currentSort.col === colIndex ? !currentSort.asc : true;
+            currentSort = { table: tableId, col: colIndex, asc: isAsc };
+
+            table.querySelectorAll('th').forEach(th => { th.classList.remove('sort-asc', 'sort-desc'); });
+            table.querySelectorAll('th')[colIndex].classList.add(isAsc ? 'sort-asc' : 'sort-desc');
+
+            rows.sort((a, b) => {
+                let valA = a.cells[colIndex].innerText.trim();
+                let valB = b.cells[colIndex].innerText.trim();
+
+                if (colIndex === 2) {
+                    valA = parseInt(valA) || 0;
+                    valB = parseInt(valB) || 0;
+                    return isAsc ? valA - valB : valB - valA;
+                }
+                return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            });
+            tbody.append(...rows);
+        }
 
         function toggleStatus(countryName) {
             const country = ndcData.find(c => c.c === countryName);
@@ -429,22 +521,81 @@
                 html += `<tr><td>${item.c}</td><td>${item.l}</td><td>${item.p}</td><td>${badge}</td><td>${dlBtn}</td></tr>`;
             });
             tbody.innerHTML = html;
+
+            const abody = document.getElementById('annexBody');
+            let aHtml = '';
+            annexData.forEach(item => {
+                const fileUrl = item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f);
+                const dlBtn = `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>`;
+                aHtml += `<tr><td>${item.c}</td><td>${item.l}</td><td>${item.p}</td><td>${dlBtn}</td></tr>`;
+            });
+            abody.innerHTML = aHtml;
+
             updateProgressMetrics();
+        }
+
+        function renderExamples() {
+            const container = document.getElementById('examples-list');
+            let html = '';
+            codingExamples.forEach(ex => {
+                let boxClass = ''; let badgeClass = '';
+                if (ex.level === "Tokenistic") { boxClass = "ex-tokenistic"; badgeClass = "badge-tok"; }
+                else if (ex.level === "Partial") { boxClass = "ex-partial"; badgeClass = "badge-par"; }
+                else if (ex.level === "Embedded") { boxClass = "ex-embedded"; badgeClass = "badge-emb"; }
+
+                html += `
+                <div class="example-box ${boxClass}">
+                    <div class="ex-header"><span class="ex-badge ${badgeClass}">${ex.level} Commitment</span></div>
+                    <div class="ex-content">
+                        <strong>Statement:</strong><p style="font-family: Georgia, serif; font-style: italic;">"${ex.statement}"</p>
+                        <strong>Analysis:</strong><p>${ex.analysis}</p>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function submitExample() {
+            const level = document.getElementById('new-level').value;
+            const statement = document.getElementById('new-statement').value.trim();
+            const analysis = document.getElementById('new-analysis').value.trim();
+            if (!statement || !analysis) { alert("Please fill in both fields."); return; }
+            codingExamples.push({ level, statement, analysis });
+            localStorage.setItem('codingExamplesState', JSON.stringify(codingExamples));
+            document.getElementById('new-statement').value = '';
+            document.getElementById('new-analysis').value = '';
+            renderExamples();
         }
 
         function showPage(pageId, btnElement) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-btn')); // Fix applied here!
+            document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-btn'));
             document.getElementById(pageId).classList.add('active');
             btnElement.classList.add('active-btn');
             
-            // Timeout prevents Google Charts from crashing when drawing in a hidden div
             if(pageId === 'dashboard') { setTimeout(drawGantt, 50); }
             if(pageId === 'map') { setTimeout(drawRegionsMap, 50); }
         }
 
+        function filterTable(tableId) {
+            let input = document.getElementById("searchInput").value.toUpperCase();
+            let tr = document.getElementById(tableId).getElementsByTagName("tr");
+            for (let i = 1; i < tr.length; i++) {
+                let textMatch = false;
+                for (let j = 0; j < 3; j++) {
+                    let td = tr[i].getElementsByTagName("td")[j];
+                    if (td) {
+                        if ((td.textContent || td.innerText).toUpperCase().indexOf(input) > -1) {
+                            textMatch = true; break;
+                        }
+                    }
+                }
+                tr[i].style.display = textMatch ? "" : "none";
+            }
+        }
+
         google.charts.load('current', {'packages':['gantt', 'geochart']});
-        google.charts.setOnLoadCallback(() => { loadTables(); drawGantt(); drawRegionsMap(); });
+        google.charts.setOnLoadCallback(() => { loadTables(); drawGantt(); drawRegionsMap(); renderExamples(); });
 
         function drawGantt() {
             var data = new google.visualization.DataTable();
@@ -463,8 +614,9 @@
                 ['COP', 'COP 31 Begins', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 10), null, 0, null]
             ]);
 
+            // Removed custom palette array to prevent Google Charts missing-hex-color crash
             var chart = new google.visualization.Gantt(document.getElementById('gantt_chart'));
-            chart.draw(data, { height: 310, gantt: { trackHeight: 32, palette: [{ "color": "#0066cc" }, { "color": "#34c759" }, { "color": "#5ac8fa" }] } });
+            chart.draw(data, { height: 310, gantt: { trackHeight: 32 } });
         }
 
         var panZoomInstance = null;
@@ -530,7 +682,6 @@
             term.innerHTML = `<p class="sys-msg">System: Fetching document from Hugging Face CDN...</p>`;
             
             try {
-                // Load PDF
                 const loadingTask = pdfjsLib.getDocument(fileUrl);
                 const pdf = await loadingTask.promise;
                 term.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting text from ${pdf.numPages} pages...</p>`;
@@ -543,20 +694,35 @@
                     fullText += strings.join(" ") + " ";
                 }
                 
-                term.innerHTML += `<p class="sys-msg">System: Text extracted. Segmenting sentences and running semantic keyword match...</p>`;
+                term.innerHTML += `<p class="sys-msg">System: Text extracted. Segmenting sentences and running semantic concept matching...</p>`;
                 
-                // Clean and chunk text (Mocking Spacy/FAISS locally)
                 fullText = fullText.replace(/\s+/g, " ").trim();
                 const sentences = fullText.match(/[^.!?]+[.!?]+/g) || [];
-                const queryWords = queryStr.split(',').map(w => w.trim()).filter(w => w.length > 2);
+                const queryWordsRaw = queryStr.split(',').map(w => w.trim());
                 
+                // Expand user query using concept dictionary for implicit mentions
+                let activeConcepts = [];
+                queryWordsRaw.forEach(qw => {
+                    let found = false;
+                    for (const [key, synonyms] of Object.entries(conceptMap)) {
+                        if (synonyms.includes(qw) || key === qw) {
+                            activeConcepts = activeConcepts.concat(synonyms);
+                            found = true;
+                        }
+                    }
+                    if(!found) activeConcepts.push(qw); // Add if not in dictionary
+                });
+
+                // Deduplicate expanded concepts
+                activeConcepts = [...new Set(activeConcepts)].filter(w => w.length > 2);
+
                 let scoredSentences = [];
                 sentences.forEach(sentence => {
                     if(sentence.length < 25) return;
                     let score = 0;
                     let lowerSent = sentence.toLowerCase();
-                    queryWords.forEach(qw => {
-                        if(lowerSent.includes(qw)) score += 1;
+                    activeConcepts.forEach(concept => {
+                        if(lowerSent.includes(concept)) score += 1;
                     });
                     if(score > 0) {
                         scoredSentences.push({ text: sentence.trim(), score: score });
@@ -567,15 +733,14 @@
                 const topResults = scoredSentences.slice(0, 3);
 
                 if(topResults.length === 0) {
-                    term.innerHTML += `<p class="err-msg">Result: No significant passages found matching the provided query terms.</p>`;
+                    term.innerHTML += `<p class="err-msg">Result: No significant passages found implicitly or explicitly matching the query.</p>`;
                 } else {
                     term.innerHTML += `<br><p style="color:#f92672; font-weight:bold;">--- Retrieved High-Relevance Passages ---</p>`;
                     topResults.forEach((res, idx) => {
-                        // Highlight matching words
                         let highlightedText = res.text;
-                        queryWords.forEach(qw => {
-                            const regex = new RegExp(`(${qw})`, 'gi');
-                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(249,38,114,0.3); color:#fff;">$1</span>`);
+                        activeConcepts.forEach(concept => {
+                            const regex = new RegExp(`\\b(${concept})\\b`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(249,38,114,0.3); color:#fff; border-radius:3px; padding:0 2px;">$1</span>`);
                         });
                         term.innerHTML += `<p>[Passage ${idx + 1}] ${highlightedText}</p><br>`;
                     });
@@ -585,7 +750,7 @@
 
             } catch (err) {
                 console.error(err);
-                term.innerHTML += `<p class="err-msg">Error: CORS/Network block. Ensure Hugging Face repository files are public and accessible.</p>`;
+                term.innerHTML += `<p class="err-msg">Error: Network block. Ensure Hugging Face repository files are public and accessible.</p>`;
             }
         }
     </script>
