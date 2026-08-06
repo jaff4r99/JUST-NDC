@@ -120,7 +120,6 @@
         .timeline-list li { margin-bottom: 18px; padding-left: 20px; border-left: 3px solid var(--secondary); }
         .timeline-date { font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; font-size: 0.95rem; }
 
-        /* Perfected Framework Design */
         .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
         .framework-box { padding: 24px; border-radius: 12px; box-shadow: var(--apple-shadow); transition: transform 0.2s; }
         .framework-box:hover { transform: translateY(-2px); }
@@ -131,7 +130,6 @@
         .box-transformative { background-color: #001f40; color: #fff; padding: 28px; border-radius: 12px; text-align: center; box-shadow: var(--apple-shadow); margin: 0 auto; width: 100%; box-sizing: border-box; transition: transform 0.2s; }
         .box-transformative:hover { transform: translateY(-2px); }
 
-        /* Perfected Matrix Styling */
         .matrix-table { margin-top: 20px; border: 1px solid rgba(0,0,0,0.1); background: #fff; border-radius: 8px; overflow: hidden; }
         .matrix-table th, .matrix-table td { border: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; color: #333; }
         .col-dim { font-weight: 700; background-color: #ffffff; width: 15%; }
@@ -143,7 +141,6 @@
         
         .header-light-blue { color: #5ac8fa !important; }
 
-        /* Evaluator & Examples Ledger Styling */
         .example-box { padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border-light); border-top-width: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; overflow: hidden; transition: transform 0.2s; }
         .example-box:hover { transform: translateY(-2px); box-shadow: var(--apple-shadow); }
         .example-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; }
@@ -157,7 +154,6 @@
         .ex-content strong { display: block; margin-bottom: 5px; color: var(--primary); }
         .ex-content p { margin-top: 0; font-size: 0.95rem; }
 
-        /* Analyzer Styles */
         .analyzer-terminal { background: #1e1e1e; color: #a6e22e; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 8px; height: 400px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
         .analyzer-terminal p { margin: 8px 0; color: #f8f8f2; }
         .analyzer-terminal .sys-msg { color: #66d9ef; font-weight: bold; }
@@ -581,55 +577,6 @@
             { country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
-        // Expanded Multilingual Concept Map
-        const conceptMap = {
-            "Recognitional": [
-                "marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "vulnerable", "empower", "women", "gender", "female", "gedsi", "fairness", "local communities", "agency", "dignity", "autonomy", "empowerment",
-                "grupos marginados", "derechos indígenas", "pueblos indígenas", "conocimientos tradicionales", "saberes ancestrales", "desequilibrios de poder", "exclusión social", "enfoque de género", "interseccionalidad",
-                "groupes marginalisés", "droits des peuples autochtones", "savoirs traditionnels", "déséquilibres de pouvoir", "exclusion sociale", "approche sensible au genre", "intersectionnalité", "droits des autochtones", "groupes vulnérables",
-                "маргинализированные", "коренных народов", "традиционные знания", "гендерно-ориентированный", "социальная изоляция", "уязвимые группы",
-                "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "توازن القوى", "الإقصاء الاجتماعي", "المنظور الجنساني", "الفئات الضعيفة",
-                "边缘化群体", "原住民权利", "传统知识", "权力失衡", "社会排斥", "社会包容", "性别响应", "弱势群体",
-                "маргіналізовані", "корінних народів", "традиційні знання", "гендерно-чутливий", "соціальне відчуження", "вразливі групи"
-            ],
-            "Procedural": [
-                "transparent process", "inclusive decision", "meaningful participation", "fair process", "procedural rights", "prior and informed consent", "fpic", "multi-stakeholder", "bottom-up", "decentralized governance", "grievance mechanism", "co-production", "consultation", "participation", "stakeholder", "public consultation", "engage", "involve", "commune", "community", "communities",
-                "procesos transparentes", "decisiones inclusiva", "participación significativa", "consentimiento libre previo e informado", "consulta pública", "mecanismos de reclamación", "gobernanza descentralizada", "mecanismos de queja",
-                "processus transparents", "décision inclusive", "participation significative", "consentement préalable", "consultation publique", "mécanismes de recours", "gouvernance décentralisée",
-                "прозрачные процессы", "инклюзивное", "значимое участие", "осознанное согласие", "механизмы рассмотрения жалоб", "общественные консультации", "предварительное согласие",
-                "عمليات شفافة", "صنع قرار شامل", "مشاركة مجدية", "الموافقة المسبقة", "آليات التظلم", "اللامركزية", "مشاورات عامة",
-                "透明过程", "包容性决策", "有意义的参与", "事先知情同意", "利益相关方磋商", "申诉机制", "权力下放", "公众咨询",
-                "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"
-            ],
-            "Distributive": [
-                "equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "equitable outcomes", "just transition", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "youth inclusion", "vulnerable populations", "fair & ambitious", "cbdr", "spatial justice", "urban equity",
-                "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza",
-                "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses",
-                "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты",
-                "التقاسم العادل", "تقاسم الأعباء", "تقاسم المنافع", "الإنصاف بين الأجيال", "انتقال عادل", "الأمان الاجتماعي",
-                "公平分享", "责任分担", "利益共享", "代际公平", "公正转型", "社会安全网",
-                "справедливий розподіл", "розподіл тягаря", "розподіл вигод", "міжпоколінна справедливість", "справедливий перехід", "соціального захисту"
-            ],
-            "Restorative": [
-                "past climate injustice", "historical responsibilities", "reparative", "restorative", "past harms", "loss and damage", "non-economic loss", "common but differentiated responsibilities", "compensation", "rehabilitation", "ecological debt", "climate reparations", "relocation", "resettlement", "climate mobility", "displacement", "human mobility", "forced migration", "planned relocation", "climate refugees",
-                "injusticias climáticas pasadas", "responsabilidades históricas", "medidas reparadoras", "pérdidas y daños", "responsabilidades comunes pero diferenciadas", "deuda ecológica", "movilidad climática", "daños no económicos",
-                "injustices climatiques passées", "responsabilités historiques", "mesures de réparation", "pertes et préjudices", "responsabilités communes mais différenciées", "dette écologique", "mobilité climatique", "préjudices non économiques",
-                "прошлые климатические", "историческая ответственность", "потери и ущерб", "неэкономические потери", "общая но дифференцированная", "экологический долг", "климатическая миграция",
-                "المظالم المناخية", "المسؤوليات التاريخية", "تدابير جبر الضرر", "الخسائر والأضرار", "الخسائر غير الاقتصادية", "المسؤوليات المشتركة", "التنقل المناخي",
-                "历史气候不公", "历史责任", "补救措施", "损失与损害", "非经济损失", "共同但有区别的责任", "生态债务", "气候流动性",
-                "минулі кліматичні", "історична відповідальність", "втрати та збитки", "неекономічні втрати", "спільна але диференційована", "кліматична міграція"
-            ],
-            "Transformative": [
-                "root causes", "systemic change", "social injustice", "structural inequalities", "transformative", "paradigm shift", "decolonization", "systemic reform", "dismantling patriarchy", "fossil fuel phase-out", "degrowth", "post-growth", "well-being economy", "post-extractivism", "buen vivir", "deep decarbonization", "post-capitalism", "climate justice", "environmental justice", "social justice", "urban climate justice",
-                "causas profundas", "cambio sistémico", "desigualdades estructurales", "descolonización", "decrecimiento", "postcrecimiento", "economía del bienestar", "post-extractivismo", "vivir bien", "combustibles fósiles", "causas subyacentes",
-                "causes profondes", "changement systémique", "inégalités structurelles", "décolonisation", "décroissance", "post-croissance", "économie du bien-être", "énergies fossiles",
-                "коренные причины", "системные изменения", "структурное неравенство", "деколонизация", "антирост", "дерост", "пост-экстрактивизм", "отказ от ископаемого",
-                "الأسباب الجذرية", "التغيير المنهجي", "عدم المساواة الهيكلية", "إنهاء الاستعمار", "تراجع النمو", "ما بعد النمو", "اقتصاد الرفاه", "الوقود الأحفوري",
-                "根本原因", "系统性变革", "结构性不平等", "非殖民化", "去增长", "后增长", "福祉经济", "化石燃料",
-                "першопричини", "системні зміни", "структурна нерівність", "деколонізація", "антизростання", "викопного палива", "докорінні причини"
-            ]
-        };
-
         let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
         let annexData = JSON.parse(JSON.stringify(defaultAnnexData));
         let codingExamples = JSON.parse(JSON.stringify(defaultExamples));
@@ -986,12 +933,12 @@
             else if (conceptsMatched.some(c => conceptMap["Procedural"].includes(c))) dim = "Procedural";
 
             let tier = "Tokenistic";
-            const embeddedRegex = /\b(law|legislation|statutory|legally binding|enforcement|accountability mechanism|formal framework|budget allocation|decree|act of parliament|constitution|ley|loi|закон|قانون|法律|законодавство)\b/i;
-            const partialRegex = /\b(plan|measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|політика)\b/i;
+            const embeddedWords = ["law", "legislation", "statutory", "legally binding", "enforcement", "accountability mechanism", "formal framework", "budget allocation", "decree", "act of parliament", "constitution", "ley", "loi", "закон", "قانون", "法律", "законодавство"];
+            const partialWords = ["plan ", "measure", "policy", "framework", "strategy", "program", "initiative", "commit", "roadmap", "target", "medida", "política", "stratégie", "политика", "سياسة", "政策", "політика"];
 
-            if (embeddedRegex.test(text)) {
+            if (embeddedWords.some(w => lower.includes(w))) {
                 tier = "Embedded";
-            } else if (partialRegex.test(text)) {
+            } else if (partialWords.some(w => lower.includes(w))) {
                 tier = "Partial";
             }
 
@@ -1024,9 +971,7 @@
 
                     for (const [dim, phrases] of Object.entries(conceptMap)) {
                         phrases.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText)) {
+                            if(lowerText.includes(phrase)) {
                                 isJustice = true;
                                 matchedTerms.push(phrase);
                             }
@@ -1169,9 +1114,7 @@
 
                     for (const [dim, phrases] of Object.entries(conceptMap)) {
                         phrases.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText)) {
+                            if(lowerText.includes(phrase)) {
                                 score += 1;
                                 matchedTerms.push(phrase);
                             }
@@ -1198,8 +1141,8 @@
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
-                            const regex = new RegExp(`(^|[\\s\\W_])(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})([\\s\\W_]|$)`, 'gi');
-                            highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
+                            const regex = new RegExp(`(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$1</span>`);
                         });
                         term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
                     });
