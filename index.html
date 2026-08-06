@@ -433,7 +433,7 @@
                 <!-- PAGE 5: AI TEXT SCRAPER -->
                 <div id="analyzer" class="page">
                     <h1 style="color: #1d1d1f;">AI Text Scraper & Query Engine</h1>
-                    <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system utilizes an expanded 3-tier multilingual dictionary to maximize extraction recall.</p>
+                    <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system utilizes an expanded multilingual dictionary and a context-aware heuristic filter to maximize accurate extraction recall while minimizing false positives.</p>
                     
                     <div class="ui-box" style="background: #ffffff;">
                         <div class="form-group">
@@ -474,6 +474,7 @@
                         
                         <div id="ai-terminal" class="analyzer-terminal">
                             <p class="sys-msg">System: Ready. Select a document to analyze or export.</p>
+                            <p class="sys-msg">Note: Engine uses Context-Aware filtering to distinguish between generic verbs (e.g., 'sectors involved') and true justice participation ('communities involved').</p>
                         </div>
                     </div>
                 </div>
@@ -581,54 +582,88 @@
             { country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
-        // Expanded Multilingual Concept Map
+        // --- Context-Aware Multilingual Justice Taxonomy ---
+        // Ambiguous terms (like 'involve' or 'vulnerable') will ONLY be flagged if a human context marker is also present in the paragraph.
         const conceptMap = {
-            "Recognitional": [
-                "marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "vulnerable", "empower", "women", "gender", "female", "gedsi", "fairness", "local communities", "agency", "dignity", "autonomy", "empowerment",
-                "grupos marginados", "derechos indígenas", "pueblos indígenas", "conocimientos tradicionales", "saberes ancestrales", "desequilibrios de poder", "exclusión social", "enfoque de género", "interseccionalidad",
-                "groupes marginalisés", "droits des peuples autochtones", "savoirs traditionnels", "déséquilibres de pouvoir", "exclusion sociale", "approche sensible au genre", "intersectionnalité", "droits des autochtones", "groupes vulnérables",
-                "маргинализированные", "коренных народов", "традиционные знания", "гендерно-ориентированный", "социальная изоляция", "уязвимые группы",
-                "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "توازن القوى", "الإقصاء الاجتماعي", "المنظور الجنساني", "الفئات الضعيفة",
-                "边缘化群体", "原住民权利", "传统知识", "权力失衡", "社会排斥", "社会包容", "性别响应", "弱势群体",
-                "маргіналізовані", "корінних народів", "традиційні знання", "гендерно-чутливий", "соціальне відчуження", "вразливі групи"
-            ],
-            "Procedural": [
-                "transparent process", "inclusive decision", "meaningful participation", "fair process", "procedural rights", "prior and informed consent", "fpic", "multi-stakeholder", "bottom-up", "decentralized governance", "grievance mechanism", "co-production", "consultation", "participation", "stakeholder", "public consultation", "engage", "involve", "commune", "community", "communities",
-                "procesos transparentes", "decisiones inclusiva", "participación significativa", "consentimiento libre previo e informado", "consulta pública", "mecanismos de reclamación", "gobernanza descentralizada", "mecanismos de queja",
-                "processus transparents", "décision inclusive", "participation significative", "consentement préalable", "consultation publique", "mécanismes de recours", "gouvernance décentralisée",
-                "прозрачные процессы", "инклюзивное", "значимое участие", "осознанное согласие", "механизмы рассмотрения жалоб", "общественные консультации", "предварительное согласие",
-                "عمليات شفافة", "صنع قرار شامل", "مشاركة مجدية", "الموافقة المسبقة", "آليات التظلم", "اللامركزية", "مشاورات عامة",
-                "透明过程", "包容性决策", "有意义的参与", "事先知情同意", "利益相关方磋商", "申诉机制", "权力下放", "公众咨询",
-                "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"
-            ],
-            "Distributive": [
-                "equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "equitable outcomes", "just transition", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "youth inclusion", "vulnerable populations", "fair & ambitious", "cbdr", "spatial justice", "urban equity",
-                "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza",
-                "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses",
-                "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты",
-                "التقاسم العادل", "تقاسم الأعباء", "تقاسم المنافع", "الإنصاف بين الأجيال", "انتقال عادل", "الأمان الاجتماعي",
-                "公平分享", "责任分担", "利益共享", "代际公平", "公正转型", "社会安全网",
-                "справедливий розподіл", "розподіл тягаря", "розподіл вигод", "міжпоколінна справедливість", "справедливий перехід", "соціального захисту"
-            ],
-            "Restorative": [
-                "past climate injustice", "historical responsibilities", "reparative", "restorative", "past harms", "loss and damage", "non-economic loss", "common but differentiated responsibilities", "compensation", "rehabilitation", "ecological debt", "climate reparations", "relocation", "resettlement", "climate mobility", "displacement", "human mobility", "forced migration", "planned relocation", "climate refugees",
-                "injusticias climáticas pasadas", "responsabilidades históricas", "medidas reparadoras", "pérdidas y daños", "responsabilidades comunes pero diferenciadas", "deuda ecológica", "movilidad climática", "daños no económicos",
-                "injustices climatiques passées", "responsabilités historiques", "mesures de réparation", "pertes et préjudices", "responsabilités communes mais différenciées", "dette écologique", "mobilité climatique", "préjudices non économiques",
-                "прошлые климатические", "историческая ответственность", "потери и ущерб", "неэкономические потери", "общая но дифференцированная", "экологический долг", "климатическая миграция",
-                "المظالم المناخية", "المسؤوليات التاريخية", "تدابير جبر الضرر", "الخسائر والأضرار", "الخسائر غير الاقتصادية", "المسؤوليات المشتركة", "التنقل المناخي",
-                "历史气候不公", "历史责任", "补救措施", "损失与损害", "非经济损失", "共同但有区别的责任", "生态债务", "气候流动性",
-                "минулі кліматичні", "історична відповідальність", "втрати та збитки", "неекономічні втрати", "спільна але диференційована", "кліматична міграція"
-            ],
-            "Transformative": [
-                "root causes", "systemic change", "social injustice", "structural inequalities", "transformative", "paradigm shift", "decolonization", "systemic reform", "dismantling patriarchy", "fossil fuel phase-out", "degrowth", "post-growth", "well-being economy", "post-extractivism", "buen vivir", "deep decarbonization", "post-capitalism", "climate justice", "environmental justice", "social justice", "urban climate justice",
-                "causas profundas", "cambio sistémico", "desigualdades estructurales", "descolonización", "decrecimiento", "postcrecimiento", "economía del bienestar", "post-extractivismo", "vivir bien", "combustibles fósiles", "causas subyacentes",
-                "causes profondes", "changement systémique", "inégalités structurelles", "décolonisation", "décroissance", "post-croissance", "économie du bien-être", "énergies fossiles",
-                "коренные причины", "системные изменения", "структурное неравенство", "деколонизация", "антирост", "дерост", "пост-экстрактивизм", "отказ от ископаемого",
-                "الأسباب الجذرية", "التغيير المنهجي", "عدم المساواة الهيكلية", "إنهاء الاستعمار", "تراجع النمو", "ما بعد النمو", "اقتصاد الرفاه", "الوقود الأحفوري",
-                "根本原因", "系统性变革", "结构性不平等", "非殖民化", "去增长", "后增长", "福祉经济", "化石燃料",
-                "першопричини", "системні зміни", "структурна нерівність", "деколонізація", "антизростання", "викопного палива", "докорінні причини"
-            ]
+            "Recognitional": {
+                unambiguous: [
+                    "marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "gedsi", "epistemic justice", "self-determination", "structural recognition", "decolonial recognition", "women", "gender", "female", "youth", "empowerment", "dignity", "agency", "local communities",
+                    "grupos marginados", "derechos indígenas", "pueblos indígenas", "conocimientos tradicionales", "saberes ancestrales", "desequilibrios de poder", "exclusión social", "enfoque de género", "interseccionalidad",
+                    "groupes marginalisés", "droits des peuples autochtones", "savoirs traditionnels", "déséquilibres de pouvoir", "exclusion sociale", "approche sensible au genre", "intersectionnalité", "droits des autochtones", "groupes vulnérables",
+                    "маргинализированные", "коренных народов", "традиционные знания", "гендерно-ориентированный", "социальная изоляция",
+                    "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "توازن القوى", "الإقصاء الاجتماعي", "المنظور الجنساني", "الفئات الضعيفة",
+                    "边缘化群体", "原住民权利", "传统知识", "权力失衡", "社会排斥", "社会包容", "性别响应", "弱势群体",
+                    "маргіналізовані", "корінних народів", "традиційні знання", "гендерно-чутливий", "соціальне відчуження"
+                ],
+                ambiguous: ["vulnerable", "fairness", "empower"]
+            },
+            "Procedural": {
+                unambiguous: [
+                    "transparent process", "inclusive decision", "fair process", "procedural rights", "prior and informed consent", "fpic", "bottom-up planning", "decentralized governance", "grievance mechanism", "co-production", "participatory planning", "access to information", "accountability mechanism", "co-governance", "decision-making autonomy", "institutionalized public participation", "structural power redistribution", "democratized governance",
+                    "procesos transparentes", "decisiones inclusiva", "participación significativa", "consentimiento libre previo e informado", "mecanismos de reclamación", "gobernanza descentralizada", "mecanismos de queja",
+                    "processus transparents", "décision inclusive", "participation significative", "consentement préalable", "mécanismes de recours", "gouvernance décentralisée",
+                    "прозрачные процессы", "инклюзивное", "значимое участие", "осознанное согласие", "механизмы рассмотрения жалоб", "общественные консультации", "предварительное согласие",
+                    "عمليات شفافة", "صنع قرار شامل", "مشاركة مجدية", "الموافقة المسبقة", "آليات التظلم", "اللامركزية", "مشاورات عامة",
+                    "透明过程", "包容性决策", "有意义的参与", "事先知情同意", "利益相关方磋商", "申诉机制", "权力下放", "公众咨询",
+                    "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"
+                ],
+                ambiguous: ["consultation", "stakeholder", "participation", "public consultation", "engage", "involve", "involved", "community", "communities", "multi-stakeholder", "transparent", "transparency", "consulta pública", "consultation publique"]
+            },
+            "Distributive": {
+                unambiguous: [
+                    "equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "spatial justice", "urban equity", "vulnerability-based targeting", "technology transfer", "differentiated impacts", "just transition", "structural redistribution", "systemic equity", "wealth taxation", "post-extractivist distribution", "equitable climate action", "cbdr",
+                    "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza",
+                    "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses",
+                    "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты",
+                    "التقاسم العادل", "تقاسم الأعباء", "تقاسم المنافع", "الإنصاف بين الأجيال", "انتقال عادل", "الأمان الاجتماعي",
+                    "公平分享", "责任分担", "利益共享", "代际公平", "公正转型", "社会安全网",
+                    "справедливий розподіл", "розподіл тягаря", "розподіл вигод", "міжпоколінна справедливість", "справедливий перехід", "соціального захисту"
+                ],
+                ambiguous: ["allocation", "resource", "fair & ambitious", "equitable outcomes", "targeted support"]
+            },
+            "Restorative": {
+                unambiguous: [
+                    "past climate injustice", "historical responsibilities", "reparative justice", "restorative", "past harms", "loss and damage", "neld", "non-economic loss", "ecological debt", "climate reparations", "climate mobility", "climate refugees", "forced migration", "planned relocation", "disaster displacement", "warsaw international mechanism", "common but differentiated responsibilities", "trapped populations", "climate immobility", "historical loss evaluation",
+                    "injusticias climáticas pasadas", "responsabilidades históricas", "medidas reparadoras", "pérdidas y daños", "responsabilidades comunes pero diferenciadas", "deuda ecológica", "movilidad climática", "daños no económicos",
+                    "injustices climatiques passées", "responsabilités historiques", "mesures de réparation", "pertes et préjudices", "responsabilités communes mais différenciées", "dette écologique", "mobilité climatique", "préjudices non économiques",
+                    "прошлые климатические", "историческая ответственность", "потери и ущерб", "неэкономические потери", "общая но дифференцированная", "экологический долг", "климатическая миграция",
+                    "المظالم المناخية", "المسؤوليات التاريخية", "تدابير جبر الضرر", "الخسائر والأضرار", "الخسائر غير الاقتصادية", "المسؤوليات المشتركة", "التنقل المناخي",
+                    "历史气候不公", "历史责任", "补救措施", "损失与损害", "非经济损失", "共同但有区别的责任", "生态债务", "气候流动性",
+                    "минулі кліматичні", "історична відповідальність", "втрати та збитки", "неекономічні втрати", "спільна але диференційована", "кліматична міграція"
+                ],
+                ambiguous: ["remediation", "compensation", "rehabilitation", "relocation", "resettlement", "displacement", "human mobility"]
+            },
+            "Transformative": {
+                unambiguous: [
+                    "climate justice", "environmental justice", "social justice", "urban climate justice", "root causes", "systemic change", "structural inequalities", "systemic reform", "deep decarbonization", "dismantling patriarchy", "decolonization", "degrowth", "post-growth", "well-being economy", "post-extractivism", "buen vivir", "post-capitalism", "paradigm shift", "anti-growth", "post-development", "fossil fuel phase-out",
+                    "causas profundas", "cambio sistémico", "desigualdades estructurales", "descolonización", "decrecimiento", "postcrecimiento", "economía del bienestar", "post-extractivismo", "vivir bien", "combustibles fósiles", "causas subyacentes",
+                    "causes profondes", "changement systémique", "inégalités structurelles", "décolonisation", "décroissance", "post-croissance", "économie du bien-être", "énergies fossiles",
+                    "коренные причины", "системные изменения", "структурное неравенство", "деколонизация", "антирост", "дерост", "пост-экстрактивизм", "отказ от ископаемого",
+                    "الأسباب الجذرية", "التغيير المنهجي", "عدم المساواة الهيكلية", "إنهاء الاستعمار", "تراجع النمو", "ما بعد النمو", "اقتصاد الرفاه", "الوقود الأحفوري",
+                    "根本原因", "系统性变革", "结构性不平等", "非殖民化", "去增长", "后增长", "福祉经济", "化石燃料",
+                    "першопричини", "системні зміни", "структурна нерівність", "деколонізація", "антизростання", "викопного палива", "докорінні причини"
+                ],
+                ambiguous: ["transformative action", "circular economy"]
+            }
         };
+
+        const humanContextMarkers = [
+            "people", "citizen", "public", "women", "youth", "indigenous", "marginalized", "society", 
+            "group", "population", "resident", "worker", "farmer", "household", "minority", "actor", "social",
+            "decision", "rights", "justice", "equity", "equitable", "fair",
+            "pueblo", "público", "comunidad", "groupe", "citoyen", "население", "مجتمع"
+        ];
+
+        function isValidContext(term, text) {
+            let isAmbiguous = false;
+            for (let dim in conceptMap) {
+                if (conceptMap[dim].ambiguous.includes(term)) isAmbiguous = true;
+            }
+            if (!isAmbiguous) return true; // Unambiguous terms pass automatically
+            
+            const lowerText = text.toLowerCase();
+            return humanContextMarkers.some(marker => lowerText.includes(marker));
+        }
 
         let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
         let annexData = JSON.parse(JSON.stringify(defaultAnnexData));
@@ -980,18 +1015,18 @@
             const lower = text.toLowerCase();
             let dim = "Recognitional"; 
 
-            if (conceptsMatched.some(c => conceptMap["Transformative"].includes(c))) dim = "Transformative";
-            else if (conceptsMatched.some(c => conceptMap["Restorative"].includes(c))) dim = "Restorative";
-            else if (conceptsMatched.some(c => conceptMap["Distributive"].includes(c))) dim = "Distributive";
-            else if (conceptsMatched.some(c => conceptMap["Procedural"].includes(c))) dim = "Procedural";
+            if (conceptsMatched.some(c => conceptMap["Transformative"].unambiguous.includes(c) || conceptMap["Transformative"].ambiguous.includes(c))) dim = "Transformative";
+            else if (conceptsMatched.some(c => conceptMap["Restorative"].unambiguous.includes(c) || conceptMap["Restorative"].ambiguous.includes(c))) dim = "Restorative";
+            else if (conceptsMatched.some(c => conceptMap["Distributive"].unambiguous.includes(c) || conceptMap["Distributive"].ambiguous.includes(c))) dim = "Distributive";
+            else if (conceptsMatched.some(c => conceptMap["Procedural"].unambiguous.includes(c) || conceptMap["Procedural"].ambiguous.includes(c))) dim = "Procedural";
 
             let tier = "Tokenistic";
-            const embeddedWords = ["law", "legislation", "statutory", "legally binding", "enforcement", "accountability mechanism", "formal framework", "budget allocation", "decree", "act of parliament", "constitution", "ley", "loi", "закон", "قانون", "法律", "законодавство"];
-            const partialWords = ["plan ", "measure", "policy", "framework", "strategy", "program", "initiative", "commit", "roadmap", "target", "plan ", "medida", "política", "stratégie", "политика", "سياسة", "政策", "політика"];
+            const embeddedRegex = /\b(legislation|statutory|legally binding|enforcement|accountability mechanism|formal framework|budget allocation|decree|act of parliament|constitution|ley|loi|законодавство)\b/i;
+            const partialRegex = /\b(measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|політика)\b/i;
 
-            if (embeddedWords.some(w => lower.includes(w))) {
+            if (embeddedRegex.test(text)) {
                 tier = "Embedded";
-            } else if (partialWords.some(w => lower.includes(w))) {
+            } else if (partialRegex.test(text)) {
                 tier = "Partial";
             }
 
@@ -1022,9 +1057,22 @@
                     let matchedTerms = [];
                     let isJustice = false;
 
-                    for (const [dim, phrases] of Object.entries(conceptMap)) {
-                        phrases.forEach(phrase => {
-                            if(lowerText.includes(phrase)) {
+                    for (const [dim, categories] of Object.entries(conceptMap)) {
+                        // Check Unambiguous Terms
+                        categories.unambiguous.forEach(phrase => {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText)) {
+                                isJustice = true;
+                                matchedTerms.push(phrase);
+                            }
+                        });
+                        
+                        // Check Ambiguous Terms ONLY if Context is Valid
+                        categories.ambiguous.forEach(phrase => {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText) && isValidContext(phrase, lowerText)) {
                                 isJustice = true;
                                 matchedTerms.push(phrase);
                             }
@@ -1155,7 +1203,7 @@
             
             try {
                 const passages = await extractPassagesFromPDF(fileUrl, term);
-                term.innerHTML += `<p class="sys-msg">System: Extracted context blocks. Running global multilingual concept matching...</p>`;
+                term.innerHTML += `<p class="sys-msg">System: Extracted context blocks. Running global multilingual concept matching & context-aware heuristic filter...</p>`;
                 
                 let scoredPassages = [];
                 let seenTexts = new Set();
@@ -1165,9 +1213,19 @@
                     let lowerText = item.text.toLowerCase();
                     let matchedTerms = [];
 
-                    for (const [dim, phrases] of Object.entries(conceptMap)) {
-                        phrases.forEach(phrase => {
-                            if(lowerText.includes(phrase)) {
+                    for (const [dim, categories] of Object.entries(conceptMap)) {
+                        categories.unambiguous.forEach(phrase => {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText)) {
+                                score += 1;
+                                matchedTerms.push(phrase);
+                            }
+                        });
+                        categories.ambiguous.forEach(phrase => {
+                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
+                            if(regex.test(lowerText) && isValidContext(phrase, lowerText)) {
                                 score += 1;
                                 matchedTerms.push(phrase);
                             }
@@ -1194,8 +1252,8 @@
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
-                            const regex = new RegExp(`(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
-                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$1</span>`);
+                            const regex = new RegExp(`(^|[\\s\\W_])(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})([\\s\\W_]|$)`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
                         });
                         term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
                     });
