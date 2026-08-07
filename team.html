@@ -529,15 +529,15 @@
                                 <label>Target Query Parameters: 
                                     <span class="tooltip">Hover for Justice Taxonomy
                                       <span class="tooltiptext">
-                                        <strong>1. Recognitional:</strong> Women, gender, youth, vulnerable, dignity, indigenous, agency, GEDSI, ancestral domains, customary land, traditional knowledge, social inclusion, epistemic justice, human rights.<br><br>
-                                        <strong>2. Procedural:</strong> Consultation, stakeholder, participation, FPIC, bottom-up planning, grievance mechanisms, co-governance, decision-making autonomy.<br><br>
-                                        <strong>3. Distributive:</strong> Equitable sharing, burden/benefit sharing, just transition, social safety nets, progressive taxation, spatial justice, urban equity, CBDR.<br><br>
+                                        <strong>1. Recognitional:</strong> Women, gender, youth, vulnerable, dignity, indigenous, agency, GEDSI, ancestral domains, customary land, traditional knowledge, social inclusion, epistemic justice, human rights, public health.<br><br>
+                                        <strong>2. Procedural:</strong> Consultation, stakeholder, participation, FPIC, bottom-up planning, grievance mechanisms, co-governance, decision-making autonomy, capacity building.<br><br>
+                                        <strong>3. Distributive:</strong> Equitable sharing, burden/benefit sharing, just transition, progressive taxation, spatial justice, CBDR, technology transfer, climate finance, social/economic benefits.<br><br>
                                         <strong>4. Restorative:</strong> Past harms, compensation, loss and damage, NELD, rehabilitation, climate mobility, displacement, historical responsibilities, ecological debt.<br><br>
-                                        <strong>5. Transformative:</strong> Climate justice, environmental justice, root causes, systemic change, structural inequalities, decolonization, degrowth, fossil fuel phase-out, buen vivir.
+                                        <strong>5. Transformative:</strong> Climate justice, environmental justice, root causes, systemic change, structural inequalities, decolonization, degrowth, fossil fuel phase-out, buen vivir, south-south cooperation.
                                       </span>
                                     </span>
                                 </label>
-                                <input type="text" class="search-box" value="System automatically scans across all 5 Justice Dimensions and 3 Commitment Tiers." disabled style="background:#f0f0f0; color:#555;">
+                                <input type="text" class="search-box" value="System automatically scans across all 4 Justice Dimensions and 3 Commitment Tiers." disabled style="background:#f0f0f0; color:#555;">
                             </div>
                             <div class="form-group" style="width: 180px; margin-bottom: 0;">
                                 <label for="ai-depth">Result Depth:</label>
@@ -613,7 +613,7 @@
         let currentUser = "Anonymous";
         let googleChartsLoaded = false;
         
-        // --- SUPABASE CONFIGURATION (Wrapped in Try/Catch to prevent fatal UI crashes) ---
+        // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = 'https://lqxrvquhwglodgallheu.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxeHJ2cXVod2dsb2RnYWxsaGV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwMzA3NTEsImV4cCI6MjEwMTYwNjc1MX0.y0VwtOtwT4kJPyxnrGmfz6fxtcmJv6Fkbxv6B-oEDT0';
         let supabaseClient = null;
@@ -1086,7 +1086,7 @@
             }
             
             if(pageId === 'dashboard' && googleChartsLoaded) { setTimeout(drawGantt, 50); }
-            if(pageId === 'map' && googleChartsLoaded) { setTimeout(drawRegionsMap, 200); }
+            if(pageId === 'map' && googleChartsLoaded) { setTimeout(drawRegionsMap, 150); }
         }
 
         function filterTable(tableId) {
@@ -1111,8 +1111,7 @@
             google.charts.setOnLoadCallback(() => { 
                 googleChartsLoaded = true;
                 if(document.getElementById('dashboard').classList.contains('active')) drawGantt();
-                // We DO NOT call drawRegionsMap() here to prevent the SVG collapse bug.
-                // It will be called safely when the user clicks the Map tab.
+                // Map drawing is intentionally suppressed here. It waits for user interaction.
             });
         }
 
@@ -1165,7 +1164,7 @@
             if (!googleChartsLoaded) return;
             var chartContainer = document.getElementById('regions_div');
             
-            // SECURITY CHECK: If the tab is hidden (offsetWidth is 0), DO NOT draw the map.
+            // STRICT SAFETY CHECK: Abort drawing if the map container is hidden or 0 width.
             if(!chartContainer || chartContainer.offsetParent === null || chartContainer.offsetWidth === 0) return; 
 
             if (panZoomInstance) {
@@ -1203,7 +1202,6 @@
             google.visualization.events.addListener(chart, 'ready', function() {
                 setTimeout(() => {
                     var svgElem = chartContainer.querySelector('svg');
-                    // Ensure the SVG is valid before attaching pan-zoom
                     if (svgElem && chartContainer.offsetWidth > 0) {
                         if (panZoomInstance) panZoomInstance.destroy();
                         panZoomInstance = svgPanZoom(svgElem, { zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true, minZoom: 1, maxZoom: 15 });
@@ -1332,17 +1330,13 @@
 
                     for (const [dim, categories] of Object.entries(conceptMap)) {
                         categories.unambiguous.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText)) {
+                            if(lowerText.includes(phrase)) {
                                 isJustice = true;
                                 matchedTerms.push(phrase);
                             }
                         });
                         categories.ambiguous.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText) && isValidContext(phrase, lowerText)) {
+                            if(lowerText.includes(phrase) && isValidContext(phrase, lowerText)) {
                                 isJustice = true;
                                 matchedTerms.push(phrase);
                             }
@@ -1485,17 +1479,13 @@
 
                     for (const [dim, categories] of Object.entries(conceptMap)) {
                         categories.unambiguous.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText)) {
+                            if(lowerText.includes(phrase)) {
                                 score += 1;
                                 matchedTerms.push(phrase);
                             }
                         });
                         categories.ambiguous.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText) && isValidContext(phrase, lowerText)) {
+                            if(lowerText.includes(phrase) && isValidContext(phrase, lowerText)) {
                                 score += 1;
                                 matchedTerms.push(phrase);
                             }
@@ -1522,8 +1512,8 @@
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
-                            const regex = new RegExp(`(^|[\\s\\W_])(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})([\\s\\W_]|$)`, 'gi');
-                            highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
+                            const regex = new RegExp(`(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+                            highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$1</span>`);
                         });
                         term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
                     });
