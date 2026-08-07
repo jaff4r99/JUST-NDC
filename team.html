@@ -898,9 +898,7 @@
                 }
 
                 loadTables();
-                if (googleChartsLoaded && document.getElementById('map').classList.contains('active')) {
-                    drawRegionsMap(); 
-                }
+                drawRegionsMap();
             }
         }
 
@@ -1086,12 +1084,8 @@
                 document.querySelector('.sidebar-overlay').classList.remove('active');
             }
             
-            if(pageId === 'dashboard' && googleChartsLoaded) { drawGantt(); }
-            
-            if(pageId === 'map' && googleChartsLoaded) { 
-                // Draw map strictly after layout paints
-                setTimeout(drawRegionsMap, 100); 
-            }
+            if(pageId === 'dashboard') { setTimeout(drawGantt, 50); }
+            if(pageId === 'map') { setTimeout(drawRegionsMap, 50); }
         }
 
         function filterTable(tableId) {
@@ -1114,15 +1108,15 @@
         if (typeof google !== 'undefined') {
             google.charts.load('current', {'packages':['gantt', 'geochart']});
             google.charts.setOnLoadCallback(() => { 
-                googleChartsLoaded = true;
-                if(document.getElementById('dashboard').classList.contains('active')) drawGantt();
+                loadTables();
+                drawGantt(); 
+                drawRegionsMap();
             });
         }
 
         function drawGantt() {
-            if (!googleChartsLoaded) return;
             var chartContainer = document.getElementById('gantt_chart');
-            if(!chartContainer || chartContainer.offsetWidth === 0) return;
+            if(!chartContainer) return;
 
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Task ID'); data.addColumn('string', 'Task Name'); data.addColumn('string', 'Resource');
@@ -1160,12 +1154,8 @@
 
         var panZoomInstance = null;
         function drawRegionsMap() {
-            if (!googleChartsLoaded) return;
             var chartContainer = document.getElementById('regions_div');
-            
-            if(!chartContainer || chartContainer.offsetWidth === 0) {
-                return; 
-            }
+            if(!chartContainer) return;
 
             if (panZoomInstance) {
                 panZoomInstance.destroy();
@@ -1202,7 +1192,7 @@
             google.visualization.events.addListener(chart, 'ready', function() {
                 setTimeout(() => {
                     var svgElem = chartContainer.querySelector('svg');
-                    if (svgElem && chartContainer.offsetWidth > 0) {
+                    if (svgElem) {
                         if (panZoomInstance) panZoomInstance.destroy();
                         panZoomInstance = svgPanZoom(svgElem, { zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true, minZoom: 1, maxZoom: 15 });
                     }
@@ -1235,6 +1225,7 @@
                     const sents = pageText.match(/[^.!?。！？]+[.!?。！？]*/g) || [pageText];
                     for(let j = 0; j < sents.length; j++) {
                         let chunk = sents[j].trim();
+                        // Extremely relaxed length/punctuation constraints to support non-Latin character streams
                         if(chunk.length > 15 && !/glossary|table of contents/i.test(chunk)) {
                             
                             // Check if sentence is English, and if so, ignore if it is entirely all-caps (Headers/Titles)
