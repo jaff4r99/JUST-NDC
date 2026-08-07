@@ -471,7 +471,7 @@
                         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                             <div class="form-group" style="flex-grow:1;">
                                 <label for="new-country">Country Name:</label>
-                                <input type="text" id="new-country" class="search-box" placeholder="e.g., Canada, Saint Lucia...">
+                                <input type="text" id="new-country" class="search-box" placeholder="e.g., Moldova, Niue, Canada...">
                             </div>
                             <div class="form-group" style="width: 200px;">
                                 <label for="new-level">Commitment Level:</label>
@@ -537,7 +537,7 @@
                                       </span>
                                     </span>
                                 </label>
-                                <input type="text" class="search-box" value="System automatically scans across all Justice Dimensions and 3 Commitment Tiers." disabled style="background:#f0f0f0; color:#555;">
+                                <input type="text" class="search-box" value="System automatically scans across all 5 Justice Dimensions and 3 Commitment Tiers." disabled style="background:#f0f0f0; color:#555;">
                             </div>
                             <div class="form-group" style="width: 180px; margin-bottom: 0;">
                                 <label for="ai-depth">Result Depth:</label>
@@ -611,6 +611,7 @@
     <script>
         // --- AUTH & ACTIVITY TRACKING ---
         let currentUser = "Anonymous";
+        let googleChartsLoaded = false;
         
         // --- SUPABASE CONFIGURATION (Wrapped in Try/Catch to prevent fatal UI crashes) ---
         const SUPABASE_URL = 'https://lqxrvquhwglodgallheu.supabase.co';
@@ -794,7 +795,7 @@
                 try { loadTables(); } catch(e) {}
                 try { renderExamples(); } catch(e) {}
                 try { 
-                    if (typeof google !== 'undefined' && google.visualization && google.visualization.GeoChart) {
+                    if (googleChartsLoaded && document.getElementById('map').classList.contains('active')) {
                         drawRegionsMap();
                     }
                 } catch(e) {}
@@ -896,7 +897,7 @@
                 }
 
                 loadTables();
-                if (typeof google !== 'undefined' && google.visualization && google.visualization.GeoChart) {
+                if (googleChartsLoaded && document.getElementById('map').classList.contains('active')) {
                     drawRegionsMap(); 
                 }
             }
@@ -921,13 +922,17 @@
                 if (item.s === 1) analyzed += w;
             });
             const pct = ((analyzed / total) * 100).toFixed(1);
-            document.getElementById('progress-ratio').innerText = `${analyzed} / ${total}`;
-            document.getElementById('progress-percent').innerText = `${pct}% Completed`;
-            document.getElementById('progress-bar-fill').style.width = `${pct}%`;
+            const ratioElem = document.getElementById('progress-ratio');
+            const pctElem = document.getElementById('progress-percent');
+            const barElem = document.getElementById('progress-bar-fill');
+            if(ratioElem) ratioElem.innerText = `${analyzed} / ${total}`;
+            if(pctElem) pctElem.innerText = `${pct}% Completed`;
+            if(barElem) barElem.style.width = `${pct}%`;
         }
 
         function loadTables() {
             const tbody = document.getElementById('tableBody');
+            if(!tbody) return;
             let html = '';
             ndcData.forEach(item => {
                 const badgeClass = item.s === 1 ? 'badge-done' : 'badge-pending';
@@ -940,13 +945,15 @@
             tbody.innerHTML = html;
 
             const abody = document.getElementById('annexBody');
-            let aHtml = '';
-            annexData.forEach(item => {
-                const fileUrl = item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f);
-                const dlBtn = `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>`;
-                aHtml += `<tr><td>${item.c}</td><td>${item.l}</td><td>${item.p}</td><td>${dlBtn}</td></tr>`;
-            });
-            abody.innerHTML = aHtml;
+            if(abody) {
+                let aHtml = '';
+                annexData.forEach(item => {
+                    const fileUrl = item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f);
+                    const dlBtn = `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>`;
+                    aHtml += `<tr><td>${item.c}</td><td>${item.l}</td><td>${item.p}</td><td>${dlBtn}</td></tr>`;
+                });
+                abody.innerHTML = aHtml;
+            }
 
             updateProgressMetrics();
             if(currentSort.table === 'countryTable') {
@@ -960,7 +967,8 @@
             const containerEmb = document.getElementById('examples-list-embedded');
             const containerPar = document.getElementById('examples-list-partial');
             const containerTok = document.getElementById('examples-list-tokenistic');
-            
+            if(!containerEmb) return;
+
             let htmlEmb = '', htmlPar = '', htmlTok = '';
 
             codingExamples.forEach((ex) => {
@@ -1077,8 +1085,8 @@
                 document.querySelector('.sidebar-overlay').classList.remove('active');
             }
             
-            if(pageId === 'dashboard') { setTimeout(drawGantt, 50); }
-            if(pageId === 'map' && typeof google !== 'undefined') { setTimeout(drawRegionsMap, 50); }
+            if(pageId === 'dashboard' && googleChartsLoaded) { setTimeout(drawGantt, 50); }
+            if(pageId === 'map' && googleChartsLoaded) { setTimeout(drawRegionsMap, 50); }
         }
 
         function filterTable(tableId) {
@@ -1101,11 +1109,14 @@
         if (typeof google !== 'undefined') {
             google.charts.load('current', {'packages':['gantt', 'geochart']});
             google.charts.setOnLoadCallback(() => { 
-                drawGantt(); 
+                googleChartsLoaded = true;
+                if(document.getElementById('dashboard').classList.contains('active')) drawGantt();
+                if(document.getElementById('map').classList.contains('active')) drawRegionsMap();
             });
         }
 
         function drawGantt() {
+            if (!googleChartsLoaded) return;
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Task ID'); data.addColumn('string', 'Task Name'); data.addColumn('string', 'Resource');
             data.addColumn('date', 'Start Date'); data.addColumn('date', 'End Date'); data.addColumn('number', 'Duration');
@@ -1122,7 +1133,9 @@
                 ['COP', 'COP 31 Begins', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 10), null, 0, null]
             ]);
 
-            var chart = new google.visualization.Gantt(document.getElementById('gantt_chart'));
+            var chartContainer = document.getElementById('gantt_chart');
+            if(!chartContainer || chartContainer.offsetWidth === 0) return;
+            var chart = new google.visualization.Gantt(chartContainer);
             chart.draw(data, { 
                 height: 310, 
                 gantt: { 
@@ -1141,6 +1154,10 @@
 
         var panZoomInstance = null;
         function drawRegionsMap() {
+            if (!googleChartsLoaded) return;
+            var chartContainer = document.getElementById('regions_div');
+            if(!chartContainer || chartContainer.offsetWidth === 0) return; // Crucial check to prevent invisible SVG drawing
+
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Country');
             data.addColumn('number', 'Value');
@@ -1156,7 +1173,6 @@
             });
 
             var regionVal = document.getElementById('regionSelect') ? document.getElementById('regionSelect').value : 'world';
-            var chartContainer = document.getElementById('regions_div');
             var chart = new google.visualization.GeoChart(chartContainer);
 
             google.visualization.events.addListener(chart, 'select', function() {
@@ -1189,7 +1205,6 @@
         }
 
         async function extractPassagesFromPDF(fileUrl, termNode) {
-            // Apply CORS proxy for external URLs (like unfccc.int) to prevent PDF.js crashes
             const fetchUrl = fileUrl.startsWith('http') && !fileUrl.includes('huggingface.co') 
                 ? 'https://api.allorigins.win/raw?url=' + encodeURIComponent(fileUrl) 
                 : fileUrl;
@@ -1208,7 +1223,6 @@
                     const sents = pageText.match(/[^.!?]+[.!?]+/g) || [pageText];
                     for(let j = 0; j < sents.length; j++) {
                         let chunk = sents[j].trim();
-                        // Ignore extremely short fragments, headers lacking punctuation, and TOC/Glossary patterns
                         if(chunk.length > 20 && chunk.split(" ").length > 5 && /[.!?]$/.test(chunk) && !/glossary|table of contents/i.test(chunk) && chunk !== chunk.toUpperCase()) {
                             let prev = (j > 0) ? sents[j-1].trim() : "";
                             let next = (j < sents.length - 1) ? sents[j+1].trim() : "";
