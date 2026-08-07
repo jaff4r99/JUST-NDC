@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JUST-NDC (Team Edition): Assessing Transformative Climate Justice in NDC 3.0</title>
+    <title>JUST-NDC: Assessing Transformative Climate Justice in NDC 3.0</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
     <!-- PDF.js for Client-Side AI Analyzer Text Extraction -->
@@ -1085,8 +1085,8 @@
                 document.querySelector('.sidebar-overlay').classList.remove('active');
             }
             
-            if(pageId === 'dashboard' && googleChartsLoaded) { setTimeout(drawGantt, 50); }
-            if(pageId === 'map' && googleChartsLoaded) { setTimeout(drawRegionsMap, 50); }
+            if(pageId === 'dashboard' && googleChartsLoaded) { setTimeout(drawGantt, 150); }
+            if(pageId === 'map' && googleChartsLoaded) { setTimeout(drawRegionsMap, 150); }
         }
 
         function filterTable(tableId) {
@@ -1117,6 +1117,14 @@
 
         function drawGantt() {
             if (!googleChartsLoaded) return;
+            var chartContainer = document.getElementById('gantt_chart');
+            if(!chartContainer) return;
+            
+            if (chartContainer.offsetWidth === 0) {
+                setTimeout(drawGantt, 100);
+                return;
+            }
+
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Task ID'); data.addColumn('string', 'Task Name'); data.addColumn('string', 'Resource');
             data.addColumn('date', 'Start Date'); data.addColumn('date', 'End Date'); data.addColumn('number', 'Duration');
@@ -1133,8 +1141,7 @@
                 ['COP', 'COP 31 Begins', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 10), null, 0, null]
             ]);
 
-            var chartContainer = document.getElementById('gantt_chart');
-            if(!chartContainer || chartContainer.offsetWidth === 0) return;
+            chartContainer.innerHTML = '';
             var chart = new google.visualization.Gantt(chartContainer);
             chart.draw(data, { 
                 height: 310, 
@@ -1156,7 +1163,19 @@
         function drawRegionsMap() {
             if (!googleChartsLoaded) return;
             var chartContainer = document.getElementById('regions_div');
-            if(!chartContainer || chartContainer.offsetWidth === 0) return; // Crucial check to prevent invisible SVG drawing
+            if(!chartContainer) return;
+            
+            // Auto-Retry Loop if Map Tab is invisible/unrendered
+            if (chartContainer.offsetWidth === 0) {
+                setTimeout(drawRegionsMap, 100);
+                return;
+            }
+
+            if (panZoomInstance) {
+                panZoomInstance.destroy();
+                panZoomInstance = null;
+            }
+            chartContainer.innerHTML = '';
 
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Country');
