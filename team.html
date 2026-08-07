@@ -544,7 +544,7 @@
                                     <option value="5">Top 5 Passages</option>
                                     <option value="15">Top 15 Passages</option>
                                     <option value="30">Top 30 Passages</option>
-                                    <option value="999" selected>All Relevant Matches</option>
+                                    <option value="99999" selected>All Relevant Matches</option>
                                 </select>
                             </div>
                         </div>
@@ -801,11 +801,6 @@
             } finally {
                 try { loadTables(); } catch(e) {}
                 try { renderExamples(); } catch(e) {}
-                try { 
-                    if (googleChartsLoaded && document.getElementById('map').classList.contains('active')) {
-                        drawRegionsMap();
-                    }
-                } catch(e) {}
             }
         }
 
@@ -1093,9 +1088,9 @@
             
             if(pageId === 'dashboard' && googleChartsLoaded) { drawGantt(); }
             
-            // Explicitly force map drawing slightly after the tab is fully visible
             if(pageId === 'map' && googleChartsLoaded) { 
-                setTimeout(drawRegionsMap, 300); 
+                // Draw map strictly after layout paints
+                setTimeout(drawRegionsMap, 100); 
             }
         }
 
@@ -1168,94 +1163,64 @@
             if (!googleChartsLoaded) return;
             var chartContainer = document.getElementById('regions_div');
             
-            // STRICT SAFETY CHECK: Abort drawing if the map container is hidden or 0 width.
-            if(!chartContainer || chartContainer.offsetParent === null || chartContainer.offsetWidth === 0) {
-                setTimeout(drawRegionsMap, 100); // Retry loop
+            if(!chartContainer || chartContainer.offsetWidth === 0) {
                 return; 
             }
 
-            try {
-                if (panZoomInstance) {
-                    panZoomInstance.destroy();
-                    panZoomInstance = null;
-                }
-                chartContainer.innerHTML = '';
-
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Country');
-                data.addColumn('number', 'Value');
-                data.addColumn({type: 'string', role: 'tooltip'});
-
-                ndcData.forEach(item => {
-                    const statusText = item.s === 1 ? 'Analyzed' : 'Pending';
-                    if(item.mapTarget === "EU_EXPAND") {
-                        euCountries.forEach(euC => data.addRow([euC, item.s, `EU Member State\nStatus: ${statusText}`]));
-                    } else if (item.mapTarget !== null) {
-                        data.addRow([item.mapTarget, item.s, `${item.c}\nStatus: ${statusText}`]);
-                    }
-                });
-
-                var regionVal = document.getElementById('regionSelect') ? document.getElementById('regionSelect').value : 'world';
-                var chart = new google.visualization.GeoChart(chartContainer);
-
-                google.visualization.events.addListener(chart, 'select', function() {
-                    var selection = chart.getSelection();
-                    if (selection.length > 0) {
-                        var geoCode = data.getValue(selection[0].row, 0);
-                        var matched = ndcData.find(item => item.mapTarget === geoCode || (item.mapTarget === "EU_EXPAND" && euCountries.includes(geoCode)));
-                        if (matched) toggleStatus(matched.c);
-                    }
-                });
-
-                google.visualization.events.addListener(chart, 'ready', function() {
-                    setTimeout(() => {
-                        var svgElem = chartContainer.querySelector('svg');
-                        if (svgElem && chartContainer.offsetWidth > 0) {
-                            if (panZoomInstance) panZoomInstance.destroy();
-                            panZoomInstance = svgPanZoom(svgElem, { zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true, minZoom: 1, maxZoom: 15 });
-                        }
-                    }, 100);
-                });
-
-                chart.draw(data, {
-                    region: regionVal,
-                    colorAxis: { colors: ['#FDBE02', '#34c759'], minValue: 0, maxValue: 1 },
-                    backgroundColor: 'transparent',
-                    datalessRegionColor: '#e0e0e0',
-                    defaultColor: '#e0e0e0',
-                    legend: 'none'
-                });
-            } catch (error) {
-                console.error("Map Drawing Error:", error);
+            if (panZoomInstance) {
+                panZoomInstance.destroy();
+                panZoomInstance = null;
             }
+            chartContainer.innerHTML = '';
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Country');
+            data.addColumn('number', 'Value');
+            data.addColumn({type: 'string', role: 'tooltip'});
+
+            ndcData.forEach(item => {
+                const statusText = item.s === 1 ? 'Analyzed' : 'Pending';
+                if(item.mapTarget === "EU_EXPAND") {
+                    euCountries.forEach(euC => data.addRow([euC, item.s, `EU Member State\nStatus: ${statusText}`]));
+                } else if (item.mapTarget !== null) {
+                    data.addRow([item.mapTarget, item.s, `${item.c}\nStatus: ${statusText}`]);
+                }
+            });
+
+            var regionVal = document.getElementById('regionSelect') ? document.getElementById('regionSelect').value : 'world';
+            var chart = new google.visualization.GeoChart(chartContainer);
+
+            google.visualization.events.addListener(chart, 'select', function() {
+                var selection = chart.getSelection();
+                if (selection.length > 0) {
+                    var geoCode = data.getValue(selection[0].row, 0);
+                    var matched = ndcData.find(item => item.mapTarget === geoCode || (item.mapTarget === "EU_EXPAND" && euCountries.includes(geoCode)));
+                    if (matched) toggleStatus(matched.c);
+                }
+            });
+
+            google.visualization.events.addListener(chart, 'ready', function() {
+                setTimeout(() => {
+                    var svgElem = chartContainer.querySelector('svg');
+                    if (svgElem && chartContainer.offsetWidth > 0) {
+                        if (panZoomInstance) panZoomInstance.destroy();
+                        panZoomInstance = svgPanZoom(svgElem, { zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true, minZoom: 1, maxZoom: 15 });
+                    }
+                }, 100);
+            });
+
+            chart.draw(data, {
+                region: regionVal,
+                colorAxis: { colors: ['#FDBE02', '#34c759'], minValue: 0, maxValue: 1 },
+                backgroundColor: 'transparent',
+                datalessRegionColor: '#e0e0e0',
+                defaultColor: '#e0e0e0',
+                legend: 'none'
+            });
         }
 
         async function extractPassagesFromPDF(fileUrl, termNode) {
-            let finalUrl = fileUrl;
-
-            // Only attempt proxy if it is NOT a huggingface link
-            if (fileUrl.startsWith('http') && !fileUrl.includes('huggingface.co')) {
-                termNode.innerHTML += `<p class="sys-msg" style="color:#ffbd2e;">System: External file detected. Downloading to secure memory buffer to bypass server blocks...</p>`;
-                try {
-                    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(fileUrl);
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error('Primary proxy failed');
-                    const blob = await response.blob();
-                    finalUrl = URL.createObjectURL(blob);
-                } catch (e) {
-                    termNode.innerHTML += `<p class="sys-msg" style="color:#ffbd2e;">Warning: Primary proxy failed. Attempting secondary fallback proxy...</p>`;
-                    try {
-                        const fallbackUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(fileUrl);
-                        const response2 = await fetch(fallbackUrl);
-                        const blob2 = await response2.blob();
-                        finalUrl = URL.createObjectURL(blob2);
-                    } catch(err2) {
-                        termNode.innerHTML += `<p class="err-msg">Error: The file is too large or heavily restricted. Proceeding with direct fetch...</p>`;
-                    }
-                }
-            }
-
-            const loadingTask = pdfjsLib.getDocument(finalUrl);
+            const loadingTask = pdfjsLib.getDocument(fileUrl);
             const pdf = await loadingTask.promise;
             termNode.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting contextual text blocks from ${pdf.numPages} pages...</p>`;
             
@@ -1270,7 +1235,6 @@
                     const sents = pageText.match(/[^.!?。！？]+[.!?。！？]*/g) || [pageText];
                     for(let j = 0; j < sents.length; j++) {
                         let chunk = sents[j].trim();
-                        // Extremely relaxed length/punctuation constraints to support non-Latin character streams
                         if(chunk.length > 15 && !/glossary|table of contents/i.test(chunk)) {
                             
                             // Check if sentence is English, and if so, ignore if it is entirely all-caps (Headers/Titles)
@@ -1526,7 +1490,8 @@
                 if(finalResults.length === 0) {
                     term.innerHTML += `<p class="err-msg">Result: No significant passages found implicitly or explicitly matching justice concepts.</p>`;
                 } else {
-                    term.innerHTML += `<br><p style="color:#34c759; font-weight:bold;">--- Retrieved ${finalResults.length} Relevant Passages (Max Limit: ${resultLimit}) ---</p>`;
+                    let maxText = resultLimit >= 99999 ? "All" : resultLimit;
+                    term.innerHTML += `<br><p style="color:#34c759; font-weight:bold;">--- Retrieved ${finalResults.length} Relevant Passages (Max Limit: ${maxText}) ---</p>`;
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
