@@ -509,15 +509,14 @@
                                 <label>Target Query Parameters: 
                                     <span class="tooltip">Hover for Justice Taxonomy
                                       <span class="tooltiptext">
-                                        <strong>1. Recognitional:</strong> Women, gender, youth, vulnerable, dignity, indigenous, agency, GEDSI, ancestral domains, customary land, traditional knowledge, social inclusion, epistemic justice, human rights.<br><br>
-                                        <strong>2. Procedural:</strong> Consultation, stakeholder, participation, FPIC, bottom-up planning, grievance mechanisms, co-governance, decision-making autonomy.<br><br>
-                                        <strong>3. Distributive:</strong> Equitable sharing, burden/benefit sharing, just transition, social safety nets, progressive taxation, spatial justice, urban equity, CBDR.<br><br>
-                                        <strong>4. Restorative:</strong> Past harms, compensation, loss and damage, NELD, rehabilitation, climate mobility, displacement, historical responsibilities, ecological debt.<br><br>
-                                        <strong>5. Transformative:</strong> Climate justice, environmental justice, root causes, systemic change, structural inequalities, decolonization, degrowth, fossil fuel phase-out, buen vivir.
+                                        <strong>1. Recognitional:</strong> Women, gender, youth, vulnerable, dignity, indigenous, agency, GEDSI, ancestral domains, customary land, traditional knowledge, social inclusion, epistemic justice, human rights, people-centered, public wellbeing, future generations.<br><br>
+                                        <strong>2. Procedural:</strong> Consultation, stakeholder, participation, FPIC, bottom-up planning, grievance mechanisms, co-governance, decision-making autonomy, capacity building, environmental disclosure.<br><br>
+                                        <strong>3. Distributive:</strong> Equitable sharing, burden/benefit sharing, just transition, progressive taxation, spatial justice, CBDR, technology transfer, climate finance, social/economic benefits, south-south cooperation.<br><br>
+                                        <strong>4. Restorative:</strong> Past harms, compensation, loss and damage, NELD, rehabilitation, climate mobility, displacement, historical responsibilities, ecological debt, disaster risk reduction, health adaptation.<br><br>
                                       </span>
                                     </span>
                                 </label>
-                                <input type="text" class="search-box" value="System automatically scans across all Justice Dimensions and 3 Commitment Tiers." disabled style="background:#f0f0f0; color:#555;">
+                                <input type="text" class="search-box" value="System automatically scans across all 4 Justice Dimensions and 3 Commitment Tiers." disabled style="background:#f0f0f0; color:#555;">
                             </div>
                             <div class="form-group" style="width: 180px; margin-bottom: 0;">
                                 <label for="ai-depth">Result Depth:</label>
@@ -525,7 +524,7 @@
                                     <option value="5">Top 5 Passages</option>
                                     <option value="15">Top 15 Passages</option>
                                     <option value="30">Top 30 Passages</option>
-                                    <option value="999" selected>All Relevant Matches</option>
+                                    <option value="99999" selected>All Relevant Matches</option>
                                 </select>
                             </div>
                         </div>
@@ -589,6 +588,15 @@
     </div>
 
     <script>
+        // --- GLOBALS & ISO MAPPING ---
+        const euCountries = [
+            "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", 
+            "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", 
+            "RO", "SK", "SI", "ES", "SE"
+        ];
+        
+        let googleChartsLoaded = false;
+
         const hfBaseUrl = "https://huggingface.co/spaces/jaff4r/Climate-Justice-in-NDCs/resolve/main/ndcs/";
 
         const defaultNdcData = [
@@ -613,7 +621,7 @@
             { c: "Malawi", l: "English", s: 0, p: 95, mapTarget: "MW", f: "95 NDC3.0 Malawi.pdf" }, { c: "Malaysia", l: "English", s: 0, p: 16, mapTarget: "MY", f: "16 Malaysia NDC 3.0 to UNFCCC 2025 final.pdf" }, { c: "Mauritius", l: "English", s: 0, p: 51, mapTarget: "MU", f: "51 Mauritius.pdf" }, 
             { c: "Micronesia", l: "English", s: 0, p: 68, mapTarget: "FM", f: "68 Micronesia.pdf" }, { c: "Mongolia", l: "English", s: 0, p: 36, mapTarget: "MN", f: "36 Mongolia.pdf" }, { c: "Mozambique", l: "English", s: 0, p: 25, mapTarget: "MZ", f: "25 Mozambique.pdf" }, 
             { c: "Nauru", l: "English", s: 0, p: 63, mapTarget: "NR", f: "63Nauru NDC 3.pdf" }, { c: "Nigeria", l: "English", s: 0, p: 70, mapTarget: "NG", f: "70 Nigeria NDC 3.0.pdf" }, 
-            { c: "Oman", l: "English", s: 0, p: 67, mapTarget: "OM", url: "oman.pdf" },
+            { c: "Oman", l: "English", s: 0, p: 67, mapTarget: "OM", f: "oman.pdf" },
             { c: "Pakistan", l: "English", s: 0, p: 59, mapTarget: "PK", f: "59 Pakistan.pdf" }, { c: "Palau", l: "English", s: 0, p: 58, mapTarget: "PW", f: "58 Palau.pdf" }, { c: "Qatar", l: "English", s: 0, p: 39, mapTarget: "QA", f: "39 Qatar NDC 3.0.pdf" }, { c: "Republic of Korea", l: "English", s: 0, p: 28, mapTarget: "KR", f: "28The Republic of Koreas 2035 NDC.pdf" }, 
             { c: "Rwanda", l: "English", s: 0, p: 152, mapTarget: "RW", f: "152 Rwanda NDC3.0 Final.pdf" }, { c: "Samoa", l: "English", s: 0, p: 45, mapTarget: "WS", f: "45Samoa NDC3.0_FINAL.pdf" }, { c: "Sao Tome and Principe", l: "English", s: 0, p: 79, mapTarget: "ST", f: "79 Sao Tome and Principe.pdf" }, 
             { c: "Serbia", l: "English", s: 0, p: 13, mapTarget: "RS", f: "13 Serbia.pdf" }, { c: "Seychelles", l: "English", s: 0, p: 40, mapTarget: "SC", f: "40 Seychelles.pdf" }, { c: "Sierra Leone", l: "English", s: 0, p: 147, mapTarget: "SL", f: "147 Sierra Leone NDC 3.0.pdf" }, 
@@ -646,23 +654,24 @@
             { id: "default-3", dimension: "Recognitional", country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
-        // Refined Context-Aware Multilingual Justice Taxonomy
+        // --- Refined Context-Aware Multilingual Justice Taxonomy ---
+        // Extensively expanded to capture Global South / Developmental frameworks
         const conceptMap = {
             "Recognitional": {
-                unambiguous: ["marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "gedsi", "epistemic justice", "self-determination", "structural recognition", "decolonial recognition", "women", "gender", "female", "youth", "empowerment", "dignity", "agency", "local communities", "social justice", "structural inequalities", "dismantling patriarchy", "decolonization", "grupos marginados", "derechos indígenas", "pueblos indígenas", "conocimientos tradicionales", "saberes ancestrales", "desequilibrios de poder", "exclusión social", "enfoque de género", "interseccionalidad", "groupes marginalisés", "droits des peuples autochtones", "savoirs traditionnels", "déséquilibres de pouvoir", "exclusion sociale", "approche sensible au genre", "intersectionnalité", "droits des autochtones", "groupes vulnérables", "маргинализированные", "коренных народов", "традиционные знания", "гендерно-ориентированный", "социальная изоляция", "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "توازن القوى", "الإقصاء الاجتماعي", "المنظور الجنساني", "الفئات الضعيفة", "边缘化群体", "原住民权利", "传统知识", "权力失衡", "社会排斥", "社会包容", "性别响应", "弱势群体", "маргіналізовані", "корінних народів", "традиційні знання", "гендерно-чутливий", "соціальне відчуження"],
+                unambiguous: ["marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "gedsi", "epistemic justice", "self-determination", "structural recognition", "decolonial recognition", "women", "gender", "female", "youth", "empowerment", "dignity", "agency", "local communities", "people-centered development", "people-centred development", "people first", "life first", "public wellbeing", "future generations", "fundamental interests", "grupos marginados", "derechos indígenas", "pueblos indígenas", "conocimientos tradicionales", "saberes ancestrales", "desequilibrios de poder", "exclusión social", "enfoque de género", "interseccionalidad", "groupes marginalisés", "droits des peuples autochtones", "savoirs traditionnels", "déséquilibres de pouvoir", "exclusion sociale", "approche sensible au genre", "intersectionnalité", "droits des autochtones", "groupes vulnérables", "маргинализированные", "коренных народов", "традиционные знания", "гендерно-ориентированный", "социальная изоляция", "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "توازن القوى", "الإقصاء الاجتماعي", "المنظور الجنساني", "الفئات الضعيفة", "边缘化群体", "原住民权利", "传统知识", "权力失衡", "社会排斥", "社会包容", "性别响应", "弱势群体", "以人民为中心", "人民至上", "生命至上", "群众的根本利益", "公众福祉", "子孙后代", "маргіналізовані", "корінних народів", "традиційні знання", "гендерно-чутливий", "соціальне відчуження"],
                 ambiguous: ["vulnerable", "fairness", "empower"]
             },
             "Procedural": {
-                unambiguous: ["transparent process", "inclusive decision", "fair process", "procedural rights", "prior and informed consent", "fpic", "bottom-up planning", "decentralized governance", "grievance mechanism", "co-production", "participatory planning", "access to information", "accountability mechanism", "co-governance", "decision-making autonomy", "institutionalized public participation", "structural power redistribution", "democratized governance", "systemic reform", "systemic change", "procesos transparentes", "decisiones inclusiva", "participación significativa", "consentimiento libre previo e informado", "mecanismos de reclamación", "gobernanza descentralizada", "mecanismos de queja", "processus transparents", "décision inclusive", "participation significative", "consentement préalable", "mécanismes de recours", "gouvernance décentralisée", "прозрачные процессы", "инклюзивное", "значимое участие", "осознанное согласие", "механизмы рассмотрения жалоб", "общественные консультации", "предварительное согласие", "عمليات شفافة", "صنع قرار شامل", "مشاركة مجدية", "الموافقة المسبقة", "آليات التظلم", "اللامركزية", "مشاورات عامة", "透明过程", "包容性决策", "有意义的参与", "事先知情同意", "利益相关方磋商", "申诉机制", "权力下放", "公众咨询", "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"],
-                ambiguous: ["consultation", "stakeholder", "participation", "public consultation", "engage", "involve", "involved", "community", "communities", "multi-stakeholder", "transparent", "transparency", "consulta pública", "consultation publique"]
+                unambiguous: ["transparent process", "inclusive decision", "fair process", "procedural rights", "prior and informed consent", "fpic", "bottom-up planning", "decentralized governance", "grievance mechanism", "co-production", "participatory planning", "access to information", "accountability mechanism", "co-governance", "decision-making autonomy", "institutionalized public participation", "structural power redistribution", "democratized governance", "capacity building", "public awareness", "environmental disclosure", "procesos transparentes", "decisiones inclusiva", "participación significativa", "consentimiento libre previo e informado", "mecanismos de reclamación", "gobernanza descentralizada", "mecanismos de queja", "desarrollo de capacidades", "processus transparents", "décision inclusive", "participation significative", "consentement préalable", "mécanismes de recours", "gouvernance décentralisée", "renforcement des capacités", "прозрачные процессы", "инклюзивное", "значимое участие", "осознанное согласие", "механизмы рассмотрения жалоб", "общественные консультации", "предварительное согласие", "наращивание потенциала", "عمليات شفافة", "صنع قرار شامل", "مشاركة مجدية", "الموافقة المسبقة", "آليات التظلم", "اللامركزية", "مشاورات عامة", "بناء القدرات", "透明过程", "包容性决策", "有意义的参与", "事先知情同意", "利益相关方磋商", "申诉机制", "权力下放", "公众咨询", "能力建设", "公众意识", "环境信息披露", "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"],
+                ambiguous: ["consultation", "stakeholder", "participation", "public consultation", "engage", "involve", "involved", "community", "communities", "multi-stakeholder", "transparent", "transparency", "consulta pública", "consultation publique", "公众参与"]
             },
             "Distributive": {
-                unambiguous: ["equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "spatial justice", "urban equity", "vulnerability-based targeting", "technology transfer", "differentiated impacts", "just transition", "structural redistribution", "systemic equity", "wealth taxation", "post-extractivist distribution", "equitable climate action", "cbdr", "climate justice", "environmental justice", "urban climate justice", "root causes", "degrowth", "post-growth", "well-being economy", "post-extractivism", "buen vivir", "post-capitalism", "paradigm shift", "anti-growth", "post-development", "fossil fuel phase-out", "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza", "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses", "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты", "التقاسم العادل", "تقاسم الأعباء", "تقاسم المنافع", "الإنصاف بين الأجيال", "انتقال عادل", "الأمان الاجتماعي", "公平分享", "责任分担", "利益共享", "代际公平", "公正转型", "社会安全网", "справедливий розподіл", "розподіл тягаря", "розподіл вигод", "міжпоколінна справедливість", "справедливий перехід", "соціального захисту"],
-                ambiguous: ["allocation", "resource", "fair & ambitious", "equitable outcomes", "targeted support"]
+                unambiguous: ["equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "spatial justice", "urban equity", "vulnerability-based targeting", "technology transfer", "differentiated impacts", "just transition", "structural redistribution", "systemic equity", "wealth taxation", "post-extractivist distribution", "equitable climate action", "cbdr", "common but differentiated responsibilities", "south-south cooperation", "climate finance", "economic benefits", "environmental benefits", "social benefits", "belt and road", "fair development space", "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza", "cooperación sur-sur", "transferencia de tecnología", "financiación climática", "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses", "coopération sud-sud", "transfert de technologie", "financement climatique", "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты", "сотрудничество юг-юг", "التقاسم العادل", "تقاسم الأعباء", "تقاسم المنافع", "الإنصاف بين الأجيال", "انتقال عادل", "الأمان الاجتماعي", "التعاون بين بلدان الجنوب", "公平分享", "责任分担", "利益共享", "代际公平", "公正转型", "社会安全网", "共同但有区别的责任", "南南合作", "气候资金", "技术转让", "经济效益", "环境效益", "社会效益", "一带一路", "公平的发展空间", "справедливий розподіл", "розподіл тягаря", "розподіл вигод", "міжпоколінна справедливість", "справедливий перехід", "соціального захисту"],
+                ambiguous: ["allocation", "resource", "fair & ambitious", "equitable outcomes", "targeted support", "公平", "公正"]
             },
             "Restorative": {
-                unambiguous: ["past climate injustice", "historical responsibilities", "reparative justice", "restorative", "past harms", "loss and damage", "neld", "non-economic loss", "ecological debt", "climate reparations", "climate mobility", "climate refugees", "forced migration", "planned relocation", "disaster displacement", "warsaw international mechanism", "common but differentiated responsibilities", "trapped populations", "climate immobility", "historical loss evaluation", "injusticias climáticas pasadas", "responsabilidades históricas", "medidas reparadoras", "pérdidas y daños", "responsabilidades comunes pero diferenciadas", "deuda ecológica", "movilidad climática", "daños no económicos", "injustices climatiques passées", "responsabilités historiques", "mesures de réparation", "pertes et préjudices", "responsabilités communes mais différenciées", "dette écologique", "mobilité climatique", "préjudices non économiques", "прошлые климатические", "историческая ответственность", "потери и ущерб", "неэкономические потери", "общая но дифференцированная", "экологический долг", "климатическая миграция", "المظالم المناخية", "المسؤوليات التاريخية", "تدابير جبر الضرر", "الخسائر والأضرار", "الخسائر غير الاقتصادية", "المسؤوليات المشتركة", "التنقل المناخي", "历史气候不公", "历史责任", "补救措施", "损失与损害", "非经济损失", "共同但有区别的责任", "生态债务", "气候流动性", "минулі кліматичні", "історична відповідальність", "втрати та збитки", "неекономічні втрати", "спільна але диференційована", "кліматична міграція"],
-                ambiguous: ["remediation", "compensation", "rehabilitation", "relocation", "resettlement", "displacement", "human mobility"]
+                unambiguous: ["past climate injustice", "historical responsibilities", "reparative justice", "restorative", "past harms", "loss and damage", "neld", "non-economic loss", "ecological debt", "climate reparations", "climate mobility", "climate refugees", "forced migration", "planned relocation", "disaster displacement", "warsaw international mechanism", "trapped populations", "climate immobility", "historical loss evaluation", "disaster risk reduction", "health adaptation", "heat warning", "food security", "water security", "resilient cities", "injusticias climáticas pasadas", "responsabilidades históricas", "medidas reparadoras", "pérdidas y daños", "deuda ecológica", "movilidad climática", "daños no económicos", "injustices climatiques passées", "responsabilités historiques", "mesures de réparation", "pertes et préjudices", "dette écologique", "mobilité climatique", "préjudices non économiques", "прошлые климатические", "историческая ответственность", "потери и ущерб", "неэкономические потери", "экологический долг", "климатическая миграция", "المظالم المناخية", "المسؤوليات التاريخية", "تدابير جبر الضرر", "الخسائر والأضرار", "الخسائر غير الاقتصادية", "التنقل المناخي", "历史气候不公", "历史责任", "补救措施", "损失与损害", "非经济损失", "生态债务", "气候流动性", "防灾减灾", "健康适应", "高温预警", "粮食安全", "水安全", "韧性城市", "минулі кліматичні", "історична відповідальність", "втрати та збитки", "неекономічні втрати", "кліматична міграція"],
+                ambiguous: ["remediation", "compensation", "rehabilitation", "relocation", "resettlement", "displacement", "human mobility", "resilience"]
             }
         };
 
@@ -670,8 +679,15 @@
             "people", "citizen", "public", "women", "youth", "indigenous", "marginalized", "society", 
             "group", "population", "resident", "worker", "farmer", "household", "minority", "actor", "social",
             "decision", "rights", "justice", "equity", "equitable", "fair",
-            "pueblo", "público", "comunidad", "groupe", "citoyen", "население", "مجتمع"
+            "pueblo", "público", "comunidad", "groupe", "citoyen", "население", "مجتمع", "人民", "公众", "社区", "群体"
         ];
+
+        function checkMatch(phrase, text) {
+            const isAsian = /[\u4e00-\u9fa5\u3040-\u30ff]/.test(phrase);
+            const searchText = isAsian ? text.replace(/\s+/g, '') : text;
+            const searchPhrase = isAsian ? phrase.toLowerCase().replace(/\s+/g, '') : phrase.toLowerCase();
+            return searchText.includes(searchPhrase);
+        }
 
         function isValidContext(term, text) {
             let isAmbiguous = false;
@@ -680,7 +696,7 @@
             }
             if (!isAmbiguous) return true; 
             const lowerText = text.toLowerCase();
-            return humanContextMarkers.some(marker => lowerText.includes(marker));
+            return humanContextMarkers.some(marker => checkMatch(marker, lowerText));
         }
 
         let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
@@ -711,9 +727,6 @@
             } finally {
                 loadTables();
                 renderExamples();
-                if (typeof google !== 'undefined' && google.visualization && google.visualization.GeoChart) {
-                    drawRegionsMap();
-                }
             }
         }
 
@@ -751,8 +764,6 @@
             loadLocalData();
         });
 
-        const euCountries = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"];
-        
         let currentSort = { table: null, col: null, asc: true };
         function sortTable(colIndex, tableId) {
             const table = document.getElementById(tableId);
@@ -786,7 +797,7 @@
                 } catch(e) {}
 
                 loadTables();
-                if (typeof google !== 'undefined' && google.visualization && google.visualization.GeoChart) {
+                if (googleChartsLoaded && document.getElementById('map').classList.contains('active')) {
                     drawRegionsMap(); 
                 }
             }
@@ -966,8 +977,8 @@
                 document.querySelector('.sidebar-overlay').classList.remove('active');
             }
             
-            if(pageId === 'dashboard') { setTimeout(drawGantt, 50); }
-            if(pageId === 'map' && typeof google !== 'undefined') { setTimeout(drawRegionsMap, 50); }
+            if(pageId === 'dashboard' && googleChartsLoaded) { drawGantt(); }
+            if(pageId === 'map' && googleChartsLoaded) { setTimeout(drawRegionsMap, 50); }
         }
 
         function filterTable(tableId) {
@@ -990,11 +1001,16 @@
         if (typeof google !== 'undefined') {
             google.charts.load('current', {'packages':['gantt', 'geochart']});
             google.charts.setOnLoadCallback(() => { 
-                drawGantt(); 
+                googleChartsLoaded = true;
+                if(document.getElementById('dashboard').classList.contains('active')) drawGantt();
             });
         }
 
         function drawGantt() {
+            if (!googleChartsLoaded) return;
+            var chartContainer = document.getElementById('gantt_chart');
+            if(!chartContainer) return;
+
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Task ID'); data.addColumn('string', 'Task Name'); data.addColumn('string', 'Resource');
             data.addColumn('date', 'Start Date'); data.addColumn('date', 'End Date'); data.addColumn('number', 'Duration');
@@ -1011,7 +1027,8 @@
                 ['COP', 'COP 31 Begins', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 10), null, 0, null]
             ]);
 
-            var chart = new google.visualization.Gantt(document.getElementById('gantt_chart'));
+            chartContainer.innerHTML = '';
+            var chart = new google.visualization.Gantt(chartContainer);
             chart.draw(data, { 
                 height: 310, 
                 gantt: { 
@@ -1030,6 +1047,16 @@
 
         var panZoomInstance = null;
         function drawRegionsMap() {
+            if (!googleChartsLoaded) return;
+            var chartContainer = document.getElementById('regions_div');
+            if(!chartContainer) return;
+            
+            if (panZoomInstance) {
+                panZoomInstance.destroy();
+                panZoomInstance = null;
+            }
+            chartContainer.innerHTML = '';
+
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Country');
             data.addColumn('number', 'Value');
@@ -1045,8 +1072,6 @@
             });
 
             var regionVal = document.getElementById('regionSelect') ? document.getElementById('regionSelect').value : 'world';
-            var chartContainer = document.getElementById('regions_div');
-            if(!chartContainer) return;
             var chart = new google.visualization.GeoChart(chartContainer);
 
             google.visualization.events.addListener(chart, 'select', function() {
@@ -1079,11 +1104,7 @@
         }
 
         async function extractPassagesFromPDF(fileUrl, termNode) {
-            const fetchUrl = fileUrl.startsWith('http') && !fileUrl.includes('huggingface.co') 
-                ? 'https://api.allorigins.win/raw?url=' + encodeURIComponent(fileUrl) 
-                : fileUrl;
-
-            const loadingTask = pdfjsLib.getDocument(fetchUrl);
+            const loadingTask = pdfjsLib.getDocument(fileUrl);
             const pdf = await loadingTask.promise;
             termNode.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting contextual text blocks from ${pdf.numPages} pages...</p>`;
             
@@ -1093,15 +1114,21 @@
                 const content = await page.getTextContent();
                 const pageText = content.items.map(it => it.str).join(" ").replace(/\s+/g, " ").trim();
                 
-                if(pageText.length > 30) {
-                    const sents = pageText.match(/[^.!?]+[.!?]+/g) || [pageText];
+                if(pageText.length > 20) {
+                    // Split on both Western and CJK punctuation marks
+                    const sents = pageText.match(/[^.!?。！？]+[.!?。！？]*/g) || [pageText];
                     for(let j = 0; j < sents.length; j++) {
                         let chunk = sents[j].trim();
-                        if(chunk.length > 20 && chunk.split(" ").length > 5 && /[.!?]$/.test(chunk) && !/glossary|table of contents/i.test(chunk) && chunk !== chunk.toUpperCase()) {
-                            let prev = (j > 0) ? sents[j-1].trim() : "";
-                            let next = (j < sents.length - 1) ? sents[j+1].trim() : "";
-                            let fullContext = `${prev} ${chunk} ${next}`.trim();
-                            pagePassages.push({ page: i, text: fullContext });
+                        if(chunk.length > 15 && !/glossary|table of contents/i.test(chunk)) {
+                            
+                            // Check if sentence is English, and if so, ignore if it is entirely all-caps (Headers/Titles)
+                            let isAllCaps = /[a-zA-Z]/.test(chunk) && chunk === chunk.toUpperCase();
+                            if (!isAllCaps) {
+                                let prev = (j > 0) ? sents[j-1].trim() : "";
+                                let next = (j < sents.length - 1) ? sents[j+1].trim() : "";
+                                let fullContext = `${prev} ${chunk} ${next}`.trim();
+                                pagePassages.push({ page: i, text: fullContext });
+                            }
                         }
                     }
                 }
@@ -1122,7 +1149,7 @@
 
             let tier = "Tokenistic";
             const embeddedRegex = /\b(legislation|statutory|legally binding|enforcement|accountability mechanism|formal framework|budget allocation|decree|act of parliament|constitution|ley|loi|законодавство)\b/i;
-            const partialRegex = /\b(measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|політика)\b/i;
+            const partialRegex = /\b(measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|环境信息披露|规划)\b/i;
 
             if (embeddedRegex.test(text)) {
                 tier = "Embedded";
@@ -1169,17 +1196,13 @@
 
                     for (const [dim, categories] of Object.entries(conceptMap)) {
                         categories.unambiguous.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText)) {
+                            if(checkMatch(phrase, lowerText)) {
                                 isJustice = true;
                                 matchedTerms.push(phrase);
                             }
                         });
                         categories.ambiguous.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText) && isValidContext(phrase, lowerText)) {
+                            if(checkMatch(phrase, lowerText) && isValidContext(phrase, lowerText)) {
                                 isJustice = true;
                                 matchedTerms.push(phrase);
                             }
@@ -1227,7 +1250,7 @@
                 }
 
                 let ledgerHtml = '';
-                statementLedger.forEach((st) => {
+                statementLedger.forEach((st, idx) => {
                     let boxClass = st.tier === "Tokenistic" ? "ex-tokenistic" : (st.tier === "Partial" ? "ex-partial" : "ex-embedded");
                     let badgeClass = st.tier === "Tokenistic" ? "badge-tok" : (st.tier === "Partial" ? "badge-par" : "badge-emb");
                     
@@ -1321,17 +1344,13 @@
 
                     for (const [dim, categories] of Object.entries(conceptMap)) {
                         categories.unambiguous.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText)) {
+                            if(checkMatch(phrase, lowerText)) {
                                 score += 1;
                                 matchedTerms.push(phrase);
                             }
                         });
                         categories.ambiguous.forEach(phrase => {
-                            const escaped = phrase.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = new RegExp(`(^|[\\s\\W_])${escaped}([\\s\\W_]|$)`, 'i');
-                            if(regex.test(lowerText) && isValidContext(phrase, lowerText)) {
+                            if(checkMatch(phrase, lowerText) && isValidContext(phrase, lowerText)) {
                                 score += 1;
                                 matchedTerms.push(phrase);
                             }
@@ -1354,12 +1373,20 @@
                 if(finalResults.length === 0) {
                     term.innerHTML += `<p class="err-msg">Result: No significant passages found implicitly or explicitly matching justice concepts.</p>`;
                 } else {
-                    term.innerHTML += `<br><p style="color:#34c759; font-weight:bold;">--- Retrieved ${finalResults.length} Relevant Passages (Max Limit: ${resultLimit}) ---</p>`;
+                    let maxText = resultLimit >= 99999 ? "All" : resultLimit;
+                    term.innerHTML += `<br><p style="color:#34c759; font-weight:bold;">--- Retrieved ${finalResults.length} Relevant Passages (Max Limit: ${maxText}) ---</p>`;
                     finalResults.forEach((res, idx) => {
                         let highlightedText = res.text;
                         res.matches.forEach(concept => {
-                            const regex = new RegExp(`(^|[\\s\\W_])(${concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})([\\s\\W_]|$)`, 'gi');
-                            highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
+                            const isAsian = /[\u4e00-\u9fa5\u3040-\u30ff]/.test(concept);
+                            const escaped = concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                            const regex = isAsian ? new RegExp(`(${escaped})`, 'gi') : new RegExp(`(^|[\\s\\W_])(${escaped})([\\s\\W_]|$)`, 'gi');
+                            
+                            if(isAsian) {
+                                highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$1</span>`);
+                            } else {
+                                highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
+                            }
                         });
                         term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
                     });
