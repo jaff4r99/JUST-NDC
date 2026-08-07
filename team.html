@@ -898,7 +898,9 @@
                 }
 
                 loadTables();
-                drawRegionsMap();
+                if (googleChartsLoaded && document.getElementById('map').classList.contains('active')) {
+                    drawRegionsMap(); 
+                }
             }
         }
 
@@ -1084,8 +1086,11 @@
                 document.querySelector('.sidebar-overlay').classList.remove('active');
             }
             
-            if(pageId === 'dashboard') { setTimeout(drawGantt, 50); }
-            if(pageId === 'map') { setTimeout(drawRegionsMap, 50); }
+            if(pageId === 'dashboard' && googleChartsLoaded) { drawGantt(); }
+            
+            if(pageId === 'map' && googleChartsLoaded) { 
+                drawRegionsMap(); 
+            }
         }
 
         function filterTable(tableId) {
@@ -1108,13 +1113,13 @@
         if (typeof google !== 'undefined') {
             google.charts.load('current', {'packages':['gantt', 'geochart']});
             google.charts.setOnLoadCallback(() => { 
-                loadTables();
-                drawGantt(); 
-                drawRegionsMap();
+                googleChartsLoaded = true;
+                if(document.getElementById('dashboard').classList.contains('active')) drawGantt();
             });
         }
 
         function drawGantt() {
+            if (!googleChartsLoaded) return;
             var chartContainer = document.getElementById('gantt_chart');
             if(!chartContainer) return;
 
@@ -1154,59 +1159,64 @@
 
         var panZoomInstance = null;
         function drawRegionsMap() {
+            if (!googleChartsLoaded) return;
             var chartContainer = document.getElementById('regions_div');
             if(!chartContainer) return;
 
-            if (panZoomInstance) {
-                panZoomInstance.destroy();
-                panZoomInstance = null;
-            }
-            chartContainer.innerHTML = '';
-
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Country');
-            data.addColumn('number', 'Value');
-            data.addColumn({type: 'string', role: 'tooltip'});
-
-            ndcData.forEach(item => {
-                const statusText = item.s === 1 ? 'Analyzed' : 'Pending';
-                if(item.mapTarget === "EU_EXPAND") {
-                    euCountries.forEach(euC => data.addRow([euC, item.s, `EU Member State\nStatus: ${statusText}`]));
-                } else if (item.mapTarget !== null) {
-                    data.addRow([item.mapTarget, item.s, `${item.c}\nStatus: ${statusText}`]);
+            try {
+                if (panZoomInstance) {
+                    panZoomInstance.destroy();
+                    panZoomInstance = null;
                 }
-            });
+                chartContainer.innerHTML = '';
 
-            var regionVal = document.getElementById('regionSelect') ? document.getElementById('regionSelect').value : 'world';
-            var chart = new google.visualization.GeoChart(chartContainer);
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Country');
+                data.addColumn('number', 'Value');
+                data.addColumn({type: 'string', role: 'tooltip'});
 
-            google.visualization.events.addListener(chart, 'select', function() {
-                var selection = chart.getSelection();
-                if (selection.length > 0) {
-                    var geoCode = data.getValue(selection[0].row, 0);
-                    var matched = ndcData.find(item => item.mapTarget === geoCode || (item.mapTarget === "EU_EXPAND" && euCountries.includes(geoCode)));
-                    if (matched) toggleStatus(matched.c);
-                }
-            });
-
-            google.visualization.events.addListener(chart, 'ready', function() {
-                setTimeout(() => {
-                    var svgElem = chartContainer.querySelector('svg');
-                    if (svgElem) {
-                        if (panZoomInstance) panZoomInstance.destroy();
-                        panZoomInstance = svgPanZoom(svgElem, { zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true, minZoom: 1, maxZoom: 15 });
+                ndcData.forEach(item => {
+                    const statusText = item.s === 1 ? 'Analyzed' : 'Pending';
+                    if(item.mapTarget === "EU_EXPAND") {
+                        euCountries.forEach(euC => data.addRow([euC, item.s, `EU Member State\nStatus: ${statusText}`]));
+                    } else if (item.mapTarget !== null) {
+                        data.addRow([item.mapTarget, item.s, `${item.c}\nStatus: ${statusText}`]);
                     }
-                }, 100);
-            });
+                });
 
-            chart.draw(data, {
-                region: regionVal,
-                colorAxis: { colors: ['#FDBE02', '#34c759'], minValue: 0, maxValue: 1 },
-                backgroundColor: 'transparent',
-                datalessRegionColor: '#e0e0e0',
-                defaultColor: '#e0e0e0',
-                legend: 'none'
-            });
+                var regionVal = document.getElementById('regionSelect') ? document.getElementById('regionSelect').value : 'world';
+                var chart = new google.visualization.GeoChart(chartContainer);
+
+                google.visualization.events.addListener(chart, 'select', function() {
+                    var selection = chart.getSelection();
+                    if (selection.length > 0) {
+                        var geoCode = data.getValue(selection[0].row, 0);
+                        var matched = ndcData.find(item => item.mapTarget === geoCode || (item.mapTarget === "EU_EXPAND" && euCountries.includes(geoCode)));
+                        if (matched) toggleStatus(matched.c);
+                    }
+                });
+
+                google.visualization.events.addListener(chart, 'ready', function() {
+                    setTimeout(() => {
+                        var svgElem = chartContainer.querySelector('svg');
+                        if (svgElem) {
+                            if (panZoomInstance) panZoomInstance.destroy();
+                            panZoomInstance = svgPanZoom(svgElem, { zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true, minZoom: 1, maxZoom: 15 });
+                        }
+                    }, 100);
+                });
+
+                chart.draw(data, {
+                    region: regionVal,
+                    colorAxis: { colors: ['#FDBE02', '#34c759'], minValue: 0, maxValue: 1 },
+                    backgroundColor: 'transparent',
+                    datalessRegionColor: '#e0e0e0',
+                    defaultColor: '#e0e0e0',
+                    legend: 'none'
+                });
+            } catch (error) {
+                console.error("Map Drawing Error:", error);
+            }
         }
 
         async function extractPassagesFromPDF(fileUrl, termNode) {
