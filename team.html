@@ -612,7 +612,7 @@
         let currentUser = "Anonymous";
         let googleChartsLoaded = false;
         
-        // --- SUPABASE CONFIGURATION (Wrapped in Try/Catch to prevent fatal UI crashes) ---
+        // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = 'https://lqxrvquhwglodgallheu.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxeHJ2cXVod2dsb2RnYWxsaGV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwMzA3NTEsImV4cCI6MjEwMTYwNjc1MX0.y0VwtOtwT4kJPyxnrGmfz6fxtcmJv6Fkbxv6B-oEDT0';
         let supabaseClient = null;
@@ -651,7 +651,7 @@
             { c: "Malawi", l: "English", s: 0, p: 95, mapTarget: "MW", f: "95 NDC3.0 Malawi.pdf" }, { c: "Malaysia", l: "English", s: 0, p: 16, mapTarget: "MY", f: "16 Malaysia NDC 3.0 to UNFCCC 2025 final.pdf" }, { c: "Mauritius", l: "English", s: 0, p: 51, mapTarget: "MU", f: "51 Mauritius.pdf" }, 
             { c: "Micronesia", l: "English", s: 0, p: 68, mapTarget: "FM", f: "68 Micronesia.pdf" }, { c: "Mongolia", l: "English", s: 0, p: 36, mapTarget: "MN", f: "36 Mongolia.pdf" }, { c: "Mozambique", l: "English", s: 0, p: 25, mapTarget: "MZ", f: "25 Mozambique.pdf" }, 
             { c: "Nauru", l: "English", s: 0, p: 63, mapTarget: "NR", f: "63Nauru NDC 3.pdf" }, { c: "Nigeria", l: "English", s: 0, p: 70, mapTarget: "NG", f: "70 Nigeria NDC 3.0.pdf" }, 
-            { c: "Oman", l: "English", s: 0, p: 67, mapTarget: "OM", url: "https://unfccc.int/sites/default/files/2026-07/The%20Sultanate%20of%20Omans%20Third%20Nationally%20Determined%20Contributions%20%20%28NDC%203.0%29.pdf" },
+            { c: "Oman", l: "English", s: 0, p: 67, mapTarget: "OM", f: "oman.pdf" },
             { c: "Pakistan", l: "English", s: 0, p: 59, mapTarget: "PK", f: "59 Pakistan.pdf" }, { c: "Palau", l: "English", s: 0, p: 58, mapTarget: "PW", f: "58 Palau.pdf" }, { c: "Qatar", l: "English", s: 0, p: 39, mapTarget: "QA", f: "39 Qatar NDC 3.0.pdf" }, { c: "Republic of Korea", l: "English", s: 0, p: 28, mapTarget: "KR", f: "28The Republic of Koreas 2035 NDC.pdf" }, 
             { c: "Rwanda", l: "English", s: 0, p: 152, mapTarget: "RW", f: "152 Rwanda NDC3.0 Final.pdf" }, { c: "Samoa", l: "English", s: 0, p: 45, mapTarget: "WS", f: "45Samoa NDC3.0_FINAL.pdf" }, { c: "Sao Tome and Principe", l: "English", s: 0, p: 79, mapTarget: "ST", f: "79 Sao Tome and Principe.pdf" }, 
             { c: "Serbia", l: "English", s: 0, p: 13, mapTarget: "RS", f: "13 Serbia.pdf" }, { c: "Seychelles", l: "English", s: 0, p: 40, mapTarget: "SC", f: "40 Seychelles.pdf" }, { c: "Sierra Leone", l: "English", s: 0, p: 147, mapTarget: "SL", f: "147 Sierra Leone NDC 3.0.pdf" }, 
@@ -684,27 +684,6 @@
             { id: "default-3", dimension: "Recognitional", country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
-        // --- Refined Context-Aware Multilingual Justice Taxonomy ---
-        // Extensively expanded to capture Global South / Developmental frameworks
-        const conceptMap = {
-            "Recognitional": {
-                unambiguous: ["marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "gedsi", "epistemic justice", "self-determination", "structural recognition", "decolonial recognition", "women", "gender", "female", "youth", "empowerment", "dignity", "agency", "local communities", "people-centered development", "people-centred development", "people first", "life first", "public wellbeing", "future generations", "fundamental interests", "grupos marginados", "derechos indígenas", "pueblos indígenas", "conocimientos tradicionales", "saberes ancestrales", "desequilibrios de poder", "exclusión social", "enfoque de género", "interseccionalidad", "groupes marginalisés", "droits des peuples autochtones", "savoirs traditionnels", "déséquilibres de pouvoir", "exclusion sociale", "approche sensible au genre", "intersectionnalité", "droits des autochtones", "groupes vulnérables", "маргинализированные", "коренных народов", "традиционные знания", "гендерно-ориентированный", "социальная изоляция", "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "توازن القوى", "الإقصاء الاجتماعي", "المنظور الجنساني", "الفئات الضعيفة", "边缘化群体", "原住民权利", "传统知识", "权力失衡", "社会排斥", "社会包容", "性别响应", "弱势群体", "以人民为中心", "人民至上", "生命至上", "群众的根本利益", "公众福祉", "子孙后代", "маргіналізовані", "корінних народів", "традиційні знання", "гендерно-чутливий", "соціальне відчуження"],
-                ambiguous: ["vulnerable", "fairness", "empower"]
-            },
-            "Procedural": {
-                unambiguous: ["transparent process", "inclusive decision", "fair process", "procedural rights", "prior and informed consent", "fpic", "bottom-up planning", "decentralized governance", "grievance mechanism", "co-production", "participatory planning", "access to information", "accountability mechanism", "co-governance", "decision-making autonomy", "institutionalized public participation", "structural power redistribution", "democratized governance", "capacity building", "public awareness", "environmental disclosure", "procesos transparentes", "decisiones inclusiva", "participación significativa", "consentimiento libre previo e informado", "mecanismos de reclamación", "gobernanza descentralizada", "mecanismos de queja", "desarrollo de capacidades", "processus transparents", "décision inclusive", "participation significative", "consentement préalable", "mécanismes de recours", "gouvernance décentralisée", "renforcement des capacités", "прозрачные процессы", "инклюзивное", "значимое участие", "осознанное согласие", "механизмы рассмотрения жалоб", "общественные консультации", "предварительное согласие", "наращивание потенциала", "عمليات شفافة", "صنع قرار شامل", "مشاركة مجدية", "الموافقة المسبقة", "آليات التظلم", "اللامركزية", "مشاورات عامة", "بناء القدرات", "透明过程", "包容性决策", "有意义的参与", "事先知情同意", "利益相关方磋商", "申诉机制", "权力下放", "公众咨询", "能力建设", "公众意识", "环境信息披露", "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"],
-                ambiguous: ["consultation", "stakeholder", "participation", "public consultation", "engage", "involve", "involved", "community", "communities", "multi-stakeholder", "transparent", "transparency", "consulta pública", "consultation publique", "公众参与"]
-            },
-            "Distributive": {
-                unambiguous: ["equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "spatial justice", "urban equity", "vulnerability-based targeting", "technology transfer", "differentiated impacts", "just transition", "structural redistribution", "systemic equity", "wealth taxation", "post-extractivist distribution", "equitable climate action", "cbdr", "common but differentiated responsibilities", "south-south cooperation", "climate finance", "economic benefits", "environmental benefits", "social benefits", "belt and road", "fair development space", "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza", "cooperación sur-sur", "transferencia de tecnología", "financiación climática", "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses", "coopération sud-sud", "transfert de technologie", "financement climatique", "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты", "сотрудничество юг-юг", "التقاسم العادل", "تقاسم الأعباء", "تقاسم المنافع", "الإنصاف بين الأجيال", "انتقال عادل", "الأمان الاجتماعي", "التعاون بين بلدان الجنوب", "公平分享", "责任分担", "利益共享", "代际公平", "公正转型", "社会安全网", "共同但有区别的责任", "南南合作", "气候资金", "技术转让", "经济效益", "环境效益", "社会效益", "一带一路", "公平的发展空间", "справедливий розподіл", "розподіл тягаря", "розподіл вигод", "міжпоколінна справедливість", "справедливий перехід", "соціального захисту"],
-                ambiguous: ["allocation", "resource", "fair & ambitious", "equitable outcomes", "targeted support", "公平", "公正"]
-            },
-            "Restorative": {
-                unambiguous: ["past climate injustice", "historical responsibilities", "reparative justice", "restorative", "past harms", "loss and damage", "neld", "non-economic loss", "ecological debt", "climate reparations", "climate mobility", "climate refugees", "forced migration", "planned relocation", "disaster displacement", "warsaw international mechanism", "trapped populations", "climate immobility", "historical loss evaluation", "disaster risk reduction", "health adaptation", "heat warning", "food security", "water security", "resilient cities", "injusticias climáticas pasadas", "responsabilidades históricas", "medidas reparadoras", "pérdidas y daños", "deuda ecológica", "movilidad climática", "daños no económicos", "injustices climatiques passées", "responsabilités historiques", "mesures de réparation", "pertes et préjudices", "dette écologique", "mobilité climatique", "préjudices non économiques", "прошлые климатические", "историческая ответственность", "потери и ущерб", "неэкономические потери", "экологический долг", "климатическая миграция", "المظالم المناخية", "المسؤوليات التاريخية", "تدابير جبر الضرر", "الخسائر والأضرار", "الخسائر غير الاقتصادية", "التنقل المناخي", "历史气候不公", "历史责任", "补救措施", "损失与损害", "非经济损失", "生态债务", "气候流动性", "防灾减灾", "健康适应", "高温预警", "粮食安全", "水安全", "韧性城市", "минулі кліматичні", "історична відповідальність", "втрати та збитки", "неекономічні втрати", "кліматична міграція"],
-                ambiguous: ["remediation", "compensation", "rehabilitation", "relocation", "resettlement", "displacement", "human mobility", "resilience"]
-            }
-        };
-
         const humanContextMarkers = [
             "people", "citizen", "public", "women", "youth", "indigenous", "marginalized", "society", 
             "group", "population", "resident", "worker", "farmer", "household", "minority", "actor", "social",
@@ -712,10 +691,8 @@
             "pueblo", "público", "comunidad", "groupe", "citoyen", "население", "مجتمع", "人民", "公众", "社区", "群体"
         ];
 
-        // --- Helper Function: Asian Language Space Stripping ---
         function checkMatch(phrase, text) {
             const isAsian = /[\u4e00-\u9fa5\u3040-\u30ff]/.test(phrase);
-            // If the target phrase is Chinese/Japanese, we strip spaces from both to prevent PDF.js spacing bugs
             const searchText = isAsian ? text.replace(/\s+/g, '') : text;
             const searchPhrase = isAsian ? phrase.toLowerCase().replace(/\s+/g, '') : phrase.toLowerCase();
             return searchText.includes(searchPhrase);
@@ -812,7 +789,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Prompt for User Name for Activity Log
             let savedUser = localStorage.getItem('just_ndc_user');
             if(!savedUser) {
                 savedUser = prompt("Welcome to the JUST-NDC Team Workspace! Please enter your name:");
@@ -1095,8 +1071,11 @@
             }
             
             if(pageId === 'dashboard' && googleChartsLoaded) { drawGantt(); }
-            // Force drawing of map only when the tab is fully rendered and visible.
-            if(pageId === 'map' && googleChartsLoaded) { drawRegionsMap(); }
+            
+            // Trigger Map Drawing safely when tab is shown
+            if(pageId === 'map' && googleChartsLoaded) { 
+                setTimeout(drawRegionsMap, 150); 
+            }
         }
 
         function filterTable(tableId) {
@@ -1167,9 +1146,13 @@
         function drawRegionsMap() {
             if (!googleChartsLoaded) return;
             var chartContainer = document.getElementById('regions_div');
+            if(!chartContainer) return;
             
-            // STRICT SAFETY CHECK: Abort drawing if the map container is hidden or 0 width.
-            if(!chartContainer || chartContainer.offsetParent === null || chartContainer.offsetWidth === 0) return; 
+            // AUTO-RETRY LOOP: If container width is 0 (tab switching animation in progress), retry in 100ms
+            if (chartContainer.offsetWidth === 0) {
+                setTimeout(drawRegionsMap, 100);
+                return;
+            }
 
             if (panZoomInstance) {
                 panZoomInstance.destroy();
@@ -1226,7 +1209,7 @@
         async function extractPassagesFromPDF(fileUrl, termNode) {
             let finalUrl = fileUrl;
 
-            // Proxy to bypass CORS and file-size restrictions for external links like Oman
+            // Secure Proxy Buffer for External Files
             if (fileUrl.startsWith('http') && !fileUrl.includes('huggingface.co')) {
                 termNode.innerHTML += `<p class="sys-msg" style="color:#ffbd2e;">System: External file detected. Downloading to secure memory buffer to bypass server blocks...</p>`;
                 try {
@@ -1243,7 +1226,7 @@
                         const blob2 = await response2.blob();
                         finalUrl = URL.createObjectURL(blob2);
                     } catch(err2) {
-                        termNode.innerHTML += `<p class="err-msg">Error: The file is too large or heavily restricted. Proceeding with direct fetch (may crash).</p>`;
+                        termNode.innerHTML += `<p class="err-msg">Error: The file is too large or heavily restricted. Proceeding with direct fetch...</p>`;
                     }
                 }
             }
@@ -1258,13 +1241,13 @@
                 const content = await page.getTextContent();
                 const pageText = content.items.map(it => it.str).join(" ").replace(/\s+/g, " ").trim();
                 
-                if(pageText.length > 30) {
-                    // Update regex to split on Chinese full stops (。), exclamation marks (！), and question marks (？)
+                if(pageText.length > 20) {
+                    // Split on both Western and CJK punctuation marks (。 ！ ？ . ! ?)
                     const sents = pageText.match(/[^.!?。！？]+[.!?。！？]+/g) || [pageText];
                     for(let j = 0; j < sents.length; j++) {
                         let chunk = sents[j].trim();
-                        // Removed the space-count requirement (split(" ").length) to allow Chinese character strings to pass the filter
-                        if(chunk.length > 20 && /[.!?。！？]$/.test(chunk) && !/glossary|table of contents/i.test(chunk) && chunk !== chunk.toUpperCase()) {
+                        // Relaxed length/punctuation constraints to support non-Latin character streams
+                        if(chunk.length > 10 && !/glossary|table of contents/i.test(chunk)) {
                             let prev = (j > 0) ? sents[j-1].trim() : "";
                             let next = (j < sents.length - 1) ? sents[j+1].trim() : "";
                             let fullContext = `${prev} ${chunk} ${next}`.trim();
@@ -1289,7 +1272,7 @@
 
             let tier = "Tokenistic";
             const embeddedRegex = /\b(legislation|statutory|legally binding|enforcement|accountability mechanism|formal framework|budget allocation|decree|act of parliament|constitution|ley|loi|законодавство)\b/i;
-            const partialRegex = /\b(measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|політика)\b/i;
+            const partialRegex = /\b(measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|环境信息披露|规划)\b/i;
 
             if (embeddedRegex.test(text)) {
                 tier = "Embedded";
@@ -1520,7 +1503,6 @@
                         res.matches.forEach(concept => {
                             const isAsian = /[\u4e00-\u9fa5\u3040-\u30ff]/.test(concept);
                             const escaped = concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            // If Asian characters, find exact strings without spacing boundaries
                             const regex = isAsian ? new RegExp(`(${escaped})`, 'gi') : new RegExp(`(^|[\\s\\W_])(${escaped})([\\s\\W_]|$)`, 'gi');
                             
                             if(isAsian) {
