@@ -207,6 +207,62 @@
             .metric-grid { grid-template-columns: 1fr; }
             .lang-container { grid-template-columns: repeat(2, 1fr); }
         }
+        /* ---- v2 assessment UI ---- */
+        .panel-sub { font-size: 0.87rem; color: var(--text-muted); margin: 0 0 14px 0; line-height: 1.5; }
+        .diag-box { margin: 0 0 14px 0; }
+        .diag-ok, .diag-warn { font-size: 0.83rem; padding: 9px 13px; border-radius: 8px; margin-bottom: 6px; }
+        .diag-ok { background: #eef4fb; color: #274b6d; border-left: 4px solid #5a8fc4; }
+        .diag-warn { background: #fff5e6; color: #7a4b00; border-left: 4px solid #e6a700; }
+        .dim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+        .dim-card { background: #fff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 14px 16px; }
+        .dim-card h4 { margin: 0 0 6px 0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); }
+        .dim-tier { font-size: 1.35rem; font-weight: 700; }
+        .dim-conf { font-size: 0.76rem; color: var(--text-muted); margin-bottom: 8px; }
+        .dim-note { font-size: 0.8rem; color: #444; margin: 0; line-height: 1.45; }
+        .rubric-row { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .rubric-row:last-child { border-bottom: none; }
+        .rubric-flag { color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: .5px; padding: 5px 10px; border-radius: 6px; min-width: 74px; text-align: center; }
+        .rubric-body b { font-size: 0.95rem; }
+        .rubric-q { font-size: 0.85rem; color: #555; margin: 3px 0; }
+        .rubric-d { font-size: 0.82rem; color: var(--text-muted); font-style: italic; }
+        .q-wrap { display: grid; grid-template-columns: 26px 84px 1fr; grid-template-rows: 1fr 22px 20px; gap: 6px; max-width: 520px; }
+        .q-ylab { grid-column: 1; grid-row: 1; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; font-size: 0.68rem; font-weight: 700; letter-spacing: .5px; color: var(--text-muted); }
+        .q-yticks { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; justify-content: space-around; align-items: flex-end; font-size: 0.72rem; color: var(--text-muted); }
+        .q-grid { grid-column: 3; grid-row: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 62px); gap: 4px; }
+        .q-cell { background: #f4f4f6; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #999; }
+        .q-here { background: var(--primary); color: #fff; }
+        .q-xticks { grid-column: 3; grid-row: 2; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; font-size: 0.72rem; color: var(--text-muted); }
+        .q-xlab { grid-column: 3; grid-row: 3; text-align: center; font-size: 0.68rem; font-weight: 700; letter-spacing: .5px; color: var(--text-muted); }
+        .q-note { font-size: 0.8rem; color: var(--text-muted); margin-top: 14px; line-height: 1.5; }
+        .ledger-controls { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
+        .lf-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .lf-group > span { font-size: 0.76rem; color: var(--text-muted); font-weight: 600; }
+        .lf-btn { border: 1px solid #dcdcdc; background: #fff; border-radius: 20px; padding: 4px 12px; font-size: 0.76rem; cursor: pointer; }
+        .lf-on { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .lf-count { font-size: 0.76rem; color: var(--text-muted); }
+        .ledger-item { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+        .ex-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+        .ex-badge { color: #fff; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 5px; }
+        .ex-dim { font-weight: 700; color: var(--primary); margin-left: 8px; font-size: 0.85rem; }
+        .ex-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+        .chip { font-size: 0.68rem; padding: 3px 8px; border-radius: 12px; background: #f0f0f2; color: #555; }
+        .chip-sec { background: #e8eef6; color: #2c4f75; }
+        .chip-international { background: #efe6f7; color: #56307a; }
+        .chip-mixed { background: #f7f0e0; color: #6b5220; }
+        .chip-cond { background: #fdeaea; color: #922; }
+        .chip-struct { background: #e4f4e8; color: #1f5c2e; }
+        .chip-review { background: #fff2cc; color: #7a5b00; }
+        .chip-over { background: #ddd7ff; color: #33268a; }
+        .ex-quote { font-family: Georgia, serif; font-style: italic; margin: 10px 0; line-height: 1.6; color: #222; }
+        .ex-why { font-size: 0.78rem; color: #555; background: #fafafa; border-radius: 8px; padding: 9px 12px; line-height: 1.6; }
+        .ex-override { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
+        .ex-override label { font-size: 0.74rem; color: var(--text-muted); display: flex; gap: 5px; align-items: center; }
+        .ex-override select, .ex-override input { font-size: 0.76rem; padding: 4px 7px; border: 1px solid #ddd; border-radius: 6px; }
+        .ex-override input { flex-grow: 1; min-width: 180px; }
+        .descriptive { font-size: 0.78rem; color: var(--text-muted); border-top: 1px solid #eee; padding-top: 12px; margin-top: 8px; line-height: 1.6; }
+        .scr-loc { color: #5ac8fa; font-weight: 700; }
+        .scr-lab { color: #34c759; font-weight: 700; }
+        .scr-terms { color: #888; font-size: 0.78rem; }
     </style>
 </head>
 <body>
@@ -237,15 +293,16 @@
                 <button id="btn-methodology" onclick="showPage('methodology', this)"><span>📘</span> Framework & Method</button>
                 <button id="btn-map" onclick="showPage('map', this)"><span>🗺️</span> Global Map & Status</button>
                 <button id="btn-repository" onclick="showPage('repository', this)"><span>💡</span> Coding Examples</button>
-                <button id="btn-analyzer" onclick="showPage('analyzer', this)"><span>🧠</span> AI Text Scraper</button>
-                <button id="btn-evaluator" onclick="showPage('evaluator', this)"><span>⚖️</span> Country Evaluator</button>
+                <button id="btn-analyzer" onclick="showPage('analyzer', this)"><span>🧠</span> Screener</button>
+                <button id="btn-evaluator" onclick="showPage('evaluator', this)"><span>⚖️</span> Assessment</button>
             </div>
 
             <div class="content" id="main-content-area">
                 <!-- PAGE 1: DASHBOARD -->
                 <div id="dashboard" class="page active">
+                    <div id="local-note" class="diag-ok" style="margin-bottom:14px;"></div>
                     <h1 style="color: #1d1d1f;">JUST-NDC Project Roadmap</h1>
-                    <p>Evaluating transformative climate justice across 120 NDC submissions (+2 Annexes). Target velocity: 2 NDCs per working day.</p>
+                    <p>Evaluating transformative climate justice across 120 NDC submissions (+2 Annexes). Corpus locked 1 August 2026. Coverage and cut-off are recorded on the Global Map page.</p>
                     
                     <div class="ui-box" style="border-left: 5px solid var(--primary); background: rgba(0,102,204,0.03);">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
@@ -269,7 +326,7 @@
                         <ul class="timeline-list">
                             <li><span class="timeline-date">July 20 – July 31: Project Setup and Calibration</span>Translating the transformative climate justice framework into structured AI prompts. Includes the July 30th UN-Habitat meeting to align technical parameters and pilot testing on early NDC 3.0 submissions to calibrate "tokenistic" vs. "embedded" distinctions.</li>
                             <li><span class="timeline-date">August 1 – August 31: Data Execution and Initial Mapping</span>Locking the document corpus (pre-Aug 1 deadline). Running the full dataset through the AI tool to extract statements, mapping results onto the two-axis matrix, and packaging all data for seamless October transition.</li>
-                            <li><span class="timeline-date">September 1 – September 30: Paternity Leave</span>Jaffar disconnected. Andreia leads human verification of analyzed texts.</li>
+                            <li><span class="timeline-date">September 1 – September 30: Reduced capacity period</span>Andreia leads human verification of analysed texts.</li>
                             <li><span class="timeline-date">October 1 – October 31: Synthesis, Drafting and Visualization</span>Synthesizing AI-generated results, evaluating data for procedural over-reliance ("justice-washing"), drafting core findings and recommendations, and finalizing visual heatmap assets.</li>
                             <li><span class="timeline-date">November 1 – November 8: Final Polish and Pre-COP Dissemination</span>Final blind cross-review on AI outputs. Publishing the report and preparing presentation materials before COP 31 begins on November 9th.</li>
                         </ul>
@@ -278,11 +335,19 @@
 
                 <!-- PAGE 2: METHODOLOGY -->
                 <div id="methodology" class="page">
-                    <h1 class="header-light-blue" style="font-size: 2.1rem; margin-bottom: 10px;">Framework & Methodology Instruction Manual</h1>
-                    <p style="margin-top: 0;">Welcome to the UNU-EHS FAST team's NDC evaluation hub. If you are new to this project (e.g., incoming researchers or student assistants), this page outlines exactly how we conduct our line-by-line analysis of NDC 3.0 documents to evaluate their commitments to transformative climate justice.</p>
-                    
-                    <h2 class="header-light-blue">1. The Transformative Climate Justice Framework</h2>
-                    
+                    <h1 class="header-light-blue" style="font-size: 2.1rem; margin-bottom: 10px;">Framework and Methodology</h1>
+                    <p style="margin-top: 0;">This page is the working manual for the JUST-NDC analysis. It sets out why the project exists, the framework we apply, how a statement is coded, what the tool does on its own, and where its judgement stops and yours begins. If you are joining the team, read it end to end before you code anything.</p>
+
+                    <h2 class="header-light-blue">1. Why this project exists</h2>
+                    <div class="ui-box" style="margin-top: 15px;">
+                        <p style="margin-top: 0;">Climate change is a lived experience that magnifies existing inequalities within and between countries. Nationally Determined Contributions are the core vehicle through which states set out what they will do about it. Under the Paris Agreement each Party is expected to prepare, communicate and maintain successive NDCs, to do so in the light of equity, and to make each one represent a progression beyond the last and reflect its highest possible ambition.</p>
+                        <p>The expectation is not only that countries cut emissions but that they explain how their plans are fair. The technical dialogue of the first global stocktake states that all countries are expected to explain in their NDCs how those NDCs are fair and ambitious. The UAE Consensus agreed at COP28 went further, urging governments to embed inclusive, multilevel and gender-responsive governance in their new plans. Civil society has framed the test more bluntly: whether governments move beyond tokenistic mentions of inclusive language towards operationalising measures that make climate action equitable.</p>
+                        <p>NDC 3.0, the round due in 2025 and covering targets to 2035, is the first cycle in which that expectation can be tested at scale. That is what this project does. It asks whether NDCs simply acknowledge justice or actively work on inequities, by rating statements and paying attention to the legal, institutional and financial backing behind them.</p>
+                        <p style="margin-bottom: 0; font-size: 0.9rem; color: var(--text-muted);">Framework source: Abbas, S. M. J., Sandholz, S. and van Schie, D. (2025). <em>Tokenistic or transformative? Evaluating transformative climate justice in NDC 3.0 submissions.</em> UNU-EHS Policy Brief No. 16. The framework builds on IPCC (2022) and EEA (2024), the transformative justice agenda set out by Newell and others (2021), and earlier justice coding work by Juhola and others (2022) and Jones and others (2024).</p>
+                    </div>
+
+                    <h2 class="header-light-blue">2. The four dimensions of climate justice</h2>
+
                     <div class="framework-grid">
                         <div class="framework-box box-recognitional">
                             <h3 style="margin:0 0 10px 0; color: #ffffff; text-transform: uppercase; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px;">Recognitional Justice</h3>
@@ -301,7 +366,7 @@
                             <p style="margin:0; font-size:0.95rem; color: #ffffff;">Recognizes and seeks to address past climate injustices or historical responsibilities through reparative measures and responses.</p>
                         </div>
                     </div>
-                    
+
                     <div style="text-align: center; margin-top: 20px;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#001f40" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
                             <path d="M12 4v16M19 13l-7 7-7-7"/>
@@ -312,17 +377,23 @@
                         </div>
                     </div>
 
-                    <h2 class="header-light-blue">2. The Line-by-Line Coding Guide</h2>
+                    <div class="ui-box" style="margin-top: 18px; background:#fff;">
+                        <p style="margin-top:0;"><strong>Transformative climate justice is not a fifth dimension and is never coded on a statement.</strong> The four dimensions together establish a baseline. Transformative justice is reached at their intersection, when a country shifts power, rules and resource flows rather than adding stand-alone measures. Every statement in this project is coded to one of the four. The transformative judgement is made once, at country level, after all four have been assessed. Section 6 sets out exactly how.</p>
+                    </div>
+
+                    <h2 class="header-light-blue">3. The line-by-line coding guide</h2>
                     <div class="ui-box" style="margin-top: 15px;">
-                        <p style="margin-top: 0;">To process our corpus of 120 NDC documents at scale while maintaining rigorous qualitative standards, we follow a strict hybrid workflow. Here is what you need to do step-by-step:</p>
+                        <p style="margin-top: 0;">We process 120 NDC documents while keeping qualitative standards. The workflow is hybrid: the tool retrieves and proposes, you decide.</p>
                         <ol style="line-height: 1.8; margin-bottom: 0;">
-                            <li><strong>Review the Extracted Text:</strong> Instead of reading hundreds of pages manually, an AI (NLP) tool will scrape the PDFs and pre-flag paragraphs containing implicit or explicit mentions of justice. Your job begins with reviewing these flagged text excerpts.</li>
-                            <li><strong>Interpret & Categorize the Dimension:</strong> Read the specific statement carefully. Use the four definitions listed in the framework diagram above to decide which dimension of climate justice (Recognitional, Procedural, Distributive, or Restorative) the text aligns with.</li>
-                            <li><strong>Assess the Level of Commitment:</strong> Next, you must grade how strong the policy commitment actually is. We use a four-tier grading scale. Evaluate the excerpt against the Matrix Table below to see if it qualifies as <em>No Mention</em>, <em>Tokenistic</em>, <em>Partial</em>, or <em>Embedded</em>. Pay special attention to whether the statement is just a vague aspiration (Tokenistic) or backed by a legally binding institutional framework (Embedded).</li>
+                            <li><strong>Review the retrieved text.</strong> The screener reads the PDF and pre-flags sentences containing explicit or implicit justice content. Your work starts with those, plus the passages the recall net caught that the classifier could not assign.</li>
+                            <li><strong>Assign the dimension.</strong> Decide which of the four dimensions the statement belongs to, using the definitions above. The tool proposes one and shows which terms drove it, along with any close alternative. Where two dimensions are close, it says so rather than picking silently.</li>
+                            <li><strong>Grade the level of commitment.</strong> Use the matrix in section 4. The question is not whether the measure sounds good but how it is phrased: a vague aspiration is tokenistic, a named measure without backing is partial, and a measure tied to law, institutions, funding and accountability is embedded.</li>
+                            <li><strong>Correct the machine, do not trust it.</strong> Every entry shows the evidence behind its grade. Where it is wrong, reassign it in the ledger. Your correction is what enters the dataset. Treat the machine label as a first draft written by a fast but literal-minded assistant.</li>
+                            <li><strong>Record the reason.</strong> Every override takes a short note. Two coders disagreeing is normal and useful. Two coders disagreeing silently is not.</li>
                         </ol>
                     </div>
-                    
-                    <h2 class="header-light-blue">3. Commitment Grading Matrix</h2>
+
+                    <h2 class="header-light-blue">4. Commitment grading matrix</h2>
                     <div class="matrix-table-wrapper">
                         <table class="matrix-table">
                             <thead>
@@ -342,18 +413,76 @@
                             </tbody>
                         </table>
                     </div>
+                    <p class="panel-sub" style="margin-top:12px;">One caveat applies to every cell above. The assessment is qualitative and text-based. We evaluate the content and commitments of the NDCs on paper, not the implementation of those commitments or the intent of whoever drafted them.</p>
+
+                    <h2 class="header-light-blue">5. What the 2025 policy brief found</h2>
+                    <div class="ui-box" style="margin-top: 15px; background:#fff;">
+                        <p style="margin-top:0;">The brief coded 27 NDCs submitted to the UNFCCC as of July 2025, line by line, by hand. Four were in Spanish and one in French; those were handled with professional translation software and secondary manual verification by fluent speakers, with discrepancies resolved through blind cross-review. Content was also organised into nine thematic clusters, guided by prevalent topics in the texts and the CAN Guidelines for NDCs, to see where justice is integrated and where it is neglected. The findings that the tool now has to reproduce at scale are these.</p>
+                        <ul style="line-height:1.8;">
+                            <li><strong>Justice language is common, embedded commitments are not.</strong> Most references remain tokenistic or partial. Many statements are high-level or process-oriented rather than specifying measures with institutional support.</li>
+                            <li><strong>Recognitional and procedural justice dominate.</strong> More than half of the NDCs analysed mentioned vulnerable groups or the importance of stakeholder consultation, making these the most frequently mentioned dimensions. Most of those mentions are tokenistic. Countries list vulnerable populations or affirm support for them, but only a minority outline specific programmes or legal protections. Few provide mechanisms for ongoing inclusive decision-making.</li>
+                            <li><strong>Distributive and restorative justice lag.</strong> Both are less prevalent. Restorative justice was the least addressed dimension, with most countries avoiding language that could be read as accepting liability or formally compensating for climate harm.</li>
+                            <li><strong>Loss and damage usually points outward.</strong> Where it appears, it is often an appeal for global support rather than a commitment by the country to compensate affected groups within its own territory. This is why the tool now records the direction of every claim.</li>
+                            <li><strong>International distributive framing tracks economic capacity.</strong> References to providing finance or technology transfer, or to common but differentiated responsibilities, were more frequent in submissions from parties with comparatively greater economic capacity.</li>
+                            <li><strong>The imbalance is the headline.</strong> Heavy on recognitional and procedural mentions, light on distributive and restorative action. Most countries are more comfortable acknowledging inequities than committing to redistributive or compensatory measures. This is the pattern the brief names as a justice-washing risk, and the tool flags it explicitly.</li>
+                            <li><strong>Justice is siloed by theme.</strong> Commitments are deepest in the just transition and social equity cluster and the capacity-building and public participation cluster, and weakest in technically focused areas such as sectoral mitigation and technology and innovation. Strong procedural commitments at national planning level rarely translate into guaranteed stakeholder influence over financial allocations within sectors.</li>
+                            <li><strong>A small set of countries are close.</strong> Only a few reach embedded level on both axes of the matrix. Brazil is the worked example in the brief: it defines climate justice on the first page of its NDC, links that definition to the Pact for Ecological Transformation and the National Policy on Climate Change, reports participatory design involving more than 4,000 participants and 1,200 proposals, prepares sectoral plans for indigenous peoples and for racial equality, and applies common but differentiated responsibilities within the country as well as between countries.</li>
+                        </ul>
+                        <p style="margin-bottom:0;">The brief's three recommendations shape what the tool looks for. Pair commitments with the law or policy they attach to, the responsible institution, a budget line, a timeline and a monitoring indicator. Translate participation commitments into outcomes on distribution and remediation. Adapt the drafting patterns of the countries already close to transformative justice.</p>
+                    </div>
+
+                    <h2 class="header-light-blue">6. How the tool works</h2>
+                    <div class="ui-box" style="margin-top: 15px; background:#fff;">
+                        <p style="margin-top:0;"><strong>What kind of AI this is.</strong> It is a natural language processing pipeline, not a large language model. Nothing is sent to an external model and nothing is generated. Every decision is made by rules you can read in the page source, so the same document produces the same result every time, and any grade can be traced to the exact words that produced it. That is a deliberate choice: a black box cannot be defended in a methods section, and a generated summary cannot be checked against the text it came from. The trade-off is that the tool has no understanding. It reads patterns. That is why every output is a proposal for a human coder rather than a result.</p>
+
+                        <p><strong>Stage one: retrieval, tuned for recall.</strong> The document is read page by page. Lines are rebuilt from the position of each text fragment on the page rather than concatenated in file order, so two-column layouts and tables do not come out interleaved. Tables of contents, acronym lists, reference pages and cover pages are detected and skipped. Headings are tracked so every sentence knows which section of the NDC it came from. Sentences are split in a way that survives decimals, abbreviations and bullet lists, which is most of what an NDC is made of. If the text layer is thin, the document is flagged as probably scanned rather than reported as containing no justice content.</p>
+
+                        <p><strong>The lexicon.</strong> Terms are held in three groups. <em>Core</em> terms are specific enough to assign a dimension on their own. <em>Supporting</em> terms add weight but cannot assign a dimension by themselves. The <em>recall net</em> holds terms that appear near justice content but are not evidence of it, such as capacity building, climate finance, disaster risk reduction and resilience. Recall net terms flag a passage for you to look at and can never assign a dimension or a grade. This is how the tool stays wide without letting adaptation vocabulary masquerade as restorative justice. The lexicon covers English, Spanish, French, Russian, Arabic, Chinese and Ukrainian, and it carries a version number that is stamped on every export.</p>
+
+                        <p><strong>Stage two: classification, tuned for precision.</strong> Each sentence is scored across the four dimensions and assigned to the highest scoring one. There is no default dimension and no fallback. Where two dimensions are close, or where only supporting terms matched, the statement is marked for manual confirmation and both candidates are shown.</p>
+
+                        <p><strong>How the grade is decided.</strong> The tool does not look for a magic word. It checks the sentence for ten kinds of evidence: a named legal instrument, a named institution, a budget line or monetary figure, a time bound, an accountability or monitoring provision, a commitment verb, a named measure, hedging, conditionality, and negation. Embedded requires a legal anchor, or an institution together with money, plus a commitment verb and either accountability or a deadline, with no negation nearby. Partial requires a commitment verb and a named measure, institution or deadline, without legal or financial anchoring. Everything else is tokenistic. Each entry in the ledger states which of the ten fired and why the grade followed.</p>
+
+                        <p><strong>What else is recorded.</strong> Each statement also carries the direction of the claim, meaning whether it is a domestic commitment about the state's own conduct or an international claim about what others should do; whether it is conditional on external support; which section of the NDC it sits in and whether that section is framing or operational; which of the nine thematic clusters it belongs to; and whether it engages structural drivers of injustice. None of these change the grade. They are what make the dataset worth analysing afterwards.</p>
+
+                        <p style="margin-bottom:0;"><strong>What the tool never does.</strong> It never applies a transformative label to a statement. It never counts mentions to reach a conclusion. It never decides that a country is doing well because it repeats a phrase.</p>
+                    </div>
+
+                    <h2 class="header-light-blue">7. How a country verdict is produced</h2>
+                    <div class="ui-box" style="background:#fff;">
+                        <p style="margin-top:0;"><strong>Nothing in the verdict is a count.</strong> How many times an NDC mentions justice moves no score. A 460-page submission and a 14-page submission are assessed on the same terms.</p>
+                        <ol style="line-height:1.75;">
+                            <li><strong>Statement level.</strong> Each sentence gets one of the four dimensions and one of the three commitment grades, on the evidence present in that sentence.</li>
+                            <li><strong>Dimension level.</strong> Each dimension takes the strongest grade the document actually evidences. Embedded requires either two independent embedded statements or one carrying at least three kinds of evidence. A single weak candidate is graded down to partial and marked for confirmation. Every dimension reports a confidence level alongside its grade.</li>
+                            <li><strong>Country level.</strong> Six criteria are checked, each returning pass, partial or fail. <em>Coverage</em>: are all four dimensions addressed at all. <em>Depth</em>: what is the weakest of the four, since transformative justice is the intersection and the floor is what counts. <em>Balance</em>: is the recognitional and procedural axis matched by the distributive and restorative axis. <em>Anchoring</em>: are commitments tied to named law, institutions or money. <em>Integration</em>: does justice appear in the operational parts of the NDC or only in the framing. <em>Structural engagement</em>: does the NDC address the causes of injustice or only its symptoms.</li>
+                            <li><strong>The verdict.</strong> Approaching transformative climate justice requires all six criteria to pass, or five with depth passing. Where the recognitional and procedural dimensions are developed while distributive and restorative are both at or below tokenistic, the tool reports a justice-washing risk, which is the pattern identified in the brief. The remaining outcomes are substantive but uneven, partial commitment, predominantly tokenistic, and justice largely absent.</li>
+                        </ol>
+                        <p style="margin-bottom:0; font-size:0.9rem; color:var(--text-muted);">Composite axis rule: each axis takes the weaker of its two dimensions. This follows the intersection logic of the framework rather than flattering a country for one strong dimension. The rule is a named setting in the code so it can be changed and reported, but not changed silently.</p>
+                    </div>
+
+                    <h2 class="header-light-blue">8. What the tool cannot do</h2>
+                    <div class="ui-box" style="background:#fff;">
+                        <ul style="line-height:1.75;">
+                            <li><strong>It reads what is written, not what will happen.</strong> A well-drafted commitment scores the same whether or not it is ever delivered. This limitation is stated in the policy brief and has not changed.</li>
+                            <li><strong>Recall is not yet established.</strong> The pipeline can only be checked on what it retrieved. Reading a stratified sample of pages the screener did not flag, roughly ten pages each from twelve documents across the language groups, is what turns the recall assumption into a number we can publish.</li>
+                            <li><strong>The embedded grade is strongest in English, Spanish and French.</strong> Legal and institutional vocabulary in Russian, Arabic and Chinese is thinner in the lexicon, so submissions in those languages carry a higher risk of being graded down for linguistic rather than substantive reasons. Treat non-Latin-script documents as requiring full manual confirmation.</li>
+                            <li><strong>Anchors are recorded, not verified.</strong> The tool notes that an NDC names a law. It does not check that the law exists or says what the NDC claims. Decide before coding whether embedded requires external verification, and log the source if it does.</li>
+                            <li><strong>The dataset is the human layer.</strong> Machine output is a first draft. Overrides carry a coder name, a timestamp and an engine version for exactly this reason.</li>
+                        </ul>
+                    </div>
+
                 </div>
 
                 <!-- PAGE 3: GLOBAL MAP -->
                 <div id="map" class="page">
                     <h1 style="color: #1d1d1f;">Global Analysis Status</h1>
-                    <p>Interactive tracking across 146 covered countries from 120 NDCs (27 EU member states have 1 NDC).</p>
+                    <p>120 NDC documents covering 146 countries. The European Union submits a single NDC on behalf of its 27 member states, so 119 single-country documents plus 1 EU document equals 146 countries. Corpus snapshot: UNFCCC NDC registry, retrieved 1 August 2026. Submissions received after that date are outside this dataset. Countries yet to submit are not a random sample, so global claims must be qualified.</p>
 
                     <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
                             <div>
                                 <h2 style="color: white; margin: 0 0 4px 0; font-size: 1.3rem;">Completion Tracker</h2>
-                                <p style="margin: 0; opacity: 0.85; font-size: 0.9rem;">Real-time dataset progress</p>
+                                <p style="margin: 0; opacity: 0.85; font-size: 0.9rem;">Countries with a completed human-verified assessment</p>
                             </div>
                             <div style="text-align: right;">
                                 <span id="progress-ratio" style="font-size: 2.2rem; font-weight: 700; display: block; line-height: 1;">0 / 146</span>
@@ -479,6 +608,29 @@
                             <label for="new-analysis">Your Analysis / Justification:</label>
                             <textarea id="new-analysis" class="search-box" rows="3" placeholder="Explain why this statement fits the selected commitment level..."></textarea>
                         </div>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px;">
+                            <div class="form-group"><label for="new-page">Page or paragraph locator</label>
+                                <input type="text" id="new-page" class="search-box" placeholder="e.g. p. 34, para 5.2"></div>
+                            <div class="form-group"><label for="new-section">Section of the NDC</label>
+                                <select id="new-section" class="search-box">
+                                    <option>CONTEXT</option><option>MITIGATION</option><option>ADAPTATION</option>
+                                    <option>LOSS_DAMAGE</option><option>MEANS</option><option>GOVERNANCE</option>
+                                    <option>PARTICIPATION</option><option>MRV</option><option>FAIRNESS</option>
+                                    <option>ANNEX</option><option>OTHER</option>
+                                </select></div>
+                            <div class="form-group"><label for="new-scope">Direction of the claim</label>
+                                <select id="new-scope" class="search-box">
+                                    <option value="Domestic">Domestic commitment (what the state will do)</option>
+                                    <option value="International">International claim (what others should do)</option>
+                                    <option value="Mixed">Mixed</option>
+                                </select></div>
+                            <div class="form-group"><label for="new-conditional">Conditionality</label>
+                                <select id="new-conditional" class="search-box">
+                                    <option value="unconditional">Unconditional</option>
+                                    <option value="conditional">Conditional on external support</option>
+                                    <option value="unspecified">Not specified</option>
+                                </select></div>
+                        </div>
                         <button id="submit-example-btn" onclick="submitExample()" class="download-btn" style="background: var(--primary); color:#fff;">Save Example to Hub</button>
                     </div>
 
@@ -494,95 +646,105 @@
 
                 <!-- PAGE 5: AI TEXT SCRAPER -->
                 <div id="analyzer" class="page">
-                    <h1 style="color: #1d1d1f;">AI Text Scraper & Query Engine</h1>
-                    <p>Select an NDC document to parse multi-sentence context blocks containing direct or implicit climate justice concepts. The system utilizes an expanded multilingual dictionary and a context-aware heuristic filter to maximize accurate extraction recall while minimizing false positives.</p>
-                    
+                    <h1 style="color: #1d1d1f;">Screener: passage retrieval</h1>
+                    <p>Stage one of two. This pass is tuned for <b>recall</b>: it casts a wide net so that justice-relevant text is not missed, and it deliberately over-returns. It does not make coding decisions. Terms in the recall net that carry no dimension weight are marked "unassigned" so you can see what the net caught without it contaminating the classification.</p>
+
                     <div class="ui-box" style="background: #ffffff;">
                         <div class="form-group">
-                            <label for="ai-ndc-select">Select NDC Document to Analyze:</label>
+                            <label for="ai-ndc-select">NDC document</label>
                             <select id="ai-ndc-select" class="search-box">
                                 <option value="" disabled selected>Loading available NDCs...</option>
                             </select>
                         </div>
                         <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
                             <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                                <label>Target Query Parameters: 
-                                    <span class="tooltip">Hover for Justice Taxonomy
-                                      <span class="tooltiptext">
-                                        <strong>1. Recognitional:</strong> Women, gender, youth, vulnerable, dignity, indigenous, agency, GEDSI, ancestral domains, customary land, traditional knowledge, social inclusion, epistemic justice, human rights, people-centered, public wellbeing, future generations.<br><br>
-                                        <strong>2. Procedural:</strong> Consultation, stakeholder, participation, FPIC, bottom-up planning, grievance mechanisms, co-governance, decision-making autonomy, capacity building, environmental disclosure.<br><br>
-                                        <strong>3. Distributive:</strong> Equitable sharing, burden/benefit sharing, just transition, progressive taxation, spatial justice, CBDR, technology transfer, climate finance, social/economic benefits, south-south cooperation.<br><br>
-                                        <strong>4. Restorative:</strong> Past harms, compensation, loss and damage, NELD, rehabilitation, climate mobility, displacement, historical responsibilities, ecological debt, disaster risk reduction, health adaptation.<br><br>
-                                      </span>
-                                    </span>
-                                </label>
-                                <input type="text" class="search-box" value="System automatically scans across all 4 Justice Dimensions and 3 Commitment Tiers." disabled style="background:#f0f0f0; color:#555;">
+                                <label>Lexicon <span class="tooltip">(what is in it)<span class="tooltiptext">
+                                    The full versioned lexicon is printed on the Framework &amp; Method page and exported with every ledger. It is split into <b>core</b> terms (can assign a dimension), <b>supporting</b> terms (contribute weight only) and a <b>recall net</b> (flags a passage for human review, never assigns anything).
+                                </span></span></label>
+                                <input type="text" class="search-box" id="lexicon-stamp" value="loading lexicon version..." disabled style="background:#f0f0f0; color:#555;">
                             </div>
-                            <div class="form-group" style="width: 180px; margin-bottom: 0;">
-                                <label for="ai-depth">Result Depth:</label>
+                            <div class="form-group" style="width: 260px; margin-bottom: 0;">
+                                <label for="ai-depth">View</label>
                                 <select id="ai-depth" class="search-box">
-                                    <option value="5">Top 5 Passages</option>
-                                    <option value="15">Top 15 Passages</option>
-                                    <option value="30">Top 30 Passages</option>
-                                    <option value="99999" selected>All Relevant Matches</option>
+                                    <option value="all" selected>Everything, in document order</option>
+                                    <option value="anchored">Only passages with a legal, financial or institutional anchor</option>
+                                    <option value="operational">Only passages outside vision and context sections</option>
+                                    <option value="review">Only passages needing a manual decision</option>
                                 </select>
                             </div>
                         </div>
                         <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
-                            <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff; padding: 10px 18px;">Check for Justice Mentions</button>
-                            <button onclick="exportScrapedDocx()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 10px 18px;">Export Scraped Text as Word (.docx)</button>
+                            <button onclick="runBrowserAnalysis()" class="download-btn" style="background-color: var(--accent); color: #fff; padding: 10px 18px;">Run screener</button>
+                            <button onclick="exportScrapedDocx()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 10px 18px;">Export passages (.doc)</button>
                         </div>
-                        
+
                         <div id="ai-terminal" class="analyzer-terminal">
-                            <p class="sys-msg">System: Ready. Select a document to analyze or export.</p>
-                            <p class="sys-msg">Note: Engine uses Context-Aware filtering to distinguish between generic verbs (e.g., 'sectors involved') and true justice participation ('communities involved'). It also automatically ignores Title Pages and Glossaries.</p>
+                            <p class="sys-msg">Ready. Passages are returned in document order, never ranked by keyword density, so a single high-substance commitment is not pushed below a keyword-dense vision paragraph.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- PAGE 6: COUNTRY EVALUATOR & SYNTHESIS -->
                 <div id="evaluator" class="page">
-                    <h1 style="color: #1d1d1f;">Automated Country Evaluator & Synthesis</h1>
-                    <p>Select an NDC document to run a full-text qualitative synthesis against the Transformative Climate Justice framework. The engine classifies extracted contextual statements into their dimension and commitment tier.</p>
+                    <h1 style="color: #1d1d1f;">Assessment: country profile and verdict</h1>
+                    <p>Stage two of two, tuned for <b>precision</b>. Each dimension is graded on the strongest evidence found for it, and the country verdict comes from a six-criterion rubric based on what is present in the document, not on how many statements were flagged. Volume of justice language changes nothing here.</p>
 
                     <div class="ui-box">
                         <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
                             <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                                <label for="eval-country-select">Select Country NDC to Evaluate:</label>
+                                <label for="eval-country-select">NDC document</label>
                                 <select id="eval-country-select" class="search-box" style="margin-bottom: 0;">
                                     <option value="" disabled selected>Loading countries...</option>
                                 </select>
                             </div>
-                            <button onclick="runFullCountryEvaluation()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 12px 20px;">Run Comprehensive Synthesis</button>
+                            <button onclick="runFullCountryEvaluation()" class="download-btn" style="background-color: var(--primary); color: #fff; padding: 12px 20px;">Run assessment</button>
                         </div>
                     </div>
 
                     <div id="eval-results-container" style="display: none;">
-                        <div class="ui-box" id="verdict-banner" style="border-left: 6px solid var(--accent); background: #ffffff;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                                <div>
-                                    <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Overall NDC Decree Verdict</span>
-                                    <h2 id="verdict-title" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.6rem;">Evaluating...</h2>
-                                </div>
-                                <button onclick="exportEvaluationDocx()" class="download-btn" style="background-color: var(--accent); color: #fff;">📥 Export Synthesis Report (.docx)</button>
-                            </div>
-                            <p id="verdict-summary" style="margin-top: 10px; font-size: 0.95rem; color: #444;"></p>
-                        </div>
+                        <div id="eval-diagnostics" class="diag-box"></div>
 
-                        <div class="metric-grid">
-                            <div class="metric-box" onclick="filterLedger('All')"><h3 id="stat-total">0</h3><p>Total Flagged Statements</p><span style="font-size:0.7rem; color:#aaa;">(Click to Reset)</span></div>
-                            <div class="metric-box" style="border-bottom: 4px solid var(--embedded);" onclick="filterLedger('Embedded')"><h3 id="stat-embedded">0</h3><p>Embedded Commitments</p><span style="font-size:0.7rem; color:#aaa;">(Click to Filter)</span></div>
-                            <div class="metric-box" style="border-bottom: 4px solid var(--partial);" onclick="filterLedger('Partial')"><h3 id="stat-partial">0</h3><p>Partial Commitments</p><span style="font-size:0.7rem; color:#aaa;">(Click to Filter)</span></div>
-                            <div class="metric-box" style="border-bottom: 4px solid var(--tokenistic);" onclick="filterLedger('Tokenistic')"><h3 id="stat-tokenistic">0</h3><p>Tokenistic Mentions</p><span style="font-size:0.7rem; color:#aaa;">(Click to Filter)</span></div>
+                        <div class="ui-box" id="verdict-banner" style="border-left: 6px solid var(--accent); background: #ffffff;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">
+                                <div>
+                                    <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Assessment against the transformative justice rubric</span>
+                                    <h2 id="verdict-title" style="margin: 4px 0 0 0; font-size: 1.6rem;">Evaluating...</h2>
+                                </div>
+                                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                    <button onclick="exportEvaluationDocx()" class="download-btn" style="background-color: var(--accent); color: #fff;">Export report (.doc)</button>
+                                    <button onclick="exportEvaluationCsv()" class="download-btn" style="background-color: var(--primary); color: #fff;">Export ledger (.csv)</button>
+                                </div>
+                            </div>
+                            <div id="verdict-summary" style="margin-top: 12px; font-size: 0.93rem; color: #333; line-height:1.55;"></div>
                         </div>
 
                         <div class="ui-box">
-                            <h3 style="margin-top: 0;">Extracted Policy Statement Ledger</h3>
-                            <p style="font-size: 0.9rem; color: var(--text-muted);">Below is the full catalog of paragraph blocks derived from the document, contextually mapped by justice type and commitment grade.</p>
+                            <h3 style="margin-top:0;">Dimension profile</h3>
+                            <p class="panel-sub">Each dimension takes the strongest tier the document actually evidences. A dimension does not rise because a phrase is repeated.</p>
+                            <div id="dimension-profile" class="dim-grid"></div>
+                        </div>
+
+                        <div class="ui-box">
+                            <h3 style="margin-top:0;">Transformative justice rubric</h3>
+                            <p class="panel-sub">Transformative climate justice is not a fifth dimension and is never coded on a statement. It is the judgement made once all four dimensions have been assessed, following the intersection logic in the policy brief.</p>
+                            <div id="rubric-table"></div>
+                        </div>
+
+                        <div class="ui-box">
+                            <h3 style="margin-top:0;">Position in the transformative justice matrix</h3>
+                            <div id="quadrant"></div>
+                        </div>
+
+                        <div class="ui-box">
+                            <h3 style="margin-top: 0;">Statement ledger</h3>
+                            <p class="panel-sub">Every entry shows why the machine graded it that way. Reassign anything that is wrong: the dimension profile, the rubric and the verdict recompute immediately from your corrections, and the override is written to the shared database with your name against it.</p>
+                            <div id="ledger-controls" class="ledger-controls"></div>
                             <div id="eval-statement-ledger"></div>
+                            <p id="descriptive-stats" class="descriptive"></p>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -611,7 +773,7 @@
             { c: "Uruguay", l: "Spanish", s: 1, p: 77, mapTarget: "UY", f: "77 Uruguay ESP.pdf" }, { c: "Zambia", l: "English", s: 1, p: 38, mapTarget: "ZM", f: "38 Final Submission of Zambia NDC 3.0.pdf" }, { c: "Zimbabwe", l: "English", s: 1, p: 42, mapTarget: "ZW", f: "42 Zimbabwe.pdf" },
             { c: "Angola", l: "English", s: 0, p: 114, mapTarget: "AO", f: "114 Angola.pdf" }, { c: "Armenia", l: "English", s: 0, p: 43, mapTarget: "AM", f: "43Armenia's NDC 3.0.pdf" }, { c: "Australia", l: "English", s: 0, p: 36, mapTarget: "AU", f: "36 Australia NDC.pdf" }, 
             { c: "Azerbaijan", l: "English", s: 0, p: 96, mapTarget: "AZ", f: "96 Azerbaijan.pdf" }, { c: "Bahrain", l: "English", s: 0, p: 32, mapTarget: "BH", f: "32 Bahrain.pdf" }, { c: "Bangladesh", l: "English", s: 0, p: 80, mapTarget: "BD", f: "80 Bangladesh.pdf" }, 
-            { c: "Barbados", l: "English", s: 0, p: 52, mapTarget: "BB", f: "52 Barbados NDC.pdf" }, { c: "Belarus", l: "English", s: 0, p: 25, mapTarget: "BY", f: "25 Belarus RUSS.pdf" }, { c: "Bhutan", l: "English", s: 0, p: 30, mapTarget: "BT", f: "30 Bhutan.pdf" }, 
+            { c: "Barbados", l: "English", s: 0, p: 52, mapTarget: "BB", f: "52 Barbados NDC.pdf" }, { c: "Belarus", l: "Russian", s: 0, p: 25, mapTarget: "BY", f: "25 Belarus RUSS.pdf" }, { c: "Bhutan", l: "English", s: 0, p: 30, mapTarget: "BT", f: "30 Bhutan.pdf" }, 
             { c: "Brunei Darussalam", l: "English", s: 0, p: 27, mapTarget: "BN", f: "27 Brunei Darussalam.pdf" }, { c: "Cabo Verde", l: "English", s: 0, p: 94, mapTarget: "CV", f: "94 NDC 3.0 Cabo Verde.pdf" }, { c: "Cambodia", l: "English", s: 0, p: 158, mapTarget: "KH", f: "158 Cambodia.pdf" }, 
             { c: "Ethiopia", l: "English", s: 0, p: 29, mapTarget: "ET", f: "29 Ethiopia.pdf" }, { c: "European Union", l: "English", s: 0, p: 47, mapTarget: "EU_EXPAND", f: "47 European Union (27 Countries).pdf" }, 
             { c: "Fiji", l: "English", s: 0, p: 76, mapTarget: "FJ", f: "76 Fiji NDC3.0_Final.pdf" }, { c: "Georgia", l: "English", s: 0, p: 37, mapTarget: "GE", f: "37 NDC_3.0_Georgia.pdf" }, { c: "Guyana", l: "English", s: 0, p: 17, mapTarget: "GY", f: "17 Guyanas NDC 2025-2035.pdf" }, 
@@ -654,50 +816,710 @@
             { id: "default-3", dimension: "Recognitional", country: "Canada", level: "Embedded", statement: "In 2016, the Government [. . .] endorsed the United Nations Declaration on the Rights of Indigenous Peoples (the Declaration) without qualification and committed to its full and effective implementation. In June 2021, Parliament passed legislation to advance the implementation of the United Nations Declaration. The legislation requires the Government [. . .], in consultation and cooperation with Indigenous Peoples, to take all measures necessary to ensure that the laws [. . .] are consistent with the rights of Indigenous Peoples set out in the Declaration, as well as to develop an action plan to achieve its objectives.", analysis: "Backed by legislation requiring alignment of laws with Indigenous rights and mandating a co-developed action plan with Indigenous Peoples. It names the accountable actor and pursues a legally binding process, making it an institutionalized, monitorable commitment." }
         ];
 
-        // --- Refined Context-Aware Multilingual Justice Taxonomy ---
-        // Extensively expanded to capture Global South / Developmental frameworks
-        const conceptMap = {
-            "Recognitional": {
-                unambiguous: ["marginalized", "indigenous", "traditional knowledge", "diverse values", "power imbalance", "social exclusion", "human rights", "ancestral domains", "customary land", "gender-responsive", "intersectionality", "epistemological parity", "local ecological knowledge", "social inclusion", "cultural heritage", "gedsi", "epistemic justice", "self-determination", "structural recognition", "decolonial recognition", "women", "gender", "female", "youth", "empowerment", "dignity", "agency", "local communities", "people-centered development", "people-centred development", "people first", "life first", "public wellbeing", "future generations", "fundamental interests", "grupos marginados", "derechos indígenas", "pueblos indígenas", "conocimientos tradicionales", "saberes ancestrales", "desequilibrios de poder", "exclusión social", "enfoque de género", "interseccionalidad", "groupes marginalisés", "droits des peuples autochtones", "savoirs traditionnels", "déséquilibres de pouvoir", "exclusion sociale", "approche sensible au genre", "intersectionnalité", "droits des autochtones", "groupes vulnérables", "маргинализированные", "коренных народов", "традиционные знания", "гендерно-ориентированный", "социальная изоляция", "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "توازن القوى", "الإقصاء الاجتماعي", "المنظور الجنساني", "الفئات الضعيفة", "边缘化群体", "原住民权利", "传统知识", "权力失衡", "社会排斥", "社会包容", "性别响应", "弱势群体", "以人民为中心", "人民至上", "生命至上", "群众的根本利益", "公众福祉", "子孙后代", "маргіналізовані", "корінних народів", "традиційні знання", "гендерно-чутливий", "соціальне відчуження"],
-                ambiguous: ["vulnerable", "fairness", "empower"]
-            },
-            "Procedural": {
-                unambiguous: ["transparent process", "inclusive decision", "fair process", "procedural rights", "prior and informed consent", "fpic", "bottom-up planning", "decentralized governance", "grievance mechanism", "co-production", "participatory planning", "access to information", "accountability mechanism", "co-governance", "decision-making autonomy", "institutionalized public participation", "structural power redistribution", "democratized governance", "capacity building", "public awareness", "environmental disclosure", "procesos transparentes", "decisiones inclusiva", "participación significativa", "consentimiento libre previo e informado", "mecanismos de reclamación", "gobernanza descentralizada", "mecanismos de queja", "desarrollo de capacidades", "processus transparents", "décision inclusive", "participation significative", "consentement préalable", "mécanismes de recours", "gouvernance décentralisée", "renforcement des capacités", "прозрачные процессы", "инклюзивное", "значимое участие", "осознанное согласие", "механизмы рассмотрения жалоб", "общественные консультации", "предварительное согласие", "наращивание потенциала", "عمليات شفافة", "صنع قرار شامل", "مشاركة مجدية", "الموافقة المسبقة", "آليات التظلم", "اللامركزية", "مشاورات عامة", "بناء القدرات", "透明过程", "包容性决策", "有意义的参与", "事先知情同意", "利益相关方磋商", "申诉机制", "权力下放", "公众咨询", "能力建设", "公众意识", "环境信息披露", "прозорі процеси", "інклюзивне", "значуща участь", "усвідомлена згода", "розгляду скарг", "громадські консультації", "попередня згода"],
-                ambiguous: ["consultation", "stakeholder", "participation", "public consultation", "engage", "involve", "involved", "community", "communities", "multi-stakeholder", "transparent", "transparency", "consulta pública", "consultation publique", "公众参与"]
-            },
-            "Distributive": {
-                unambiguous: ["equitable sharing", "burden sharing", "benefit sharing", "intergenerational equity", "targeted subsidies", "progressive taxation", "social safety nets", "spatial planning", "wealth redistribution", "spatial justice", "urban equity", "vulnerability-based targeting", "technology transfer", "differentiated impacts", "just transition", "structural redistribution", "systemic equity", "wealth taxation", "post-extractivist distribution", "equitable climate action", "cbdr", "common but differentiated responsibilities", "south-south cooperation", "climate finance", "economic benefits", "environmental benefits", "social benefits", "belt and road", "fair development space", "reparto equitativo", "reparto de cargas", "distribución de beneficios", "equidad intergeneracional", "transición justa", "redes de seguridad social", "redistribución de la riqueza", "cooperación sur-sur", "transferencia de tecnología", "financiación climática", "partage équitable", "partage du fardeau", "partage des avantages", "équité intergénérationnelle", "transition juste", "filets de sécurité", "redistribution des richesses", "coopération sud-sud", "transfert de technologie", "financement climatique", "справедливое распределение", "распределение бремени", "распределение выгод", "справедливость между поколениями", "справедливый переход", "социальной защиты", "сотрудничество юг-юг", "التقاسم العادل", "تقاسم الأعباء", "تقاسم المنافع", "الإنصاف بين الأجيال", "انتقال عادل", "الأمان الاجتماعي", "التعاون بين بلدان الجنوب", "公平分享", "责任分担", "利益共享", "代际公平", "公正转型", "社会安全网", "共同但有区别的责任", "南南合作", "气候资金", "技术转让", "经济效益", "环境效益", "社会效益", "一带一路", "公平的发展空间", "справедливий розподіл", "розподіл тягаря", "розподіл вигод", "міжпоколінна справедливість", "справедливий перехід", "соціального захисту"],
-                ambiguous: ["allocation", "resource", "fair & ambitious", "equitable outcomes", "targeted support", "公平", "公正"]
-            },
-            "Restorative": {
-                unambiguous: ["past climate injustice", "historical responsibilities", "reparative justice", "restorative", "past harms", "loss and damage", "neld", "non-economic loss", "ecological debt", "climate reparations", "climate mobility", "climate refugees", "forced migration", "planned relocation", "disaster displacement", "warsaw international mechanism", "trapped populations", "climate immobility", "historical loss evaluation", "disaster risk reduction", "health adaptation", "heat warning", "food security", "water security", "resilient cities", "injusticias climáticas pasadas", "responsabilidades históricas", "medidas reparadoras", "pérdidas y daños", "deuda ecológica", "movilidad climática", "daños no económicos", "injustices climatiques passées", "responsabilités historiques", "mesures de réparation", "pertes et préjudices", "dette écologique", "mobilité climatique", "préjudices non économiques", "прошлые климатические", "историческая ответственность", "потери и ущерб", "неэкономические потери", "экологический долг", "климатическая миграция", "المظالم المناخية", "المسؤوليات التاريخية", "تدابير جبر الضرر", "الخسائر والأضرار", "الخسائر غير الاقتصادية", "التنقل المناخي", "历史气候不公", "历史责任", "补救措施", "损失与损害", "非经济损失", "生态债务", "气候流动性", "防灾减灾", "健康适应", "高温预警", "粮食安全", "水安全", "韧性城市", "минулі кліматичні", "історична відповідальність", "втрати та збитки", "неекономічні втрати", "кліматична міграція"],
-                ambiguous: ["remediation", "compensation", "rehabilitation", "relocation", "resettlement", "displacement", "human mobility", "resilience"]
-            }
+/* ============================================================================
+   JUST-NDC ANALYSIS ENGINE v2.0
+   Abbas, Sandholz, van Schie (2025) transformative climate justice framework.
+   Four dimensions. Four commitment tiers. No fifth dimension.
+   Country verdict is rubric-based (component presence), never frequency-based.
+   ========================================================================== */
+
+const ENGINE_VERSION = "2.0.0";
+const LEXICON_VERSION = "2026-08-11";
+
+/* Rule constants exposed so the method is stated, not buried. */
+const RULES = {
+    AXIS_RULE: "min",          // composite axis takes the weaker of its two dimensions
+    EMBEDDED_MIN_FEATURES: 3,  // evidence features needed to accept a single-statement Embedded
+    TIER_ORDER: ["Absent", "Tokenistic", "Partial", "Embedded"]
+};
+
+const tierRank = t => RULES.TIER_ORDER.indexOf(t);
+const tierMax = (a, b) => (tierRank(a) >= tierRank(b) ? a : b);
+const tierMin = (a, b) => (tierRank(a) <= tierRank(b) ? a : b);
+
+/* ============================================================================
+   1. MATCHING
+   Unicode-aware word boundaries for alphabetic scripts, substring for CJK.
+   English terms tolerate regular plural and participle inflection.
+   ========================================================================== */
+
+const CJK_RE = /[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/;
+const matcherCache = new Map();
+
+function buildMatcher(term) {
+    if (matcherCache.has(term)) return matcherCache.get(term);
+    let fn;
+    if (CJK_RE.test(term)) {
+        const needle = term.replace(/\s+/g, "");
+        fn = text => text.replace(/\s+/g, "").includes(needle);
+    } else {
+        const esc = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "[\\s\\u00a0-]+");
+        // allow English inflection on the final token
+        const re = new RegExp("(?<![\\p{L}\\p{N}])" + esc + "(?:s|es|ed|ing)?(?![\\p{L}\\p{N}])", "iu");
+        fn = text => re.test(text);
+    }
+    matcherCache.set(term, fn);
+    return fn;
+}
+const hasTerm = (term, text) => buildMatcher(term)(text);
+const anyTerm = (list, text) => list.some(t => hasTerm(t, text));
+function whichTerms(list, text) {
+    const hits = list.filter(t => hasTerm(t, text));
+    // drop any hit that is contained inside a longer hit, so overlapping lexicon
+    // entries ("prior and informed consent" inside "free, prior and informed
+    // consent") are counted once rather than twice
+    return hits.filter(h => !hits.some(o => o !== h && o.length > h.length && o.toLowerCase().includes(h.toLowerCase())));
+}
+
+/* ============================================================================
+   2. LEXICON
+   core       = high precision, may assign a dimension on its own
+   supporting = contributes weight, cannot assign a dimension alone
+   screen     = recall net only. Flags a passage for human review and never
+                assigns a dimension or tier. This is where the terms that
+                generate most false positives now live.
+   ========================================================================== */
+
+const LEXICON = {
+    Recognitional: {
+        core: [
+            "marginalized", "marginalised", "indigenous", "indigenous peoples", "traditional knowledge",
+            "ancestral domain", "customary land", "customary tenure", "land tenure", "land rights",
+            "afro-descendant", "quilombola", "traditional peoples", "ethnic minority", "ethnic minorities",
+            "persons with disabilities", "people with disabilities", "older persons", "elderly",
+            "pastoralist", "fisherfolk", "smallholder", "informal settlement", "informal worker",
+            "gender-responsive", "gender responsive", "gender equality", "gender mainstreaming",
+            "women and girls", "women-led", "youth-led", "intersectionality", "epistemic justice",
+            "local ecological knowledge", "social inclusion", "social exclusion", "power imbalance",
+            "self-determination", "leave no one behind", "leaving no one behind", "gedsi",
+            "cultural heritage", "cultural identity", "diverse values", "knowledge systems",
+            "grupos marginados", "pueblos indigenas", "pueblos indígenas", "conocimientos tradicionales",
+            "saberes ancestrales", "exclusion social", "exclusión social", "enfoque de genero",
+            "enfoque de género", "igualdad de genero", "igualdad de género", "personas con discapacidad",
+            "pueblos originarios", "afrodescendiente", "tenencia de la tierra",
+            "groupes marginalises", "groupes marginalisés", "peuples autochtones", "savoirs traditionnels",
+            "exclusion sociale", "approche genre", "egalite des genres", "égalité des genres",
+            "personnes handicapees", "personnes handicapées", "securite fonciere", "sécurité foncière",
+            "маргинализированные", "коренных народов", "коренные народы", "традиционные знания",
+            "гендерное равенство", "социальная изоляция", "лица с инвалидностью",
+            "الفئات المهمشة", "الشعوب الأصلية", "المعارف التقليدية", "المساواة بين الجنسين",
+            "الإقصاء الاجتماعي", "الأشخاص ذوي الإعاقة",
+            "边缘化群体", "原住民", "少数民族", "传统知识", "性别平等", "社会排斥", "残疾人", "弱势群体",
+            "маргіналізовані", "корінних народів", "традиційні знання", "гендерна рівність",
+            "соціальне відчуження", "особи з інвалідністю"
+        ],
+        supporting: [
+            "women", "gender", "youth", "children", "migrants", "displaced people", "refugees",
+            "dignity", "human rights", "rights-based", "empowerment", "local communities",
+            "people-centred", "people-centered", "vulnerable groups", "vulnerable populations",
+            "mujeres", "juventud", "derechos humanos", "comunidades locales", "grupos vulnerables",
+            "femmes", "jeunes", "droits humains", "communautes locales", "communautés locales",
+            "groupes vulnerables", "groupes vulnérables",
+            "женщины", "молодежь", "права человека", "уязвимые группы",
+            "المرأة", "الشباب", "حقوق الإنسان", "الفئات الضعيفة",
+            "妇女", "青年", "人权", "地方社区"
+        ]
+    },
+    Procedural: {
+        core: [
+            "free prior and informed consent", "free, prior and informed consent", "fpic",
+            "prior and informed consent", "participatory planning", "participatory governance",
+            "participatory budgeting", "co-design", "co-production", "co-governance",
+            "grievance mechanism", "grievance redress", "complaints mechanism", "ombudsman",
+            "access to information", "right to information", "access to justice",
+            "environmental disclosure", "public hearing", "public consultation", "national dialogue",
+            "validation workshop", "multi-stakeholder platform", "civil society organisations",
+            "civil society organizations", "inclusive decision-making", "inclusive decision making",
+            "decentralized governance", "decentralised governance", "devolution", "subnational authorities",
+            "transparent process", "procedural rights", "whole-of-society",
+            "consentimiento libre previo e informado", "consulta previa", "consulta publica",
+            "consulta pública", "mecanismo de reclamacion", "mecanismo de reclamación",
+            "planificacion participativa", "planificación participativa", "sociedad civil",
+            "acceso a la informacion", "acceso a la información", "gobernanza participativa",
+            "consentement prealable", "consentement préalable", "consultation publique",
+            "planification participative", "mecanisme de recours", "mécanisme de recours",
+            "societe civile", "société civile", "acces a l'information", "accès à l'information",
+            "gouvernance participative",
+            "предварительное согласие", "общественные консультации", "гражданское общество",
+            "механизм рассмотрения жалоб", "доступ к информации", "участие общественности",
+            "الموافقة الحرة والمسبقة والمستنيرة", "المشاورات العامة", "المجتمع المدني",
+            "آلية التظلم", "الحصول على المعلومات", "المشاركة العامة",
+            "自由事先知情同意", "公众参与", "公众咨询", "民间社会", "申诉机制", "信息公开", "参与式规划",
+            "попередня згода", "громадські консультації", "громадянське суспільство",
+            "механізм оскарження", "доступ до інформації"
+        ],
+        supporting: [
+            "stakeholder engagement", "stakeholder consultation", "meaningful participation",
+            "community participation", "community engagement", "transparency", "accountability",
+            "participacion", "participación", "partes interesadas", "transparencia",
+            "participation", "parties prenantes", "transparence",
+            "участие", "заинтересованных сторон", "прозрачность",
+            "المشاركة", "أصحاب المصلحة", "الشفافية",
+            "参与", "利益相关方", "透明"
+        ]
+    },
+    Distributive: {
+        core: [
+            "just transition", "equitable sharing", "burden sharing", "benefit sharing",
+            "benefit-sharing", "equitable allocation", "equitable access", "energy poverty",
+            "affordability", "subsidy reform", "social protection", "social safety net",
+            "cash transfer", "targeted subsidies", "progressive taxation", "wealth redistribution",
+            "redistribution", "polluter pays", "green jobs", "reskilling", "retraining",
+            "worker transition", "displaced workers", "intergenerational equity", "future generations",
+            "spatial justice", "differentiated impacts", "vulnerability-based targeting",
+            "common but differentiated responsibilities", "cbdr", "equity principle",
+            "concessional finance", "grant-based finance", "fiscal space", "debt sustainability",
+            "transicion justa", "transición justa", "reparto equitativo", "distribucion de beneficios",
+            "distribución de beneficios", "proteccion social", "protección social",
+            "pobreza energetica", "pobreza energética", "equidad intergeneracional",
+            "responsabilidades comunes pero diferenciadas", "redistribucion", "redistribución",
+            "transition juste", "partage equitable", "partage équitable", "partage des benefices",
+            "partage des bénéfices", "protection sociale", "precarite energetique",
+            "précarité énergétique", "equite intergenerationnelle", "équité intergénérationnelle",
+            "responsabilites communes mais differenciees", "responsabilités communes mais différenciées",
+            "справедливый переход", "справедливое распределение", "социальная защита",
+            "энергетическая бедность", "общая но дифференцированная ответственность",
+            "انتقال عادل", "التقاسم العادل", "الحماية الاجتماعية", "فقر الطاقة",
+            "المسؤوليات المشتركة والمتباينة",
+            "公正转型", "公平分享", "利益共享", "社会保障", "能源贫困", "共同但有区别的责任", "代际公平",
+            "справедливий перехід", "справедливий розподіл", "соціальний захист"
+        ],
+        supporting: [
+            "technology transfer", "south-south cooperation", "equitable", "equity",
+            "fair distribution", "livelihood support", "income support",
+            "transferencia de tecnologia", "transferencia de tecnología", "cooperacion sur-sur",
+            "cooperación sur-sur", "equidad", "medios de vida",
+            "transfert de technologie", "cooperation sud-sud", "coopération sud-sud", "equite", "équité",
+            "передача технологий", "сотрудничество юг-юг", "справедливость",
+            "نقل التكنولوجيا", "التعاون بين بلدان الجنوب", "الإنصاف",
+            "技术转让", "南南合作", "公平"
+        ]
+    },
+    Restorative: {
+        core: [
+            "loss and damage", "losses and damages", "non-economic loss", "non-economic losses",
+            "neld", "reparation", "reparations", "reparative", "redress", "restorative justice",
+            "historical responsibility", "historical responsibilities", "historic emissions",
+            "ecological debt", "climate debt", "climate reparations", "liability", "compensation fund",
+            "santiago network", "warsaw international mechanism", "fund for responding to loss and damage",
+            "loss and damage fund", "slow onset", "slow-onset", "irreversible loss", "residual impacts",
+            "residual risk", "past harms", "past injustice", "historical injustice",
+            "planned relocation", "managed retreat", "involuntary migration", "forced displacement",
+            "climate-induced displacement", "climate displacement", "climate mobility",
+            "trapped populations", "loss of territory", "loss of culture", "cultural loss",
+            "language loss", "sacred sites", "rehabilitation of affected",
+            "perdidas y danos", "pérdidas y daños", "danos no economicos", "daños no económicos",
+            "responsabilidad historica", "responsabilidad histórica", "deuda ecologica", "deuda ecológica",
+            "reparacion", "reparación", "reubicacion planificada", "reubicación planificada",
+            "desplazamiento climatico", "desplazamiento climático", "movilidad climatica",
+            "movilidad climática", "injusticias pasadas",
+            "pertes et prejudices", "pertes et préjudices", "prejudices non economiques",
+            "préjudices non économiques", "responsabilite historique", "responsabilité historique",
+            "dette ecologique", "dette écologique", "reparation", "réparation",
+            "relocalisation planifiee", "relocalisation planifiée", "deplacement climatique",
+            "déplacement climatique", "mobilite climatique", "mobilité climatique",
+            "потери и ущерб", "неэкономические потери", "историческая ответственность",
+            "экологический долг", "возмещение ущерба", "климатическая миграция",
+            "планируемое переселение",
+            "الخسائر والأضرار", "الخسائر غير الاقتصادية", "المسؤولية التاريخية", "الدين البيئي",
+            "جبر الضرر", "التنقل المناخي", "إعادة التوطين المخطط",
+            "损失与损害", "非经济损失", "历史责任", "生态债务", "补偿", "气候流动", "有计划的迁移",
+            "втрати та збитки", "неекономічні втрати", "історична відповідальність",
+            "кліматична міграція"
+        ],
+        supporting: [
+            "displacement", "resettlement", "relocation", "compensation", "remediation",
+            "affected communities", "restoration of livelihoods",
+            "desplazamiento", "reasentamiento", "compensacion", "compensación",
+            "deplacement", "déplacement", "reinstallation", "réinstallation", "indemnisation",
+            "перемещение", "переселение", "компенсация",
+            "النزوح", "إعادة التوطين", "التعويض",
+            "流离失所", "重新安置", "赔偿"
+        ]
+    }
+};
+
+/* Recall net. Flags a passage for human review. Contributes no dimension weight
+   and cannot set a tier. These are the terms that produced false positives in
+   v1: government agencies, adaptation vocabulary, generic co-benefits. */
+const SCREEN_ONLY = [
+    "capacity building", "capacity-building", "public awareness", "climate finance",
+    "economic benefits", "environmental benefits", "social benefits", "co-benefits",
+    "disaster risk reduction", "early warning", "health adaptation", "heat warning",
+    "food security", "water security", "resilient cities", "resilience", "vulnerable",
+    "inclusive", "inclusion", "fairness", "wellbeing", "well-being", "quality of life",
+    "poverty reduction", "sustainable development", "social development",
+    "renforcement des capacites", "renforcement des capacités", "sensibilisation",
+    "desarrollo de capacidades", "sensibilizacion", "sensibilización", "reduccion de la pobreza",
+    "наращивание потенциала", "بناء القدرات", "能力建设", "公众意识", "防灾减灾", "粮食安全"
+];
+
+/* Root-cause markers. Used only by rubric criterion 6. */
+const STRUCTURAL_MARKERS = [
+    "structural inequality", "structural inequalities", "systemic inequality", "root causes",
+    "underlying drivers of vulnerability", "power relations", "power asymmetr", "decoloni",
+    "extractivism", "post-extractivist", "unequal exchange", "land reform", "agrarian reform",
+    "tenure reform", "redistribut", "climate justice", "environmental justice", "energy democracy",
+    "transformative change", "system change", "structural transformation",
+    "desigualdad estructural", "causas estructurales", "justicia climatica", "justicia climática",
+    "reforma agraria", "relaciones de poder",
+    "inegalites structurelles", "inégalités structurelles", "causes profondes", "justice climatique",
+    "reforme fonciere", "réforme foncière", "rapports de pouvoir",
+    "структурное неравенство", "коренные причины", "климатическая справедливость",
+    "عدم المساواة الهيكلية", "الأسباب الجذرية", "العدالة المناخية",
+    "结构性不平等", "根本原因", "气候正义", "气候公正"
+];
+
+/* Nine thematic clusters from the policy brief, used for the Figure 5 heat map. */
+const CLUSTERS = {
+    "Capacity-building and public participation": ["capacity building", "capacity-building", "training", "public participation", "awareness", "education", "stakeholder", "consultation", "civil society"],
+    "Just transition and social equity": ["just transition", "social equity", "green jobs", "workers", "reskilling", "social protection", "gender", "youth", "indigenous", "vulnerable groups", "poverty"],
+    "Governance and institutional frameworks": ["institutional arrangement", "governance", "ministry", "inter-ministerial", "coordination", "mandate", "legal framework", "legislation", "act", "decree", "policy framework"],
+    "Climate finance and investment": ["finance", "financing", "budget", "investment", "fund", "expenditure", "resource mobilisation", "resource mobilization", "taxation", "subsidy"],
+    "Biodiversity and ecosystem conservation": ["biodiversity", "ecosystem", "forest", "mangrove", "wetland", "protected area", "conservation", "nature-based"],
+    "Energy transition and renewable energy": ["renewable", "solar", "wind", "hydropower", "energy transition", "electrification", "grid", "fossil fuel", "coal", "gas"],
+    "Sectoral mitigation measures": ["transport", "industry", "agriculture", "waste", "buildings", "cement", "livestock", "emission reduction", "mitigation measure"],
+    "Monitoring and reporting": ["monitoring", "reporting", "verification", "mrv", "indicator", "review", "transparency framework", "biennial", "inventory"],
+    "Technology and innovation": ["technology", "innovation", "research and development", "digital", "data system", "modelling", "modeling"]
+};
+
+/* ============================================================================
+   3. EVIDENCE FEATURES
+   Applied to the target sentence only. Each one is reported to the coder so the
+   tier can be checked rather than trusted.
+   ========================================================================== */
+
+const FEATURES = {
+    legalAnchor: [
+        /(?<![\p{L}])(act|law|statute|legislation|legislative|statutory|legally binding|decree|ordinance|regulation|constitution|code|bill)(?![\p{L}])/iu,
+        /\b(law|act|decree|decreto|ley|loi|lei|gesetz)\s*(no\.?|n[°º]|number|#)?\s*\d/iu,
+        /\b(act|law|code|charter)\s+(of\s+)?(19|20)\d{2}\b/iu,
+        /(?<![\p{L}])(ley|leyes|decreto|reglamento|constitucion|constitución|codigo|código)(?![\p{L}])/iu,
+        /(?<![\p{L}])(loi|decret|décret|reglement|règlement|arrete|arrêté|constitution)(?![\p{L}])/iu,
+        /(закон|законодательств|постановлени|указ|кодекс|конституц)/iu,
+        /(законодавств|постанов|указ|кодекс|конституц)/iu,
+        /(قانون|مرسوم|تشريع|لائحة|دستور)/u,
+        /(法律|法案|条例|法规|宪法|决定|办法)/u
+    ],
+    institutionAnchor: [
+        /(?<![\p{L}])(ministry|ministries|minister|department|agency|authority|commission|council|committee|secretariat|directorate|bureau|taskforce|task force|working group|focal point|institute|board)(?![\p{L}])/iu,
+        /(?<![\p{L}])(ministerio|secretaria|secretaría|comision|comisión|consejo|comite|comité|direccion|dirección|instituto|autoridad)(?![\p{L}])/iu,
+        /(?<![\p{L}])(ministere|ministère|direction|commission|conseil|comite|comité|agence|autorite|autorité|secretariat|secrétariat)(?![\p{L}])/iu,
+        /(министерств|ведомств|комисси|совет|комитет|агентств|управлени)/iu,
+        /(міністерств|комісі|рада|комітет|агентств)/iu,
+        /(وزارة|هيئة|لجنة|مجلس|إدارة|مديرية)/u,
+        /(部|委员会|机构|管理局|办公室|领导小组)/u
+    ],
+    financeAnchor: [
+        /(?<![\p{L}\p{N}])(usd|eur|us\$|€|\$|million|billion|milliard|millones|миллион|مليون|亿|万元)(?![\p{L}])/iu,
+        /(?<![\p{L}])(budget|budgetary|budget line|allocation of funds|allocated funds|dedicated fund|earmark|financing plan|expenditure framework|fiscal allocation)(?![\p{L}])/iu,
+        /(?<![\p{L}])(presupuesto|asignacion presupuestaria|asignación presupuestaria|fondo dedicado)(?![\p{L}])/iu,
+        /(?<![\p{L}])(budget|dotation|ligne budgetaire|ligne budgétaire|fonds dedie|fonds dédié)(?![\p{L}])/iu,
+        /(бюджет|финансировани|ассигновани)/iu,
+        /(ميزانية|تمويل مخصص|اعتماد مالي)/u,
+        /(预算|资金安排|专项资金)/u
+    ],
+    timeBound: [
+        /\b(by|before|no later than|not later than|para el|d'ici|к)\s+(19|20)\d{2}\b/iu,
+        /\b(19|20)\d{2}\s*[-–—]\s*(19|20)\d{2}\b/,
+        /(?<![\p{L}])(annually|annual|every year|biennial|biennially|quarterly|each year|anualmente|anual|annuellement|annuel|ежегодно|سنويا|每年)(?![\p{L}])/iu,
+        /(?<![\p{L}])(within\s+\d+\s+(year|month)|in the first\s+\d+)(?![\p{L}])/iu
+    ],
+    accountability: [
+        /(?<![\p{L}])(monitor|monitors|monitoring|reporting|reports?)\s+(to|on|of|requirement|obligation)/iu,
+        /(?<![\p{L}])(annual|biennial|periodic|regular)\s+(report|reporting|review|assessment|audit)/iu,
+        /(?<![\p{L}])(monitoring|indicator|indicators|evaluation|review mechanism|oversight|audit|compliance|enforcement|enforceable|verification|track progress|shall report|must report|accountability mechanism)(?![\p{L}])/iu,
+        /(?<![\p{L}])(seguimiento|monitoreo|indicador|evaluacion|evaluación|fiscalizacion|fiscalización|rendicion de cuentas|rendición de cuentas)(?![\p{L}])/iu,
+        /(?<![\p{L}])(suivi|indicateur|evaluation|évaluation|controle|contrôle|reddition de comptes)(?![\p{L}])/iu,
+        /(мониторинг|отчетност|показател|контрол)/iu,
+        /(رصد|مؤشر|تقييم|مساءلة|إنفاذ)/u,
+        /(监测|监督|指标|评估|问责|执行)/u
+    ],
+    commitVerb: [
+        /(?<![\p{L}])(will|shall|commits? to|is committed to|has established|established|adopted|enacted|mandates?|requires?|guarantees?|allocates?|ensures?)(?![\p{L}])/iu,
+        /(?<![\p{L}])(se compromete|garantiza|establece|asigna|exige|adopta|aprobo|aprobó)(?![\p{L}])/iu,
+        /(?<![\p{L}])(s'engage|garantit|etablit|établit|alloue|exige|adopte)(?![\p{L}])/iu,
+        /(обязуетс|обеспечит|устанавлива|выделяет|принял)/iu,
+        /(تلتزم|تضمن|تنشئ|تخصص)/u,
+        /(将|应当|承诺|建立|保障|拨付)/u
+    ],
+    concreteMeasure: [
+        /(?<![\p{L}])(programme|program|programmes|programs|plan|plans|strategy|strategies|policy|policies|framework|frameworks|scheme|schemes|initiative|initiatives|project|projects|measure|measures|action plan|roadmap|target|targets|standard|standards|guideline|guidelines|mechanism|mechanisms|fund|funds)(?![\p{L}])/iu,
+        /(?<![\p{L}])(programa|programas|plan|planes|estrategia|estrategias|politica|política|politicas|políticas|medida|medidas|mecanismo|meta|metas)(?![\p{L}])/iu,
+        /(?<![\p{L}])(programme|programmes|plan|plans|strategie|stratégie|politique|politiques|mesure|mesures|mecanisme|mécanisme|objectif|objectifs)(?![\p{L}])/iu,
+        /(программ|план|стратеги|политик|мер[аыу]|механизм|цел[ьи])/iu,
+        /(برنامج|خطة|استراتيجية|سياسة|تدبير|آلية|هدف)/u,
+        /(方案|规划|计划|战略|政策|措施|机制|目标)/u
+    ],
+    hedge: [
+        /(?<![\p{L}])(may|might|could|where possible|where feasible|as appropriate|to the extent possible|endeavour|endeavor|aims? to|seeks? to|intends? to|aspires? to|will consider|is expected to|encourage)(?![\p{L}])/iu,
+        /(?<![\p{L}])(podria|podría|en la medida de lo posible|se procurara|se procurará|pretende|aspira)(?![\p{L}])/iu,
+        /(?<![\p{L}])(pourrait|dans la mesure du possible|s'efforcera|vise a|vise à|entend)(?![\p{L}])/iu,
+        /(может|по возможности|стремится|намерен)/iu,
+        /(قد|حسب الإمكان|تسعى|تهدف)/u,
+        /(可能|尽可能|力争|拟)/u
+    ],
+    conditional: [
+        /(?<![\p{L}])(conditional|subject to (the )?(availability|provision|receipt)|contingent (up)?on|provided that|if (adequate|sufficient|international) (support|finance|funding)|with international support|dependent on external)(?![\p{L}])/iu,
+        /(?<![\p{L}])(condicionad|sujeto a la disponibilidad|con apoyo internacional)(?![\p{L}])/iu,
+        /(?<![\p{L}])(conditionnel|sous reserve|sous réserve|avec un appui international)(?![\p{L}])/iu,
+        /(при условии|при наличии финансировани)/iu,
+        /(مشروط|رهنا بتوافر)/u,
+        /(视.*而定|在获得国际支持)/u
+    ],
+    negation: [
+        /(?<![\p{L}])(no|not|does not|do not|without|lack of|lacks|absence of|is not|are not|neither|nor|non-binding|not legally binding|no dedicated|no specific)(?![\p{L}])/iu,
+        /(?<![\p{L}])(no existe|sin|carece|ausencia de|no vinculante)(?![\p{L}])/iu,
+        /(?<![\p{L}])(ne pas|sans|absence de|non contraignant|manque de)(?![\p{L}])/iu,
+        /(не имеет|отсутств|без|не является обязательн)/iu,
+        /(لا يوجد|بدون|غياب|غير ملزم)/u,
+        /(没有|缺乏|不具约束力|未)/u
+    ],
+    internationalScope: [
+        /(?<![\p{L}])(developed countries|annex i|international community|international support|global north|donor|multilateral|green climate fund|gcf|adaptation fund|global environment facility|gef|international finance|external support|developed country parties)(?![\p{L}])/iu,
+        /(?<![\p{L}])(paises desarrollados|países desarrollados|comunidad internacional|apoyo internacional|fondo verde)(?![\p{L}])/iu,
+        /(?<![\p{L}])(pays developpes|pays développés|communaute internationale|communauté internationale|appui international|fonds vert)(?![\p{L}])/iu,
+        /(развитые стран|международное сообществ|международная поддержк)/iu,
+        /(البلدان المتقدمة|المجتمع الدولي|الدعم الدولي)/u,
+        /(发达国家|国际社会|国际支持|绿色气候基金)/u
+    ]
+};
+
+function detectFeatures(sentence) {
+    const out = {};
+    for (const [name, patterns] of Object.entries(FEATURES)) {
+        out[name] = patterns.some(re => { re.lastIndex = 0; return re.test(sentence); });
+    }
+    return out;
+}
+
+/* Negation only invalidates an anchor when it sits close to it. */
+function negatesAnchor(sentence) {
+    // "leave no one behind" and "climate action" must not read as negations
+    const s = sentence.toLowerCase().replace(/leave[s]?\s+no\s+one\s+behind/g, "                       ");
+    const neg = /(?<![\p{L}])(not|does not|do not|will not|is not|are not|without|lack of|lacks|absence of|non-binding|no dedicated|no specific|no legal|no such|sin |sans |не |لا |没有|未)(?![\p{L}])/giu;
+    const anchor = /(?<![\p{L}])(legislation|law|laws|act|acts|decree|statute|statutory|regulation|regulations|budget|fund|funds|mechanism|mechanisms|framework|frameworks|policy|policies|ley|loi|закон|قانون|法)(?![\p{L}])/giu;
+    let m, negPos = [], ancPos = [];
+    while ((m = neg.exec(s)) !== null) negPos.push(m.index);
+    while ((m = anchor.exec(s)) !== null) ancPos.push(m.index);
+    return negPos.some(n => ancPos.some(a => Math.abs(a - n) <= 60));
+}
+
+/* ============================================================================
+   4. CLASSIFICATION
+   ========================================================================== */
+
+function classifyDimension(sentence) {
+    const scores = {}, evidence = {};
+    for (const [dim, sets] of Object.entries(LEXICON)) {
+        const coreHits = whichTerms(sets.core, sentence);
+        const suppHits = whichTerms(sets.supporting, sentence);
+        scores[dim] = coreHits.length * 3 + suppHits.length;
+        evidence[dim] = { core: coreHits, supporting: suppHits };
+    }
+    const screenHits = whichTerms(SCREEN_ONLY, sentence);
+
+    const ranked = Object.entries(scores).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+    if (ranked.length === 0) {
+        return { flagged: screenHits.length > 0, dimension: null, alternates: [], evidence, screenHits, needsReview: screenHits.length > 0, reason: screenHits.length ? "screen term only, no dimension term" : "no match" };
+    }
+
+    const top = ranked[0];
+    const tied = ranked.filter(([, v]) => v === top[1]);
+    let dimension, needsReview = false, reason;
+
+    if (tied.length === 1) {
+        dimension = top[0];
+        reason = "highest weighted dimension evidence";
+        if (evidence[dimension].core.length === 0) { needsReview = true; reason = "supporting terms only, no core term"; }
+        const runnerUp = ranked[1];
+        if (runnerUp && runnerUp[1] >= top[1] * 0.6) {
+            needsReview = true;
+            reason = "close call against " + runnerUp[0] + " justice, confirm the assignment";
+        }
+    } else {
+        // documented tie-break: longest core term wins as the more specific claim
+        const best = tied.map(([d]) => {
+            const longest = (evidence[d].core.concat(evidence[d].supporting)).reduce((a, b) => (b.length > a.length ? b : a), "");
+            return { d, len: longest.length };
+        }).sort((a, b) => b.len - a.len);
+        dimension = best[0].d;
+        needsReview = true;
+        reason = "tie between " + tied.map(t => t[0]).join(" / ") + ", resolved on term specificity, confirm manually";
+    }
+
+    return {
+        flagged: true,
+        dimension,
+        alternates: ranked.filter(([d]) => d !== dimension).map(([d, v]) => ({ dimension: d, score: v })),
+        evidence, screenHits, needsReview, reason
+    };
+}
+
+function classifyTier(sentence, features) {
+    const negated = features.negation && negatesAnchor(sentence);
+    const anchorLegal = features.legalAnchor && !negated;
+    const anchorInstFin = features.institutionAnchor && features.financeAnchor && !negated;
+    const enforce = features.accountability || features.timeBound;
+
+    const featureList = Object.entries(features).filter(([, v]) => v).map(([k]) => k);
+    const strength = ["legalAnchor", "institutionAnchor", "financeAnchor", "timeBound", "accountability", "commitVerb"]
+        .filter(k => features[k]).length;
+
+    let tier, why = [];
+
+    if ((anchorLegal || anchorInstFin) && features.commitVerb && enforce) {
+        tier = "Embedded";
+        why.push(anchorLegal ? "names a legal instrument" : "names an institution and a financial allocation");
+        why.push("uses a commitment verb");
+        why.push(features.accountability ? "includes accountability or monitoring" : "is time-bound");
+        if (features.conditional) why.push("but the commitment is conditional on external support");
+    } else if (features.commitVerb && (features.concreteMeasure || features.institutionAnchor || features.timeBound) && !features.hedge) {
+        tier = "Partial";
+        why.push("commits to a named measure without legal or financial anchoring");
+    } else if (features.commitVerb && features.concreteMeasure && features.hedge) {
+        tier = "Partial";
+        why.push("names a measure but the language is hedged");
+    } else {
+        tier = "Tokenistic";
+        if (negated) why.push("the legal or institutional reference is negated");
+        else if (features.hedge) why.push("aspirational or hedged language");
+        else why.push("mention without an actionable commitment");
+    }
+
+    return { tier, why, features: featureList, strength, negated, conditional: features.conditional };
+}
+
+function classifyScope(sentence, features) {
+    const intl = features.internationalScope;
+    const domestic = /(?<![\p{L}])(national|domestic|our country|the country|province|provinces|provincial|municipal|municipality|district|districts|local government|local communities|communities|citizens|households)(?![\p{L}])/iu.test(sentence)
+        || /(?<![\p{L}])(nacional|municipal|comunidades|ciudadan\p{L}*|provincial)(?![\p{L}])/iu.test(sentence)
+        || /(?<![\p{L}])(nationale?|municipale?|communaut\p{L}*|citoyen\p{L}*)(?![\p{L}])/iu.test(sentence)
+        || /(?<![\p{L}])(национальн\p{L}*|муниципальн\p{L}*|общин\p{L}*)(?![\p{L}])/iu.test(sentence)
+        || /(وطني|بلدي|مجتمعات)/u.test(sentence)
+        || /(国家|地方|社区)/u.test(sentence);
+    if (intl && domestic) return "Mixed";
+    if (intl) return "International";
+    return "Domestic";
+}
+
+function classifyCluster(sentence) {
+    let best = null, bestScore = 0;
+    for (const [name, terms] of Object.entries(CLUSTERS)) {
+        const n = terms.filter(t => hasTerm(t, sentence)).length;
+        if (n > bestScore) { bestScore = n; best = name; }
+    }
+    return bestScore > 0 ? best : "Unclassified";
+}
+
+/* ============================================================================
+   5. DOCUMENT SEGMENTATION
+   ========================================================================== */
+
+const SECTION_MAP = [
+    { type: "FRONT", narrative: true, terms: ["table of contents", "contents", "acronym", "abbreviation", "glossary", "foreword", "preface", "acknowledg", "list of figures", "indice", "índice", "acronimos", "acrónimos", "sommaire", "sigles", "содержание", "المحتويات", "目录", "缩略语"] },
+    { type: "CONTEXT", narrative: true, terms: ["introduction", "background", "national circumstances", "vision", "context", "overview", "executive summary", "introduccion", "introducción", "circunstancias nacionales", "resumen ejecutivo", "contexte", "circonstances nationales", "resume", "résumé", "введение", "национальные обстоятельства", "مقدمة", "الظروف الوطنية", "引言", "国情", "背景"] },
+    { type: "FAIRNESS", narrative: false, terms: ["fair and ambitious", "fairness and ambition", "equity and ambition", "justice", "equidad", "justicia", "equite", "équité", "justice climatique", "справедлив", "الإنصاف", "公平与雄心"] },
+    { type: "MITIGATION", narrative: false, terms: ["mitigation", "emission reduction", "ghg target", "mitigacion", "mitigación", "attenuation", "atténuation", "смягчени", "التخفيف", "减缓"] },
+    { type: "ADAPTATION", narrative: false, terms: ["adaptation", "resilience", "adaptacion", "adaptación", "adaptation", "адаптаци", "التكيف", "适应"] },
+    { type: "LOSS_DAMAGE", narrative: false, terms: ["loss and damage", "perdidas y danos", "pérdidas y daños", "pertes et prejudices", "pertes et préjudices", "потери и ущерб", "الخسائر والأضرار", "损失与损害"] },
+    { type: "MEANS", narrative: false, terms: ["means of implementation", "finance", "financing", "technology", "capacity", "support needs", "medios de implementacion", "medios de implementación", "financiamiento", "moyens de mise en oeuvre", "financement", "средства осуществлени", "финансировани", "وسائل التنفيذ", "التمويل", "实施手段", "资金"] },
+    { type: "GOVERNANCE", narrative: false, terms: ["institutional arrangement", "governance", "implementation arrangement", "planning process", "legal framework", "arreglos institucionales", "gobernanza", "marco legal", "dispositions institutionnelles", "gouvernance", "cadre juridique", "институциональн", "الترتيبات المؤسسية", "机构安排", "治理"] },
+    { type: "PARTICIPATION", narrative: false, terms: ["stakeholder", "consultation", "participatory process", "engagement", "consulta", "participacion", "participación", "concertation", "consultation", "консультаци", "المشاورات", "利益相关方", "公众参与"] },
+    { type: "MRV", narrative: false, terms: ["monitoring", "reporting", "verification", "mrv", "transparency framework", "monitoreo", "seguimiento", "suivi", "мониторинг", "الرصد", "监测", "报告"] },
+    { type: "ANNEX", narrative: false, terms: ["annex", "appendix", "ictu", "information to facilitate clarity", "anexo", "annexe", "приложени", "الملحق", "附件"] }
+];
+
+function classifySection(headingText) {
+    if (!headingText) return { type: "UNKNOWN", narrative: false };
+    const h = headingText.toLowerCase();
+    for (const s of SECTION_MAP) {
+        if (s.terms.some(t => (CJK_RE.test(t) ? h.replace(/\s+/g, "").includes(t) : h.includes(t)))) {
+            return { type: s.type, narrative: s.narrative };
+        }
+    }
+    return { type: "OTHER", narrative: false };
+}
+
+function looksLikeHeading(line) {
+    const t = line.trim();
+    if (!t || t.length > 90) return false;
+    if (/[.;:]$/.test(t) && !/^\d+(\.\d+)*\.?\s/.test(t)) return false;
+    if (/^\d+(\.\d+)*\.?\s+\S/.test(t)) return true;
+    const letters = t.replace(/[^\p{L}]/gu, "");
+    if (letters.length < 3) return false;
+    const upper = (t.match(/\p{Lu}/gu) || []).length;
+    if (upper / letters.length > 0.7) return true;
+    const words = t.split(/\s+/).filter(w => /\p{L}/u.test(w));
+    if (words.length <= 10 && words.length >= 1) {
+        const cap = words.filter(w => /^\p{Lu}/u.test(w)).length;
+        if (cap / words.length >= 0.6 && !/[.!?]$/.test(t)) return true;
+    }
+    return false;
+}
+
+function isSkippablePage(pageText, lines) {
+    const dotLeaders = (pageText.match(/\.{4,}/g) || []).length;
+    if (dotLeaders >= 4) return "table of contents";
+    const tocLines = lines.filter(l => /\.{3,}\s*\d{1,3}\s*$/.test(l) || /\s{3,}\d{1,3}\s*$/.test(l)).length;
+    if (lines.length > 5 && tocLines / lines.length > 0.45) return "table of contents";
+    const acr = lines.filter(l => /^[A-Z0-9]{2,8}[\s:–-]+\p{L}/u.test(l.trim())).length;
+    if (lines.length > 6 && acr / lines.length > 0.5) return "acronym list";
+    if (/^(bibliograph|references|referencias|bibliographie|список литературы|المراجع|参考文献)/i.test(pageText.trim())) return "references";
+    return null;
+}
+
+/* Sentence segmentation that survives decimals, abbreviations and bullet lists. */
+const ABBREVIATIONS = ["e.g", "i.e", "etc", "no", "nos", "art", "arts", "para", "paras", "fig", "figs", "vol", "approx", "cf", "vs", "dr", "mr", "mrs", "ms", "st", "jr", "sr", "ltd", "inc", "co", "ej", "p.ej", "art", "n°", "nº", "ср", "рис", "табл"];
+
+function splitSentences(text) {
+    let t = " " + text + " ";
+    t = t.replace(/(\d)\.(\d)/g, "$1\u0001$2");                 // decimals
+    t = t.replace(/\b([A-Z])\.(?=\s*[A-Z]\.)/g, "$1\u0001");     // initials U.S.A.
+    ABBREVIATIONS.forEach(a => {
+        const re = new RegExp("(?<![\\p{L}])" + a.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\.", "giu");
+        t = t.replace(re, a + "\u0001");
+    });
+    t = t.replace(/([•·▪◦‣])\s*/g, "\u0002$1 ");                 // bullets act as boundaries
+    const parts = t.split(/(?<=[.!?。！？؟])\s+|\u0002|\n{2,}/);
+    return parts
+        .map(s => s.replace(/\u0001/g, ".").replace(/\s+/g, " ").trim())
+        .filter(s => s.length > 0);
+}
+
+/* ============================================================================
+   6. DIMENSION ROLL-UP AND TRANSFORMATIVE RUBRIC
+   No statement counts are used to set any tier or the verdict. Counts are
+   reported as descriptive metadata only.
+   ========================================================================== */
+
+function rollUpDimension(statements) {
+    const mine = statements.filter(s => s.dimension && s.tier);
+    if (mine.length === 0) {
+        return { tier: "Absent", confidence: "high", support: [], note: "no statements assigned to this dimension" };
+    }
+    const embedded = mine.filter(s => s.tier === "Embedded");
+    const strongEmbedded = embedded.filter(s => s.strength >= RULES.EMBEDDED_MIN_FEATURES && !s.negated);
+    const partial = mine.filter(s => s.tier === "Partial");
+
+    if (embedded.length >= 2 || strongEmbedded.length >= 1) {
+        return {
+            tier: "Embedded",
+            confidence: embedded.length >= 2 && strongEmbedded.length >= 1 ? "high" : (strongEmbedded.length >= 1 ? "medium" : "low"),
+            support: (strongEmbedded.length ? strongEmbedded : embedded).slice(0, 3).map(s => s.id),
+            note: embedded.length >= 2 ? "two or more independent embedded statements" : "one embedded statement with " + strongEmbedded[0].strength + " evidence features"
         };
+    }
+    if (embedded.length === 1) {
+        return { tier: "Partial", confidence: "low", support: embedded.map(s => s.id), note: "one embedded candidate below the evidence threshold, graded down to Partial pending human confirmation" };
+    }
+    if (partial.length >= 1) {
+        return { tier: "Partial", confidence: partial.length >= 2 ? "high" : "medium", support: partial.slice(0, 3).map(s => s.id), note: partial.length + " statement(s) with named measures but no legal or financial anchoring" };
+    }
+    return { tier: "Tokenistic", confidence: "high", support: mine.slice(0, 3).map(s => s.id), note: "mentions only, no actionable commitment detected" };
+}
 
-        const humanContextMarkers = [
-            "people", "citizen", "public", "women", "youth", "indigenous", "marginalized", "society", 
-            "group", "population", "resident", "worker", "farmer", "household", "minority", "actor", "social",
-            "decision", "rights", "justice", "equity", "equitable", "fair",
-            "pueblo", "público", "comunidad", "groupe", "citoyen", "население", "مجتمع", "人民", "公众", "社区", "群体"
-        ];
+function buildRubric(profile, statements) {
+    const dims = ["Recognitional", "Procedural", "Distributive", "Restorative"];
+    const tiers = dims.map(d => profile[d].tier);
+    const present = dims.filter(d => profile[d].tier !== "Absent");
 
-        function checkMatch(phrase, text) {
-            const isAsian = /[\u4e00-\u9fa5\u3040-\u30ff]/.test(phrase);
-            const searchText = isAsian ? text.replace(/\s+/g, '') : text;
-            const searchPhrase = isAsian ? phrase.toLowerCase().replace(/\s+/g, '') : phrase.toLowerCase();
-            return searchText.includes(searchPhrase);
-        }
+    const axis = (a, b) => (RULES.AXIS_RULE === "min" ? tierMin(profile[a].tier, profile[b].tier) : tierMax(profile[a].tier, profile[b].tier));
+    const axisRP = axis("Recognitional", "Procedural");
+    const axisDR = axis("Distributive", "Restorative");
 
-        function isValidContext(term, text) {
-            let isAmbiguous = false;
-            for (let dim in conceptMap) {
-                if (conceptMap[dim].ambiguous && conceptMap[dim].ambiguous.includes(term)) isAmbiguous = true;
-            }
-            if (!isAmbiguous) return true; 
-            const lowerText = text.toLowerCase();
-            return humanContextMarkers.some(marker => checkMatch(marker, lowerText));
-        }
+    const withLegal = dims.filter(d => statements.some(s => s.dimension === d && s.featureSet.includes("legalAnchor") && !s.negated));
+    const withFin = dims.filter(d => statements.some(s => s.dimension === d && (s.featureSet.includes("financeAnchor") || s.featureSet.includes("institutionAnchor")) && !s.negated));
+
+    const operationalDims = dims.filter(d => statements.some(s => s.dimension === d && !s.section.narrative && tierRank(s.tier) >= tierRank("Partial")));
+    const clusters = [...new Set(statements.filter(s => s.dimension).map(s => s.cluster).filter(c => c !== "Unclassified"))];
+
+    const structural = statements.filter(s => s.structural);
+    const structuralActionable = structural.filter(s => tierRank(s.tier) >= tierRank("Partial"));
+    const definesJustice = statements.some(s => /(climate justice|justicia climatica|justicia climática|justice climatique|климатическая справедливость|العدالة المناخية|气候正义|气候公正)/iu.test(s.text) && /(means|defined as|refers to|understood as|se define|se entiende|se refiere|definie|définie|определяется|تعني|是指)/iu.test(s.text));
+
+    const C = [];
+    C.push({
+        id: 1, name: "Coverage",
+        question: "Are all four justice dimensions addressed at all?",
+        result: present.length === 4 ? "PASS" : present.length === 3 ? "PARTIAL" : "FAIL",
+        detail: present.length === 4 ? "all four dimensions appear in the text" : "absent: " + dims.filter(d => profile[d].tier === "Absent").join(", ")
+    });
+    C.push({
+        id: 2, name: "Depth",
+        question: "What is the weakest of the four dimensions? Transformative justice is the intersection, so the floor is what counts.",
+        result: tiers.every(t => t === "Embedded") ? "PASS" : tiers.every(t => tierRank(t) >= tierRank("Partial")) ? "PARTIAL" : "FAIL",
+        detail: "floor is " + dims.map(d => profile[d].tier).reduce((a, b) => tierMin(a, b)) + " (" + dims.map(d => d[0] + ":" + profile[d].tier).join(", ") + ")"
+    });
+    C.push({
+        id: 3, name: "Balance",
+        question: "Is the recognitional and procedural axis matched by the distributive and restorative axis?",
+        result: (axisRP === "Embedded" && axisDR === "Embedded") ? "PASS" : (tierRank(axisRP) >= tierRank("Partial") && tierRank(axisDR) >= tierRank("Partial")) ? "PARTIAL" : "FAIL",
+        detail: "R+P axis " + axisRP + ", D+R axis " + axisDR + " (axis rule: " + RULES.AXIS_RULE + ")"
+    });
+    C.push({
+        id: 4, name: "Anchoring",
+        question: "Are justice commitments tied to named law, institutions or money?",
+        result: (withLegal.length >= 1 && withFin.length >= 1) ? "PASS" : (withLegal.length + withFin.length >= 1) ? "PARTIAL" : "FAIL",
+        detail: (withLegal.length ? "legal anchor in " + withLegal.join(", ") : "no legal anchor") + "; " + (withFin.length ? "institutional or financial anchor in " + withFin.join(", ") : "no institutional or financial anchor")
+    });
+    C.push({
+        id: 5, name: "Integration",
+        question: "Does justice appear in the operational parts of the NDC or only in the framing?",
+        result: (operationalDims.length >= 3 && clusters.length >= 4) ? "PASS" : operationalDims.length >= 2 ? "PARTIAL" : "FAIL",
+        detail: operationalDims.length + " of 4 dimensions carry actionable statements outside the vision and context sections; present in " + clusters.length + " thematic clusters"
+    });
+    C.push({
+        id: 6, name: "Structural engagement",
+        question: "Does the NDC engage the causes of injustice rather than its symptoms?",
+        result: (structuralActionable.length >= 1 || (definesJustice && structural.length >= 2)) ? "PASS" : structural.length >= 1 ? "PARTIAL" : "FAIL",
+        detail: definesJustice ? "the NDC defines climate justice and links it to policy" : structural.length ? structural.length + " statement(s) engage structural drivers, " + structuralActionable.length + " of them at Partial or above" : "no engagement with structural drivers detected"
+    });
+
+    const pass = C.filter(c => c.result === "PASS").length;
+    const fail = C.filter(c => c.result === "FAIL").length;
+    const depth = C[1].result, coverage = C[0].result, anchoring = C[3].result;
+
+    const washing = tierRank(profile.Recognitional.tier) >= tierRank("Partial")
+        && tierRank(profile.Procedural.tier) >= tierRank("Partial")
+        && tierRank(profile.Distributive.tier) <= tierRank("Tokenistic")
+        && tierRank(profile.Restorative.tier) <= tierRank("Tokenistic");
+
+    let verdict, tone, reasoning = [];
+    const floor = dims.map(d => profile[d].tier).reduce((a, b) => tierMin(a, b));
+
+    if (pass === 6 || (pass === 5 && depth === "PASS")) {
+        verdict = "Approaching transformative climate justice";
+        tone = "embedded";
+        reasoning.push("All four dimensions are addressed with anchored commitments, they hold together rather than resting on one strong dimension, and the NDC engages the causes of injustice rather than only its symptoms.");
+    } else if (present.length === 0) {
+        verdict = "Justice largely absent";
+        tone = "absent";
+        reasoning.push("No statement met the threshold for any of the four dimensions. Check the extraction diagnostics before recording this result.");
+    } else if (washing) {
+        verdict = "Process-heavy and outcome-light: justice-washing risk";
+        tone = "tokenistic";
+        reasoning.push("Recognition and participation are developed while both distributive and restorative commitments stay at or below tokenistic. This is the pattern the policy brief identifies as justice-washing.");
+    } else if (tiers.every(t => tierRank(t) <= tierRank("Tokenistic"))) {
+        verdict = "Predominantly tokenistic";
+        tone = "tokenistic";
+        reasoning.push("Justice concepts appear but no dimension reaches an actionable commitment.");
+    } else if (coverage === "PASS" && anchoring !== "FAIL" && tierRank(floor) >= tierRank("Partial")) {
+        verdict = "Substantive but uneven";
+        tone = "partial";
+        reasoning.push("All four dimensions carry actionable commitments and at least some are anchored, but the profile is not strong enough across the board to be called transformative.");
+    } else {
+        verdict = "Partial commitment";
+        tone = "partial";
+        reasoning.push("Some dimensions carry named or anchored measures while others do not. The floor across the four dimensions is " + floor + ", and transformative justice is the intersection of all four.");
+    }
+
+    C.filter(c => c.result !== "PASS").forEach(c => reasoning.push(c.name + ": " + c.detail + "."));
+    if (anchoring === "FAIL") reasoning.push("No justice commitment in this NDC is tied to a named legal instrument, institution or budget line.");
+
+    return { criteria: C, verdict, tone, reasoning, axisRP, axisDR, washing, pass, fail };
+}
+
 
         let ndcData = JSON.parse(JSON.stringify(defaultNdcData));
         let annexData = JSON.parse(JSON.stringify(defaultAnnexData));
@@ -708,7 +1530,17 @@
         let editingIndex = -1;
 
         // --- Local Storage Initialization ---
+        function stampLexicon() {
+            var s = document.getElementById('lexicon-stamp');
+            if (s) s.value = 'Engine ' + ENGINE_VERSION + ', lexicon ' + LEXICON_VERSION + ' (4 dimensions, core + supporting + recall net)';
+            var b = document.getElementById('local-note');
+            if (b) b.innerHTML = 'Offline copy. Analysis runs entirely in this browser and nothing is sent anywhere. '
+                + 'Coding examples and coder overrides are saved to this browser only and are not shared with the team. '
+                + 'Use the team workspace for anything that needs to be visible to others.';
+        }
+
         function loadLocalData() {
+            stampLexicon();
             try {
                 const savedNdcData = localStorage.getItem('ndcTrackerState');
                 if (savedNdcData) {
@@ -916,6 +1748,11 @@
             const dimension = document.getElementById('new-dimension').value;
             const statement = document.getElementById('new-statement').value.trim();
             const analysis = document.getElementById('new-analysis').value.trim();
+            const locator = (document.getElementById('new-page') || {}).value || "";
+            const section = (document.getElementById('new-section') || {}).value || "";
+            const scope = (document.getElementById('new-scope') || {}).value || "";
+            const conditionality = (document.getElementById('new-conditional') || {}).value || "";
+            const coder = (typeof currentUser !== "undefined" ? currentUser : "Local");
 
             if (!statement || !analysis) { alert("Please fill in both the statement and analysis fields."); return; }
 
@@ -928,7 +1765,7 @@
                 document.getElementById('submit-example-btn').innerText = "Save Example to Hub";
             } else {
                 const newId = 'ex-' + Date.now();
-                codingExamples.push({ id: newId, country, level, dimension, statement, analysis });
+                codingExamples.push({ id: newId, country, level, dimension, statement, analysis, locator, section, scope, conditionality, coder, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION });
             }
 
             try {
@@ -1020,7 +1857,7 @@
                 ['Setup', 'Project Setup & Calibration', 'Phase', new Date(2026, 6, 20), new Date(2026, 6, 31), null, 100, null],
                 ['Mtg1', 'UN-Habitat Meeting', 'Meeting', new Date(2026, 6, 30), new Date(2026, 6, 31), null, 100, null],
                 ['Data', 'Data Execution & Mapping', 'Analysis', new Date(2026, 7, 1), new Date(2026, 7, 31), null, 15, null],
-                ['Leave', 'Paternity Leave', 'Leave', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
+                ['Leave', 'Reduced capacity period', 'Leave', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
                 ['Verify', 'Andreia Verification', 'Verification', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
                 ['Synth', 'Synthesis & Drafting', 'Phase', new Date(2026, 9, 1), new Date(2026, 9, 31), null, 0, null],
                 ['Final', 'Final Dissemination', 'Phase', new Date(2026, 10, 1), new Date(2026, 10, 8), null, 0, null],
@@ -1103,337 +1940,549 @@
             });
         }
 
-        async function extractPassagesFromPDF(fileUrl, termNode) {
-            const loadingTask = pdfjsLib.getDocument(fileUrl);
-            const pdf = await loadingTask.promise;
-            termNode.innerHTML += `<p class="sys-msg">System: PDF Loaded. Extracting contextual text blocks from ${pdf.numPages} pages...</p>`;
-            
-            let pagePassages = [];
-            for(let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                const pageText = content.items.map(it => it.str).join(" ").replace(/\s+/g, " ").trim();
-                
-                if(pageText.length > 20) {
-                    // Split on both Western and CJK punctuation marks
-                    const sents = pageText.match(/[^.!?。！？]+[.!?。！？]*/g) || [pageText];
-                    for(let j = 0; j < sents.length; j++) {
-                        let chunk = sents[j].trim();
-                        if(chunk.length > 15 && !/glossary|table of contents/i.test(chunk)) {
-                            
-                            // Check if sentence is English, and if so, ignore if it is entirely all-caps (Headers/Titles)
-                            let isAllCaps = /[a-zA-Z]/.test(chunk) && chunk === chunk.toUpperCase();
-                            if (!isAllCaps) {
-                                let prev = (j > 0) ? sents[j-1].trim() : "";
-                                let next = (j < sents.length - 1) ? sents[j+1].trim() : "";
-                                let fullContext = `${prev} ${chunk} ${next}`.trim();
-                                pagePassages.push({ page: i, text: fullContext });
-                            }
-                        }
-                    }
-                }
-            }
-            return pagePassages;
+/* ============================================================================
+   8. DOCUMENT EXTRACTION (layout aware)
+   Rebuilds lines from pdf.js item coordinates, detects two-column layouts,
+   skips front matter, tracks the current heading, and reports text-layer health
+   so a scanned PDF cannot masquerade as "no justice found".
+   ========================================================================== */
+
+async function extractDocument(fileUrl, log) {
+    let finalUrl = fileUrl;
+    if (fileUrl.startsWith('http') && !fileUrl.includes('huggingface.co')) {
+        try {
+            const r = await fetch('https://corsproxy.io/?' + encodeURIComponent(fileUrl));
+            if (!r.ok) throw new Error('proxy');
+            finalUrl = URL.createObjectURL(await r.blob());
+        } catch (e) {
+            try {
+                const r2 = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(fileUrl));
+                finalUrl = URL.createObjectURL(await r2.blob());
+            } catch (e2) { log && log('Proxy unavailable, attempting direct fetch.', 'warn'); }
         }
+    }
 
-        function assignDimensionAndTier(text, conceptsMatched) {
-            const lower = text.toLowerCase();
-            let dim = "Recognitional"; 
+    const pdf = await pdfjsLib.getDocument(finalUrl).promise;
+    log && log(`PDF loaded: ${pdf.numPages} pages. Rebuilding page layout.`);
 
-            for(let key in conceptMap) {
-                if (conceptsMatched.some(c => conceptMap[key].unambiguous.includes(c) || (conceptMap[key].ambiguous && conceptMap[key].ambiguous.includes(c)))) {
-                    dim = key;
-                    break;
-                }
-            }
+    const units = [];
+    const diag = { pages: pdf.numPages, lowTextPages: 0, skipped: [], totalChars: 0, columns: 0 };
+    let currentHeading = "", currentSection = { type: "UNKNOWN", narrative: false };
+    let unitIndex = 0;
 
-            let tier = "Tokenistic";
-            const embeddedRegex = /\b(legislation|statutory|legally binding|enforcement|accountability mechanism|formal framework|budget allocation|decree|act of parliament|constitution|ley|loi|законодавство)\b/i;
-            const partialRegex = /\b(measure|policy|framework|strategy|program|initiative|commit|roadmap|target|medida|política|stratégie|политика|سياسة|政策|环境信息披露|规划)\b/i;
+    for (let p = 1; p <= pdf.numPages; p++) {
+        const page = await pdf.getPage(p);
+        const vp = page.getViewport({ scale: 1 });
+        const content = await page.getTextContent();
+        const items = content.items.filter(it => it.str && it.str.trim().length);
+        if (!items.length) { diag.lowTextPages++; continue; }
 
-            if (embeddedRegex.test(text)) {
-                tier = "Embedded";
-            } else if (partialRegex.test(text)) {
-                tier = "Partial";
-            }
+        // group items into lines by baseline y
+        const rows = new Map();
+        items.forEach(it => {
+            const y = Math.round(it.transform[5] / 2) * 2;
+            if (!rows.has(y)) rows.set(y, []);
+            rows.get(y).push({ x: it.transform[4], w: it.width || 0, h: Math.abs(it.transform[3]) || 10, str: it.str });
+        });
 
-            return { dim, tier };
-        }
+        // two-column detection: are most lines confined to one side of the page?
+        const mid = vp.width / 2, band = vp.width * 0.06;
+        let leftOnly = 0, rightOnly = 0, spanning = 0;
+        rows.forEach(r => {
+            const minX = Math.min(...r.map(i => i.x)), maxX = Math.max(...r.map(i => i.x + i.w));
+            if (maxX < mid + band) leftOnly++;
+            else if (minX > mid - band) rightOnly++;
+            else spanning++;
+        });
+        const twoCol = rows.size > 8 && (leftOnly + rightOnly) / rows.size > 0.75 && leftOnly > 2 && rightOnly > 2;
+        if (twoCol) diag.columns++;
 
-        function filterLedger(tier) {
-            const items = document.querySelectorAll('.ledger-item');
-            items.forEach(item => {
-                if(tier === 'All' || item.dataset.tier === tier) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
+        const toLine = r => r.sort((a, b) => a.x - b.x)
+            .reduce((acc, it, i, arr) => {
+                const gap = i > 0 ? it.x - (arr[i - 1].x + arr[i - 1].w) : 0;
+                return acc + (i > 0 && gap > 1.2 ? " " : "") + it.str;
+            }, "").replace(/\s+/g, " ").trim();
+
+        let ordered;
+        if (twoCol) {
+            const L = [], R = [];
+            [...rows.entries()].forEach(([y, r]) => {
+                const maxX = Math.max(...r.map(i => i.x + i.w));
+                (maxX < mid + band ? L : R).push([y, r]);
             });
+            const bySide = arr => arr.sort((a, b) => b[0] - a[0]).map(([y, r]) => ({ y, h: Math.max(...r.map(i => i.h)), text: toLine(r) }));
+            ordered = bySide(L).concat(bySide(R));
+        } else {
+            ordered = [...rows.entries()].sort((a, b) => b[0] - a[0])
+                .map(([y, r]) => ({ y, h: Math.max(...r.map(i => i.h)), text: toLine(r) }));
         }
 
-        async function runFullCountryEvaluation() {
-            const rawVal = document.getElementById('eval-country-select').value;
-            if(!rawVal) { alert("Please select a country NDC first."); return; }
-            const config = JSON.parse(rawVal);
-            
-            const resultsContainer = document.getElementById('eval-results-container');
-            const ledger = document.getElementById('eval-statement-ledger');
-            
-            resultsContainer.style.display = "block";
-            ledger.innerHTML = "<p style='color: var(--primary); font-weight:bold;'>System: Extracting full document context blocks and running qualitative synthesis...</p>";
+        const lines = ordered.map(l => l.text).filter(Boolean);
+        const pageText = lines.join(" ");
+        diag.totalChars += pageText.length;
+        if (pageText.length < 120) { diag.lowTextPages++; continue; }
 
-            try {
-                const passages = await extractPassagesFromPDF(config.url, ledger);
-                
-                let embeddedCount = 0, partialCount = 0, tokenisticCount = 0;
-                let statementLedger = [];
-                let seenPassages = new Set(); 
+        const skip = isSkippablePage(pageText, lines);
+        if (skip) { diag.skipped.push({ page: p, reason: skip }); continue; }
+        if (p === 1 && pageText.length < 600) { diag.skipped.push({ page: 1, reason: "cover page" }); continue; }
 
-                passages.forEach(item => {
-                    const lowerText = item.text.toLowerCase();
-                    let matchedTerms = [];
-                    let isJustice = false;
+        const medianH = ordered.map(l => l.h).sort((a, b) => a - b)[Math.floor(ordered.length / 2)] || 10;
 
-                    for (const [dim, categories] of Object.entries(conceptMap)) {
-                        categories.unambiguous.forEach(phrase => {
-                            if(checkMatch(phrase, lowerText)) {
-                                isJustice = true;
-                                matchedTerms.push(phrase);
-                            }
-                        });
-                        categories.ambiguous.forEach(phrase => {
-                            if(checkMatch(phrase, lowerText) && isValidContext(phrase, lowerText)) {
-                                isJustice = true;
-                                matchedTerms.push(phrase);
-                            }
-                        });
-                    }
-
-                    if(isJustice && !seenPassages.has(item.text)) {
-                        seenPassages.add(item.text);
-                        const { dim, tier } = assignDimensionAndTier(item.text, matchedTerms);
-                        
-                        if(tier === "Embedded") embeddedCount++;
-                        else if(tier === "Partial") partialCount++;
-                        else tokenisticCount++;
-
-                        statementLedger.push({ page: item.page, text: item.text, dimension: dim, tier: tier });
-                    }
-                });
-
-                const totalFound = statementLedger.length;
-                document.getElementById('stat-total').innerText = totalFound;
-                document.getElementById('stat-embedded').innerText = embeddedCount;
-                document.getElementById('stat-partial').innerText = partialCount;
-                document.getElementById('stat-tokenistic').innerText = tokenisticCount;
-
-                const banner = document.getElementById('verdict-banner');
-                const vTitle = document.getElementById('verdict-title');
-                const vSummary = document.getElementById('verdict-summary');
-
-                if(totalFound === 0) {
-                    vTitle.innerText = "No Explicit Climate Justice Statements Found";
-                    vSummary.innerText = "The document does not contain explicit or implicit references matching the climate justice evaluation framework.";
-                    banner.style.borderLeftColor = "var(--text-muted)";
-                } else if(embeddedCount >= 4 || (embeddedCount / totalFound) > 0.25) {
-                    vTitle.innerText = `Transformative Climate Justice Achieved (${config.c})`;
-                    vSummary.innerText = `The ${config.c} NDC demonstrates strong, legally backed, and institutionalized commitments. Out of ${totalFound} flagged statement blocks, ${embeddedCount} are fully embedded in policy, finance, or legislative frameworks.`;
-                    banner.style.borderLeftColor = "var(--embedded)";
-                } else if(partialCount > tokenisticCount) {
-                    vTitle.innerText = `Partial Justice Commitment (${config.c})`;
-                    vSummary.innerText = `The ${config.c} NDC contains actionable planning measures, but lacks binding statutory enforcement. Moderate risk of justice-washing (${partialCount}/${totalFound} partial commitments).`;
-                    banner.style.borderLeftColor = "var(--pending)";
-                } else {
-                    vTitle.innerText = `Predominantly Tokenistic / High Justice-Washing Risk (${config.c})`;
-                    vSummary.innerText = `Statements in the ${config.c} NDC consist primarily of aspirational language without binding mechanisms, strategic plans, or budget allocations (${tokenisticCount}/${totalFound} tokenistic mentions).`;
-                    banner.style.borderLeftColor = "var(--tokenistic)";
-                }
-
-                let ledgerHtml = '';
-                statementLedger.forEach((st, idx) => {
-                    let boxClass = st.tier === "Tokenistic" ? "ex-tokenistic" : (st.tier === "Partial" ? "ex-partial" : "ex-embedded");
-                    let badgeClass = st.tier === "Tokenistic" ? "badge-tok" : (st.tier === "Partial" ? "badge-par" : "badge-emb");
-                    
-                    ledgerHtml += `
-                    <div class="example-box ledger-item ${boxClass}" data-tier="${st.tier}">
-                        <div class="ex-header">
-                            <div>
-                                <span class="ex-badge ${badgeClass}">${st.tier}</span>
-                                <span style="font-weight: 700; color: var(--primary); margin-left: 10px; font-size: 0.85rem;">${st.dimension} Justice</span>
-                            </div>
-                            <span style="font-size: 0.85rem; font-weight:bold; color: var(--text-muted);">Page ${st.page}</span>
-                        </div>
-                        <div class="ex-content">
-                            <p style="font-family: Georgia, serif; font-style: italic; margin:0;">"${st.text}"</p>
-                        </div>
-                    </div>`;
-                });
-                ledger.innerHTML = ledgerHtml;
-
-                lastEvaluatedResults = { country: config.c, verdict: vTitle.innerText, summary: vSummary.innerText, total: totalFound, embedded: embeddedCount, partial: partialCount, tokenistic: tokenisticCount, ledger: statementLedger };
-
-            } catch(err) {
-                console.error(err);
-                ledger.innerHTML = "<p class='err-msg'>Error running country evaluation. Ensure file availability.</p>";
+        ordered.forEach(line => {
+            const t = line.text;
+            if (!t) return;
+            if (looksLikeHeading(t) || (line.h > medianH * 1.25 && t.length < 90)) {
+                currentHeading = t;
+                currentSection = classifySection(t);
+                return;
             }
-        }
-
-        function exportEvaluationDocx() {
-            if(!lastEvaluatedResults) return;
-            const res = lastEvaluatedResults;
-            
-            let docContent = `
-            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-            <head><title>JUST-NDC Evaluation Report - ${res.country}</title></head>
-            <body style='font-family: Arial, sans-serif;'>
-                <h1 style='color:#0066cc;'>JUST-NDC Qualitative Synthesis Report</h1>
-                <h2>Country: ${res.country}</h2>
-                <hr/>
-                <h3>Decreed Verdict: ${res.verdict}</h3>
-                <p><strong>Summary:</strong> ${res.summary}</p>
-                <br/>
-                <h3>Statement Breakdown Metrics</h3>
-                <ul>
-                    <li><strong>Total Flagged Statements:</strong> ${res.total}</li>
-                    <li><strong>Embedded Commitments:</strong> ${res.embedded}</li>
-                    <li><strong>Partial Commitments:</strong> ${res.partial}</li>
-                    <li><strong>Tokenistic Mentions:</strong> ${res.tokenistic}</li>
-                </ul>
-                <br/>
-                <h3>Extracted Policy Statement Ledger</h3>
-            `;
-
-            res.ledger.forEach((item, idx) => {
-                docContent += `
-                <div style='margin-bottom: 15px; padding: 10px; border-left: 4px solid #0066cc; background: #f9f9f9;'>
-                    <p><strong>[Excerpt ${idx + 1}] Page ${item.page} | ${item.dimension} Justice | Grade: ${item.tier}</strong></p>
-                    <p style='font-style: italic;'>"${item.text}"</p>
-                </div>`;
+            splitSentences(t).forEach(sent => {
+                if (sent.length < 25) return;
+                if (/^[\d\s.,%()/-]+$/.test(sent)) return;                       // table row of numbers
+                if ((sent.match(/\d/g) || []).length / sent.length > 0.35) return; // dense numeric table
+                units.push({
+                    id: `p${p}-s${unitIndex++}`,
+                    page: p, text: sent, heading: currentHeading,
+                    section: currentSection, column: twoCol
+                });
             });
+        });
+    }
 
-            docContent += `</body></html>`;
+    diag.scannedRisk = diag.lowTextPages / diag.pages > 0.3 || diag.totalChars / diag.pages < 300;
+    return { units, diag };
+}
 
-            const blob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `JUST-NDC_Evaluation_${res.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
-            a.click();
+/* ============================================================================
+   9. PIPELINE
+   ========================================================================== */
+
+function analyseUnits(units) {
+    const statements = [], screened = [];
+    units.forEach(u => {
+        const dim = classifyDimension(u.text);
+        if (!dim.flagged) return;
+        const features = detectFeatures(u.text);
+        const tierRes = classifyTier(u.text, features);
+        const record = {
+            id: u.id, page: u.page, text: u.text, heading: u.heading, section: u.section,
+            dimension: dim.dimension, alternates: dim.alternates, needsReview: dim.needsReview,
+            dimReason: dim.reason, matched: dim.dimension ? dim.evidence[dim.dimension] : { core: [], supporting: [] },
+            screenHits: dim.screenHits,
+            tier: dim.dimension ? tierRes.tier : null,
+            tierWhy: tierRes.why, featureSet: tierRes.features, strength: tierRes.strength,
+            negated: tierRes.negated, conditional: !!tierRes.conditional,
+            scope: classifyScope(u.text, features),
+            cluster: classifyCluster(u.text),
+            structural: anyTerm(STRUCTURAL_MARKERS, u.text),
+            override: null
+        };
+        if (dim.dimension) statements.push(record); else screened.push(record);
+    });
+    return { statements, screened };
+}
+
+function effective(s) {
+    return {
+        dimension: (s.override && s.override.dimension) || s.dimension,
+        tier: (s.override && s.override.tier) || s.tier
+    };
+}
+
+function evaluateCountry(country, units, diag) {
+    const { statements, screened } = analyseUnits(units);
+    const DIMS = ["Recognitional", "Procedural", "Distributive", "Restorative"];
+    const profile = {};
+    DIMS.forEach(d => {
+        profile[d] = rollUpDimension(statements.filter(s => effective(s).dimension === d).map(s => ({ ...s, tier: effective(s).tier })));
+    });
+    const rubric = buildRubric(profile, statements.map(s => ({ ...s, dimension: effective(s).dimension, tier: effective(s).tier })));
+
+    const descriptive = {
+        flagged: statements.length,
+        forReview: statements.filter(s => s.needsReview).length,
+        screenOnly: screened.length,
+        conditional: statements.filter(s => s.conditional).length,
+        international: statements.filter(s => s.scope === "International").length,
+        byTier: { Embedded: 0, Partial: 0, Tokenistic: 0 },
+        clusters: {}
+    };
+    statements.forEach(s => {
+        const t = effective(s).tier; if (t) descriptive.byTier[t]++;
+        const key = s.cluster + "||" + effective(s).dimension;
+        const prev = descriptive.clusters[key] || "Absent";
+        descriptive.clusters[key] = tierMax(prev, t || "Absent");
+    });
+
+    return {
+        country, profile, rubric, statements, screened, descriptive, diag,
+        engine: ENGINE_VERSION, lexicon: LEXICON_VERSION,
+        run: new Date().toISOString(), coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous")
+    };
+}
+
+/* ============================================================================
+   10. UI
+   ========================================================================== */
+
+const TIER_COLOR = { Embedded: "#2e7d32", Partial: "#e6a700", Tokenistic: "#c62828", Absent: "#9e9e9e" };
+const RESULT_COLOR = { PASS: "#2e7d32", PARTIAL: "#e6a700", FAIL: "#c62828" };
+const DIMS4 = ["Recognitional", "Procedural", "Distributive", "Restorative"];
+
+let lastEvaluation = null;
+let lastScreen = { country: "", results: [], diag: null };
+let ledgerFilter = { dimension: "All", tier: "All", review: false };
+
+function termLog(nodeId, msg, kind) {
+    const n = document.getElementById(nodeId);
+    if (!n) return;
+    const cls = kind === "warn" ? "sys-msg" : kind === "err" ? "err-msg" : "sys-msg";
+    const color = kind === "warn" ? ' style="color:#ffbd2e;"' : "";
+    n.innerHTML += `<p class="${cls}"${color}>${msg}</p>`;
+    n.scrollTop = n.scrollHeight;
+}
+
+function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/* ---------- Country evaluator ---------- */
+
+async function runFullCountryEvaluation() {
+    const raw = document.getElementById('eval-country-select').value;
+    if (!raw) { alert("Select an NDC document first."); return; }
+    const cfg = JSON.parse(raw);
+
+    document.getElementById('eval-results-container').style.display = "block";
+    const ledger = document.getElementById('eval-statement-ledger');
+    const diagBox = document.getElementById('eval-diagnostics');
+    ledger.innerHTML = "<p style='color:var(--primary);font-weight:bold;'>Extracting document structure...</p>";
+    diagBox.innerHTML = "";
+
+    try {
+        const { units, diag } = await extractDocument(cfg.url, (m, k) => { diagBox.innerHTML += `<div class="${k === 'warn' ? 'diag-warn' : 'diag-ok'}">${esc(m)}</div>`; });
+
+        if (diag.scannedRisk) {
+            diagBox.innerHTML += `<div class="diag-warn"><b>Text layer is thin.</b> ${diag.lowTextPages} of ${diag.pages} pages returned little or no text, averaging ${Math.round(diag.totalChars / diag.pages)} characters per page. This document may be scanned. Results below are not reliable until it is OCRed. Do not record this as "no justice content".</div>`;
         }
+        diagBox.innerHTML += `<div class="diag-ok">${diag.pages} pages, ${units.length} sentence units, ${diag.skipped.length} pages skipped (${diag.skipped.map(s => s.page + ": " + s.reason).join("; ") || "none"}), ${diag.columns} page(s) read as two columns.</div>`;
 
-        async function runBrowserAnalysis() {
-            const fileUrl = document.getElementById('ai-ndc-select').value;
-            const resultLimit = parseInt(document.getElementById('ai-depth').value, 10) || 15;
-            const term = document.getElementById('ai-terminal');
-            
-            if(!fileUrl) { term.innerHTML += `<p class="err-msg">Error: Please select an NDC document first.</p>`; return; }
+        lastEvaluation = evaluateCountry(cfg.c, units, diag);
+        renderEvaluation();
+        if (typeof logActivity === "function") logActivity(`evaluated ${cfg.c} (engine ${ENGINE_VERSION})`);
+    } catch (err) {
+        console.error(err);
+        ledger.innerHTML = `<p class='err-msg'>Extraction failed: ${esc(err.message)}. Check that the file is reachable.</p>`;
+    }
+}
 
-            term.innerHTML = `<p class="sys-msg">System: Fetching document...</p>`;
-            
-            try {
-                const passages = await extractPassagesFromPDF(fileUrl, term);
-                term.innerHTML += `<p class="sys-msg">System: Extracted context blocks. Running global multilingual concept matching & context-aware heuristic filter...</p>`;
-                
-                let scoredPassages = [];
-                let seenTexts = new Set();
+function renderEvaluation() {
+    const R = lastEvaluation;
+    if (!R) return;
 
-                passages.forEach(item => {
-                    let score = 0;
-                    let lowerText = item.text.toLowerCase();
-                    let matchedTerms = [];
+    document.getElementById('verdict-title').innerText = R.rubric.verdict;
+    document.getElementById('verdict-title').style.color = TIER_COLOR[R.rubric.tone === "embedded" ? "Embedded" : R.rubric.tone === "partial" ? "Partial" : R.rubric.tone === "absent" ? "Absent" : "Tokenistic"];
+    document.getElementById('verdict-banner').style.borderLeftColor = TIER_COLOR[R.rubric.tone === "embedded" ? "Embedded" : R.rubric.tone === "partial" ? "Partial" : R.rubric.tone === "absent" ? "Absent" : "Tokenistic"];
+    document.getElementById('verdict-summary').innerHTML = R.rubric.reasoning.map(r => "<div>" + esc(r) + "</div>").join("");
 
-                    for (const [dim, categories] of Object.entries(conceptMap)) {
-                        categories.unambiguous.forEach(phrase => {
-                            if(checkMatch(phrase, lowerText)) {
-                                score += 1;
-                                matchedTerms.push(phrase);
-                            }
-                        });
-                        categories.ambiguous.forEach(phrase => {
-                            if(checkMatch(phrase, lowerText) && isValidContext(phrase, lowerText)) {
-                                score += 1;
-                                matchedTerms.push(phrase);
-                            }
-                        });
-                    }
+    // dimension profile
+    document.getElementById('dimension-profile').innerHTML = DIMS4.map(d => {
+        const p = R.profile[d];
+        return `<div class="dim-card" style="border-top:5px solid ${TIER_COLOR[p.tier]};">
+            <h4>${d} justice</h4>
+            <div class="dim-tier" style="color:${TIER_COLOR[p.tier]}">${p.tier}</div>
+            <div class="dim-conf">confidence: ${p.confidence}</div>
+            <p class="dim-note">${esc(p.note)}</p>
+        </div>`;
+    }).join("");
 
-                    if(score > 0 && !seenTexts.has(item.text)) {
-                        seenTexts.add(item.text);
-                        scoredPassages.push({ pageNum: item.page, text: item.text, score: score, matches: [...new Set(matchedTerms)] });
-                    }
-                });
+    // rubric
+    document.getElementById('rubric-table').innerHTML = R.rubric.criteria.map(c => `
+        <div class="rubric-row">
+            <div class="rubric-flag" style="background:${RESULT_COLOR[c.result]}">${c.result}</div>
+            <div class="rubric-body">
+                <b>${c.id}. ${c.name}</b>
+                <div class="rubric-q">${esc(c.question)}</div>
+                <div class="rubric-d">${esc(c.detail)}</div>
+            </div>
+        </div>`).join("");
 
-                scoredPassages.sort((a, b) => b.score - a.score);
-                const finalResults = scoredPassages.slice(0, resultLimit);
-                
-                lastScrapedResults = finalResults;
-                const sel = document.getElementById('ai-ndc-select');
-                lastScrapedCountry = sel.options[sel.selectedIndex].text;
+    renderQuadrant(R.rubric.axisRP, R.rubric.axisDR, R.country);
 
-                if(finalResults.length === 0) {
-                    term.innerHTML += `<p class="err-msg">Result: No significant passages found implicitly or explicitly matching justice concepts.</p>`;
-                } else {
-                    let maxText = resultLimit >= 99999 ? "All" : resultLimit;
-                    term.innerHTML += `<br><p style="color:#34c759; font-weight:bold;">--- Retrieved ${finalResults.length} Relevant Passages (Max Limit: ${maxText}) ---</p>`;
-                    finalResults.forEach((res, idx) => {
-                        let highlightedText = res.text;
-                        res.matches.forEach(concept => {
-                            const isAsian = /[\u4e00-\u9fa5\u3040-\u30ff]/.test(concept);
-                            const escaped = concept.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                            const regex = isAsian ? new RegExp(`(${escaped})`, 'gi') : new RegExp(`(^|[\\s\\W_])(${escaped})([\\s\\W_]|$)`, 'gi');
-                            
-                            if(isAsian) {
-                                highlightedText = highlightedText.replace(regex, `<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$1</span>`);
-                            } else {
-                                highlightedText = highlightedText.replace(regex, `$1<span style="background: rgba(52,199,89,0.3); color:#fff; border-radius:3px; padding:0 2px; font-weight:bold;">$2</span>$3`);
-                            }
-                        });
-                        term.innerHTML += `<p><span style="color:#5ac8fa; font-weight:bold;">[Page ${res.pageNum}]</span> [Excerpt ${idx + 1}] ${highlightedText}</p><br>`;
-                    });
-                    term.innerHTML += `<p class="sys-msg">System: Analysis complete. Found ${scoredPassages.length} total distinct concept matches in document.</p>`;
-                }
-                term.scrollTop = term.scrollHeight;
+    const d = R.descriptive;
+    document.getElementById('descriptive-stats').innerHTML =
+        `<b>Descriptive only, not used in any score:</b> ${d.flagged} statements assigned to a dimension
+         (${d.byTier.Embedded} embedded, ${d.byTier.Partial} partial, ${d.byTier.Tokenistic} tokenistic);
+         ${d.forReview} need manual dimension confirmation; ${d.screenOnly} passages caught by the recall net with no dimension term;
+         ${d.conditional} statements are conditional on external support; ${d.international} are addressed outward rather than inward.`;
 
-            } catch (err) {
-                console.error(err);
-                term.innerHTML += `<p class="err-msg">Error parsing document. Verify file availability.</p>`;
-            }
+    renderLedger();
+}
+
+function renderQuadrant(rp, dr, country) {
+    const idx = t => Math.max(0, tierRank(t) - 1); // Tokenistic 0, Partial 1, Embedded 2
+    const labels = ["tokenistic", "partial", "embedded"];
+    const x = idx(dr), y = idx(rp);
+    let cells = "";
+    for (let r = 2; r >= 0; r--) {
+        for (let c = 0; c < 3; c++) {
+            const here = (c === x && r === y);
+            cells += `<div class="q-cell ${here ? 'q-here' : ''}">${here ? esc(country) : ''}</div>`;
         }
+    }
+    document.getElementById('quadrant').innerHTML = `
+        <div class="q-wrap">
+            <div class="q-ylab">RECOGNITIONAL + PROCEDURAL</div>
+            <div class="q-yticks"><span>embedded</span><span>partial</span><span>tokenistic</span></div>
+            <div class="q-grid">${cells}</div>
+            <div class="q-xticks"><span>tokenistic</span><span>partial</span><span>embedded</span></div>
+            <div class="q-xlab">DISTRIBUTIVE + RESTORATIVE</div>
+        </div>
+        <p class="q-note">Axis position is the weaker of the two dimensions on that axis (rule: ${RULES.AXIS_RULE}).
+        Upper right is the region the policy brief describes as approaching transformative climate justice.</p>`;
+}
 
-        async function exportScrapedDocx() {
-            const term = document.getElementById('ai-terminal');
-            if(lastScrapedResults.length === 0) { 
-                term.innerHTML += `<p class="err-msg">Error: Please run 'Check for Justice Mentions' first.</p>`; 
-                term.scrollTop = term.scrollHeight;
-                return; 
-            }
+/* ---------- Ledger with coder overrides ---------- */
 
-            term.innerHTML += `<p class="sys-msg">System: Exporting scraped passages to Word...</p>`;
-            term.scrollTop = term.scrollHeight;
+function setLedgerFilter(kind, value) {
+    if (kind === 'review') ledgerFilter.review = !ledgerFilter.review;
+    else ledgerFilter[kind] = value;
+    renderLedger();
+}
 
-            try {
-                let docContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><title>Scraped Mentions</title></head><body style='font-family:Arial;'><h1>Scraped Justice Mentions: ${lastScrapedCountry}</h1><hr/>`;
+function renderLedger() {
+    const R = lastEvaluation; if (!R) return;
+    const list = R.statements.filter(s => {
+        const e = effective(s);
+        if (ledgerFilter.dimension !== "All" && e.dimension !== ledgerFilter.dimension) return false;
+        if (ledgerFilter.tier !== "All" && e.tier !== ledgerFilter.tier) return false;
+        if (ledgerFilter.review && !s.needsReview) return false;
+        return true;
+    });
 
-                lastScrapedResults.forEach((res, idx) => {
-                    docContent += `<h3>[Excerpt ${idx + 1}] Page ${res.pageNum}</h3><p>${res.text}</p><br/>`;
-                });
+    document.getElementById('ledger-controls').innerHTML = `
+        <div class="lf-group"><span>Dimension:</span>
+        ${["All", ...DIMS4].map(d => `<button class="lf-btn ${ledgerFilter.dimension === d ? 'lf-on' : ''}" onclick="setLedgerFilter('dimension','${d}')">${d}</button>`).join("")}</div>
+        <div class="lf-group"><span>Tier:</span>
+        ${["All", "Embedded", "Partial", "Tokenistic"].map(t => `<button class="lf-btn ${ledgerFilter.tier === t ? 'lf-on' : ''}" onclick="setLedgerFilter('tier','${t}')">${t}</button>`).join("")}</div>
+        <div class="lf-group"><button class="lf-btn ${ledgerFilter.review ? 'lf-on' : ''}" onclick="setLedgerFilter('review')">Needs manual check only</button>
+        <span class="lf-count">${list.length} of ${R.statements.length} shown</span></div>`;
 
-                docContent += `</body></html>`;
+    document.getElementById('eval-statement-ledger').innerHTML = list.map(s => {
+        const e = effective(s);
+        const chips = [
+            `<span class="chip chip-sec">${s.section.type}${s.section.narrative ? " (framing)" : ""}</span>`,
+            `<span class="chip">p. ${s.page}</span>`,
+            `<span class="chip">${esc(s.cluster)}</span>`,
+            `<span class="chip chip-${s.scope.toLowerCase()}">${s.scope}</span>`,
+            s.conditional ? `<span class="chip chip-cond">conditional</span>` : "",
+            s.structural ? `<span class="chip chip-struct">structural</span>` : "",
+            s.needsReview ? `<span class="chip chip-review">check dimension</span>` : "",
+            s.override ? `<span class="chip chip-over">coder override</span>` : ""
+        ].join("");
 
-                const blob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `Scraped_Mentions_${lastScrapedCountry.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
-                a.click();
-                
-                term.innerHTML += `<p class="sys-msg">Success: Scraped text Word document downloaded.</p>`;
-                term.scrollTop = term.scrollHeight;
-            } catch(err) {
-                console.error(err);
-                term.innerHTML += `<p class="err-msg">Error exporting text.</p>`;
-            }
-        }
+        return `<div class="ledger-item" data-id="${s.id}">
+            <div class="ex-header">
+                <div>
+                    <span class="ex-badge" style="background:${TIER_COLOR[e.tier]}">${e.tier}</span>
+                    <span class="ex-dim">${e.dimension} justice</span>
+                </div>
+                <div class="ex-chips">${chips}</div>
+            </div>
+            <div class="ex-content"><p class="ex-quote">${esc(s.text)}</p></div>
+            <div class="ex-why">
+                <b>Why this tier:</b> ${esc(s.tierWhy.join("; "))}.
+                <b>Evidence features:</b> ${s.featureSet.length ? esc(s.featureSet.join(", ")) : "none"}.
+                <b>Dimension terms:</b> ${esc([...s.matched.core, ...s.matched.supporting].join(", ") || "none")}.
+                ${s.alternates.length ? "<b>Alternate dimension(s):</b> " + esc(s.alternates.map(a => a.dimension).join(", ")) + "." : ""}
+                ${s.heading ? "<b>Under heading:</b> " + esc(s.heading) + "." : ""}
+            </div>
+            <div class="ex-override">
+                <label>Reassign dimension
+                    <select onchange="overrideStatement('${s.id}','dimension',this.value)">
+                        <option value="">machine: ${e.dimension}</option>
+                        ${DIMS4.map(d => `<option value="${d}">${d}</option>`).join("")}
+                    </select>
+                </label>
+                <label>Reassign tier
+                    <select onchange="overrideStatement('${s.id}','tier',this.value)">
+                        <option value="">machine: ${e.tier}</option>
+                        ${["Embedded", "Partial", "Tokenistic"].map(t => `<option value="${t}">${t}</option>`).join("")}
+                    </select>
+                </label>
+                <input type="text" placeholder="coder note (why)" value="${esc((s.override && s.override.note) || '')}"
+                       onchange="overrideStatement('${s.id}','note',this.value)">
+            </div>
+        </div>`;
+    }).join("") || "<p style='color:var(--text-muted)'>No statements match this filter.</p>";
+}
+
+async function overrideStatement(id, field, value) {
+    const s = lastEvaluation.statements.find(x => x.id === id);
+    if (!s) return;
+    s.override = s.override || { dimension: null, tier: null, note: "" };
+    s.override[field] = value || null;
+    s.override.coder = (typeof currentUser !== "undefined" ? currentUser : "Anonymous");
+    s.override.at = new Date().toISOString();
+
+    // recompute profile and verdict from the corrected data
+    const DIMS = DIMS4;
+    DIMS.forEach(d => {
+        lastEvaluation.profile[d] = rollUpDimension(
+            lastEvaluation.statements.filter(x => effective(x).dimension === d).map(x => ({ ...x, tier: effective(x).tier }))
+        );
+    });
+    lastEvaluation.rubric = buildRubric(lastEvaluation.profile,
+        lastEvaluation.statements.map(x => ({ ...x, dimension: effective(x).dimension, tier: effective(x).tier })));
+    renderEvaluation();
+
+    // always keep a local copy so the standalone build does not lose coder work
+    try {
+        const key = 'justndc_overrides';
+        const store = JSON.parse(localStorage.getItem(key) || '{}');
+        store[lastEvaluation.country + '::' + id] = {
+            country: lastEvaluation.country, statement_id: id, page: s.page,
+            machine_dimension: s.dimension, machine_tier: s.tier,
+            coder_dimension: s.override.dimension, coder_tier: s.override.tier,
+            note: s.override.note || "", coder: s.override.coder, at: s.override.at,
+            statement: s.text, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION
+        };
+        localStorage.setItem(key, JSON.stringify(store));
+    } catch (e) { console.warn("local override store unavailable", e); }
+
+    if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        try {
+            await supabaseClient.from('statement_overrides').upsert({
+                country: lastEvaluation.country, statement_id: id, page: s.page,
+                machine_dimension: s.dimension, machine_tier: s.tier,
+                coder_dimension: s.override.dimension, coder_tier: s.override.tier,
+                note: s.override.note || "", coder: s.override.coder,
+                statement: s.text, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION
+            }, { onConflict: 'country,statement_id' });
+        } catch (e) { console.warn("override not synced", e); }
+    }
+}
+
+/* ---------- Screener (recall-oriented pass) ---------- */
+
+async function runBrowserAnalysis() {
+    const url = document.getElementById('ai-ndc-select').value;
+    const term = document.getElementById('ai-terminal');
+    if (!url) { termLog('ai-terminal', "Select an NDC document first.", 'err'); return; }
+    term.innerHTML = `<p class="sys-msg">Fetching and rebuilding document layout...</p>`;
+
+    try {
+        const { units, diag } = await extractDocument(url, m => termLog('ai-terminal', m));
+        if (diag.scannedRisk) termLog('ai-terminal', `Warning: thin text layer (${diag.lowTextPages}/${diag.pages} pages sparse). Likely a scanned PDF. Needs OCR before coding.`, 'warn');
+
+        const { statements, screened } = analyseUnits(units);
+        const all = statements.concat(screened);
+        const sel = document.getElementById('ai-ndc-select');
+        lastScreen = { country: sel.options[sel.selectedIndex].text, results: all, diag };
+
+        const mode = document.getElementById('ai-depth').value;
+        let shown = all;
+        if (mode === 'anchored') shown = all.filter(s => s.featureSet.includes('legalAnchor') || s.featureSet.includes('financeAnchor') || s.featureSet.includes('institutionAnchor'));
+        else if (mode === 'review') shown = all.filter(s => s.needsReview || !s.dimension);
+        else if (mode === 'operational') shown = all.filter(s => !s.section.narrative);
+
+        shown = shown.sort((a, b) => (a.page - b.page) || a.id.localeCompare(b.id));
+
+        termLog('ai-terminal', `${units.length} sentence units read. ${statements.length} assigned to a dimension, ${screened.length} caught by the recall net only. Showing ${shown.length} in document order.`);
+        term.innerHTML += shown.map(s => {
+            const label = s.dimension ? `${s.dimension} / ${s.tier}` : `unassigned (recall net)`;
+            return `<p><span class="scr-loc">[p.${s.page} ${s.section.type}]</span>
+                <span class="scr-lab">${label}</span> ${esc(s.text)}
+                <span class="scr-terms">${esc([...(s.matched ? s.matched.core : []), ...(s.matched ? s.matched.supporting : []), ...s.screenHits].join(", "))}</span></p>`;
+        }).join("");
+        term.scrollTop = term.scrollHeight;
+    } catch (err) {
+        console.error(err);
+        termLog('ai-terminal', "Error parsing document: " + esc(err.message), 'err');
+    }
+}
+
+/* ---------- Exports ---------- */
+
+function download(name, content, mime) {
+    const blob = new Blob(['\ufeff', content], { type: mime });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+}
+
+function exportEvaluationDocx() {
+    if (!lastEvaluation) { alert("Run an evaluation first."); return; }
+    const R = lastEvaluation;
+    let h = `<html xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'></head><body style="font-family:Calibri;">
+    <h1>JUST-NDC assessment: ${esc(R.country)}</h1>
+    <p><i>Engine ${R.engine}, lexicon ${R.lexicon}. Run ${esc(R.run)} by ${esc(R.coder)}.
+    Framework: Abbas, Sandholz and van Schie (2025), UNU-EHS Policy Brief No. 16.
+    Machine output requires human confirmation before use.</i></p>
+    <h2>Verdict: ${esc(R.rubric.verdict)}</h2>
+    <ul>${R.rubric.reasoning.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    <h2>Dimension profile</h2>
+    <table border="1" cellpadding="6" style="border-collapse:collapse;"><tr><th>Dimension</th><th>Level of commitment</th><th>Confidence</th><th>Basis</th></tr>
+    ${DIMS4.map(d => `<tr><td>${d} justice</td><td>${R.profile[d].tier}</td><td>${R.profile[d].confidence}</td><td>${esc(R.profile[d].note)}</td></tr>`).join("")}</table>
+    <h2>Transformative justice rubric</h2>
+    <table border="1" cellpadding="6" style="border-collapse:collapse;"><tr><th>#</th><th>Criterion</th><th>Result</th><th>Detail</th></tr>
+    ${R.rubric.criteria.map(c => `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.result}</td><td>${esc(c.detail)}</td></tr>`).join("")}</table>
+    <p>Composite axes: recognitional and procedural = ${R.rubric.axisRP}; distributive and restorative = ${R.rubric.axisDR}.</p>
+    <h2>Statement ledger</h2>`;
+    R.statements.forEach(s => {
+        const e = effective(s);
+        h += `<p><b>[p.${s.page}] ${e.dimension} / ${e.tier}</b>${s.override ? " (coder override by " + esc(s.override.coder) + ")" : ""}<br>
+        <i>"${esc(s.text)}"</i><br>
+        <small>Section: ${s.section.type}. Cluster: ${esc(s.cluster)}. Scope: ${s.scope}.${s.conditional ? " Conditional." : ""}
+        Reason: ${esc(s.tierWhy.join("; "))}. Features: ${esc(s.featureSet.join(", ") || "none")}.</small></p>`;
+    });
+    h += `<h2>Extraction diagnostics</h2><p>${R.diag.pages} pages, ${R.diag.skipped.length} skipped, ${R.diag.lowTextPages} sparse pages${R.diag.scannedRisk ? ", <b>scanned-PDF risk flagged</b>" : ""}.</p></body></html>`;
+    download(`JUSTNDC_${R.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`, h, 'application/msword');
+}
+
+function exportEvaluationCsv() {
+    if (!lastEvaluation) { alert("Run an evaluation first."); return; }
+    const R = lastEvaluation;
+    const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+    const head = ["country", "statement_id", "page", "section", "heading", "cluster", "scope", "conditional", "structural",
+        "machine_dimension", "machine_tier", "coder_dimension", "coder_tier", "coder_note", "coder",
+        "needs_review", "evidence_features", "matched_terms", "tier_reason", "statement", "engine", "lexicon", "run_utc"];
+    const rows = R.statements.map(s => [
+        R.country, s.id, s.page, s.section.type, s.heading, s.cluster, s.scope, s.conditional, s.structural,
+        s.dimension, s.tier, s.override && s.override.dimension, s.override && s.override.tier,
+        s.override && s.override.note, s.override && s.override.coder,
+        s.needsReview, s.featureSet.join("|"), [...s.matched.core, ...s.matched.supporting].join("|"),
+        s.tierWhy.join("; "), s.text, R.engine, R.lexicon, R.run
+    ].map(q).join(","));
+    download(`JUSTNDC_${R.country.replace(/[^a-zA-Z0-9]/g, '_')}_ledger.csv`, [head.join(","), ...rows].join("\n"), 'text/csv');
+}
+
+function exportScrapedDocx() {
+    if (!lastScreen.results.length) { termLog('ai-terminal', "Run the screener first.", 'err'); return; }
+    let h = `<html xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'></head><body style="font-family:Calibri;">
+    <h1>Screened passages: ${esc(lastScreen.country)}</h1>
+    <p><i>Recall-oriented screen, engine ${ENGINE_VERSION}, lexicon ${LEXICON_VERSION}. Not a coding decision.</i></p>`;
+    lastScreen.results.forEach(s => {
+        h += `<p><b>[p.${s.page} ${s.section.type}]</b> ${s.dimension ? s.dimension + " / " + s.tier : "unassigned"}<br>${esc(s.text)}</p>`;
+    });
+    download(`Screened_${lastScreen.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`, h + "</body></html>", 'application/msword');
+}
+
+/* Standalone builds keep coder overrides in the browser only. This exports every
+   override recorded on this machine so it can be merged into the team dataset. */
+function exportAllOverrides() {
+    let store = {};
+    try { store = JSON.parse(localStorage.getItem('justndc_overrides') || '{}'); } catch (e) { }
+    const rows = Object.values(store);
+    if (!rows.length) { alert("No coder overrides recorded in this browser yet."); return; }
+    const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+    const head = ["country", "statement_id", "page", "machine_dimension", "machine_tier",
+        "coder_dimension", "coder_tier", "note", "coder", "at", "statement", "engine", "lexicon"];
+    const csv = [head.join(",")].concat(rows.map(r => head.map(k => q(r[k])).join(","))).join("\n");
+    download("JUSTNDC_all_overrides.csv", csv, "text/csv");
+}
+
     </script>
 </body>
 </html>
