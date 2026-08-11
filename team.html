@@ -311,6 +311,7 @@
             <div class="content" id="main-content-area">
                 <!-- PAGE 1: DASHBOARD -->
                 <div id="dashboard" class="page active">
+                    <div id="db-note" class="diag-ok" style="margin-bottom:14px;"></div>
                     <h1 style="color: #1d1d1f;">JUST-NDC Project Roadmap</h1>
                     <p>Evaluating transformative climate justice across 120 NDC submissions (+2 Annexes). Corpus locked 1 August 2026. Coverage and cut-off are recorded on the Global Map page.</p>
                     
@@ -355,11 +356,19 @@
 
                 <!-- PAGE 2: METHODOLOGY -->
                 <div id="methodology" class="page">
-                    <h1 class="header-light-blue" style="font-size: 2.1rem; margin-bottom: 10px;">Framework & Methodology Instruction Manual</h1>
-                    <p style="margin-top: 0;">Welcome to the UNU-EHS FAST team's NDC evaluation hub. If you are new to this project (e.g., incoming researchers or student assistants), this page outlines exactly how we conduct our line-by-line analysis of NDC 3.0 documents to evaluate their commitments to transformative climate justice.</p>
-                    
-                    <h2 class="header-light-blue">1. The Transformative Climate Justice Framework</h2>
-                    
+                    <h1 class="header-light-blue" style="font-size: 2.1rem; margin-bottom: 10px;">Framework and Methodology</h1>
+                    <p style="margin-top: 0;">This page is the working manual for the JUST-NDC analysis. It sets out why the project exists, the framework we apply, how a statement is coded, what the tool does on its own, and where its judgement stops and yours begins. If you are joining the team, read it end to end before you code anything.</p>
+
+                    <h2 class="header-light-blue">1. Why this project exists</h2>
+                    <div class="ui-box" style="margin-top: 15px;">
+                        <p style="margin-top: 0;">Climate change is a lived experience that magnifies existing inequalities within and between countries. Nationally Determined Contributions are the core vehicle through which states set out what they will do about it. Under the Paris Agreement each Party is expected to prepare, communicate and maintain successive NDCs, to do so in the light of equity, and to make each one represent a progression beyond the last and reflect its highest possible ambition.</p>
+                        <p>The expectation is not only that countries cut emissions but that they explain how their plans are fair. The technical dialogue of the first global stocktake states that all countries are expected to explain in their NDCs how those NDCs are fair and ambitious. The UAE Consensus agreed at COP28 went further, urging governments to embed inclusive, multilevel and gender-responsive governance in their new plans. Civil society has framed the test more bluntly: whether governments move beyond tokenistic mentions of inclusive language towards operationalising measures that make climate action equitable.</p>
+                        <p>NDC 3.0, the round due in 2025 and covering targets to 2035, is the first cycle in which that expectation can be tested at scale. That is what this project does. It asks whether NDCs simply acknowledge justice or actively work on inequities, by rating statements and paying attention to the legal, institutional and financial backing behind them.</p>
+                        <p style="margin-bottom: 0; font-size: 0.9rem; color: var(--text-muted);">Framework source: Abbas, S. M. J., Sandholz, S. and van Schie, D. (2025). <em>Tokenistic or transformative? Evaluating transformative climate justice in NDC 3.0 submissions.</em> UNU-EHS Policy Brief No. 16. The framework builds on IPCC (2022) and EEA (2024), the transformative justice agenda set out by Newell and others (2021), and earlier justice coding work by Juhola and others (2022) and Jones and others (2024).</p>
+                    </div>
+
+                    <h2 class="header-light-blue">2. The four dimensions of climate justice</h2>
+
                     <div class="framework-grid">
                         <div class="framework-box box-recognitional">
                             <h3 style="margin:0 0 10px 0; color: #ffffff; text-transform: uppercase; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px;">Recognitional Justice</h3>
@@ -378,7 +387,7 @@
                             <p style="margin:0; font-size:0.95rem; color: #ffffff;">Recognizes and seeks to address past climate injustices or historical responsibilities through reparative measures and responses.</p>
                         </div>
                     </div>
-                    
+
                     <div style="text-align: center; margin-top: 20px;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#001f40" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
                             <path d="M12 4v16M19 13l-7 7-7-7"/>
@@ -389,19 +398,23 @@
                         </div>
                     </div>
 
-                    <h2 class="header-light-blue">2. The Line-by-Line Coding Guide</h2>
+                    <div class="ui-box" style="margin-top: 18px; background:#fff;">
+                        <p style="margin-top:0;"><strong>Transformative climate justice is not a fifth dimension and is never coded on a statement.</strong> The four dimensions together establish a baseline. Transformative justice is reached at their intersection, when a country shifts power, rules and resource flows rather than adding stand-alone measures. Every statement in this project is coded to one of the four. The transformative judgement is made once, at country level, after all four have been assessed. Section 6 sets out exactly how.</p>
+                    </div>
+
+                    <h2 class="header-light-blue">3. The line-by-line coding guide</h2>
                     <div class="ui-box" style="margin-top: 15px;">
-                        <p style="margin-top: 0;">To process our corpus of 120 NDC documents at scale while maintaining rigorous qualitative standards, we follow a strict hybrid workflow. Here is what you need to do step-by-step:</p>
+                        <p style="margin-top: 0;">We process 120 NDC documents while keeping qualitative standards. The workflow is hybrid: the tool retrieves and proposes, you decide.</p>
                         <ol style="line-height: 1.8; margin-bottom: 0;">
-                            <li><strong>Review the Extracted Text:</strong> Instead of reading hundreds of pages manually, an AI (NLP) tool will scrape the PDFs and pre-flag paragraphs containing implicit or explicit mentions of justice. Your job begins with reviewing these flagged text excerpts.</li>
-                            <li><strong>Interpret & Categorize the Dimension:</strong> Read the specific statement carefully. Use the four definitions listed in the framework diagram above to decide which dimension of climate justice (Recognitional, Procedural, Distributive, or Restorative) the text aligns with.</li>
-                            <li><strong>Assess the Level of Commitment:</strong> Next, you must grade how strong the policy commitment actually is. We use a four-tier grading scale. Evaluate the excerpt against the Matrix Table below to see if it qualifies as <em>No Mention</em>, <em>Tokenistic</em>, <em>Partial</em>, or <em>Embedded</em>. Pay special attention to whether the statement is just a vague aspiration (Tokenistic) or backed by a legally binding institutional framework (Embedded).</li>
-                            <li><strong>Correct the machine, do not trust it:</strong> the engine assigns a dimension and a tier and shows the exact evidence it used. Where it is wrong, reassign it in the ledger. Your correction is what enters the dataset. Treat the machine label as a first draft written by a fast but literal-minded assistant.</li>
-                            <li><strong>Record the reason:</strong> every override takes a short note. Two coders disagreeing is normal and useful; two coders disagreeing silently is not.</li>
+                            <li><strong>Review the retrieved text.</strong> The screener reads the PDF and pre-flags sentences containing explicit or implicit justice content. Your work starts with those, plus the passages the recall net caught that the classifier could not assign.</li>
+                            <li><strong>Assign the dimension.</strong> Decide which of the four dimensions the statement belongs to, using the definitions above. The tool proposes one and shows which terms drove it, along with any close alternative. Where two dimensions are close, it says so rather than picking silently.</li>
+                            <li><strong>Grade the level of commitment.</strong> Use the matrix in section 4. The question is not whether the measure sounds good but how it is phrased: a vague aspiration is tokenistic, a named measure without backing is partial, and a measure tied to law, institutions, funding and accountability is embedded.</li>
+                            <li><strong>Correct the machine, do not trust it.</strong> Every entry shows the evidence behind its grade. Where it is wrong, reassign it in the ledger. Your correction is what enters the dataset. Treat the machine label as a first draft written by a fast but literal-minded assistant.</li>
+                            <li><strong>Record the reason.</strong> Every override takes a short note. Two coders disagreeing is normal and useful. Two coders disagreeing silently is not.</li>
                         </ol>
                     </div>
-                    
-                    <h2 class="header-light-blue">3. Commitment Grading Matrix</h2>
+
+                    <h2 class="header-light-blue">4. Commitment grading matrix</h2>
                     <div class="matrix-table-wrapper">
                         <table class="matrix-table">
                             <thead>
@@ -421,28 +434,64 @@
                             </tbody>
                         </table>
                     </div>
+                    <p class="panel-sub" style="margin-top:12px;">One caveat applies to every cell above. The assessment is qualitative and text-based. We evaluate the content and commitments of the NDCs on paper, not the implementation of those commitments or the intent of whoever drafted them.</p>
 
-                    <h2>4. How a country verdict is produced</h2>
-                    <div class="ui-box" style="background:#fff;">
-                        <p><b>Nothing in the verdict is a count.</b> The number of times an NDC mentions justice does not move any score. A 460-page submission and a 14-page submission are assessed on the same terms.</p>
-                        <ol style="line-height:1.75; font-size:0.92rem;">
-                            <li><b>Statement level.</b> Each sentence is assigned to one of the four dimensions and graded Tokenistic, Partial or Embedded on the evidence present in that sentence: a named legal instrument, a named institution, a budget line or figure, a time bound, an accountability or monitoring provision, a commitment verb, hedging, conditionality and negation. Transformative justice is never applied here.</li>
-                            <li><b>Dimension level.</b> Each dimension takes the strongest tier the document evidences. Embedded requires either two independent embedded statements or one carrying at least three evidence features; a single weak candidate is graded down to Partial and marked for confirmation. Every dimension also reports a confidence level.</li>
-                            <li><b>Country level.</b> Six criteria are checked, each returning pass, partial or fail: <i>coverage</i> (are all four dimensions addressed), <i>depth</i> (what is the weakest of the four, since transformative justice is the intersection), <i>balance</i> (is the recognitional and procedural axis matched by the distributive and restorative axis), <i>anchoring</i> (are commitments tied to law, institutions or money), <i>integration</i> (does justice appear in the operational sections or only in the framing) and <i>structural engagement</i> (does the NDC address the causes of injustice or only its symptoms).</li>
-                            <li><b>The verdict.</b> "Approaching transformative climate justice" requires all six criteria to pass, or five with depth passing. Where the recognitional and procedural axis is developed while the distributive and restorative axis is not, the tool reports a justice-washing risk, which is the pattern identified in the policy brief.</li>
-                        </ol>
-                        <p style="font-size:0.86rem; color:var(--text-muted);">Composite axis rule: each axis takes the <i>weaker</i> of its two dimensions. This follows the intersection logic of the framework rather than flattering a country for one strong dimension.</p>
+                    <h2 class="header-light-blue">5. What the 2025 policy brief found</h2>
+                    <div class="ui-box" style="margin-top: 15px; background:#fff;">
+                        <p style="margin-top:0;">The brief coded 27 NDCs submitted to the UNFCCC as of July 2025, line by line, by hand. Four were in Spanish and one in French; those were handled with professional translation software and secondary manual verification by fluent speakers, with discrepancies resolved through blind cross-review. Content was also organised into nine thematic clusters, guided by prevalent topics in the texts and the CAN Guidelines for NDCs, to see where justice is integrated and where it is neglected. The findings that the tool now has to reproduce at scale are these.</p>
+                        <ul style="line-height:1.8;">
+                            <li><strong>Justice language is common, embedded commitments are not.</strong> Most references remain tokenistic or partial. Many statements are high-level or process-oriented rather than specifying measures with institutional support.</li>
+                            <li><strong>Recognitional and procedural justice dominate.</strong> More than half of the NDCs analysed mentioned vulnerable groups or the importance of stakeholder consultation, making these the most frequently mentioned dimensions. Most of those mentions are tokenistic. Countries list vulnerable populations or affirm support for them, but only a minority outline specific programmes or legal protections. Few provide mechanisms for ongoing inclusive decision-making.</li>
+                            <li><strong>Distributive and restorative justice lag.</strong> Both are less prevalent. Restorative justice was the least addressed dimension, with most countries avoiding language that could be read as accepting liability or formally compensating for climate harm.</li>
+                            <li><strong>Loss and damage usually points outward.</strong> Where it appears, it is often an appeal for global support rather than a commitment by the country to compensate affected groups within its own territory. This is why the tool now records the direction of every claim.</li>
+                            <li><strong>International distributive framing tracks economic capacity.</strong> References to providing finance or technology transfer, or to common but differentiated responsibilities, were more frequent in submissions from parties with comparatively greater economic capacity.</li>
+                            <li><strong>The imbalance is the headline.</strong> Heavy on recognitional and procedural mentions, light on distributive and restorative action. Most countries are more comfortable acknowledging inequities than committing to redistributive or compensatory measures. This is the pattern the brief names as a justice-washing risk, and the tool flags it explicitly.</li>
+                            <li><strong>Justice is siloed by theme.</strong> Commitments are deepest in the just transition and social equity cluster and the capacity-building and public participation cluster, and weakest in technically focused areas such as sectoral mitigation and technology and innovation. Strong procedural commitments at national planning level rarely translate into guaranteed stakeholder influence over financial allocations within sectors.</li>
+                            <li><strong>A small set of countries are close.</strong> Only a few reach embedded level on both axes of the matrix. Brazil is the worked example in the brief: it defines climate justice on the first page of its NDC, links that definition to the Pact for Ecological Transformation and the National Policy on Climate Change, reports participatory design involving more than 4,000 participants and 1,200 proposals, prepares sectoral plans for indigenous peoples and for racial equality, and applies common but differentiated responsibilities within the country as well as between countries.</li>
+                        </ul>
+                        <p style="margin-bottom:0;">The brief's three recommendations shape what the tool looks for. Pair commitments with the law or policy they attach to, the responsible institution, a budget line, a timeline and a monitoring indicator. Translate participation commitments into outcomes on distribution and remediation. Adapt the drafting patterns of the countries already close to transformative justice.</p>
                     </div>
 
-                    <h2>5. What the tool cannot do</h2>
+                    <h2 class="header-light-blue">6. How the tool works</h2>
+                    <div class="ui-box" style="margin-top: 15px; background:#fff;">
+                        <p style="margin-top:0;"><strong>What kind of AI this is.</strong> It is a natural language processing pipeline, not a large language model. Nothing is sent to an external model and nothing is generated. Every decision is made by rules you can read in the page source, so the same document produces the same result every time, and any grade can be traced to the exact words that produced it. That is a deliberate choice: a black box cannot be defended in a methods section, and a generated summary cannot be checked against the text it came from. The trade-off is that the tool has no understanding. It reads patterns. That is why every output is a proposal for a human coder rather than a result.</p>
+
+                        <p><strong>Stage one: retrieval, tuned for recall.</strong> The document is read page by page. Lines are rebuilt from the position of each text fragment on the page rather than concatenated in file order, so two-column layouts and tables do not come out interleaved. Tables of contents, acronym lists, reference pages and cover pages are detected and skipped. Headings are tracked so every sentence knows which section of the NDC it came from. Sentences are split in a way that survives decimals, abbreviations and bullet lists, which is most of what an NDC is made of. If the text layer is thin, the document is flagged as probably scanned rather than reported as containing no justice content.</p>
+
+                        <p><strong>The lexicon.</strong> Terms are held in three groups. <em>Core</em> terms are specific enough to assign a dimension on their own. <em>Supporting</em> terms add weight but cannot assign a dimension by themselves. The <em>recall net</em> holds terms that appear near justice content but are not evidence of it, such as capacity building, climate finance, disaster risk reduction and resilience. Recall net terms flag a passage for you to look at and can never assign a dimension or a grade. This is how the tool stays wide without letting adaptation vocabulary masquerade as restorative justice. The lexicon covers English, Spanish, French, Russian, Arabic, Chinese and Ukrainian, and it carries a version number that is stamped on every export.</p>
+
+                        <p><strong>Stage two: classification, tuned for precision.</strong> Each sentence is scored across the four dimensions and assigned to the highest scoring one. There is no default dimension and no fallback. Where two dimensions are close, or where only supporting terms matched, the statement is marked for manual confirmation and both candidates are shown.</p>
+
+                        <p><strong>How the grade is decided.</strong> The tool does not look for a magic word. It checks the sentence for ten kinds of evidence: a named legal instrument, a named institution, a budget line or monetary figure, a time bound, an accountability or monitoring provision, a commitment verb, a named measure, hedging, conditionality, and negation. Embedded requires a legal anchor, or an institution together with money, plus a commitment verb and either accountability or a deadline, with no negation nearby. Partial requires a commitment verb and a named measure, institution or deadline, without legal or financial anchoring. Everything else is tokenistic. Each entry in the ledger states which of the ten fired and why the grade followed.</p>
+
+                        <p><strong>What else is recorded.</strong> Each statement also carries the direction of the claim, meaning whether it is a domestic commitment about the state's own conduct or an international claim about what others should do; whether it is conditional on external support; which section of the NDC it sits in and whether that section is framing or operational; which of the nine thematic clusters it belongs to; and whether it engages structural drivers of injustice. None of these change the grade. They are what make the dataset worth analysing afterwards.</p>
+
+                        <p style="margin-bottom:0;"><strong>What the tool never does.</strong> It never applies a transformative label to a statement. It never counts mentions to reach a conclusion. It never decides that a country is doing well because it repeats a phrase.</p>
+                    </div>
+
+                    <h2 class="header-light-blue">7. How a country verdict is produced</h2>
                     <div class="ui-box" style="background:#fff;">
-                        <ul style="line-height:1.75; font-size:0.92rem;">
-                            <li>It reads what is written, not what will happen. A perfectly worded commitment scores the same whether or not it is ever delivered. This limitation is stated in the policy brief and has not changed.</li>
-                            <li>It can only grade what it retrieves. Recall is not guaranteed. Before publication we need a manual check on a stratified sample of pages the screener did <i>not</i> flag, otherwise we cannot state a recall figure.</li>
-                            <li>Its embedded-tier vocabulary is strongest in English, Spanish and French. Russian, Arabic and Chinese submissions carry a higher risk of being graded down for linguistic rather than substantive reasons. Treat non-Latin-script documents as requiring full manual confirmation.</li>
-                            <li>It flags scanned documents rather than reporting them as empty. If the text layer is thin, the run is void until the file is OCRed.</li>
+                        <p style="margin-top:0;"><strong>Nothing in the verdict is a count.</strong> How many times an NDC mentions justice moves no score. A 460-page submission and a 14-page submission are assessed on the same terms.</p>
+                        <ol style="line-height:1.75;">
+                            <li><strong>Statement level.</strong> Each sentence gets one of the four dimensions and one of the three commitment grades, on the evidence present in that sentence.</li>
+                            <li><strong>Dimension level.</strong> Each dimension takes the strongest grade the document actually evidences. Embedded requires either two independent embedded statements or one carrying at least three kinds of evidence. A single weak candidate is graded down to partial and marked for confirmation. Every dimension reports a confidence level alongside its grade.</li>
+                            <li><strong>Country level.</strong> Six criteria are checked, each returning pass, partial or fail. <em>Coverage</em>: are all four dimensions addressed at all. <em>Depth</em>: what is the weakest of the four, since transformative justice is the intersection and the floor is what counts. <em>Balance</em>: is the recognitional and procedural axis matched by the distributive and restorative axis. <em>Anchoring</em>: are commitments tied to named law, institutions or money. <em>Integration</em>: does justice appear in the operational parts of the NDC or only in the framing. <em>Structural engagement</em>: does the NDC address the causes of injustice or only its symptoms.</li>
+                            <li><strong>The verdict.</strong> Approaching transformative climate justice requires all six criteria to pass, or five with depth passing. Where the recognitional and procedural dimensions are developed while distributive and restorative are both at or below tokenistic, the tool reports a justice-washing risk, which is the pattern identified in the brief. The remaining outcomes are substantive but uneven, partial commitment, predominantly tokenistic, and justice largely absent.</li>
+                        </ol>
+                        <p style="margin-bottom:0; font-size:0.9rem; color:var(--text-muted);">Composite axis rule: each axis takes the weaker of its two dimensions. This follows the intersection logic of the framework rather than flattering a country for one strong dimension. The rule is a named setting in the code so it can be changed and reported, but not changed silently.</p>
+                    </div>
+
+                    <h2 class="header-light-blue">8. What the tool cannot do</h2>
+                    <div class="ui-box" style="background:#fff;">
+                        <ul style="line-height:1.75;">
+                            <li><strong>It reads what is written, not what will happen.</strong> A well-drafted commitment scores the same whether or not it is ever delivered. This limitation is stated in the policy brief and has not changed.</li>
+                            <li><strong>Recall is not yet established.</strong> The pipeline can only be checked on what it retrieved. Reading a stratified sample of pages the screener did not flag, roughly ten pages each from twelve documents across the language groups, is what turns the recall assumption into a number we can publish.</li>
+                            <li><strong>The embedded grade is strongest in English, Spanish and French.</strong> Legal and institutional vocabulary in Russian, Arabic and Chinese is thinner in the lexicon, so submissions in those languages carry a higher risk of being graded down for linguistic rather than substantive reasons. Treat non-Latin-script documents as requiring full manual confirmation.</li>
+                            <li><strong>Anchors are recorded, not verified.</strong> The tool notes that an NDC names a law. It does not check that the law exists or says what the NDC claims. Decide before coding whether embedded requires external verification, and log the source if it does.</li>
+                            <li><strong>The dataset is the human layer.</strong> Machine output is a first draft. Overrides carry a coder name, a timestamp and an engine version for exactly this reason.</li>
                         </ul>
                     </div>
+
                 </div>
 
                 <!-- PAGE 3: GLOBAL MAP -->
@@ -1639,6 +1688,7 @@ function buildRubric(profile, statements) {
             var stamp = document.getElementById('lexicon-stamp');
             if (stamp) stamp.value = 'Engine ' + ENGINE_VERSION + ', lexicon ' + LEXICON_VERSION + ' (4 dimensions, core + supporting + recall net)';
             loadSupabaseData();
+            checkSchema();
         });
 
         let currentSort = { table: null, col: null, asc: true };
@@ -1798,6 +1848,48 @@ function buildRubric(profile, statements) {
             containerTok.innerHTML = htmlTok || "<p style='color:#888;'>No tokenistic examples added yet.</p>";
         }
 
+
+        /* Writes the full record if the extended columns exist, otherwise falls back
+           to the original six so the workspace still functions before the schema
+           migration has been run. Failures are shown, never swallowed. */
+        let schemaExtended = null;
+        async function saveExample(mode, base, extra, id) {
+            const attempt = async payload => {
+                if (mode === 'update') return supabaseClient.from('coding_examples').update(payload).eq('id', id);
+                return supabaseClient.from('coding_examples').insert([payload]);
+            };
+            let res = await attempt(Object.assign({}, base, extra));
+            if (res.error) {
+                schemaExtended = false;
+                res = await attempt(base);
+                if (res.error) { setDbNote('Save failed: ' + res.error.message, true); throw res.error; }
+                setDbNote('Saved, but the extended fields (locator, section, direction of claim, conditionality, coder) were dropped because those columns do not exist yet. Run supabase_migration.sql to keep them.', true);
+            } else {
+                schemaExtended = true;
+                setDbNote('');
+            }
+        }
+
+        function setDbNote(msg, warn) {
+            const n = document.getElementById('db-note');
+            if (!n) return;
+            if (!msg) { n.style.display = 'none'; return; }
+            n.style.display = 'block';
+            n.className = warn ? 'diag-warn' : 'diag-ok';
+            n.innerHTML = msg;
+        }
+
+        async function checkSchema() {
+            if (!supabaseClient) { setDbNote('Not connected to the shared database. The screener and the assessment still work; nothing will be saved for the team.', true); return; }
+            const probe = await supabaseClient.from('statement_overrides').select('id').limit(1);
+            const missing = [];
+            if (probe.error) missing.push('statement_overrides (coder overrides will not persist between sessions)');
+            const cols = await supabaseClient.from('coding_examples').select('coder').limit(1);
+            if (cols.error) missing.push('extended columns on coding_examples (locator, section, direction of claim, conditionality, coder)');
+            if (missing.length) setDbNote('Database schema is behind the app. Missing: ' + missing.join('; ') + '. Everything else works. Run supabase_migration.sql in the Supabase SQL editor to fix.', true);
+            else setDbNote('');
+        }
+
         async function submitExample() {
             const country = document.getElementById('new-country').value.trim() || "Unspecified Country";
             const level = document.getElementById('new-level').value;
@@ -1816,10 +1908,10 @@ function buildRubric(profile, statements) {
             try {
                 if (supabaseClient) {
                     if (editingIndex !== -1) {
-                        await supabaseClient.from('coding_examples').update({ country, level, dimension, statement, analysis, locator, section, scope, conditionality, coder, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION }).eq('id', editingIndex);
+                        await saveExample('update', { country, level, dimension, statement, analysis }, { locator, section, scope, conditionality, coder, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION }, editingIndex);
                         logActivity(`updated an example for ${country}`);
                     } else {
-                        await supabaseClient.from('coding_examples').insert([{ country, level, dimension, statement, analysis, locator, section, scope, conditionality, coder, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION }]);
+                        await saveExample('insert', { country, level, dimension, statement, analysis }, { locator, section, scope, conditionality, coder, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION });
                         logActivity(`added a new ${level} example for ${country}`);
                     }
                 }
