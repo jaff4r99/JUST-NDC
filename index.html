@@ -263,6 +263,19 @@
         .scr-loc { color: #5ac8fa; font-weight: 700; }
         .scr-lab { color: #34c759; font-weight: 700; }
         .scr-terms { color: #888; font-size: 0.78rem; }
+        .ex-ctx { color: #9a9a9a; font-style: italic; }
+        .ex-target { color: #1a1a1a; font-weight: 600; background: #fff8dc; padding: 1px 3px; border-radius: 3px; }
+        .ex-trans { font-size: 0.83rem; color: #2c4f75; background: #eef4fb; border-left: 3px solid #5a8fc4; padding: 7px 11px; border-radius: 6px; margin: 8px 0; line-height: 1.5; }
+        .ex-trans-fail { background: #fff5e6; border-left-color: #e6a700; color: #7a4b00; }
+        .ex-trans-tag { font-size: 0.68rem; text-transform: uppercase; letter-spacing: .5px; font-weight: 700; opacity: .75; margin-right: 6px; }
+        .ex-gloss { font-size: 0.79rem; color: #4a4a4a; background: #f6f6f8; padding: 6px 11px; border-radius: 6px; margin-bottom: 8px; }
+        .chip-implicit { background: #e6f0ff; color: #23478f; }
+        .scr-ctx { color: #7f8c8d; }
+        .scr-target { color: #f5f5f7; font-weight: 700; }
+        .scr-trans { color: #5ac8fa; }
+        .scr-gloss { color: #a0a0a0; font-size: 0.78rem; }
+        .scr-imp { color: #ffbd2e; font-size: 0.72rem; text-transform: uppercase; letter-spacing: .5px; }
+        .verify-backlog { display: block; margin-top: 6px; font-size: 0.85rem; color: var(--primary); background: #eef4fb; padding: 7px 11px; border-radius: 6px; }
     </style>
 </head>
 <body>
@@ -313,6 +326,7 @@
                             <div style="text-align: right;">
                                 <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Active Phase</span>
                                 <h3 id="current-phase-display" style="margin: 4px 0 0 0; color: var(--accent); font-size: 1.2rem;">Data Execution and Initial Mapping</h3>
+                                <p id="corpus-count" style="margin: 8px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">Corpus loading...</p>
                             </div>
                         </div>
                     </div>
@@ -325,8 +339,8 @@
                         <h3 style="margin-top:0;">Detailed Project Roadmap</h3>
                         <ul class="timeline-list">
                             <li><span class="timeline-date">July 20 – July 31: Project Setup and Calibration</span>Translating the transformative climate justice framework into structured AI prompts. Includes the July 30th UN-Habitat meeting to align technical parameters and pilot testing on early NDC 3.0 submissions to calibrate "tokenistic" vs. "embedded" distinctions.</li>
-                            <li><span class="timeline-date">August 1 – August 31: Data Execution and Initial Mapping</span>Locking the document corpus (pre-Aug 1 deadline). Running the full dataset through the AI tool to extract statements, mapping results onto the two-axis matrix, and packaging all data for seamless October transition.</li>
-                            <li><span class="timeline-date">September 1 – September 30: Reduced capacity period</span>Andreia leads human verification of analysed texts.</li>
+                            <li><span class="timeline-date">August 1 – August 31: Data Execution and Initial Mapping</span>Corpus locked at <b>120 NDC documents covering 146 countries</b>, snapshot taken from the UNFCCC registry on 1 August 2026. Running the corpus through the screener and the assessment, then mapping results onto the two-axis matrix.</li>
+                            <li><span class="timeline-date">September 1 – September 30: Paternity Leave</span>Human verification of machine-assessed documents continues, led by the student assistant. <span id="verify-backlog" class="verify-backlog">Verification queue loading...</span></li>
                             <li><span class="timeline-date">October 1 – October 31: Synthesis, Drafting and Visualization</span>Synthesizing AI-generated results, evaluating data for procedural over-reliance ("justice-washing"), drafting core findings and recommendations, and finalizing visual heatmap assets.</li>
                             <li><span class="timeline-date">November 1 – November 8: Final Polish and Pre-COP Dissemination</span>Final blind cross-review on AI outputs. Publishing the report and preparing presentation materials before COP 31 begins on November 9th.</li>
                         </ul>
@@ -439,6 +453,14 @@
 
                         <p><strong>The lexicon.</strong> Terms are held in three groups. <em>Core</em> terms are specific enough to assign a dimension on their own. <em>Supporting</em> terms add weight but cannot assign a dimension by themselves. The <em>recall net</em> holds terms that appear near justice content but are not evidence of it, such as capacity building, climate finance, disaster risk reduction and resilience. Recall net terms flag a passage for you to look at and can never assign a dimension or a grade. This is how the tool stays wide without letting adaptation vocabulary masquerade as restorative justice. The lexicon covers English, Spanish, French, Russian, Arabic, Chinese and Ukrainian, and it carries a version number that is stamped on every export.</p>
 
+                        <p><strong>Explicit and implicit together.</strong> A lot of justice content carries no justice vocabulary at all. A tariff design that protects poor households, a sixty-day comment period, a right of appeal to an independent panel, a rebuilding grant after a flood: all are justice statements that a keyword screen loses completely. Alongside the lexicon the tool therefore runs a layer of phrase patterns, one set per dimension, that look for the shape of the claim rather than its vocabulary. Revenue being returned to households, targeting by poverty rather than by sector, the differentiated needs of a named group, a plan prepared jointly with those affected, losses that adaptation could not prevent. These patterns sit between core and supporting terms in weight, and anything matched on phrasing alone is tagged in the ledger as an implicit match so you can check the reading. On a test set of twenty-one implicit statements written without justice vocabulary, the lexicon alone surfaced three; with the pattern layer it surfaces twenty-one, with no increase in false positives on a control set of technical sentences.</p>
+
+                        <p><strong>Context is shown, the sentence is coded.</strong> Each entry displays the sentence before and after the one being graded, with the graded sentence highlighted. The coding unit stays the single sentence, so nothing is counted twice, but you never have to judge a claim stripped of what surrounds it. This matters for a specific failure mode: the earlier version flagged a sentence whenever any sentence in a three-sentence window matched, so purely technical sentences entered the ledger because a neighbour happened to mention women or indigenous peoples. Those inflated the totals without adding evidence.</p>
+
+                        <p><strong>Non-English documents.</strong> Two aids are provided. The term gloss runs offline and always works: it shows the English equivalent of the justice terminology the classifier actually matched, so you can see why something was flagged even in a script you do not read. Machine translation of the full sentence is available on request and calls a public translation service, so it needs a connection and is rate limited. It is for orientation only. Coding decisions on non-English documents follow the method used in the policy brief: professional translation, secondary verification by a fluent speaker, and blind cross-review of any discrepancy.</p>
+
+                        <p><strong>The retrieval funnel is reported, not hidden.</strong> Every run states how many sentence candidates were seen, how many were discarded as fragments or as table rows, how many were carried forward, how many were assigned a dimension and how many were caught by the recall net alone. If the numbers look wrong you can see where they went rather than having to trust a single total.</p>
+
                         <p><strong>Stage two: classification, tuned for precision.</strong> Each sentence is scored across the four dimensions and assigned to the highest scoring one. There is no default dimension and no fallback. Where two dimensions are close, or where only supporting terms matched, the statement is marked for manual confirmation and both candidates are shown.</p>
 
                         <p><strong>How the grade is decided.</strong> The tool does not look for a magic word. It checks the sentence for ten kinds of evidence: a named legal instrument, a named institution, a budget line or monetary figure, a time bound, an accountability or monitoring provision, a commitment verb, a named measure, hedging, conditionality, and negation. Embedded requires a legal anchor, or an institution together with money, plus a commitment verb and either accountability or a deadline, with no negation nearby. Partial requires a commitment verb and a named measure, institution or deadline, without legal or financial anchoring. Everything else is tokenistic. Each entry in the ledger states which of the ten fired and why the grade followed.</p>
@@ -467,6 +489,7 @@
                             <li><strong>Recall is not yet established.</strong> The pipeline can only be checked on what it retrieved. Reading a stratified sample of pages the screener did not flag, roughly ten pages each from twelve documents across the language groups, is what turns the recall assumption into a number we can publish.</li>
                             <li><strong>The embedded grade is strongest in English, Spanish and French.</strong> Legal and institutional vocabulary in Russian, Arabic and Chinese is thinner in the lexicon, so submissions in those languages carry a higher risk of being graded down for linguistic rather than substantive reasons. Treat non-Latin-script documents as requiring full manual confirmation.</li>
                             <li><strong>Anchors are recorded, not verified.</strong> The tool notes that an NDC names a law. It does not check that the law exists or says what the NDC claims. Decide before coding whether embedded requires external verification, and log the source if it does.</li>
+                            <li><strong>Counts are not comparable across engine versions.</strong> The number of flagged statements dropped sharply between versions because sentences are no longer flagged for the content of their neighbours. Fewer entries in the ledger means less noise, not less coverage. Never compare a total from one engine version against another; compare the dimension profile and the rubric instead.</li>
                             <li><strong>The dataset is the human layer.</strong> Machine output is a first draft. Overrides carry a coder name, a timestamp and an engine version for exactly this reason.</li>
                         </ul>
                     </div>
@@ -1039,6 +1062,76 @@ const LEXICON = {
     }
 };
 
+
+/* ============================================================================
+   2b. IMPLICIT PATTERNS
+   Justice content is often carried by phrasing rather than vocabulary. A tariff
+   design that protects poor households, a comment period, a right of appeal or a
+   rebuilding grant are all justice statements that contain no justice keyword.
+   These patterns sit between core (3) and supporting (1) at weight 2. They are
+   phrase-shaped and anchored, so they stay narrow.
+   ========================================================================== */
+
+const IMPLICIT_PATTERNS = {
+    Recognitional: [
+        /(differentiated|specific|particular|distinct|special)\s+(needs|circumstances|requirements|vulnerabilit\p{L}*|situation)\s+(of|for)/iu,
+        /(female|women|child|children|youth|elderly|single.parent)[- ]headed\s+household/iu,
+        /(without|lacking|no)\s+(secure\s+)?(land\s+)?tenure/iu,
+        /(unplanned|informal|irregular|spontaneous)\s+(area|areas|settlement|settlements|neighbourhood|neighborhood)/iu,
+        /(customary|traditional|ancestral|ceremonial|seasonal)\s+(practice|practices|calendar|calendars|governance|institution|institutions|use|uses)/iu,
+        /(sign\s+language|accessible\s+format|braille|easy[- ]read|assistive)/iu,
+        /(caring\s+for\s+the\s+sick|orphan|widow|destitute|landless|nomadic|transhuman)/iu,
+        /(attention|priority|consideration)\s+(will\s+be\s+)?(paid|given)\s+to\s+(household|people|those|persons|group|communities)/iu,
+        /(mother\s+tongue|local\s+language|indigenous\s+language|minority\s+language)/iu,
+        /(necesidades\s+(diferenciadas|espec[ií]ficas))|(hogares\s+encabezados\s+por)|(asentamientos\s+informales)/iu,
+        /(besoins\s+(diff[ée]renci[ée]s|sp[ée]cifiques))|(m[ée]nages\s+dirig[ée]s\s+par)|(quartiers\s+informels)/iu
+    ],
+    Procedural: [
+        /(made\s+available|open|released)\s+(for|to)\s+(public\s+)?(comment|comments|review|scrutiny|objection)/iu,
+        /(comment|consultation|objection)\s+period\s+of\s+\d+/iu,
+        /(village|community|barangay|town|citizens|people'?s|general)\s+(assembly|assemblies|meeting|meetings|forum|forums)/iu,
+        /(right\s+of\s+appeal|may\s+appeal|can\s+appeal|appeal\s+(to|before)\s+an?\s+(independent|impartial))/iu,
+        /(independent|impartial|third[- ]party)\s+(panel|review|tribunal|arbiter|adjudicat\p{L}*)/iu,
+        /(published|publicly\s+available|open\s+format|machine[- ]readable|open\s+data)/iu,
+        /(prepared|developed|designed|drafted|elaborated)\s+(jointly|together|in\s+partnership|collaboratively)\s+with/iu,
+        /(endorsed|approved|validated|ratified)\s+by\s+(the\s+)?(affected|local|village|community|resident)/iu,
+        /(seats?|representation|quota)\s+(for|reserved\s+for)\s+(women|youth|indigenous|local|communities)/iu,
+        /(disponible\s+para\s+comentarios)|(asamblea\s+comunitaria)|(derecho\s+de\s+apelaci[oó]n)/iu,
+        /(mis\s+[àa]\s+disposition\s+pour\s+commentaires)|(assembl[ée]e\s+villageoise)|(droit\s+de\s+recours)/iu
+    ],
+    Distributive: [
+        /(revenue|revenues|proceeds|receipts)\s+(will\s+be\s+)?(recycl\p{L}*|return\p{L}*|redistribut\p{L}*|channel\p{L}*|direct\p{L}*)\s+(to|towards|back)/iu,
+        /(rebate|rebates|dividend|dividends|transfer|transfers|refund)\s+(to|for|targeted)/iu,
+        /(lifeline|social|preferential|concessional|reduced)\s+(tariff|tariffs|rate|rates|block|pricing)/iu,
+        /(affordab\p{L}*|within\s+reach)\s+(for|to)\s+(poor|low[- ]income|vulnerable|rural|household)/iu,
+        /(target\p{L}*|prioritis\p{L}*|prioritiz\p{L}*|focus\p{L}*)\s+(on\s+)?(the\s+)?(poorest|lowest[- ]income|low[- ]income|most\s+deprived|least\s+served|underserved|worst[- ]affected)/iu,
+        /(highest|greatest)\s+(poverty|deprivation|need|vulnerability)\s+(headcount|rate|index|level)?/iu,
+        /(supplement|top[- ]up|uplift|additional\s+support)\s+for\s+(rural|remote|poor|low[- ]income|off[- ]grid)/iu,
+        /(household\s+(energy\s+)?support\s+(scheme|programme|program))|(fuel\s+poverty)/iu,
+        /(free\s+allocation|windfall)\s+.{0,40}(phase|withdraw|end)/iu,
+        /(who\s+(pays|bears|benefits))|(share\s+of\s+(the\s+)?(costs|burden|benefits))/iu,
+        /(ingresos\s+se\s+(redistribu|devuelv))|(tarifa\s+social)|(hogares\s+de\s+bajos\s+ingresos)/iu,
+        /(recettes\s+.{0,20}(redistribu|revers))|(tarif\s+social)|(m[ée]nages\s+[àa]\s+faible\s+revenu)/iu
+    ],
+    Restorative: [
+        /(lost|destroyed|damaged)\s+(home|homes|house|houses|land|livelihood|livelihoods|crops|property)/iu,
+        /(rebuilding|reconstruction|recovery|rehabilitation)\s+(grant|grants|assistance|support|programme|program|fund)/iu,
+        /(histori\p{L}*|past|legacy|colonial)\s+.{0,45}(clearance|degradation|extraction|dispossession|pollution|emission)/iu,
+        /(retain|restore|return)\s+(rights?|access|title)\s+(to|over)\s+(their|the)\s+(former|traditional|ancestral|customary)/iu,
+        /(harms?|losses|damages?|impacts?|costs?)\s+.{0,50}(could\s+not|cannot|can\s+not|was\s+not\s+able\s+to|were\s+not\s+able\s+to)\s+(be\s+)?(prevent\p{L}*|avoid\p{L}*|avert\p{L}*|address\p{L}*)/iu,
+        /(beyond|exceed\p{L}*|limits?\s+of)\s+adaptation/iu,
+        /(burial\s+ground|grave|graveyard|cemetery|sacred\s+site|heritage\s+site|shrine)/iu,
+        /(make\s+good|put\s+right|set\s+right|acknowledge\s+responsib\p{L}*|accepts?\s+(that|responsibility))/iu,
+        /(ex[- ]gratia|solatium|indemnif\p{L}*|restitution)/iu,
+        /(p[ée]rdida\s+de\s+(viviendas|medios))|(ayuda\s+para\s+la\s+reconstrucci[oó]n)|(sitios\s+sagrados)/iu,
+        /(perte\s+de\s+(logements|moyens))|(aide\s+[àa]\s+la\s+reconstruction)|(sites\s+sacr[ée]s)/iu
+    ]
+};
+
+function whichPatterns(dim, text) {
+    return (IMPLICIT_PATTERNS[dim] || []).filter(re => { re.lastIndex = 0; return re.test(text); });
+}
+
 /* Recall net. Flags a passage for human review. Contributes no dimension weight
    and cannot set a tier. These are the terms that produced false positives in
    v1: government agencies, adaptation vocabulary, generic co-benefits. */
@@ -1214,8 +1307,9 @@ function classifyDimension(sentence) {
     for (const [dim, sets] of Object.entries(LEXICON)) {
         const coreHits = whichTerms(sets.core, sentence);
         const suppHits = whichTerms(sets.supporting, sentence);
-        scores[dim] = coreHits.length * 3 + suppHits.length;
-        evidence[dim] = { core: coreHits, supporting: suppHits };
+        const patHits = whichPatterns(dim, sentence);
+        scores[dim] = coreHits.length * 3 + patHits.length * 2 + suppHits.length;
+        evidence[dim] = { core: coreHits, supporting: suppHits, patterns: patHits.length };
     }
     const screenHits = whichTerms(SCREEN_ONLY, sentence);
 
@@ -1231,7 +1325,8 @@ function classifyDimension(sentence) {
     if (tied.length === 1) {
         dimension = top[0];
         reason = "highest weighted dimension evidence";
-        if (evidence[dimension].core.length === 0) { needsReview = true; reason = "supporting terms only, no core term"; }
+        if (evidence[dimension].core.length === 0 && evidence[dimension].patterns === 0) { needsReview = true; reason = "supporting terms only, no core term"; }
+        else if (evidence[dimension].core.length === 0) { needsReview = true; reason = "matched on implicit phrasing rather than an explicit justice term, confirm the reading"; }
         const runnerUp = ranked[1];
         if (runnerUp && runnerUp[1] >= top[1] * 0.6) {
             needsReview = true;
@@ -1581,12 +1676,13 @@ function buildRubric(profile, statements) {
                         let opt1 = document.createElement('option');
                         opt1.value = targetUrl;
                         opt1.textContent = `${ndc.c} (${ndc.l})`;
+                        opt1.setAttribute('data-lang', ndc.l || 'Unknown');
                         selectAi.appendChild(opt1);
                     }
 
                     if (selectEval) {
                         let opt2 = document.createElement('option');
-                        opt2.value = JSON.stringify({ c: ndc.c, url: targetUrl });
+                        opt2.value = JSON.stringify({ c: ndc.c, url: targetUrl, l: ndc.l || 'Unknown' });
                         opt2.textContent = `${ndc.c} (${ndc.l})`;
                         selectEval.appendChild(opt2);
                     }
@@ -1660,6 +1756,18 @@ function buildRubric(profile, statements) {
             if(ratioElem) ratioElem.innerText = `${analyzed} / ${total}`;
             if(pctElem) pctElem.innerText = `${pct}% Completed`;
             if(barElem) barElem.style.width = `${pct}%`;
+
+            const docsTotal = ndcData.length;
+            const docsDone = ndcData.filter(i => i.s === 1).length;
+            const docsLeft = docsTotal - docsDone;
+            const backlog = document.getElementById('verify-backlog');
+            if (backlog) {
+                backlog.innerHTML = docsDone === 0
+                    ? `Verification queue: nothing marked analysed yet. All <b>${docsTotal} documents</b> (${total} countries) are still to be run and verified.`
+                    : `Verification queue: <b>${docsDone} of ${docsTotal} documents</b> marked analysed and awaiting or undergoing human verification, covering ${analyzed} of ${total} countries. <b>${docsLeft}</b> documents not yet analysed. Toggle status on the Global Map page to update this.`;
+            }
+            const corpusLine = document.getElementById('corpus-count');
+            if (corpusLine) corpusLine.innerHTML = `<b>${docsTotal}</b> NDC documents in the corpus, covering <b>${total}</b> countries. <b>${docsDone}</b> analysed, <b>${docsLeft}</b> remaining.`;
         }
 
         function loadTables() {
@@ -1748,11 +1856,6 @@ function buildRubric(profile, statements) {
             const dimension = document.getElementById('new-dimension').value;
             const statement = document.getElementById('new-statement').value.trim();
             const analysis = document.getElementById('new-analysis').value.trim();
-            const locator = (document.getElementById('new-page') || {}).value || "";
-            const section = (document.getElementById('new-section') || {}).value || "";
-            const scope = (document.getElementById('new-scope') || {}).value || "";
-            const conditionality = (document.getElementById('new-conditional') || {}).value || "";
-            const coder = (typeof currentUser !== "undefined" ? currentUser : "Local");
 
             if (!statement || !analysis) { alert("Please fill in both the statement and analysis fields."); return; }
 
@@ -1765,7 +1868,7 @@ function buildRubric(profile, statements) {
                 document.getElementById('submit-example-btn').innerText = "Save Example to Hub";
             } else {
                 const newId = 'ex-' + Date.now();
-                codingExamples.push({ id: newId, country, level, dimension, statement, analysis, locator, section, scope, conditionality, coder, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION });
+                codingExamples.push({ id: newId, country, level, dimension, statement, analysis });
             }
 
             try {
@@ -1857,8 +1960,8 @@ function buildRubric(profile, statements) {
                 ['Setup', 'Project Setup & Calibration', 'Phase', new Date(2026, 6, 20), new Date(2026, 6, 31), null, 100, null],
                 ['Mtg1', 'UN-Habitat Meeting', 'Meeting', new Date(2026, 6, 30), new Date(2026, 6, 31), null, 100, null],
                 ['Data', 'Data Execution & Mapping', 'Analysis', new Date(2026, 7, 1), new Date(2026, 7, 31), null, 15, null],
-                ['Leave', 'Reduced capacity period', 'Leave', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
-                ['Verify', 'Andreia Verification', 'Verification', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
+                ['Leave', 'Paternity Leave', 'Leave', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
+                ['Verify', 'Human Verification', 'Verification', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
                 ['Synth', 'Synthesis & Drafting', 'Phase', new Date(2026, 9, 1), new Date(2026, 9, 31), null, 0, null],
                 ['Final', 'Final Dissemination', 'Phase', new Date(2026, 10, 1), new Date(2026, 10, 8), null, 0, null],
                 ['COP', 'COP 31 Begins', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 10), null, 0, null]
@@ -1947,7 +2050,7 @@ function buildRubric(profile, statements) {
    so a scanned PDF cannot masquerade as "no justice found".
    ========================================================================== */
 
-async function extractDocument(fileUrl, log) {
+async function extractDocument(fileUrl, log, docLang) {
     let finalUrl = fileUrl;
     if (fileUrl.startsWith('http') && !fileUrl.includes('huggingface.co')) {
         try {
@@ -1966,7 +2069,9 @@ async function extractDocument(fileUrl, log) {
     log && log(`PDF loaded: ${pdf.numPages} pages. Rebuilding page layout.`);
 
     const units = [];
-    const diag = { pages: pdf.numPages, lowTextPages: 0, skipped: [], totalChars: 0, columns: 0 };
+    const diag = { pages: pdf.numPages, lowTextPages: 0, skipped: [], totalChars: 0, columns: 0,
+                   lang: docLang || "Unknown",
+                   funnel: { sentencesSeen: 0, tooShort: 0, numericTable: 0, headings: 0, kept: 0 } };
     let currentHeading = "", currentSection = { type: "UNKNOWN", narrative: false };
     let unitIndex = 0;
 
@@ -2028,25 +2133,38 @@ async function extractDocument(fileUrl, log) {
 
         const medianH = ordered.map(l => l.h).sort((a, b) => a - b)[Math.floor(ordered.length / 2)] || 10;
 
+        const pageUnits = [];
         ordered.forEach(line => {
             const t = line.text;
             if (!t) return;
             if (looksLikeHeading(t) || (line.h > medianH * 1.25 && t.length < 90)) {
                 currentHeading = t;
                 currentSection = classifySection(t);
+                diag.funnel.headings++;
                 return;
             }
             splitSentences(t).forEach(sent => {
-                if (sent.length < 25) return;
-                if (/^[\d\s.,%()/-]+$/.test(sent)) return;                       // table row of numbers
-                if ((sent.match(/\d/g) || []).length / sent.length > 0.35) return; // dense numeric table
-                units.push({
+                diag.funnel.sentencesSeen++;
+                if (sent.length < 25) { diag.funnel.tooShort++; return; }
+                if (/^[\d\s.,%()/-]+$/.test(sent)) { diag.funnel.numericTable++; return; }
+                if ((sent.match(/\d/g) || []).length / sent.length > 0.35) { diag.funnel.numericTable++; return; }
+                pageUnits.push({
                     id: `p${p}-s${unitIndex++}`,
                     page: p, text: sent, heading: currentHeading,
-                    section: currentSection, column: twoCol
+                    section: currentSection, column: twoCol, lang: docLang || "Unknown"
                 });
             });
         });
+
+        // Attach the neighbouring sentences. The coding unit stays the sentence,
+        // so nothing is double counted, but the coder always reads it in context.
+        pageUnits.forEach((u, i) => {
+            u.before = i > 0 ? pageUnits[i - 1].text : "";
+            u.after = i < pageUnits.length - 1 ? pageUnits[i + 1].text : "";
+            u.context = [u.before, u.text, u.after].filter(Boolean).join(" ");
+        });
+        diag.funnel.kept += pageUnits.length;
+        pageUnits.forEach(u => units.push(u));
     }
 
     diag.scannedRisk = diag.lowTextPages / diag.pages > 0.3 || diag.totalChars / diag.pages < 300;
@@ -2065,7 +2183,8 @@ function analyseUnits(units) {
         const features = detectFeatures(u.text);
         const tierRes = classifyTier(u.text, features);
         const record = {
-            id: u.id, page: u.page, text: u.text, heading: u.heading, section: u.section,
+            id: u.id, page: u.page, text: u.text, before: u.before || "", after: u.after || "",
+            context: u.context || u.text, lang: u.lang || "Unknown", heading: u.heading, section: u.section,
             dimension: dim.dimension, alternates: dim.alternates, needsReview: dim.needsReview,
             dimReason: dim.reason, matched: dim.dimension ? dim.evidence[dim.dimension] : { core: [], supporting: [] },
             screenHits: dim.screenHits,
@@ -2075,6 +2194,7 @@ function analyseUnits(units) {
             scope: classifyScope(u.text, features),
             cluster: classifyCluster(u.text),
             structural: anyTerm(STRUCTURAL_MARKERS, u.text),
+            translation: null, translationSource: null,
             override: null
         };
         if (dim.dimension) statements.push(record); else screened.push(record);
@@ -2099,6 +2219,7 @@ function evaluateCountry(country, units, diag) {
     const rubric = buildRubric(profile, statements.map(s => ({ ...s, dimension: effective(s).dimension, tier: effective(s).tier })));
 
     const descriptive = {
+        sentencesRead: (diag && diag.funnel) ? diag.funnel.kept : units.length,
         flagged: statements.length,
         forReview: statements.filter(s => s.needsReview).length,
         screenOnly: screened.length,
@@ -2119,6 +2240,254 @@ function evaluateCountry(country, units, diag) {
         engine: ENGINE_VERSION, lexicon: LEXICON_VERSION,
         run: new Date().toISOString(), coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous")
     };
+}
+
+/* ============================================================================
+   11. TRANSLATION
+   Two layers, because they answer different questions.
+
+   Layer 1, the gloss, always works and never leaves the browser. It maps the
+   justice terminology the classifier actually matched to its English equivalent,
+   so you can see why a statement was flagged even if you cannot read it.
+
+   Layer 2, machine translation, gives a readable English rendering of the whole
+   sentence. It calls a public endpoint, so it needs network, it is rate limited,
+   and it is orientation only. Coding decisions on non-English documents still
+   follow the policy brief method: professional translation with secondary
+   verification by a fluent speaker, and blind cross-review of discrepancies.
+   ========================================================================== */
+
+const LANG_CODES = {
+    English: "en", Spanish: "es", French: "fr", Russian: "ru", Arabic: "ar",
+    Chinese: "zh", Ukrainian: "uk", Portuguese: "pt", German: "de", Italian: "it"
+};
+
+/* Non-English justice terminology to English. Used for the offline gloss. */
+const GLOSS = {
+    // Spanish
+    "grupos marginados": "marginalized groups", "pueblos indigenas": "indigenous peoples",
+    "pueblos indígenas": "indigenous peoples", "conocimientos tradicionales": "traditional knowledge",
+    "saberes ancestrales": "ancestral knowledge", "exclusion social": "social exclusion",
+    "exclusión social": "social exclusion", "enfoque de genero": "gender approach",
+    "enfoque de género": "gender approach", "igualdad de genero": "gender equality",
+    "igualdad de género": "gender equality", "personas con discapacidad": "persons with disabilities",
+    "pueblos originarios": "indigenous peoples", "afrodescendiente": "afro-descendant",
+    "tenencia de la tierra": "land tenure", "mujeres": "women", "juventud": "youth",
+    "derechos humanos": "human rights", "comunidades locales": "local communities",
+    "grupos vulnerables": "vulnerable groups",
+    "consentimiento libre previo e informado": "free, prior and informed consent",
+    "consulta previa": "prior consultation", "consulta publica": "public consultation",
+    "consulta pública": "public consultation", "mecanismo de reclamacion": "grievance mechanism",
+    "mecanismo de reclamación": "grievance mechanism", "planificacion participativa": "participatory planning",
+    "planificación participativa": "participatory planning", "sociedad civil": "civil society",
+    "acceso a la informacion": "access to information", "acceso a la información": "access to information",
+    "gobernanza participativa": "participatory governance", "participacion": "participation",
+    "participación": "participation", "partes interesadas": "stakeholders", "transparencia": "transparency",
+    "transicion justa": "just transition", "transición justa": "just transition",
+    "reparto equitativo": "equitable sharing", "distribucion de beneficios": "benefit sharing",
+    "distribución de beneficios": "benefit sharing", "proteccion social": "social protection",
+    "protección social": "social protection", "pobreza energetica": "energy poverty",
+    "pobreza energética": "energy poverty", "equidad intergeneracional": "intergenerational equity",
+    "responsabilidades comunes pero diferenciadas": "common but differentiated responsibilities",
+    "redistribucion": "redistribution", "redistribución": "redistribution", "equidad": "equity",
+    "medios de vida": "livelihoods", "transferencia de tecnologia": "technology transfer",
+    "transferencia de tecnología": "technology transfer", "cooperacion sur-sur": "south-south cooperation",
+    "cooperación sur-sur": "south-south cooperation",
+    "perdidas y danos": "loss and damage", "pérdidas y daños": "loss and damage",
+    "danos no economicos": "non-economic losses", "daños no económicos": "non-economic losses",
+    "responsabilidad historica": "historical responsibility", "responsabilidad histórica": "historical responsibility",
+    "deuda ecologica": "ecological debt", "deuda ecológica": "ecological debt",
+    "reparacion": "reparation", "reparación": "reparation",
+    "reubicacion planificada": "planned relocation", "reubicación planificada": "planned relocation",
+    "desplazamiento climatico": "climate displacement", "desplazamiento climático": "climate displacement",
+    "movilidad climatica": "climate mobility", "movilidad climática": "climate mobility",
+    "injusticias pasadas": "past injustices", "desplazamiento": "displacement",
+    "reasentamiento": "resettlement", "compensacion": "compensation", "compensación": "compensation",
+    "justicia climatica": "climate justice", "justicia climática": "climate justice",
+    "desigualdad estructural": "structural inequality", "causas estructurales": "structural causes",
+    "reforma agraria": "agrarian reform", "relaciones de poder": "power relations",
+
+    // French
+    "groupes marginalises": "marginalized groups", "groupes marginalisés": "marginalized groups",
+    "peuples autochtones": "indigenous peoples", "savoirs traditionnels": "traditional knowledge",
+    "exclusion sociale": "social exclusion", "approche genre": "gender approach",
+    "egalite des genres": "gender equality", "égalité des genres": "gender equality",
+    "personnes handicapees": "persons with disabilities", "personnes handicapées": "persons with disabilities",
+    "securite fonciere": "land tenure security", "sécurité foncière": "land tenure security",
+    "femmes": "women", "jeunes": "youth", "droits humains": "human rights",
+    "communautes locales": "local communities", "communautés locales": "local communities",
+    "groupes vulnerables": "vulnerable groups", "groupes vulnérables": "vulnerable groups",
+    "consentement prealable": "prior consent", "consentement préalable": "prior consent",
+    "consultation publique": "public consultation", "planification participative": "participatory planning",
+    "mecanisme de recours": "grievance mechanism", "mécanisme de recours": "grievance mechanism",
+    "societe civile": "civil society", "société civile": "civil society",
+    "acces a l'information": "access to information", "accès à l'information": "access to information",
+    "gouvernance participative": "participatory governance", "parties prenantes": "stakeholders",
+    "transparence": "transparency", "transition juste": "just transition",
+    "partage equitable": "equitable sharing", "partage équitable": "equitable sharing",
+    "partage des benefices": "benefit sharing", "partage des bénéfices": "benefit sharing",
+    "protection sociale": "social protection", "precarite energetique": "energy poverty",
+    "précarité énergétique": "energy poverty", "equite intergenerationnelle": "intergenerational equity",
+    "équité intergénérationnelle": "intergenerational equity",
+    "responsabilites communes mais differenciees": "common but differentiated responsibilities",
+    "responsabilités communes mais différenciées": "common but differentiated responsibilities",
+    "transfert de technologie": "technology transfer", "cooperation sud-sud": "south-south cooperation",
+    "coopération sud-sud": "south-south cooperation", "equite": "equity", "équité": "equity",
+    "pertes et prejudices": "loss and damage", "pertes et préjudices": "loss and damage",
+    "prejudices non economiques": "non-economic losses", "préjudices non économiques": "non-economic losses",
+    "responsabilite historique": "historical responsibility", "responsabilité historique": "historical responsibility",
+    "dette ecologique": "ecological debt", "dette écologique": "ecological debt",
+    "reparation": "reparation", "réparation": "reparation",
+    "relocalisation planifiee": "planned relocation", "relocalisation planifiée": "planned relocation",
+    "deplacement climatique": "climate displacement", "déplacement climatique": "climate displacement",
+    "mobilite climatique": "climate mobility", "mobilité climatique": "climate mobility",
+    "deplacement": "displacement", "déplacement": "displacement",
+    "reinstallation": "resettlement", "réinstallation": "resettlement", "indemnisation": "compensation",
+    "justice climatique": "climate justice", "inegalites structurelles": "structural inequalities",
+    "inégalités structurelles": "structural inequalities", "causes profondes": "root causes",
+    "reforme fonciere": "land reform", "réforme foncière": "land reform",
+    "rapports de pouvoir": "power relations",
+
+    // Russian
+    "маргинализированные": "marginalized", "коренных народов": "indigenous peoples",
+    "коренные народы": "indigenous peoples", "традиционные знания": "traditional knowledge",
+    "гендерное равенство": "gender equality", "социальная изоляция": "social exclusion",
+    "лица с инвалидностью": "persons with disabilities", "женщины": "women", "молодежь": "youth",
+    "права человека": "human rights", "уязвимые группы": "vulnerable groups",
+    "предварительное согласие": "prior consent", "общественные консультации": "public consultations",
+    "гражданское общество": "civil society", "механизм рассмотрения жалоб": "grievance mechanism",
+    "доступ к информации": "access to information", "участие общественности": "public participation",
+    "участие": "participation", "заинтересованных сторон": "stakeholders", "прозрачность": "transparency",
+    "справедливый переход": "just transition", "справедливое распределение": "equitable distribution",
+    "социальная защита": "social protection", "энергетическая бедность": "energy poverty",
+    "общая но дифференцированная ответственность": "common but differentiated responsibility",
+    "передача технологий": "technology transfer", "сотрудничество юг-юг": "south-south cooperation",
+    "справедливость": "justice", "потери и ущерб": "loss and damage",
+    "неэкономические потери": "non-economic losses", "историческая ответственность": "historical responsibility",
+    "экологический долг": "ecological debt", "возмещение ущерба": "compensation for damage",
+    "климатическая миграция": "climate migration", "планируемое переселение": "planned relocation",
+    "перемещение": "displacement", "переселение": "resettlement", "компенсация": "compensation",
+    "климатическая справедливость": "climate justice", "структурное неравенство": "structural inequality",
+    "коренные причины": "root causes",
+
+    // Arabic
+    "الفئات المهمشة": "marginalized groups", "الشعوب الأصلية": "indigenous peoples",
+    "المعارف التقليدية": "traditional knowledge", "المساواة بين الجنسين": "gender equality",
+    "الإقصاء الاجتماعي": "social exclusion", "الأشخاص ذوي الإعاقة": "persons with disabilities",
+    "المرأة": "women", "الشباب": "youth", "حقوق الإنسان": "human rights",
+    "الفئات الضعيفة": "vulnerable groups", "الموافقة الحرة والمسبقة والمستنيرة": "free, prior and informed consent",
+    "المشاورات العامة": "public consultations", "المجتمع المدني": "civil society",
+    "آلية التظلم": "grievance mechanism", "الحصول على المعلومات": "access to information",
+    "المشاركة العامة": "public participation", "المشاركة": "participation",
+    "أصحاب المصلحة": "stakeholders", "الشفافية": "transparency", "انتقال عادل": "just transition",
+    "التقاسم العادل": "equitable sharing", "الحماية الاجتماعية": "social protection",
+    "فقر الطاقة": "energy poverty", "المسؤوليات المشتركة والمتباينة": "common but differentiated responsibilities",
+    "نقل التكنولوجيا": "technology transfer", "التعاون بين بلدان الجنوب": "south-south cooperation",
+    "الإنصاف": "equity", "الخسائر والأضرار": "loss and damage",
+    "الخسائر غير الاقتصادية": "non-economic losses", "المسؤولية التاريخية": "historical responsibility",
+    "الدين البيئي": "ecological debt", "جبر الضرر": "reparation", "التنقل المناخي": "climate mobility",
+    "إعادة التوطين المخطط": "planned relocation", "النزوح": "displacement",
+    "إعادة التوطين": "resettlement", "التعويض": "compensation", "العدالة المناخية": "climate justice",
+    "عدم المساواة الهيكلية": "structural inequality", "الأسباب الجذرية": "root causes",
+
+    // Chinese
+    "边缘化群体": "marginalized groups", "原住民": "indigenous peoples", "少数民族": "ethnic minorities",
+    "传统知识": "traditional knowledge", "性别平等": "gender equality", "社会排斥": "social exclusion",
+    "残疾人": "persons with disabilities", "弱势群体": "vulnerable groups", "妇女": "women",
+    "青年": "youth", "人权": "human rights", "地方社区": "local communities",
+    "自由事先知情同意": "free, prior and informed consent", "公众参与": "public participation",
+    "公众咨询": "public consultation", "民间社会": "civil society", "申诉机制": "grievance mechanism",
+    "信息公开": "access to information", "参与式规划": "participatory planning", "参与": "participation",
+    "利益相关方": "stakeholders", "透明": "transparency", "公正转型": "just transition",
+    "公平分享": "equitable sharing", "利益共享": "benefit sharing", "社会保障": "social protection",
+    "能源贫困": "energy poverty", "共同但有区别的责任": "common but differentiated responsibilities",
+    "代际公平": "intergenerational equity", "技术转让": "technology transfer",
+    "南南合作": "south-south cooperation", "公平": "equity", "损失与损害": "loss and damage",
+    "非经济损失": "non-economic losses", "历史责任": "historical responsibility",
+    "生态债务": "ecological debt", "补偿": "compensation", "气候流动": "climate mobility",
+    "有计划的迁移": "planned relocation", "流离失所": "displacement", "重新安置": "resettlement",
+    "赔偿": "compensation", "气候正义": "climate justice", "气候公正": "climate justice",
+    "结构性不平等": "structural inequality", "根本原因": "root causes",
+
+    // Ukrainian
+    "маргіналізовані": "marginalized", "корінних народів": "indigenous peoples",
+    "традиційні знання": "traditional knowledge", "гендерна рівність": "gender equality",
+    "соціальне відчуження": "social exclusion", "особи з інвалідністю": "persons with disabilities",
+    "попередня згода": "prior consent", "громадські консультації": "public consultations",
+    "громадянське суспільство": "civil society", "механізм оскарження": "grievance mechanism",
+    "доступ до інформації": "access to information", "справедливий перехід": "just transition",
+    "справедливий розподіл": "equitable distribution", "соціальний захист": "social protection",
+    "втрати та збитки": "loss and damage", "неекономічні втрати": "non-economic losses",
+    "історична відповідальність": "historical responsibility", "кліматична міграція": "climate migration"
+};
+
+function glossTerms(statement) {
+    const out = [];
+    const seen = new Set();
+    [...statement.matched.core, ...statement.matched.supporting].forEach(t => {
+        const en = GLOSS[t.toLowerCase()];
+        if (en && !seen.has(en)) { seen.add(en); out.push({ source: t, english: en }); }
+    });
+    return out;
+}
+
+/* ---------- machine translation, optional ---------- */
+
+const TRANSLATION_CACHE = new Map();
+let translationBudgetSpent = 0;
+const TRANSLATION_CHAR_BUDGET = 45000; // conservative daily ceiling for the free tier
+
+function needsTranslation(statement) {
+    if (!statement) return false;
+    const lang = statement.lang || "Unknown";
+    if (lang === "English") return false;
+    // trust the script over the metadata label
+    if (/[\u0400-\u04ff\u0600-\u06ff\u4e00-\u9fff\u3040-\u30ff]/.test(statement.text)) return true;
+    return LANG_CODES[lang] && LANG_CODES[lang] !== "en";
+}
+
+async function translateOne(text, sourceLang) {
+    const key = (sourceLang || "auto") + "::" + text;
+    if (TRANSLATION_CACHE.has(key)) return TRANSLATION_CACHE.get(key);
+    if (translationBudgetSpent + text.length > TRANSLATION_CHAR_BUDGET) {
+        return { text: null, source: "budget", note: "translation budget for this session is used up" };
+    }
+    const src = LANG_CODES[sourceLang] || "autodetect";
+    const url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text.slice(0, 480))
+        + "&langpair=" + encodeURIComponent(src + "|en");
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        const out = data && data.responseData && data.responseData.translatedText;
+        if (!out || /MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(out)) {
+            throw new Error(out || "empty response");
+        }
+        const result = { text: out, source: "MyMemory", note: "" };
+        TRANSLATION_CACHE.set(key, result);
+        translationBudgetSpent += text.length;
+        return result;
+    } catch (e) {
+        const result = { text: null, source: "failed", note: e.message };
+        return result;
+    }
+}
+
+async function translateStatements(statements, sourceLang, onProgress) {
+    const todo = statements.filter(s => needsTranslation(s) && !s.translation);
+    let done = 0, ok = 0;
+    for (const s of todo) {
+        const r = await translateOne(s.text, sourceLang);
+        s.translation = r.text;
+        s.translationSource = r.source;
+        s.translationNote = r.note;
+        if (r.text) ok++;
+        done++;
+        if (onProgress) onProgress(done, todo.length, ok);
+        if (r.source === "budget") break;
+        await new Promise(res => setTimeout(res, 260)); // stay under the public rate limit
+    }
+    return { attempted: todo.length, translated: ok };
 }
 
 /* ============================================================================
@@ -2160,12 +2529,14 @@ async function runFullCountryEvaluation() {
     diagBox.innerHTML = "";
 
     try {
-        const { units, diag } = await extractDocument(cfg.url, (m, k) => { diagBox.innerHTML += `<div class="${k === 'warn' ? 'diag-warn' : 'diag-ok'}">${esc(m)}</div>`; });
+        const { units, diag } = await extractDocument(cfg.url, (m, k) => { diagBox.innerHTML += `<div class="${k === 'warn' ? 'diag-warn' : 'diag-ok'}">${esc(m)}</div>`; }, cfg.l);
 
         if (diag.scannedRisk) {
             diagBox.innerHTML += `<div class="diag-warn"><b>Text layer is thin.</b> ${diag.lowTextPages} of ${diag.pages} pages returned little or no text, averaging ${Math.round(diag.totalChars / diag.pages)} characters per page. This document may be scanned. Results below are not reliable until it is OCRed. Do not record this as "no justice content".</div>`;
         }
-        diagBox.innerHTML += `<div class="diag-ok">${diag.pages} pages, ${units.length} sentence units, ${diag.skipped.length} pages skipped (${diag.skipped.map(s => s.page + ": " + s.reason).join("; ") || "none"}), ${diag.columns} page(s) read as two columns.</div>`;
+        const f = diag.funnel;
+        diagBox.innerHTML += `<div class="diag-ok"><b>Retrieval funnel.</b> ${diag.pages} pages, ${diag.skipped.length} skipped (${diag.skipped.map(s => s.page + ": " + s.reason).join("; ") || "none"}), ${diag.columns} page(s) read as two columns, ${f.headings} headings used to tag sections.
+        Of ${f.sentencesSeen} sentence candidates: ${f.tooShort} discarded as fragments under 25 characters, ${f.numericTable} discarded as table rows, <b>${f.kept} carried forward as coding units</b>. Document language recorded as ${esc(diag.lang)}.</div>`;
 
         lastEvaluation = evaluateCountry(cfg.c, units, diag);
         renderEvaluation();
@@ -2242,6 +2613,38 @@ function renderQuadrant(rp, dr, country) {
         Upper right is the region the policy brief describes as approaching transformative climate justice.</p>`;
 }
 
+/* ---------- Translation display ---------- */
+
+function renderTranslation(s) {
+    if (!needsTranslation(s)) return "";
+    const gloss = glossTerms(s);
+    let out = "";
+    if (s.translation) {
+        out += `<div class="ex-trans"><span class="ex-trans-tag">English (machine, ${esc(s.translationSource)})</span> ${esc(s.translation)}</div>`;
+    } else if (s.translationSource === "failed" || s.translationSource === "budget") {
+        out += `<div class="ex-trans ex-trans-fail"><span class="ex-trans-tag">English</span> not retrieved (${esc(s.translationNote || s.translationSource)}). The term gloss below is offline and always available.</div>`;
+    }
+    if (gloss.length) {
+        out += `<div class="ex-gloss"><b>Term gloss:</b> ` + gloss.map(g => `${esc(g.source)} = ${esc(g.english)}`).join("; ") + `</div>`;
+    }
+    return out;
+}
+
+async function translateLedger() {
+    const R = lastEvaluation; if (!R) return;
+    const btn = document.getElementById('translate-btn');
+    const note = document.getElementById('translate-note');
+    const pending = R.statements.filter(s => needsTranslation(s) && !s.translation);
+    if (!pending.length) { note.innerHTML = "Nothing to translate. This document is recorded as English, or every non-English statement already has a translation."; return; }
+    btn.disabled = true;
+    const res = await translateStatements(R.statements, R.diag && R.diag.lang, (done, total, ok) => {
+        note.innerHTML = `Translating ${done} of ${total}, ${ok} returned so far...`;
+    });
+    btn.disabled = false;
+    note.innerHTML = `${res.translated} of ${res.attempted} statements translated. Machine translation is for orientation only. Coding decisions on non-English documents follow the policy brief method: professional translation with verification by a fluent speaker, and blind cross-review of discrepancies.`;
+    renderLedger();
+}
+
 /* ---------- Ledger with coder overrides ---------- */
 
 function setLedgerFilter(kind, value) {
@@ -2266,7 +2669,8 @@ function renderLedger() {
         <div class="lf-group"><span>Tier:</span>
         ${["All", "Embedded", "Partial", "Tokenistic"].map(t => `<button class="lf-btn ${ledgerFilter.tier === t ? 'lf-on' : ''}" onclick="setLedgerFilter('tier','${t}')">${t}</button>`).join("")}</div>
         <div class="lf-group"><button class="lf-btn ${ledgerFilter.review ? 'lf-on' : ''}" onclick="setLedgerFilter('review')">Needs manual check only</button>
-        <span class="lf-count">${list.length} of ${R.statements.length} shown</span></div>`;
+        <span class="lf-count">${list.length} of ${R.statements.length} shown</span></div>
+        ${R.statements.some(s => needsTranslation(s)) ? `<div class="lf-group"><button id="translate-btn" class="lf-btn" onclick="translateLedger()">Translate to English</button><span id="translate-note" class="lf-count"></span></div>` : ''}`;
 
     document.getElementById('eval-statement-ledger').innerHTML = list.map(s => {
         const e = effective(s);
@@ -2277,6 +2681,7 @@ function renderLedger() {
             `<span class="chip chip-${s.scope.toLowerCase()}">${s.scope}</span>`,
             s.conditional ? `<span class="chip chip-cond">conditional</span>` : "",
             s.structural ? `<span class="chip chip-struct">structural</span>` : "",
+            s.implicit ? `<span class="chip chip-implicit">implicit phrasing</span>` : "",
             s.needsReview ? `<span class="chip chip-review">check dimension</span>` : "",
             s.override ? `<span class="chip chip-over">coder override</span>` : ""
         ].join("");
@@ -2289,7 +2694,10 @@ function renderLedger() {
                 </div>
                 <div class="ex-chips">${chips}</div>
             </div>
-            <div class="ex-content"><p class="ex-quote">${esc(s.text)}</p></div>
+            <div class="ex-content">
+                <p class="ex-quote">${s.before ? `<span class="ex-ctx">${esc(s.before)}</span> ` : ""}<span class="ex-target">${esc(s.text)}</span>${s.after ? ` <span class="ex-ctx">${esc(s.after)}</span>` : ""}</p>
+                ${renderTranslation(s)}
+            </div>
             <div class="ex-why">
                 <b>Why this tier:</b> ${esc(s.tierWhy.join("; "))}.
                 <b>Evidence features:</b> ${s.featureSet.length ? esc(s.featureSet.join(", ")) : "none"}.
@@ -2372,7 +2780,9 @@ async function runBrowserAnalysis() {
     term.innerHTML = `<p class="sys-msg">Fetching and rebuilding document layout...</p>`;
 
     try {
-        const { units, diag } = await extractDocument(url, m => termLog('ai-terminal', m));
+        const sel0 = document.getElementById('ai-ndc-select');
+        const docLang = sel0.options[sel0.selectedIndex].getAttribute('data-lang') || 'Unknown';
+        const { units, diag } = await extractDocument(url, m => termLog('ai-terminal', m), docLang);
         if (diag.scannedRisk) termLog('ai-terminal', `Warning: thin text layer (${diag.lowTextPages}/${diag.pages} pages sparse). Likely a scanned PDF. Needs OCR before coding.`, 'warn');
 
         const { statements, screened } = analyseUnits(units);
@@ -2388,18 +2798,45 @@ async function runBrowserAnalysis() {
 
         shown = shown.sort((a, b) => (a.page - b.page) || a.id.localeCompare(b.id));
 
-        termLog('ai-terminal', `${units.length} sentence units read. ${statements.length} assigned to a dimension, ${screened.length} caught by the recall net only. Showing ${shown.length} in document order.`);
+        const ff = diag.funnel;
+        termLog('ai-terminal', `Funnel: ${ff.sentencesSeen} sentence candidates, ${ff.tooShort} fragments and ${ff.numericTable} table rows discarded, ${ff.kept} carried forward. Of those, ${statements.length} assigned a dimension and ${screened.length} caught by the recall net only. Showing ${shown.length} in document order.`);
         term.innerHTML += shown.map(s => {
             const label = s.dimension ? `${s.dimension} / ${s.tier}` : `unassigned (recall net)`;
+            const gloss = glossTerms(s);
             return `<p><span class="scr-loc">[p.${s.page} ${s.section.type}]</span>
-                <span class="scr-lab">${label}</span> ${esc(s.text)}
-                <span class="scr-terms">${esc([...(s.matched ? s.matched.core : []), ...(s.matched ? s.matched.supporting : []), ...s.screenHits].join(", "))}</span></p>`;
+                <span class="scr-lab">${label}</span>${s.implicit ? ' <span class="scr-imp">implicit</span>' : ''}<br>
+                ${s.before ? `<span class="scr-ctx">${esc(s.before)}</span> ` : ""}<span class="scr-target">${esc(s.text)}</span>${s.after ? ` <span class="scr-ctx">${esc(s.after)}</span>` : ""}
+                ${s.translation ? `<br><span class="scr-trans">EN: ${esc(s.translation)}</span>` : ""}
+                ${gloss.length ? `<br><span class="scr-gloss">gloss: ${esc(gloss.map(g => g.source + " = " + g.english).join("; "))}</span>` : ""}
+                <br><span class="scr-terms">${esc([...(s.matched ? s.matched.core : []), ...(s.matched ? s.matched.supporting : []), ...s.screenHits].join(", ")) || "matched on phrasing"}</span></p>`;
         }).join("");
+        const nonEng = shown.filter(s => needsTranslation(s));
+        if (nonEng.length) termLog('ai-terminal', `<button class="lf-btn" onclick="translateScreen()">Translate ${nonEng.length} non-English passages to English</button>`);
         term.scrollTop = term.scrollHeight;
     } catch (err) {
         console.error(err);
         termLog('ai-terminal', "Error parsing document: " + esc(err.message), 'err');
     }
+}
+
+async function translateScreen() {
+    if (!lastScreen.results.length) return;
+    await translateStatements(lastScreen.results, lastScreen.diag && lastScreen.diag.lang,
+        (d, t) => termLog('ai-terminal', `translating ${d} of ${t}...`));
+    runBrowserAnalysisRender();
+}
+
+function runBrowserAnalysisRender() {
+    const term = document.getElementById('ai-terminal');
+    term.innerHTML = lastScreen.results.map(s => {
+        const label = s.dimension ? `${s.dimension} / ${s.tier}` : `unassigned (recall net)`;
+        const gloss = glossTerms(s);
+        return `<p><span class="scr-loc">[p.${s.page} ${s.section.type}]</span>
+            <span class="scr-lab">${label}</span>${s.implicit ? ' <span class="scr-imp">implicit</span>' : ''}<br>
+            ${s.before ? `<span class="scr-ctx">${esc(s.before)}</span> ` : ""}<span class="scr-target">${esc(s.text)}</span>${s.after ? ` <span class="scr-ctx">${esc(s.after)}</span>` : ""}
+            ${s.translation ? `<br><span class="scr-trans">EN: ${esc(s.translation)}</span>` : ""}
+            ${gloss.length ? `<br><span class="scr-gloss">gloss: ${esc(gloss.map(g => g.source + " = " + g.english).join("; "))}</span>` : ""}</p>`;
+    }).join("");
 }
 
 /* ---------- Exports ---------- */
@@ -2434,6 +2871,8 @@ function exportEvaluationDocx() {
         const e = effective(s);
         h += `<p><b>[p.${s.page}] ${e.dimension} / ${e.tier}</b>${s.override ? " (coder override by " + esc(s.override.coder) + ")" : ""}<br>
         <i>"${esc(s.text)}"</i><br>
+        ${s.translation ? `<span style="color:#444;">English (machine): ${esc(s.translation)}</span><br>` : ""}
+        <small style="color:#777;">In context: ${esc(s.context || s.text)}</small><br>
         <small>Section: ${s.section.type}. Cluster: ${esc(s.cluster)}. Scope: ${s.scope}.${s.conditional ? " Conditional." : ""}
         Reason: ${esc(s.tierWhy.join("; "))}. Features: ${esc(s.featureSet.join(", ") || "none")}.</small></p>`;
     });
@@ -2447,13 +2886,16 @@ function exportEvaluationCsv() {
     const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
     const head = ["country", "statement_id", "page", "section", "heading", "cluster", "scope", "conditional", "structural",
         "machine_dimension", "machine_tier", "coder_dimension", "coder_tier", "coder_note", "coder",
-        "needs_review", "evidence_features", "matched_terms", "tier_reason", "statement", "engine", "lexicon", "run_utc"];
+        "needs_review", "implicit_match", "evidence_features", "matched_terms", "tier_reason",
+        "statement", "statement_in_context", "language", "english_machine_translation", "translation_source",
+        "engine", "lexicon", "run_utc"];
     const rows = R.statements.map(s => [
         R.country, s.id, s.page, s.section.type, s.heading, s.cluster, s.scope, s.conditional, s.structural,
         s.dimension, s.tier, s.override && s.override.dimension, s.override && s.override.tier,
         s.override && s.override.note, s.override && s.override.coder,
-        s.needsReview, s.featureSet.join("|"), [...s.matched.core, ...s.matched.supporting].join("|"),
-        s.tierWhy.join("; "), s.text, R.engine, R.lexicon, R.run
+        s.needsReview, s.implicit > 0, s.featureSet.join("|"), [...s.matched.core, ...s.matched.supporting].join("|"),
+        s.tierWhy.join("; "), s.text, s.context || s.text, s.lang, s.translation || "", s.translationSource || "",
+        R.engine, R.lexicon, R.run
     ].map(q).join(","));
     download(`JUSTNDC_${R.country.replace(/[^a-zA-Z0-9]/g, '_')}_ledger.csv`, [head.join(","), ...rows].join("\n"), 'text/csv');
 }
@@ -2464,7 +2906,7 @@ function exportScrapedDocx() {
     <h1>Screened passages: ${esc(lastScreen.country)}</h1>
     <p><i>Recall-oriented screen, engine ${ENGINE_VERSION}, lexicon ${LEXICON_VERSION}. Not a coding decision.</i></p>`;
     lastScreen.results.forEach(s => {
-        h += `<p><b>[p.${s.page} ${s.section.type}]</b> ${s.dimension ? s.dimension + " / " + s.tier : "unassigned"}<br>${esc(s.text)}</p>`;
+        h += `<p><b>[p.${s.page} ${s.section.type}]</b> ${s.dimension ? s.dimension + " / " + s.tier : "unassigned"}<br>${esc(s.context || s.text)}${s.translation ? `<br><i>EN: ${esc(s.translation)}</i>` : ""}</p>`;
     });
     download(`Screened_${lastScreen.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`, h + "</body></html>", 'application/msword');
 }
