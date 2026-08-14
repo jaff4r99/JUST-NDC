@@ -259,6 +259,87 @@
         .chip-multi { background: #eef3e8; color: #3f5a2a; }
         .ledger-pending { border-left: 4px solid #14614f; }
         .ex-concept { margin-top: 7px; padding-top: 7px; border-top: 1px dashed #dcdcdc; color: #444; }
+        /* --- v2.2 dimension card ------------------------------------------ */
+        .dim-bar { display:flex; height:8px; border-radius:4px; overflow:hidden; margin:8px 0 6px; background:#f0f0f2; }
+        .dim-bar span { display:block; }
+        .dim-basis { font-size:0.72rem; color:#555; line-height:1.55; margin-top:6px; }
+        .dim-basis b { color:#333; }
+        .dim-carrier { display:block; padding:4px 0 4px 8px; border-left:2px solid #e0e0e0; margin-top:4px; color:#555; }
+        .dim-carrier:hover { border-left-color:var(--primary); cursor:pointer; }
+        .dim-flag { display:inline-block; font-size:0.66rem; padding:2px 7px; border-radius:10px; background:#fff2cc; color:#7a5b00; margin-top:6px; }
+        .dim-agree { background:#e4f4e8; color:#1f5c2e; }
+        .muted-note { color:var(--text-muted); font-size:0.85rem; }
+        /* --- reporting ----------------------------------------------------- */
+        .rep-stat { display:inline-block; margin:0 26px 10px 0; }
+        .rep-n { display:block; font-size:1.9rem; font-weight:700; color:#1d1d1f; line-height:1.1; }
+        .rep-l { display:block; font-size:0.78rem; color:var(--text-muted); max-width:200px; }
+        .vrow { display:flex; align-items:center; gap:10px; margin:5px 0; font-size:0.82rem; }
+        .vlab { flex:0 0 260px; display:flex; align-items:center; gap:7px; }
+        .vbar { flex:1; height:9px; background:#f0f0f2; border-radius:5px; overflow:hidden; }
+        .vbar span { display:block; height:100%; }
+        .vn { flex:0 0 34px; text-align:right; font-weight:600; }
+        .vdot { display:inline-block; width:9px; height:9px; border-radius:50%; }
+        .m-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+        .m-cell { min-height:96px; border:1px solid #e6e6e6; border-radius:8px; padding:7px; background:#fafafa; }
+        .m-cell.m-goal { background:#f2faf4; border-color:#bfe3c9; }
+        .m-cell.m-wash { background:#fdf6ec; border-color:#f0dcc0; }
+        .m-cell h6 { margin:0 0 5px; font-size:0.62rem; letter-spacing:.05em; text-transform:uppercase; color:#8a8a90; }
+        .m-tag { display:inline-block; font-size:0.7rem; padding:2px 7px; border-radius:10px; background:#fff; border:1px solid #e0e0e0; margin:0 3px 3px 0; cursor:pointer; }
+        .m-tag:hover { border-color:var(--primary); color:var(--primary); }
+        .m-manual { border-style:dashed; }
+        /* --- country record ------------------------------------------------ */
+        .cr-head { margin-bottom:12px; }
+        .cr-meta { font-size:0.75rem; color:var(--text-muted); margin-top:4px; }
+        .cr-dims { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:12px 0; }
+        .cr-dim { background:#fff; border:1px solid #eee; border-radius:10px; padding:10px 12px; }
+        .cr-dim h5 { margin:0 0 4px; font-size:0.68rem; letter-spacing:.05em; text-transform:uppercase; color:#8a8a90; }
+        .cr-tier { font-size:1.15rem; font-weight:700; }
+        .cr-sub { font-size:0.72rem; color:var(--text-muted); }
+        .cr-h { margin:18px 0 8px; }
+        .cr-group { margin-bottom:16px; }
+        .cr-group h4 { margin:0 0 6px; font-size:0.95rem; }
+        .cr-count { font-size:0.7rem; background:#f0f0f2; color:#555; border-radius:10px; padding:2px 8px; margin-left:6px; }
+        .cr-level { margin:6px 0 10px 4px; }
+        .cr-level-h { display:flex; align-items:center; gap:7px; margin-bottom:5px; }
+        .cr-code { background:#fafafa; border-radius:8px; padding:9px 12px; margin-bottom:6px; }
+        .cr-quote { font-family:Georgia,serif; font-style:italic; margin:0 0 5px; line-height:1.55; color:#222; font-size:0.88rem; }
+        .cr-an { margin:0 0 6px; font-size:0.8rem; color:#555; }
+        .cr-tags { display:flex; gap:5px; flex-wrap:wrap; }
+        .ci-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; }
+        .ci-card { position:relative; text-align:left; background:#fff; border:1px solid #e8e8e8; border-radius:10px; padding:11px 13px; cursor:pointer; font:inherit; }
+        .ci-card:hover { border-color:var(--primary); }
+        .ci-name { display:block; font-weight:600; font-size:0.9rem; color:#1d1d1f; }
+        .ci-meta { display:block; font-size:0.72rem; color:var(--text-muted); margin-top:2px; }
+        .ci-bars { display:flex; align-items:flex-end; gap:3px; height:22px; margin-top:7px; }
+        .ci-bars span { flex:1; background:#d8d8e0; border-radius:2px 2px 0 0; }
+        .ci-verdict { position:absolute; top:10px; right:10px; width:9px; height:9px; border-radius:50%; }
+        /* --- notes ---------------------------------------------------------- */
+        .note-card { background:#fff; border:1px solid #e8e8e8; border-radius:12px; padding:13px 16px; margin-bottom:11px; }
+        .note-card.note-pinned { border-left:4px solid var(--primary); }
+        .note-h { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+        .note-t { margin:0; font-size:1rem; font-weight:650; color:#1d1d1f; }
+        .note-m { font-size:0.72rem; color:var(--text-muted); margin-top:3px; }
+        .note-b { margin:9px 0 0; line-height:1.65; white-space:pre-wrap; font-size:0.9rem; }
+        /* --- lexicon browser ------------------------------------------------ */
+        .lex-group { margin-bottom:18px; }
+        .lex-group h4 { margin:0 0 4px; font-size:0.95rem; }
+        .lex-terms { display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
+        .lex-term { font-size:0.76rem; padding:3px 9px; border-radius:12px; background:#f4f4f6; color:#444; border:1px solid transparent; }
+        .lex-term.lex-core { background:#e8eef6; color:#2c4f75; }
+        .lex-term.lex-frame { background:#e7f6f2; color:#14614f; }
+        .lex-term.lex-screen { background:#fff2cc; color:#7a5b00; }
+        .lex-term.lex-custom { border-color:var(--primary); }
+        .lex-term.lex-hit { outline:2px solid var(--primary); }
+        .lex-count { font-size:0.7rem; background:#f0f0f2; color:#555; border-radius:10px; padding:2px 8px; margin-left:6px; }
+        .lex-rx { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:0.72rem; background:#fafafa; border:1px solid #eee; border-radius:6px; padding:5px 8px; margin:3px 0; overflow-x:auto; white-space:nowrap; color:#444; }
+        .gap-row { display:flex; gap:10px; align-items:baseline; padding:5px 0; border-bottom:1px solid #f0f0f0; font-size:0.84rem; }
+        .gap-k { flex:0 0 190px; color:#666; }
+        .gap-word { display:inline-block; font-size:0.76rem; padding:2px 8px; border-radius:10px; background:#f4f4f6; margin:0 4px 4px 0; cursor:pointer; }
+        .gap-word:hover { background:#e8eef6; }
+        .gap-miss { background:#fdeaea; color:#922; }
+        .samp { background:#fff; border:1px solid #e8e8e8; border-radius:10px; padding:11px 14px; margin-bottom:9px; }
+        .samp p { margin:0 0 8px; line-height:1.6; font-size:0.88rem; }
+        .ledger-hit { outline:3px solid var(--primary); outline-offset:3px; }
         .ex-quote { font-family: Georgia, serif; font-style: italic; margin: 10px 0; line-height: 1.6; color: #222; }
         .ex-why { font-size: 0.78rem; color: #555; background: #fafafa; border-radius: 8px; padding: 9px 12px; line-height: 1.6; }
         .ex-override { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
@@ -314,6 +395,9 @@
                 <button id="btn-repository" onclick="showPage('repository', this)"><span>💡</span> Coding Examples</button>
                 <button id="btn-analyzer" onclick="showPage('analyzer', this)"><span>🧠</span> Screener</button>
                 <button id="btn-evaluator" onclick="showPage('evaluator', this)"><span>⚖️</span> Assessment</button>
+                <button id="btn-reporting" onclick="showPage('reporting', this)"><span>📈</span> Reporting</button>
+                <button id="btn-notes" onclick="showPage('notes', this)"><span>🗒️</span> Research Notes</button>
+                <button id="btn-settings" onclick="showPage('settings', this)"><span>⚙️</span> Settings & Lexicon</button>
             </div>
 
             <div class="content" id="main-content-area">
@@ -664,6 +748,12 @@
                     </div>
 
                     <h3 style="color: var(--embedded); margin-top: 30px; border-bottom: 2px solid var(--embedded); padding-bottom: 5px;">Embedded Commitments</h3>
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">By country</h3>
+                        <p class="panel-sub">Every country with a coding example or a recorded assessment. Open one to see its codes grouped by dimension and commitment level.</p>
+                        <div id="country-index"></div>
+                    </div>
+
                     <div id="examples-list-embedded"></div>
 
                     <h3 style="color: var(--partial); margin-top: 30px; border-bottom: 2px solid var(--partial); padding-bottom: 5px;">Partial Commitments</h3>
@@ -674,6 +764,194 @@
                 </div>
 
                 <!-- PAGE 5: AI TEXT SCRAPER -->
+                <!-- PAGE: REPORTING -->
+                <div id="reporting" class="page">
+                    <h1 style="color:#1d1d1f;">Reporting</h1>
+                    <p>The project record. Every assessment you run is written here when you record it, and this page is drawn from that record alone, not from the document currently open. Nothing on this page is a finding until the assessment behind it has been human-confirmed.</p>
+
+                    <div class="ui-box">
+                        <div id="report-summary"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+                            <h3 style="margin:0;">Verdict map</h3>
+                            <div style="display:flex;gap:10px;align-items:center;">
+                                <select id="verdictRegionSelect" class="search-box" style="width:auto;margin-bottom:0;padding:6px 12px;" onchange="drawVerdictMap()">
+                                    <option value="world">World</option>
+                                    <option value="029">Caribbean</option>
+                                    <option value="009">Oceania / Pacific</option>
+                                    <option value="150">Europe</option>
+                                    <option value="002">Africa</option>
+                                    <option value="142">Asia</option>
+                                    <option value="019">Americas</option>
+                                </select>
+                                <button class="download-btn" onclick="exportAssessmentsCsv()">Export record (CSV)</button>
+                            </div>
+                        </div>
+                        <div style="width:100%;overflow-x:auto;">
+                            <div id="verdict_map_div" style="width:100%;min-width:600px;height:420px;"></div>
+                        </div>
+                        <div id="report-verdicts"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">Transformative justice matrix</h3>
+                        <p class="panel-sub">Each axis takes the weaker of its two dimensions, following the intersection logic of the policy brief. The upper-right cell is the region the brief describes as approaching transformative climate justice; the upper-left is the justice-washing pattern of insight 2. Countries are placed from their recorded assessment. A country can be moved by hand, and a manual placement is kept separately from the machine one and marked in the export.</p>
+                        <div id="report-matrix"></div>
+                        <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:14px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>Place a country by hand</label>
+                                <select id="mp-country" class="search-box" style="margin-bottom:0;"></select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>Recognitional</label>
+                                <select id="mp-Recognitional" class="search-box" style="margin-bottom:0;">
+                                    <option>Absent</option><option>Tokenistic</option><option selected>Partial</option><option>Embedded</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>Procedural</label>
+                                <select id="mp-Procedural" class="search-box" style="margin-bottom:0;">
+                                    <option>Absent</option><option>Tokenistic</option><option selected>Partial</option><option>Embedded</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>Distributive</label>
+                                <select id="mp-Distributive" class="search-box" style="margin-bottom:0;">
+                                    <option>Absent</option><option selected>Tokenistic</option><option>Partial</option><option>Embedded</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>Restorative</label>
+                                <select id="mp-Restorative" class="search-box" style="margin-bottom:0;">
+                                    <option selected>Absent</option><option>Tokenistic</option><option>Partial</option><option>Embedded</option>
+                                </select>
+                            </div>
+                            <button class="download-btn" onclick="recordManualPlacement()">Place</button>
+                        </div>
+                    </div>
+
+                    <div class="ui-box" id="country-record-box" style="display:none;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <h3 style="margin:0;" id="country-record-title">Country record</h3>
+                            <button class="lf-btn" onclick="document.getElementById('country-record-box').style.display='none'">close</button>
+                        </div>
+                        <div id="country-record"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">Dimension profile across the corpus</h3>
+                        <div id="report-dims"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">Recorded assessments</h3>
+                        <div id="report-table"></div>
+                    </div>
+                </div>
+
+                <!-- PAGE: NOTES -->
+                <div id="notes" class="page">
+                    <h1 style="color:#1d1d1f;">Research notes</h1>
+                    <p>Observations that belong in the methodology, not in the ledger. Kept in this browser, exportable as Markdown so they can go straight into a draft.</p>
+
+                    <div class="ui-box" style="background:#f8f9fa;border:1px dashed #ccc;">
+                        <h3 style="margin-top:0;color:var(--primary);">Add a note</h3>
+                        <input type="hidden" id="note-editing" value="">
+                        <div style="display:flex;gap:15px;flex-wrap:wrap;">
+                            <div class="form-group" style="flex:2;min-width:220px;">
+                                <label>Title</label>
+                                <input type="text" id="note-title" class="search-box" placeholder="e.g. NDC 2.0 documents submitted in the 3.0 cycle">
+                            </div>
+                            <div class="form-group" style="flex:1;min-width:160px;">
+                                <label>Category</label>
+                                <select id="note-category" class="search-box">
+                                    <option>Methodology</option>
+                                    <option>Corpus and sampling</option>
+                                    <option>Coding decision</option>
+                                    <option>Lexicon gap</option>
+                                    <option>Limitation</option>
+                                    <option>Finding</option>
+                                    <option>To do</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex:1;min-width:160px;">
+                                <label>Country (optional)</label>
+                                <input type="text" id="note-country" class="search-box" placeholder="e.g. Holy See">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Note</label>
+                            <textarea id="note-body" class="search-box" rows="4" placeholder="Many parties submitted an NDC 2.0 document within the 3.0 cycle. Record which, because it changes what the corpus can be said to represent."></textarea>
+                        </div>
+                        <button id="note-save-btn" class="download-btn" style="background:var(--primary);color:#fff;" onclick="saveNote()">Save note</button>
+                        <button class="download-btn" onclick="exportNotesMd()">Export all (Markdown)</button>
+                    </div>
+
+                    <div id="notes-controls" class="ledger-controls"></div>
+                    <div id="notes-list"></div>
+                </div>
+
+                <!-- PAGE: SETTINGS -->
+                <div id="settings" class="page">
+                    <h1 style="color:#1d1d1f;">Settings and lexicon</h1>
+                    <p>What the analyser is looking for, stated in full. Every term the classifier can match is listed here, in the bucket that decides what it is allowed to do. If something is missing, this is where you will see it.</p>
+
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">Rules in force</h3>
+                        <div id="settings-rules"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">Does the analyser see this?</h3>
+                        <p class="panel-sub">Paste any sentence or paragraph. This runs the real classifier over it and reports every term, pattern and evidence feature that fires, and the record that would result. Use it on a phrasing you suspect is being missed.</p>
+                        <textarea id="ts-input" class="search-box" rows="3" placeholder="Environmental justice can no longer be regarded as an abstract concept or a distant goal."></textarea>
+                        <button class="download-btn" style="background:var(--primary);color:#fff;" onclick="testSentence()">Run the classifier over this</button>
+                        <div id="ts-out"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">What the lexicon never touched</h3>
+                        <p class="panel-sub">The words that appear most often in paragraphs of the last analysed document that matched nothing at all. A justice register the lexicon does not cover shows up here. Click a word to see the paragraphs it sits in.</p>
+                        <div id="gap-finder"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">Lexicon</h3>
+                        <div id="lex-coverage"></div>
+                        <input type="text" id="lex-search" class="search-box" placeholder="Search every bucket for a term..." onkeyup="renderSettings()">
+                        <div id="lex-tabs" class="ledger-controls"></div>
+                        <div id="lex-body"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">Add a term</h3>
+                        <p class="panel-sub">Added terms are kept in this browser and applied on top of the shipped lexicon at the start of every run. They are stamped separately in the export, so a result produced with a modified lexicon can never be mistaken for one produced with the published one.</p>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+                            <div class="form-group" style="flex:2;min-width:220px;margin-bottom:0;">
+                                <label>Term or phrase</label>
+                                <input type="text" id="ct-term" class="search-box" style="margin-bottom:0;" placeholder="e.g. energy democracy">
+                            </div>
+                            <div class="form-group" style="flex:1;min-width:220px;margin-bottom:0;">
+                                <label>Bucket</label>
+                                <select id="ct-bucket" class="search-box" style="margin-bottom:0;"></select>
+                            </div>
+                            <button class="download-btn" onclick="submitCustomTerm()">Add</button>
+                        </div>
+                        <div id="custom-terms"></div>
+                    </div>
+
+                    <div class="ui-box">
+                        <h3 style="margin-top:0;">Recall audit</h3>
+                        <p class="panel-sub">Recall cannot be claimed from what the screener returned; it can only be measured by reading what the screener passed over. Draw a sample of unflagged paragraphs from the document currently loaded in the Assessment tab, read them, and mark any that should have been caught. The tally is the basis for a recall statement in the paper.</p>
+                        <button class="download-btn" onclick="sampleUnflagged()">Draw 10 unflagged paragraphs</button>
+                        <button class="download-btn" onclick="exportAudit()">Export audit (CSV)</button>
+                        <div id="audit-tally"></div>
+                        <div id="recall-sample"></div>
+                    </div>
+                </div>
+
                 <div id="analyzer" class="page">
                     <h1 style="color: #1d1d1f;">Screener: passage retrieval</h1>
                     <p>Stage one of two. This pass is tuned for <b>recall</b>: it casts a wide net so that justice-relevant text is not missed, and it deliberately over-returns. It does not make coding decisions. Terms in the recall net that carry no dimension weight are marked "unassigned" so you can see what the net caught without it contaminating the classification.</p>
@@ -742,6 +1020,8 @@
                                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
                                     <button onclick="exportEvaluationDocx()" class="download-btn" style="background-color: var(--accent); color: #fff;">Export report (.doc)</button>
                                     <button onclick="exportEvaluationCsv()" class="download-btn" style="background-color: var(--primary); color: #fff;">Export ledger (.csv)</button>
+                                    <button onclick="recordAssessment()" class="download-btn" style="background-color:#14614f;color:#fff;">Record to project</button>
+                                    <span id="record-assessment-note" class="muted-note"></span>
                                 </div>
                             </div>
                             <div id="verdict-summary" style="margin-top: 12px; font-size: 0.93rem; color: #333; line-height:1.55;"></div>
@@ -852,7 +1132,7 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.1.0";
+const ENGINE_VERSION = "2.2.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -872,6 +1152,14 @@ const RULES = {
     EXCERPT: "paragraph",        // what is shown, exported and read
     EVIDENCE_SCOPE: "paragraph", // what the tier is judged on; set to "sentence" to revert to v2.0
     PARAGRAPH_DEDUPE: true,      // one record per paragraph per dimension, so a wider excerpt cannot inflate counts
+
+    /* v2.2. How a dimension's tier is set from its statements. "ceiling" is
+       the published method: the strongest tier the document evidences.
+       "consolidated" is the stress test: the strongest tier reached by at
+       least two statements. Whichever governs, both are computed and both
+       are reported, and the country verdict is recomputed under the other
+       one to show whether it survives the choice.                          */
+    ROLLUP_RULE: "ceiling",      // "ceiling" or "consolidated"
     MIN_UNIT_CHARS: 25,          // shorter fragments are merged into a neighbouring sentence, never dropped
     DEHYPHENATE: true            // rejoin words broken across a line, unless the hyphen belongs to the term
 };
@@ -1854,30 +2142,141 @@ function splitSentences(text) {
    reported as descriptive metadata only.
    ========================================================================== */
 
+/* ============================================================================
+   6. DIMENSION ROLL-UP, v2.2
+
+   The question this answers: given every statement coded to one dimension, what
+   is that dimension's level of commitment for the country as a whole?
+
+   Counting is the wrong instrument. A dimension with forty tokenistic mentions
+   is not stronger than one with four. But taking the single strongest statement
+   and stopping there is also wrong, because it cannot tell the reader whether
+   that statement is the document's working level or a lone sentence.
+
+   So two numbers are produced, not one, and both are reported.
+
+   CEILING        The strongest tier the document evidences, using the evidence
+                  thresholds from v2.0. Repetition-invariant by construction:
+                  adding tokenistic mentions cannot move it, and adding a
+                  second identical embedded statement only moves it if the
+                  first was too thin to stand alone.
+
+   CONSOLIDATED   The highest tier reached by at least two statements. This is
+                  the ceiling's stress test: it asks what the dimension would
+                  read if its single strongest sentence were struck out.
+
+   Both are counted in absolute statements, never as a share of the dimension's
+   total. A share would punish a long document for being long and flatter a
+   short one for being short, which is the same verbosity artefact the tier
+   rules exist to avoid: an NDC with 80 recognitional mentions and 3 partial
+   ones would score 4 per cent, while a 12-page NDC with 3 mentions and 1
+   partial would score 33 per cent, for strictly weaker evidence.
+
+   RULES.ROLLUP_RULE selects which of the two is the headline tier. The default
+   is "ceiling", which preserves the published method. Whichever is chosen, the
+   other is computed, displayed, exported, and used to test whether the country
+   verdict survives the choice.
+   ========================================================================== */
+
 function rollUpDimension(statements) {
     const mine = statements.filter(s => s.dimension && s.tier);
-    if (mine.length === 0) {
-        return { tier: "Absent", confidence: "high", support: [], note: "no statements assigned to this dimension" };
-    }
-    const embedded = mine.filter(s => s.tier === "Embedded");
-    const strongEmbedded = embedded.filter(s => s.strength >= RULES.EMBEDDED_MIN_FEATURES && !s.negated);
-    const partial = mine.filter(s => s.tier === "Partial");
+    const dist = { Embedded: 0, Partial: 0, Tokenistic: 0 };
+    mine.forEach(s => { if (dist[s.tier] !== undefined) dist[s.tier]++; });
+    const total = mine.length;
 
-    if (embedded.length >= 2 || strongEmbedded.length >= 1) {
+    if (total === 0) {
         return {
-            tier: "Embedded",
-            confidence: embedded.length >= 2 && strongEmbedded.length >= 1 ? "high" : (strongEmbedded.length >= 1 ? "medium" : "low"),
-            support: (strongEmbedded.length ? strongEmbedded : embedded).slice(0, 3).map(s => s.id),
-            note: embedded.length >= 2 ? "two or more independent embedded statements" : "one embedded statement with " + strongEmbedded[0].strength + " evidence features"
+            tier: "Absent", ceiling: "Absent", consolidated: "Absent",
+            consolidation: "none", ceilingCount: 0, distribution: dist, total: 0,
+            operational: 0, confidence: "high",
+            confidenceWhy: ["nothing was assigned to this dimension, which is an unambiguous reading"],
+            support: [], note: "no statements assigned to this dimension"
         };
     }
-    if (embedded.length === 1) {
-        return { tier: "Partial", confidence: "low", support: embedded.map(s => s.id), note: "one embedded candidate below the evidence threshold, graded down to Partial pending human confirmation" };
+
+    const embedded = mine.filter(s => s.tier === "Embedded");
+    const strongEmbedded = embedded.filter(s => (s.strength || 0) >= RULES.EMBEDDED_MIN_FEATURES && !s.negated);
+    const partial = mine.filter(s => s.tier === "Partial");
+
+    /* --- the ceiling ---------------------------------------------------- */
+    let ceiling, ceilingSet, note;
+    if (embedded.length >= 2 || strongEmbedded.length >= 1) {
+        ceiling = "Embedded";
+        ceilingSet = strongEmbedded.length ? strongEmbedded : embedded;
+        note = embedded.length >= 2
+            ? "two or more independent embedded statements, in separate paragraphs"
+            : "one embedded statement carrying " + strongEmbedded[0].strength + " evidence features";
+    } else if (embedded.length === 1) {
+        ceiling = "Partial";
+        ceilingSet = embedded;
+        note = "one embedded candidate below the evidence threshold, graded down to Partial pending human confirmation";
+    } else if (partial.length >= 1) {
+        ceiling = "Partial";
+        ceilingSet = partial;
+        note = partial.length + " statement(s) with named measures but no legal or financial anchoring";
+    } else {
+        ceiling = "Tokenistic";
+        ceilingSet = mine;
+        note = "mentions only, no actionable commitment detected in " + total + " statement(s)";
     }
-    if (partial.length >= 1) {
-        return { tier: "Partial", confidence: partial.length >= 2 ? "high" : "medium", support: partial.slice(0, 3).map(s => s.id), note: partial.length + " statement(s) with named measures but no legal or financial anchoring" };
+
+    /* --- consolidation: is the ceiling a pattern or a single sentence? --- */
+    const ceilingCount = ceilingSet.length;
+    const consolidation = ceilingCount >= 3 ? "consistent" : ceilingCount === 2 ? "emerging" : "isolated";
+
+    /* --- the stress test ------------------------------------------------- */
+    let consolidated;
+    if (embedded.length >= 2) consolidated = "Embedded";
+    else if (embedded.length + partial.length >= 2) consolidated = "Partial";
+    else consolidated = "Tokenistic";
+
+    /* --- confidence, derived rather than asserted ------------------------ */
+    const operational = ceilingSet.filter(s => s.section && !s.section.narrative).length;
+    let conf = 2;                       // 2 high, 1 medium, 0 low
+    const why = [];
+    if (ceiling === "Tokenistic") {
+        why.push("no statement reaches an actionable commitment, which is itself an unambiguous reading");
+    } else {
+        if (consolidation === "isolated") {
+            conf--;
+            why.push("the tier rests on a single statement, so it would fall to " + consolidated + " if that one sentence were struck out");
+        } else if (consolidation === "consistent") {
+            why.push(ceilingCount + " separate statements reach this tier");
+        }
+        if (ceilingSet.every(s => s.needsReview)) {
+            conf--;
+            why.push("every statement at this tier is flagged for manual confirmation of its dimension");
+        }
+        if (ceilingSet.every(s => s.conditional)) {
+            conf--;
+            why.push("every statement at this tier is conditional on external support");
+        }
+        if (operational === 0) {
+            conf--;
+            why.push("every statement at this tier sits in a framing section rather than an operational one");
+        }
+        if (ceilingSet.every(s => s.scopeLift)) {
+            conf--;
+            why.push("the tier depends on evidence found elsewhere in the paragraph rather than in the coded sentence");
+        }
+        if (embedded.length === 1 && ceiling === "Partial") {
+            why.push("an embedded candidate was graded down for want of evidence features");
+        }
     }
-    return { tier: "Tokenistic", confidence: "high", support: mine.slice(0, 3).map(s => s.id), note: "mentions only, no actionable commitment detected" };
+    const confidence = ["low", "medium", "high"][Math.max(0, Math.min(2, conf))];
+
+    return {
+        tier: RULES.ROLLUP_RULE === "consolidated" ? consolidated : ceiling,
+        ceiling, consolidated, consolidation, ceilingCount,
+        distribution: dist, total, operational,
+        confidence, confidenceWhy: why,
+        support: ceilingSet.slice(0, 3).map(s => s.id),
+        carriers: ceilingSet.slice(0, 4).map(s => ({
+            id: s.id, locator: s.locator || ("p. " + s.page), tier: s.tier,
+            needsReview: !!s.needsReview, conditional: !!s.conditional
+        })),
+        note
+    };
 }
 
 function buildRubric(profile, statements) {
@@ -2284,6 +2683,10 @@ function buildRubric(profile, statements) {
             }
             
             if(pageId === 'dashboard' && googleChartsLoaded) { drawGantt(); }
+            if(pageId === 'reporting') { renderReporting(); if (googleChartsLoaded) setTimeout(drawVerdictMap, 50); }
+            if(pageId === 'notes') { renderNotes(); }
+            if(pageId === 'settings') { renderSettings(); }
+            if(pageId === 'repository' && typeof renderCountryIndex === 'function') { renderCountryIndex(); }
             if(pageId === 'map' && googleChartsLoaded) { setTimeout(drawRegionsMap, 50); }
         }
 
@@ -2431,6 +2834,7 @@ async function extractDocument(fileUrl, log, docLang) {
         }
     }
 
+    if (typeof applyCustomTerms === "function") applyCustomTerms();
     const pdf = await pdfjsLib.getDocument(finalUrl).promise;
     log && log(`PDF loaded: ${pdf.numPages} pages. Rebuilding page layout.`);
 
@@ -2754,14 +3158,30 @@ function effective(s) {
 function evaluateCountry(country, units, diag) {
     const { statements, screened } = analyseUnits(units);
     const DIMS = ["Recognitional", "Procedural", "Distributive", "Restorative"];
+    const mapped = statements.map(s => ({ ...s, dimension: effective(s).dimension, tier: effective(s).tier }));
     const profile = {};
+    DIMS.forEach(d => { profile[d] = rollUpDimension(mapped.filter(s => s.dimension === d)); });
+    const rubric = buildRubric(profile, mapped);
+
+    /* Sensitivity: would the verdict survive the other roll-up rule? A verdict
+       that flips when the rule flips is a verdict that depends on a methods
+       choice rather than on the document, and has to be reported as such. */
+    const altRule = RULES.ROLLUP_RULE === "consolidated" ? "ceiling" : "consolidated";
+    const altProfile = {};
     DIMS.forEach(d => {
-        profile[d] = rollUpDimension(
-            statements.filter(s => effective(s).dimension === d)
-                      .map(s => ({ ...s, dimension: effective(s).dimension, tier: effective(s).tier }))
-        );
+        const p = profile[d];
+        altProfile[d] = { ...p, tier: (altRule === "consolidated" ? p.consolidated : p.ceiling) || p.tier };
     });
-    const rubric = buildRubric(profile, statements.map(s => ({ ...s, dimension: effective(s).dimension, tier: effective(s).tier })));
+    let sensitivity = null;
+    try {
+        const altRubric = buildRubric(altProfile, mapped);
+        sensitivity = {
+            rule: altRule,
+            verdict: altRubric.verdict,
+            differs: altRubric.verdict !== rubric.verdict,
+            tiers: DIMS.map(d => d + ": " + altProfile[d].tier).join(", ")
+        };
+    } catch (e) { console.warn("sensitivity check failed", e); }
 
     const coded = statements.filter(s => effective(s).dimension);
     const descriptive = {
@@ -2781,14 +3201,17 @@ function evaluateCountry(country, units, diag) {
         const e = effective(s);
         if (e.tier && descriptive.byTier[e.tier] !== undefined) descriptive.byTier[e.tier]++;
         const key = s.cluster + "||" + e.dimension;
-        const prev = descriptive.clusters[key] || "Absent";
-        descriptive.clusters[key] = tierMax(prev, e.tier || "Absent");
+        descriptive.clusters[key] = tierMax(descriptive.clusters[key] || "Absent", e.tier || "Absent");
     });
 
     return {
-        country, profile, rubric, statements, screened, descriptive, diag,
-        engine: ENGINE_VERSION, lexicon: LEXICON_VERSION,
-        rules: { evidenceScope: RULES.EVIDENCE_SCOPE, excerpt: RULES.EXCERPT, unit: RULES.UNIT, axisRule: RULES.AXIS_RULE },
+        country, profile, rubric, sensitivity, statements, screened, descriptive, diag,
+        engine: ENGINE_VERSION,
+        lexicon: (typeof lexiconStamp === "function" ? lexiconStamp() : LEXICON_VERSION),
+        rules: {
+            evidenceScope: RULES.EVIDENCE_SCOPE, excerpt: RULES.EXCERPT, unit: RULES.UNIT,
+            axisRule: RULES.AXIS_RULE, rollupRule: RULES.ROLLUP_RULE
+        },
         run: new Date().toISOString(), coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous")
     };
 }
@@ -3103,19 +3526,49 @@ function renderEvaluation() {
     const R = lastEvaluation;
     if (!R) return;
 
+    const toneTier = R.rubric.tone === "embedded" ? "Embedded" : R.rubric.tone === "partial" ? "Partial"
+                   : R.rubric.tone === "absent" ? "Absent" : "Tokenistic";
     document.getElementById('verdict-title').innerText = R.rubric.verdict;
-    document.getElementById('verdict-title').style.color = TIER_COLOR[R.rubric.tone === "embedded" ? "Embedded" : R.rubric.tone === "partial" ? "Partial" : R.rubric.tone === "absent" ? "Absent" : "Tokenistic"];
-    document.getElementById('verdict-banner').style.borderLeftColor = TIER_COLOR[R.rubric.tone === "embedded" ? "Embedded" : R.rubric.tone === "partial" ? "Partial" : R.rubric.tone === "absent" ? "Absent" : "Tokenistic"];
-    document.getElementById('verdict-summary').innerHTML = R.rubric.reasoning.map(r => "<div>" + esc(r) + "</div>").join("");
+    document.getElementById('verdict-title').style.color = TIER_COLOR[toneTier];
+    document.getElementById('verdict-banner').style.borderLeftColor = TIER_COLOR[toneTier];
+
+    let summary = R.rubric.reasoning.map(r => "<div>" + esc(r) + "</div>").join("");
+    if (R.sensitivity) {
+        summary += R.sensitivity.differs
+            ? `<div class="sens sens-warn"><b>Sensitive to the roll-up rule.</b> Under the ${esc(R.sensitivity.rule)} rule
+               (${esc(R.sensitivity.tiers)}) this NDC would read <b>${esc(R.sensitivity.verdict)}</b> instead.
+               Report the rule you used, and treat the difference as a finding rather than noise.</div>`
+            : `<div class="sens sens-ok"><b>Robust to the roll-up rule.</b> The verdict is unchanged under the ${esc(R.sensitivity.rule)} rule.</div>`;
+    }
+    document.getElementById('verdict-summary').innerHTML = summary;
 
     // dimension profile
     document.getElementById('dimension-profile').innerHTML = DIMS4.map(d => {
         const p = R.profile[d];
+        const total = p.total || 0;
+        const bars = ["Embedded", "Partial", "Tokenistic"].map(t => {
+            const n = (p.distribution && p.distribution[t]) || 0;
+            const pct = total ? Math.round((n / total) * 100) : 0;
+            return n ? `<span class="dbar" style="width:${Math.max(pct, 6)}%;background:${TIER_COLOR[t]}" title="${n} ${t}"></span>` : "";
+        }).join("");
+        const consolidationLabel = {
+            consistent: "consistent", emerging: "emerging", isolated: "isolated", none: ""
+        }[p.consolidation] || "";
         return `<div class="dim-card" style="border-top:5px solid ${TIER_COLOR[p.tier]};">
             <h4>${d} justice</h4>
             <div class="dim-tier" style="color:${TIER_COLOR[p.tier]}">${p.tier}</div>
-            <div class="dim-conf">confidence: ${p.confidence}</div>
+            ${p.tier !== "Absent" ? `<div class="dim-consol dim-${p.consolidation}">${consolidationLabel}
+                &middot; ${p.ceilingCount} of ${total} statement${total === 1 ? "" : "s"} at this tier</div>` : ""}
+            ${total ? `<div class="dbar-wrap">${bars}</div>
+            <div class="dbar-key">${p.distribution.Embedded} embedded &middot; ${p.distribution.Partial} partial &middot; ${p.distribution.Tokenistic} tokenistic</div>` : ""}
+            <div class="dim-conf dim-conf-${p.confidence}">confidence: ${p.confidence}</div>
+            ${(p.confidenceWhy && p.confidenceWhy.length) ? `<ul class="dim-why">${p.confidenceWhy.map(w => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}
+            ${p.tier !== "Absent" && p.consolidated !== p.ceiling
+                ? `<div class="dim-alt">strike out the strongest statement and this reads <b>${p.consolidated}</b></div>` : ""}
             <p class="dim-note">${esc(p.note)}</p>
+            ${(p.carriers && p.carriers.length) ? `<div class="dim-basis"><b>Carried by</b>
+                ${p.carriers.map(c => `<span class="dim-carrier" onclick="jumpToStatement('${c.id}')" title="open this statement in the ledger">${esc(c.locator)}${c.needsReview ? " &middot; check dimension" : ""}${c.conditional ? " &middot; conditional" : ""}</span>`).join("")}
+                </div>` : ""}
         </div>`;
     }).join("");
 
@@ -3135,11 +3588,35 @@ function renderEvaluation() {
     const d = R.descriptive;
     document.getElementById('descriptive-stats').innerHTML =
         `<b>Descriptive only, not used in any score:</b> ${d.flagged} statements assigned to a dimension
-         (${d.byTier.Embedded} embedded, ${d.byTier.Partial} partial, ${d.byTier.Tokenistic} tokenistic);
-         ${d.forReview} need manual dimension confirmation; ${d.screenOnly} passages caught by the recall net with no dimension term;
-         ${d.conditional} statements are conditional on external support; ${d.international} are addressed outward rather than inward.`;
+         (${d.byTier.Embedded} embedded, ${d.byTier.Partial} partial, ${d.byTier.Tokenistic} tokenistic)
+         drawn from ${d.paragraphsRead} paragraphs; ${d.forReview} need manual dimension confirmation;
+         ${d.awaitingDimension} name justice with no dimension assigned; ${d.screenOnly} passages held by the recall net;
+         ${d.conditional} are conditional on external support; ${d.international} are addressed outward rather than inward;
+         ${d.raisedByParagraph} carry a tier that rests on paragraph rather than sentence evidence.`;
+
+    const rec = document.getElementById('record-assessment-note');
+    if (rec) {
+        const saved = getAssessment(R.country);
+        rec.innerHTML = saved
+            ? `Recorded in the project on ${esc(new Date(saved.at).toLocaleString())} by ${esc(saved.coder)}. Saving again overwrites it.`
+            : `Not yet recorded in the project. Recording it puts this country on the reporting map and matrix.`;
+    }
 
     renderLedger();
+}
+
+
+/* Open the statement a dimension's tier rests on, so the basis can be checked
+   rather than taken on trust. */
+function jumpToStatement(id) {
+    ledgerFilter = { dimension: "All", tier: "All", review: false, pending: false, recall: false, sort: "document" };
+    renderLedger();
+    const el = document.querySelector(`.ledger-item[data-id="${id}"]`);
+    if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("ledger-hit");
+        setTimeout(() => el.classList.remove("ledger-hit"), 2400);
+    }
 }
 
 function renderQuadrant(rp, dr, country) {
@@ -3550,6 +4027,896 @@ function exportScrapedDocx() {
         h += `<p><b>[${esc(s.paraLocator || s.locator || ("p. " + s.page))} ${s.section.type}]</b> ${s.dimension ? s.dimension + " / " + s.tier : (s.pendingDimension ? "justice named, dimension not assigned" : "unassigned")}<br>${esc(s.excerpt || s.context || s.text)}${s.translation ? `<br><i>EN: ${esc(s.translation)}</i>` : ""}</p>`;
     });
     download(`Screened_${lastScreen.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`, h + "</body></html>", 'application/msword');
+}
+
+/* ============================================================================
+   12. PROJECT RECORD, NOTES, LOCAL SETTINGS
+   Everything here is kept in this browser. Each store has a CSV or Markdown
+   export, because a browser is not an archive and a shared project needs a file
+   it can merge. Where a Supabase client exists the write is mirrored, and a
+   missing table degrades silently rather than losing the local copy.
+   ========================================================================== */
+
+const STORE_KEYS = {
+    assessments: "justndc_assessments",
+    notes: "justndc_notes",
+    settings: "justndc_settings",
+    customTerms: "justndc_custom_terms",
+    audit: "justndc_recall_audit"
+};
+
+function storeGet(key, fallback) {
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+    catch (e) { console.warn("local store unreadable:", key, e); return fallback; }
+}
+function storeSet(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+    catch (e) {
+        alert("This browser refused to save (storage full or blocked). Export your work before closing the tab.");
+        return false;
+    }
+}
+async function mirror(table, row, conflict) {
+    if (typeof supabaseClient === "undefined" || !supabaseClient) return;
+    try { await supabaseClient.from(table).upsert(row, conflict ? { onConflict: conflict } : undefined); }
+    catch (e) { console.warn("not synced to the shared database:", table, e); }
+}
+
+/* ---------- settings ---------- */
+function getSettings() {
+    return Object.assign({
+        evidenceScope: RULES.EVIDENCE_SCOPE,
+        rollupRule: RULES.ROLLUP_RULE,
+        axisRule: RULES.AXIS_RULE
+    }, storeGet(STORE_KEYS.settings, {}));
+}
+function applySettings() {
+    const s = getSettings();
+    RULES.EVIDENCE_SCOPE = s.evidenceScope;
+    RULES.ROLLUP_RULE = s.rollupRule;
+    RULES.AXIS_RULE = s.axisRule;
+}
+function setSetting(key, value) {
+    const s = storeGet(STORE_KEYS.settings, {});
+    s[key] = value;
+    storeSet(STORE_KEYS.settings, s);
+    applySettings();
+    if (typeof lastEvaluation !== "undefined" && lastEvaluation) {
+        // recompute the profile and verdict under the new rule rather than
+        // leaving a screen that no longer matches the rules in force
+        const DIMS = DIMS4;
+        const mapped = lastEvaluation.statements.map(x => ({ ...x, dimension: effective(x).dimension, tier: effective(x).tier }));
+        DIMS.forEach(d => { lastEvaluation.profile[d] = rollUpDimension(mapped.filter(x => x.dimension === d)); });
+        lastEvaluation.rubric = buildRubric(lastEvaluation.profile, mapped);
+        lastEvaluation.rules = { evidenceScope: RULES.EVIDENCE_SCOPE, excerpt: RULES.EXCERPT, unit: RULES.UNIT, axisRule: RULES.AXIS_RULE, rollupRule: RULES.ROLLUP_RULE };
+        renderEvaluation();
+    }
+    renderSettings();
+}
+
+/* ---------- custom lexicon terms ---------- */
+let CUSTOM_TERMS = [];
+function applyCustomTerms() {
+    CUSTOM_TERMS = storeGet(STORE_KEYS.customTerms, []);
+    CUSTOM_TERMS.forEach(t => {
+        const term = String(t.term || "").toLowerCase().trim();
+        if (!term) return;
+        if (t.bucket === "frame") { if (!FRAME_TERMS.includes(term)) FRAME_TERMS.push(term); return; }
+        if (t.bucket === "screen") { if (!SCREEN_ONLY.includes(term)) SCREEN_ONLY.push(term); return; }
+        if (t.bucket === "structural") { if (!STRUCTURAL_MARKERS.includes(term)) STRUCTURAL_MARKERS.push(term); return; }
+        if (LEXICON[t.dimension] && LEXICON[t.dimension][t.bucket] && !LEXICON[t.dimension][t.bucket].includes(term)) {
+            LEXICON[t.dimension][t.bucket].push(term);
+        }
+    });
+}
+const lexiconStamp = () => LEXICON_VERSION + (CUSTOM_TERMS.length ? "+local:" + CUSTOM_TERMS.length : "");
+
+function addCustomTerm(term, dimension, bucket) {
+    term = String(term || "").toLowerCase().trim();
+    if (!term) return false;
+    const list = storeGet(STORE_KEYS.customTerms, []);
+    if (list.some(t => t.term === term && t.dimension === dimension && t.bucket === bucket)) return false;
+    list.push({ term, dimension, bucket, addedBy: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"), at: new Date().toISOString(), engine: ENGINE_VERSION });
+    storeSet(STORE_KEYS.customTerms, list);
+    applyCustomTerms();
+    return true;
+}
+function removeCustomTerm(term, dimension, bucket) {
+    const list = storeGet(STORE_KEYS.customTerms, []).filter(t => !(t.term === term && t.dimension === dimension && t.bucket === bucket));
+    storeSet(STORE_KEYS.customTerms, list);
+    CUSTOM_TERMS = list;
+    renderSettings();
+    alert("Removed from the stored list. Terms already loaded stay active until you reload the page.");
+}
+
+/* ---------- project record of assessments ---------- */
+function getAssessments() { return storeGet(STORE_KEYS.assessments, {}); }
+function getAssessment(country) { return getAssessments()[country] || null; }
+
+function recordAssessment() {
+    const R = lastEvaluation;
+    if (!R) { alert("Run an assessment first."); return; }
+    const all = getAssessments();
+    const row = {
+        country: R.country, verdict: R.rubric.verdict, tone: R.rubric.tone,
+        axisRP: R.rubric.axisRP, axisDR: R.rubric.axisDR,
+        tiers: {}, ceiling: {}, consolidated: {}, confidence: {}, counts: {},
+        sensitiveToRule: !!(R.sensitivity && R.sensitivity.differs),
+        altVerdict: R.sensitivity ? R.sensitivity.verdict : "",
+        statements: R.statements.length,
+        overrides: R.statements.filter(s => s.override && (s.override.dimension || s.override.tier)).length,
+        awaitingDimension: R.descriptive.awaitingDimension,
+        source: "analysis", engine: R.engine, lexicon: R.lexicon, rules: R.rules,
+        coder: R.coder, at: new Date().toISOString()
+    };
+    DIMS4.forEach(d => {
+        const p = R.profile[d];
+        row.tiers[d] = p.tier; row.ceiling[d] = p.ceiling; row.consolidated[d] = p.consolidated;
+        row.confidence[d] = p.confidence; row.counts[d] = p.total;
+    });
+    all[R.country] = row;
+    if (storeSet(STORE_KEYS.assessments, all)) {
+        mirror('country_assessments', {
+            country: row.country, verdict: row.verdict, axis_rp: row.axisRP, axis_dr: row.axisDR,
+            tiers: JSON.stringify(row.tiers), confidence: JSON.stringify(row.confidence),
+            sensitive_to_rule: row.sensitiveToRule, engine: row.engine, lexicon: row.lexicon, coder: row.coder
+        }, 'country');
+        const c = ndcData.find(x => x.c === R.country);
+        if (c && c.s !== 1) { c.s = 1; try { localStorage.setItem('ndcTrackerState', JSON.stringify(ndcData.map(i => ({ c: i.c, s: i.s })))); } catch (e) {} loadTables(); }
+        renderEvaluation();
+        renderReporting();
+        alert("Recorded. " + R.country + " now appears on the reporting map and in the matrix.");
+    }
+}
+
+function recordManualPlacement() {
+    const country = document.getElementById('mp-country').value;
+    if (!country) { alert("Pick a country."); return; }
+    const tiers = {};
+    DIMS4.forEach(d => { tiers[d] = document.getElementById('mp-' + d).value; });
+    const axis = (a, b) => (RULES.AXIS_RULE === "min" ? tierMin(tiers[a], tiers[b]) : tierMax(tiers[a], tiers[b]));
+    const all = getAssessments();
+    all[country] = {
+        country, verdict: "Recorded by hand", tone: "partial",
+        axisRP: axis("Recognitional", "Procedural"), axisDR: axis("Distributive", "Restorative"),
+        tiers, ceiling: tiers, consolidated: tiers, confidence: {}, counts: {},
+        sensitiveToRule: false, altVerdict: "", statements: 0, overrides: 0, awaitingDimension: 0,
+        source: "manual", engine: ENGINE_VERSION, lexicon: lexiconStamp(),
+        rules: { axisRule: RULES.AXIS_RULE },
+        coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"), at: new Date().toISOString()
+    };
+    if (storeSet(STORE_KEYS.assessments, all)) { renderReporting(); }
+}
+
+function removeAssessment(country) {
+    if (!confirm("Remove " + country + " from the project record?")) return;
+    const all = getAssessments();
+    delete all[country];
+    storeSet(STORE_KEYS.assessments, all);
+    renderReporting();
+}
+
+function exportAssessmentsCsv() {
+    const rows = Object.values(getAssessments());
+    if (!rows.length) { alert("Nothing recorded yet."); return; }
+    const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+    const head = ["country", "verdict", "axis_rp", "axis_dr",
+        ...DIMS4.map(d => d.toLowerCase() + "_tier"), ...DIMS4.map(d => d.toLowerCase() + "_ceiling"),
+        ...DIMS4.map(d => d.toLowerCase() + "_consolidated"), ...DIMS4.map(d => d.toLowerCase() + "_confidence"),
+        ...DIMS4.map(d => d.toLowerCase() + "_statements"),
+        "sensitive_to_rollup_rule", "verdict_under_other_rule", "statements", "coder_overrides",
+        "awaiting_dimension", "source", "engine", "lexicon", "rules", "coder", "recorded_utc"];
+    const csv = [head.join(",")].concat(rows.map(r => [
+        r.country, r.verdict, r.axisRP, r.axisDR,
+        ...DIMS4.map(d => r.tiers[d]), ...DIMS4.map(d => (r.ceiling || {})[d]),
+        ...DIMS4.map(d => (r.consolidated || {})[d]), ...DIMS4.map(d => (r.confidence || {})[d]),
+        ...DIMS4.map(d => (r.counts || {})[d]),
+        r.sensitiveToRule, r.altVerdict, r.statements, r.overrides, r.awaitingDimension,
+        r.source, r.engine, r.lexicon, JSON.stringify(r.rules || {}), r.coder, r.at
+    ].map(q).join(","))).join("\n");
+    download("JUSTNDC_project_record.csv", csv, "text/csv");
+}
+
+/* ---------- notes ---------- */
+const NOTE_CATEGORIES = ["Methodology", "Corpus observation", "Coding decision", "For the paper", "To do"];
+
+function getNotes() { return storeGet(STORE_KEYS.notes, []); }
+
+function saveNote() {
+    const title = document.getElementById('note-title').value.trim();
+    const body = document.getElementById('note-body').value.trim();
+    if (!body) { alert("A note needs a body."); return; }
+    const notes = getNotes();
+    const editing = document.getElementById('note-editing').value;
+    const row = {
+        id: editing || ("note-" + Date.now()),
+        title: title || body.slice(0, 60),
+        body,
+        category: document.getElementById('note-category').value,
+        country: document.getElementById('note-country').value.trim(),
+        pinned: false,
+        coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"),
+        at: new Date().toISOString(),
+        engine: ENGINE_VERSION
+    };
+    const idx = notes.findIndex(n => n.id === row.id);
+    if (idx >= 0) { row.pinned = notes[idx].pinned; row.created = notes[idx].created || notes[idx].at; notes[idx] = row; }
+    else { row.created = row.at; notes.unshift(row); }
+    storeSet(STORE_KEYS.notes, notes);
+    mirror('project_notes', { id: row.id, title: row.title, body: row.body, category: row.category, country: row.country, coder: row.coder }, 'id');
+    document.getElementById('note-title').value = "";
+    document.getElementById('note-body').value = "";
+    document.getElementById('note-country').value = "";
+    document.getElementById('note-editing').value = "";
+    document.getElementById('note-save-btn').innerText = "Save note";
+    renderNotes();
+}
+function editNote(id) {
+    const n = getNotes().find(x => x.id === id); if (!n) return;
+    document.getElementById('note-title').value = n.title;
+    document.getElementById('note-body').value = n.body;
+    document.getElementById('note-category').value = n.category;
+    document.getElementById('note-country').value = n.country || "";
+    document.getElementById('note-editing').value = n.id;
+    document.getElementById('note-save-btn').innerText = "Update note";
+    document.getElementById('note-title').scrollIntoView({ behavior: "smooth", block: "center" });
+}
+function deleteNote(id) {
+    if (!confirm("Delete this note?")) return;
+    storeSet(STORE_KEYS.notes, getNotes().filter(n => n.id !== id));
+    renderNotes();
+}
+function pinNote(id) {
+    const notes = getNotes();
+    const n = notes.find(x => x.id === id); if (!n) return;
+    n.pinned = !n.pinned;
+    storeSet(STORE_KEYS.notes, notes);
+    renderNotes();
+}
+function exportNotesMd() {
+    const notes = getNotes();
+    if (!notes.length) { alert("No notes yet."); return; }
+    let md = "# JUST-NDC project notes\n\nExported " + new Date().toISOString() + ". Engine " + ENGINE_VERSION + ", lexicon " + lexiconStamp() + ".\n";
+    NOTE_CATEGORIES.forEach(cat => {
+        const inCat = notes.filter(n => n.category === cat);
+        if (!inCat.length) return;
+        md += "\n## " + cat + "\n";
+        inCat.forEach(n => {
+            md += "\n### " + n.title + "\n";
+            md += "_" + new Date(n.created || n.at).toLocaleString() + (n.country ? " · " + n.country : "") + " · " + n.coder + "_\n\n";
+            md += n.body + "\n";
+        });
+    });
+    download("JUSTNDC_notes.md", md, "text/markdown");
+}
+
+/* ============================================================================
+   13. REPORTING
+   The project record, drawn three ways: where the corpus stands, what each
+   country was graded, and where each sits on the two composite axes.
+   ========================================================================== */
+
+const VERDICT_ORDER = [
+    "Justice largely absent",
+    "Predominantly tokenistic",
+    "Process-heavy and outcome-light: justice-washing risk",
+    "Partial commitment",
+    "Substantive but uneven",
+    "Approaching transformative climate justice"
+];
+const VERDICT_SHORT = {
+    "Justice largely absent": "Absent",
+    "Predominantly tokenistic": "Tokenistic",
+    "Process-heavy and outcome-light: justice-washing risk": "Justice-washing risk",
+    "Partial commitment": "Partial",
+    "Substantive but uneven": "Substantive, uneven",
+    "Approaching transformative climate justice": "Approaching transformative",
+    "Recorded by hand": "By hand"
+};
+const VERDICT_COLOR = {
+    "Justice largely absent": "#9e9e9e",
+    "Predominantly tokenistic": "#c62828",
+    "Process-heavy and outcome-light: justice-washing risk": "#8e44ad",
+    "Partial commitment": "#e6a700",
+    "Substantive but uneven": "#7cb342",
+    "Approaching transformative climate justice": "#2e7d32",
+    "Recorded by hand": "#5ac8fa"
+};
+const verdictValue = v => Math.max(1, VERDICT_ORDER.indexOf(v) + 1);
+
+function renderReporting() {
+    const rows = Object.values(getAssessments());
+    const box = document.getElementById('report-summary');
+    if (!box) return;
+
+    const byVerdict = {};
+    rows.forEach(r => { byVerdict[r.verdict] = (byVerdict[r.verdict] || 0) + 1; });
+    const total = ndcData.length;
+
+    box.innerHTML = `
+        <div class="rep-stat"><span class="rep-n">${rows.length}</span><span class="rep-l">assessments recorded</span></div>
+        <div class="rep-stat"><span class="rep-n">${total - rows.length}</span><span class="rep-l">documents still to grade</span></div>
+        <div class="rep-stat"><span class="rep-n">${rows.filter(r => r.source === "analysis").length}</span><span class="rep-l">from the analyser</span></div>
+        <div class="rep-stat"><span class="rep-n">${rows.filter(r => r.sensitiveToRule).length}</span><span class="rep-l">verdicts that flip under the other roll-up rule</span></div>
+        <div class="rep-stat"><span class="rep-n">${rows.filter(r => r.awaitingDimension > 0).length}</span><span class="rep-l">with justice framing still unassigned</span></div>`;
+
+    // verdict distribution
+    document.getElementById('report-verdicts').innerHTML = VERDICT_ORDER.concat(["Recorded by hand"]).map(v => {
+        const n = byVerdict[v] || 0;
+        if (!n && v === "Recorded by hand") return "";
+        const pct = rows.length ? Math.round((n / rows.length) * 100) : 0;
+        return `<div class="vrow">
+            <div class="vlab"><span class="vdot" style="background:${VERDICT_COLOR[v]}"></span>${esc(v)}</div>
+            <div class="vbar"><span style="width:${pct}%;background:${VERDICT_COLOR[v]}"></span></div>
+            <div class="vn">${n}</div>
+        </div>`;
+    }).join("");
+
+    // dimension tier distribution across the recorded corpus
+    document.getElementById('report-dims').innerHTML = DIMS4.map(d => {
+        const counts = { Embedded: 0, Partial: 0, Tokenistic: 0, Absent: 0 };
+        rows.forEach(r => { const t = r.tiers && r.tiers[d]; if (counts[t] !== undefined) counts[t]++; });
+        const n = rows.length || 1;
+        return `<div class="ddist">
+            <div class="ddist-h">${d}</div>
+            <div class="ddist-bar">
+                ${["Embedded", "Partial", "Tokenistic", "Absent"].map(t => counts[t]
+                    ? `<span style="width:${(counts[t] / n) * 100}%;background:${TIER_COLOR[t]}" title="${counts[t]} ${t}"></span>` : "").join("")}
+            </div>
+            <div class="ddist-k">${counts.Embedded} E &middot; ${counts.Partial} P &middot; ${counts.Tokenistic} T &middot; ${counts.Absent} absent</div>
+        </div>`;
+    }).join("");
+
+    renderMatrix(rows);
+    renderRecordTable(rows);
+    const sel = document.getElementById('mp-country');
+    if (sel && !sel.options.length) {
+        sel.innerHTML = `<option value="">Select a country…</option>` +
+            ndcData.map(c => `<option value="${esc(c.c)}">${esc(c.c)}</option>`).join("");
+    }
+    if (googleChartsLoaded) setTimeout(drawVerdictMap, 40);
+}
+
+function drawVerdictMap() {
+    if (!googleChartsLoaded) return;
+    const el = document.getElementById('verdict_map_div');
+    if (!el) return;
+    el.innerHTML = "";
+    const rows = getAssessments();
+
+    const data = new google.visualization.DataTable();
+    data.addColumn('string', 'Country');
+    data.addColumn('number', 'Verdict');
+    data.addColumn({ type: 'string', role: 'tooltip' });
+
+    ndcData.forEach(item => {
+        const a = rows[item.c];
+        if (!a) return;
+        const tip = `${item.c}\n${a.verdict}\nR:${a.tiers.Recognitional} P:${a.tiers.Procedural} D:${a.tiers.Distributive} Rest:${a.tiers.Restorative}`;
+        if (item.mapTarget === "EU_EXPAND") euCountries.forEach(c => data.addRow([c, verdictValue(a.verdict), tip]));
+        else if (item.mapTarget) data.addRow([item.mapTarget, verdictValue(a.verdict), tip]);
+    });
+
+    if (!data.getNumberOfRows()) {
+        el.innerHTML = `<p class="muted-note">No assessment has been recorded yet. Run one on the Assessment page and press <b>Record in project</b>.</p>`;
+        return;
+    }
+    const chart = new google.visualization.GeoChart(el);
+    chart.draw(data, {
+        region: (document.getElementById('verdictRegionSelect') || {}).value || 'world',
+        colorAxis: { values: [1, 2, 3, 4, 5, 6], colors: VERDICT_ORDER.map(v => VERDICT_COLOR[v]) },
+        datalessRegionColor: '#f0f0f2',
+        defaultColor: '#f0f0f2',
+        legend: 'none',
+        backgroundColor: '#ffffff',
+        keepAspectRatio: true
+    });
+}
+
+function renderMatrix(rows) {
+    const el = document.getElementById('report-matrix');
+    if (!el) return;
+    const idx = t => Math.max(0, tierRank(t) - 1);
+    let cells = "";
+    for (let r = 2; r >= 0; r--) {
+        for (let c = 0; c < 3; c++) {
+            const here = rows.filter(a => idx(a.axisRP) === r && idx(a.axisDR) === c);
+            const corner = (r === 2 && c === 2);
+            const washing = (r >= 1 && c === 0);
+            cells += `<div class="m-cell ${corner ? 'm-corner' : ''} ${washing ? 'm-wash' : ''}">
+                <div class="m-count">${here.length || ""}</div>
+                <div class="m-list">${here.map(a => `<span class="m-chip" style="border-color:${VERDICT_COLOR[a.verdict] || '#ccc'}"
+                    title="${esc(a.verdict)}" onclick="openCountryRecord('${esc(a.country).replace(/'/g, "\\'")}')">${esc(a.country)}</span>`).join("")}</div>
+            </div>`;
+        }
+    }
+    el.innerHTML = `<div class="q-wrap m-wrap">
+        <div class="q-ylab">RECOGNITIONAL + PROCEDURAL</div>
+        <div class="q-yticks"><span>embedded</span><span>partial</span><span>tokenistic</span></div>
+        <div class="q-grid m-grid">${cells}</div>
+        <div class="q-xticks"><span>tokenistic</span><span>partial</span><span>embedded</span></div>
+        <div class="q-xlab">DISTRIBUTIVE + RESTORATIVE</div>
+    </div>
+    <p class="q-note">Each axis takes the <b>weaker</b> of its two dimensions (rule: ${RULES.AXIS_RULE}), following the
+    intersection logic in the policy brief rather than flattering a country for one strong dimension. The upper-right cell
+    is the region the brief describes as approaching transformative climate justice. The shaded left column is the
+    justice-washing pattern of insight 2: recognition and process developed, distribution and repair not.</p>`;
+}
+
+function renderRecordTable(rows) {
+    const el = document.getElementById('report-table');
+    if (!el) return;
+    if (!rows.length) { el.innerHTML = `<p class="muted-note">Nothing recorded yet.</p>`; return; }
+    const sorted = rows.slice().sort((a, b) => verdictValue(b.verdict) - verdictValue(a.verdict) || a.country.localeCompare(b.country));
+    el.innerHTML = `<div class="table-container"><table class="sticky-th"><thead><tr>
+        <th>Country</th><th>Verdict</th>${DIMS4.map(d => `<th>${d.slice(0, 4)}</th>`).join("")}
+        <th>R+P</th><th>D+R</th><th>Source</th><th>Coder</th><th>Recorded</th><th></th></tr></thead><tbody>
+        ${sorted.map(a => `<tr>
+            <td><b>${esc(a.country)}</b>${a.sensitiveToRule ? ' <span class="chip chip-review" title="The verdict changes under the other roll-up rule">rule-sensitive</span>' : ''}</td>
+            <td><span class="vdot" style="background:${VERDICT_COLOR[a.verdict] || '#ccc'}"></span> ${esc(VERDICT_SHORT[a.verdict] || a.verdict)}</td>
+            ${DIMS4.map(d => `<td style="color:${TIER_COLOR[a.tiers[d]]};font-weight:600;">${(a.tiers[d] || "?").slice(0, 4)}</td>`).join("")}
+            <td>${(a.axisRP || "").slice(0, 4)}</td><td>${(a.axisDR || "").slice(0, 4)}</td>
+            <td>${esc(a.source)}</td><td>${esc(a.coder)}</td>
+            <td>${new Date(a.at).toLocaleDateString()}</td>
+            <td><button class="lf-btn" onclick="removeAssessment('${esc(a.country).replace(/'/g, "\\'")}')">remove</button></td>
+        </tr>`).join("")}</tbody></table></div>`;
+}
+
+/* The country record: the recorded assessment, plus every coding example filed
+   against that country, grouped by dimension and then by commitment level.
+   Sub-dimension is the thematic cluster where the analyser recorded one. */
+function openCountryRecord(country) {
+    const a = getAssessment(country);
+    const box = document.getElementById('country-record-box');
+    const el = document.getElementById('country-record');
+    if (!box || !el) return;
+    document.getElementById('country-record-title').textContent = country;
+    box.style.display = "block";
+
+    const codes = (typeof codingExamples !== "undefined" ? codingExamples : [])
+        .filter(e => (e.country || "").trim().toLowerCase() === country.trim().toLowerCase());
+
+    let head = `<p class="muted-note">No assessment recorded for this country yet.</p>`;
+    if (a) {
+        head = `<div class="cr-head">
+            <div><span class="vdot" style="background:${VERDICT_COLOR[a.verdict] || '#ccc'}"></span>
+                 <b>${esc(a.verdict)}</b>
+                 ${a.sensitiveToRule ? `<span class="chip chip-review">flips to "${esc(VERDICT_SHORT[a.altVerdict] || a.altVerdict)}" under the other roll-up rule</span>` : ''}</div>
+            <div class="cr-meta">${esc(a.source)} &middot; ${esc(a.coder)} &middot; ${new Date(a.at).toLocaleString()} &middot; engine ${esc(a.engine)}, lexicon ${esc(a.lexicon)}</div>
+        </div>
+        <div class="cr-dims">${DIMS4.map(d => `
+            <div class="cr-dim" style="border-top:4px solid ${TIER_COLOR[a.tiers[d]] || '#ccc'}">
+                <h5>${d}</h5>
+                <div class="cr-tier" style="color:${TIER_COLOR[a.tiers[d]] || '#666'}">${esc(a.tiers[d] || "?")}</div>
+                ${a.confidence && a.confidence[d] ? `<div class="cr-sub">confidence: ${esc(a.confidence[d])}</div>` : ""}
+                ${(a.ceiling && a.consolidated && a.ceiling[d] !== a.consolidated[d])
+                    ? `<div class="cr-sub">ceiling ${esc(a.ceiling[d])}, consolidated ${esc(a.consolidated[d])}</div>` : ""}
+            </div>`).join("")}</div>
+        <p class="muted-note">Axes: recognitional + procedural = <b>${esc(a.axisRP)}</b>, distributive + restorative = <b>${esc(a.axisDR)}</b>.
+        ${a.awaitingDimension ? `<b>${a.awaitingDimension}</b> passage(s) named justice without a dimension and are still unassigned. ` : ""}
+        ${a.overrides ? `<b>${a.overrides}</b> coder override(s) applied.` : ""}</p>`;
+    }
+
+    let body;
+    if (!codes.length) {
+        body = `<p class="muted-note">No coding examples filed against ${esc(country)} yet. Add them in Coding Examples; they will group here by dimension automatically.</p>`;
+    } else {
+        body = DIMS4.map(d => {
+            const mine = codes.filter(c => (c.dimension || "") === d);
+            if (!mine.length) return "";
+            const levels = ["Embedded", "Partial", "Tokenistic"];
+            return `<div class="cr-group">
+                <h4>${d} justice <span class="cr-count">${mine.length}</span></h4>
+                ${levels.map(lv => {
+                    const at = mine.filter(c => (c.level || "") === lv);
+                    if (!at.length) return "";
+                    return `<div class="cr-level">
+                        <div class="cr-level-h"><span class="ex-badge" style="background:${TIER_COLOR[lv]}">${lv}</span>
+                        <span class="cr-count">${at.length}</span></div>
+                        ${at.map(c => `<div class="cr-code">
+                            <p class="cr-quote">${esc(String(c.statement || "").slice(0, 400))}${String(c.statement || "").length > 400 ? "\u2026" : ""}</p>
+                            ${c.analysis ? `<p class="cr-an">${esc(c.analysis)}</p>` : ""}
+                            <div class="cr-tags">
+                                ${c.cluster ? `<span class="chip">${esc(c.cluster)}</span>` : ""}
+                                ${c.section ? `<span class="chip chip-sec">${esc(c.section)}</span>` : ""}
+                                ${c.scope ? `<span class="chip chip-${String(c.scope).toLowerCase()}">${esc(c.scope)}</span>` : ""}
+                                ${c.conditional && c.conditional !== "No" ? `<span class="chip chip-cond">conditional</span>` : ""}
+                                ${c.page ? `<span class="chip chip-loc">${esc(c.page)}</span>` : ""}
+                            </div>
+                        </div>`).join("")}
+                    </div>`;
+                }).join("")}
+            </div>`;
+        }).join("") || `<p class="muted-note">Coding examples exist for this country but carry no dimension.</p>`;
+    }
+
+    el.innerHTML = head + `<h4 class="cr-h">Coding examples filed for this country</h4>` + body;
+    box.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* The same record, reachable from the Coding Examples page. */
+function renderCountryIndex() {
+    const el = document.getElementById('country-index');
+    if (!el) return;
+    const codes = (typeof codingExamples !== "undefined" ? codingExamples : []);
+    const assessed = getAssessments();
+    const names = [...new Set(codes.map(c => (c.country || "Unspecified").trim()).concat(Object.keys(assessed)))]
+        .filter(Boolean).sort((a, b) => a.localeCompare(b));
+    if (!names.length) { el.innerHTML = `<p class="muted-note">No countries yet.</p>`; return; }
+    el.innerHTML = `<div class="ci-grid">${names.map(n => {
+        const mine = codes.filter(c => (c.country || "").trim().toLowerCase() === n.toLowerCase());
+        const a = assessed[n];
+        const byDim = DIMS4.map(d => mine.filter(c => c.dimension === d).length);
+        return `<button class="ci-card" onclick="openCountryRecord('${esc(n).replace(/'/g, "\\'")}')">
+            <span class="ci-name">${esc(n)}</span>
+            <span class="ci-meta">${mine.length} code${mine.length === 1 ? "" : "s"}${a ? " &middot; assessed" : ""}</span>
+            <span class="ci-bars">${byDim.map((v, i) => `<span title="${DIMS4[i]}: ${v}" style="height:${Math.min(100, v * 18) + 6}%"></span>`).join("")}</span>
+            ${a ? `<span class="ci-verdict" style="background:${VERDICT_COLOR[a.verdict] || '#ccc'}"></span>` : ""}
+        </button>`;
+    }).join("")}</div>`;
+}
+
+/* ============================================================================
+   14. NOTES
+   ========================================================================== */
+
+let noteFilter = { category: "All", q: "" };
+
+function setNoteFilter(kind, value) {
+    if (kind === "q") noteFilter.q = value;
+    else noteFilter.category = value;
+    renderNotes();
+}
+
+function renderNotes() {
+    const el = document.getElementById('notes-list');
+    if (!el) return;
+    const all = getNotes();
+    const q = noteFilter.q.toLowerCase();
+    const list = all.filter(n =>
+        (noteFilter.category === "All" || n.category === noteFilter.category) &&
+        (!q || (n.title + " " + n.body + " " + (n.country || "")).toLowerCase().includes(q))
+    ).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || new Date(b.at) - new Date(a.at));
+
+    const counts = {};
+    all.forEach(n => { counts[n.category] = (counts[n.category] || 0) + 1; });
+    document.getElementById('notes-controls').innerHTML =
+        `<div class="lf-group"><span>Category:</span>
+        ${["All"].concat(NOTE_CATEGORIES).map(c => `<button class="lf-btn ${noteFilter.category === c ? 'lf-on' : ''}" onclick="setNoteFilter('category','${c}')">${c}${c !== "All" && counts[c] ? " (" + counts[c] + ")" : ""}</button>`).join("")}
+        <span class="lf-count">${list.length} of ${all.length}</span></div>`;
+
+    el.innerHTML = list.length ? list.map(n => `
+        <div class="note-card ${n.pinned ? 'note-pinned' : ''}">
+            <div class="note-head">
+                <div><span class="chip chip-sec">${esc(n.category)}</span>
+                ${n.country ? `<span class="chip">${esc(n.country)}</span>` : ""}
+                <b class="note-title">${esc(n.title)}</b></div>
+                <div class="note-actions">
+                    <button class="lf-btn" onclick="pinNote('${n.id}')">${n.pinned ? "unpin" : "pin"}</button>
+                    <button class="lf-btn" onclick="editNote('${n.id}')">edit</button>
+                    <button class="lf-btn" onclick="deleteNote('${n.id}')">delete</button>
+                </div>
+            </div>
+            <div class="note-body">${esc(n.body).replace(/\n/g, "<br>")}</div>
+            <div class="note-meta">${esc(n.coder)} &middot; ${new Date(n.created || n.at).toLocaleString()}</div>
+        </div>`).join("")
+        : `<p class="muted-note">No notes yet. Anything you record here is exported to Markdown for the methods section.</p>`;
+}
+
+/* ============================================================================
+   15. SETTINGS: rules in force, the lexicon, and two recall instruments
+   ========================================================================== */
+
+let lexFilter = { bucket: "Recognitional.core", q: "" };
+
+function scriptOf(term) {
+    if (/[\u4e00-\u9fff]/.test(term)) return "Chinese";
+    if (/[\u0600-\u06ff]/.test(term)) return "Arabic";
+    if (/[\u0400-\u04ff]/.test(term)) return "Cyrillic";
+    if (/[\u00e0-\u00ff\u0100-\u017f]/.test(term)) return "Latin, accented";
+    return "Latin";
+}
+
+function lexiconBuckets() {
+    const b = [];
+    DIMS4.forEach(d => {
+        b.push({ key: d + ".core", label: d + " · core", list: LEXICON[d].core, note: "high precision; may assign this dimension on its own (weight 3)" });
+        b.push({ key: d + ".supporting", label: d + " · supporting", list: LEXICON[d].supporting, note: "contributes weight 1; cannot assign a dimension alone, so a match here always arrives flagged for confirmation" });
+    });
+    b.push({ key: "frame", label: "Justice frame", list: FRAME_TERMS, note: "explicit justice framing. Carries no dimension weight and assigns no dimension: it guarantees the passage reaches a coder" });
+    b.push({ key: "screen", label: "Recall net", list: SCREEN_ONLY, note: "flags a paragraph for human review only. Never assigns a dimension or a tier" });
+    b.push({ key: "structural", label: "Structural markers", list: STRUCTURAL_MARKERS, note: "used only by rubric criterion 6, root causes rather than symptoms" });
+    return b;
+}
+
+function setLexFilter(kind, value) {
+    if (kind === "q") lexFilter.q = value; else lexFilter.bucket = value;
+    renderSettings();
+}
+
+/* Which lexicon entries actually fired in the last run. Coverage, not accuracy. */
+function firedTerms() {
+    const fired = new Set();
+    if (typeof lastEvaluation !== "undefined" && lastEvaluation) {
+        lastEvaluation.statements.concat(lastEvaluation.screened || []).forEach(s => {
+            [...(s.matched && s.matched.core || []), ...(s.matched && s.matched.supporting || []),
+             ...(s.frameHits || []), ...(s.screenHits || [])].forEach(t => fired.add(String(t).toLowerCase()));
+        });
+    }
+    return fired;
+}
+
+function renderSettings() {
+    const rulesBox = document.getElementById('settings-rules');
+    if (!rulesBox) return;
+    const s = getSettings();
+
+    rulesBox.innerHTML = `
+        <div class="set-row">
+            <div class="set-lab"><b>Evidence scope</b><span>What the tier is judged on. The coding unit stays the sentence either way.</span></div>
+            <div>${[["paragraph", "Paragraph (v2.1 default)"], ["sentence", "Sentence only (v2.0 behaviour)"]].map(([v, l]) =>
+                `<button class="lf-btn ${s.evidenceScope === v ? 'lf-on' : ''}" onclick="setSetting('evidenceScope','${v}')">${l}</button>`).join("")}</div>
+        </div>
+        <div class="set-row">
+            <div class="set-lab"><b>Dimension roll-up</b><span>Ceiling: the strongest tier the document evidences. Consolidated: the highest tier reached by at least two statements.</span></div>
+            <div>${[["ceiling", "Ceiling (published method)"], ["consolidated", "Consolidated (two-statement rule)"]].map(([v, l]) =>
+                `<button class="lf-btn ${s.rollupRule === v ? 'lf-on' : ''}" onclick="setSetting('rollupRule','${v}')">${l}</button>`).join("")}</div>
+        </div>
+        <div class="set-row">
+            <div class="set-lab"><b>Composite axis</b><span>How the two dimensions on each axis of the matrix are combined.</span></div>
+            <div>${[["min", "Weaker of the two (intersection logic)"], ["max", "Stronger of the two"]].map(([v, l]) =>
+                `<button class="lf-btn ${s.axisRule === v ? 'lf-on' : ''}" onclick="setSetting('axisRule','${v}')">${l}</button>`).join("")}</div>
+        </div>
+        <p class="muted-note">Engine ${ENGINE_VERSION}, lexicon ${lexiconStamp()}. Every rule in force is written into each export.
+        Changing one of these changes results, so state the setting you used in the methods section rather than leaving it to the default.</p>`;
+
+    // ---- lexicon browser ----
+    const buckets = lexiconBuckets();
+    const active = buckets.find(b => b.key === lexFilter.bucket) || buckets[0];
+    const fired = firedTerms();
+    const q = lexFilter.q.toLowerCase();
+    const customSet = new Set(CUSTOM_TERMS.map(t => t.term));
+
+    document.getElementById('lex-tabs').innerHTML = buckets.map(b =>
+        `<button class="lf-btn ${b.key === active.key ? 'lf-on' : ''}" onclick="setLexFilter('bucket','${b.key}')">${b.label} <span class="lex-n">${b.list.length}</span></button>`).join("");
+
+    const shown = active.list.filter(t => !q || String(t).toLowerCase().includes(q));
+    const byScript = {};
+    shown.forEach(t => { const sc = scriptOf(String(t)); (byScript[sc] = byScript[sc] || []).push(t); });
+
+    document.getElementById('lex-body').innerHTML = `
+        <p class="lex-note"><b>${esc(active.label)}.</b> ${esc(active.note)}.
+        ${fired.size ? `Terms highlighted in green matched at least once in the last document analysed (${esc(lastEvaluation ? lastEvaluation.country : "")}).` : "Run an assessment to see which entries actually fire."}</p>
+        ${Object.keys(byScript).sort().map(sc => `
+            <div class="lex-group"><div class="lex-group-h">${sc} <span class="lex-n">${byScript[sc].length}</span></div>
+            <div class="lex-terms">${byScript[sc].map(t => {
+                const low = String(t).toLowerCase();
+                return `<span class="lex-term ${fired.has(low) ? 'lex-hit' : ''} ${customSet.has(low) ? 'lex-custom' : ''}"
+                    title="${customSet.has(low) ? 'added locally' : ''}">${esc(t)}${customSet.has(low)
+                        ? ` <a onclick="removeCustomTerm('${esc(low).replace(/'/g, "\\'")}','${active.key.split('.')[0]}','${active.key.includes('.') ? active.key.split('.')[1] : active.key}')">&times;</a>` : ""}</span>`;
+            }).join("")}</div></div>`).join("")}
+        ${shown.length === 0 ? `<p class="muted-note">No entry in this bucket matches "${esc(lexFilter.q)}".</p>` : ""}`;
+
+    const covEl = document.getElementById('lex-coverage');
+    if (covEl) {
+        const all = buckets.reduce((n, b) => n + b.list.length, 0);
+        covEl.innerHTML = fired.size
+            ? `<b>Coverage in the last run.</b> ${fired.size} distinct lexicon entries matched, out of ${all} in the lexicon.
+               A low figure is expected and is not a fault: most entries exist for languages and topics absent from any single NDC.
+               What matters is the reverse question, below.`
+            : `<b>Coverage.</b> Run an assessment and this will show which lexicon entries actually fired in that document.`;
+    }
+    renderCustomTerms();
+    renderGapFinder();
+}
+
+function renderCustomTerms() {
+    const el = document.getElementById('custom-terms');
+    if (!el) return;
+    if (!CUSTOM_TERMS.length) { el.innerHTML = `<p class="muted-note">No locally added terms. Anything you add is stamped into the lexicon version on every export, so a run stays reproducible.</p>`; return; }
+    el.innerHTML = `<div class="lex-terms">${CUSTOM_TERMS.map(t =>
+        `<span class="lex-term lex-custom">${esc(t.term)} <small>${esc(t.dimension || "")}${t.dimension ? "·" : ""}${esc(t.bucket)}</small>
+        <a onclick="removeCustomTerm('${esc(t.term).replace(/'/g, "\\'")}','${esc(t.dimension || "")}','${esc(t.bucket)}')">&times;</a></span>`).join("")}</div>`;
+}
+
+function submitCustomTerm() {
+    const term = document.getElementById('ct-term').value;
+    const bucketKey = document.getElementById('ct-bucket').value;
+    const dim = bucketKey.includes(".") ? bucketKey.split(".")[0] : "";
+    const bucket = bucketKey.includes(".") ? bucketKey.split(".")[1] : bucketKey;
+    if (addCustomTerm(term, dim, bucket)) {
+        document.getElementById('ct-term').value = "";
+        renderSettings();
+    } else alert("That term is already in the lexicon, or the field was empty.");
+}
+
+/* ---- gap finder: the reverse of coverage ---------------------------------
+   Coverage asks which lexicon entries fired. This asks what the screener read
+   and did not flag, which is the only question that bears on recall. It lists
+   the most frequent content words in paragraphs that no rule touched, so a
+   missing register shows up as a cluster of unfamiliar words rather than as
+   silence.                                                                  */
+
+const GAP_STOPWORDS = new Set(("the of and to in a for on is are be as by with that this it its from at or an will shall which "
+    + "have has had not but their they we our all can may more than other such these those into under over between within "
+    + "also should would could been being when where what who how any each per about through during before after above below "
+    + "de la el los las en y del que por con para una uno les des du au aux dans sur est sont pour par une")
+    .split(" "));
+
+function renderGapFinder() {
+    const el = document.getElementById('gap-finder');
+    if (!el) return;
+    if (typeof lastUnits === "undefined" || !lastUnits || !lastUnits.length) {
+        el.innerHTML = `<p class="muted-note">Run an assessment or the screener first. This panel then shows what the document said in the paragraphs no rule touched.</p>`;
+        return;
+    }
+    const touched = new Set();
+    if (typeof lastEvaluation !== "undefined" && lastEvaluation) {
+        lastEvaluation.statements.concat(lastEvaluation.screened || []).forEach(s => touched.add(s.paraId));
+    }
+    const untouchedParas = [];
+    const seen = new Set();
+    lastUnits.forEach(u => {
+        if (touched.has(u.paraId) || seen.has(u.paraId)) return;
+        seen.add(u.paraId);
+        untouchedParas.push(u);
+    });
+
+    const freq = new Map();
+    untouchedParas.forEach(u => {
+        const words = (u.excerpt || u.text).toLowerCase().match(/[\p{L}][\p{L}'-]{3,}/gu) || [];
+        new Set(words).forEach(w => { if (!GAP_STOPWORDS.has(w)) freq.set(w, (freq.get(w) || 0) + 1); });
+    });
+    const top = [...freq.entries()].sort((a, b) => b[1] - a[1]).slice(0, 60);
+
+    el.innerHTML = `
+        <p class="lex-note"><b>${untouchedParas.length} paragraphs</b> in ${esc(lastEvaluation ? lastEvaluation.country : "the last document")}
+        were read and matched nothing at all: no dimension term, no implicit pattern, no justice framing, no recall term.
+        These are the words that appear most often in them. A justice register the lexicon does not cover shows up here.</p>
+        <div class="lex-terms">${top.map(([w, n]) =>
+            `<span class="lex-term gap-term" onclick="inspectGapWord('${esc(w).replace(/'/g, "\\'")}')">${esc(w)} <span class="lex-n">${n}</span></span>`).join("")}</div>
+        <div id="gap-detail"></div>
+        <div style="margin-top:14px;">
+            <button class="lf-btn" onclick="sampleUnflagged()">Draw a random sample of 10 unflagged paragraphs to read</button>
+            <span class="muted-note" style="margin-left:8px;">This is the recall check the methods note lists as outstanding.</span>
+        </div>
+        <div id="recall-sample"></div>`;
+}
+
+function inspectGapWord(word) {
+    const box = document.getElementById('gap-detail');
+    if (!box || typeof lastUnits === "undefined") return;
+    const touched = new Set();
+    if (lastEvaluation) lastEvaluation.statements.concat(lastEvaluation.screened || []).forEach(s => touched.add(s.paraId));
+    const hits = [];
+    const seen = new Set();
+    lastUnits.forEach(u => {
+        if (touched.has(u.paraId) || seen.has(u.paraId)) return;
+        if ((u.excerpt || u.text).toLowerCase().includes(word)) { seen.add(u.paraId); hits.push(u); }
+    });
+    box.innerHTML = `<div class="gap-box"><b>"${esc(word)}" in ${hits.length} unflagged paragraph(s)</b>
+        ${hits.slice(0, 5).map(u => `<p class="gap-para"><span class="scr-loc">[${esc(u.paraLocator || ("p. " + u.page))}]</span> ${esc(u.excerpt || u.text)}</p>`).join("")}
+        <p class="muted-note">If any of these is justice content, add the term that would have caught it under
+        <b>Add a term</b> above, then re-run the document.</p></div>`;
+}
+
+function sampleUnflagged() {
+    const box = document.getElementById('recall-sample');
+    if (!box || typeof lastUnits === "undefined") return;
+    const touched = new Set();
+    if (lastEvaluation) lastEvaluation.statements.concat(lastEvaluation.screened || []).forEach(s => touched.add(s.paraId));
+    const pool = [];
+    const seen = new Set();
+    lastUnits.forEach(u => { if (!touched.has(u.paraId) && !seen.has(u.paraId)) { seen.add(u.paraId); pool.push(u); } });
+    const pick = [];
+    const copy = pool.slice();
+    while (pick.length < 10 && copy.length) pick.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
+
+    const audit = storeGet(STORE_KEYS.audit, []);
+    box.innerHTML = `<div class="gap-box">
+        <b>Random sample of ${pick.length} paragraphs the screener did not flag</b>
+        <p class="muted-note">Read each one and mark it. The tally below is a recall estimate for this document only:
+        misses divided by paragraphs read. It is recorded with the country name so the samples accumulate into the
+        stratified check the methods note requires.</p>
+        ${pick.map((u, i) => `<div class="samp" id="samp-${i}">
+            <p class="gap-para"><span class="scr-loc">[${esc(u.paraLocator || ("p. " + u.page))}]</span> ${esc(u.excerpt || u.text)}</p>
+            <button class="lf-btn" onclick="markSample(${i},'miss','${esc(u.paraId)}')">justice content, missed</button>
+            <button class="lf-btn" onclick="markSample(${i},'ok','${esc(u.paraId)}')">correctly skipped</button>
+        </div>`).join("")}
+        <div id="audit-tally">${auditTally(audit)}</div>
+        ${audit.length ? `<button class="lf-btn" onclick="exportAudit()">Export the audit record (.csv)</button>` : ""}
+    </div>`;
+}
+
+function markSample(i, verdict, paraId) {
+    const audit = storeGet(STORE_KEYS.audit, []);
+    audit.push({
+        country: lastEvaluation ? lastEvaluation.country : "unknown",
+        paraId, verdict, at: new Date().toISOString(),
+        coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"),
+        engine: ENGINE_VERSION, lexicon: lexiconStamp()
+    });
+    storeSet(STORE_KEYS.audit, audit);
+    const el = document.getElementById('samp-' + i);
+    if (el) el.className = "samp samp-" + verdict;
+    const t = document.getElementById('audit-tally');
+    if (t) t.innerHTML = auditTally(audit);
+}
+
+function auditTally(audit) {
+    if (!audit.length) return "";
+    const miss = audit.filter(a => a.verdict === "miss").length;
+    const pct = Math.round((miss / audit.length) * 100);
+    return `<p class="audit-tally"><b>Audit so far:</b> ${audit.length} unflagged paragraphs read across
+        ${new Set(audit.map(a => a.country)).size} document(s); ${miss} contained justice content the screener missed (${pct}%).
+        ${audit.length < 100 ? "Well short of a defensible recall statement, which needs roughly 120 pages stratified by language and length." : ""}</p>`;
+}
+
+function exportAudit() {
+    const audit = storeGet(STORE_KEYS.audit, []);
+    const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+    const head = ["country", "paragraph_id", "verdict", "coder", "at", "engine", "lexicon"];
+    download("JUSTNDC_recall_audit.csv",
+        [head.join(",")].concat(audit.map(a => head.map(k => q(a[k === "paragraph_id" ? "paraId" : k])).join(","))).join("\n"),
+        "text/csv");
+}
+
+/* ---------------------------------------------------------------------------
+   Does the analyser see this? Runs the real classifier over any text and
+   reports every rule that fires and the record that would result. This is the
+   answer to "am I missing something": paste the phrasing you suspect is being
+   dropped and read what the engine actually does with it.
+   ------------------------------------------------------------------------- */
+function testSentence() {
+    const out = document.getElementById('ts-out');
+    const text = (document.getElementById('ts-input').value || "").trim();
+    if (!out) return;
+    if (!text) { out.innerHTML = `<p class="muted-note">Paste a sentence or a paragraph.</p>`; return; }
+    if (typeof applyCustomTerms === "function") applyCustomTerms();
+
+    const dim = classifyDimension(text, text);
+    const f = detectFeatures(text);
+    const tr = classifyTier(text, f);
+    const fired = Object.entries(f).filter(([, v]) => v).map(([k]) => k);
+
+    const perDim = DIMS4.map(d => {
+        const e = dim.evidence[d];
+        const bits = [...e.core.map(t => `<span class="lex-term lex-core">${esc(t)}</span>`),
+                      ...e.supporting.map(t => `<span class="lex-term">${esc(t)}</span>`)];
+        if (e.patterns) bits.push(`<span class="lex-term lex-frame">${e.patterns} implicit pattern${e.patterns > 1 ? "s" : ""}</span>`);
+        if (!bits.length) return "";
+        const score = e.core.length * 3 + e.patterns * 2 + e.supporting.length;
+        return `<div class="gap-row"><span class="gap-k">${d} (weight ${score})</span><span class="lex-terms">${bits.join("")}</span></div>`;
+    }).filter(Boolean).join("");
+
+    let outcome, tone;
+    if (dim.dimension) {
+        outcome = `This enters the ledger as <b>${dim.dimension} justice / ${tr.tier}</b>.`;
+        tone = "dim-agree";
+    } else if (dim.frameHits.length) {
+        outcome = `This enters the ledger with <b>no dimension assigned</b>: justice is named but no dimension term is present, so a coder assigns it.`;
+        tone = "dim-flag";
+    } else if (dim.screenHits.length) {
+        outcome = `This is held by the <b>recall net</b> only. It is reachable from the ledger but counts towards nothing until a coder places it.`;
+        tone = "dim-flag";
+    } else {
+        outcome = `This would <b>not be retrieved at all</b>. Nothing in it matches any dimension term, implicit pattern, justice framing or recall term. If you believe it is a justice statement, add a term below and test again.`;
+        tone = "dim-flag";
+    }
+
+    out.innerHTML = `
+        <div class="dim-flag ${tone}" style="display:block;margin:10px 0;padding:9px 12px;">${outcome}</div>
+        ${perDim || `<p class="muted-note">No dimension term, supporting term or implicit pattern matched.</p>`}
+        <div class="gap-row"><span class="gap-k">Justice framing</span><span class="lex-terms">${
+            dim.frameHits.length ? dim.frameHits.map(t => `<span class="lex-term lex-frame">${esc(t)}</span>`).join("") : '<span class="muted-note">none</span>'}</span></div>
+        <div class="gap-row"><span class="gap-k">Recall net</span><span class="lex-terms">${
+            dim.screenHits.length ? dim.screenHits.map(t => `<span class="lex-term lex-screen">${esc(t)}</span>`).join("") : '<span class="muted-note">none</span>'}</span></div>
+        <div class="gap-row"><span class="gap-k">Evidence features</span><span class="lex-terms">${
+            fired.length ? fired.map(t => `<span class="lex-term">${esc(t)}</span>`).join("") : '<span class="muted-note">none</span>'}</span></div>
+        <div class="gap-row"><span class="gap-k">Tier reasoning</span><span>${esc(tr.why.join("; "))}</span></div>
+        <div class="gap-row"><span class="gap-k">Scope / cluster</span><span>${esc(classifyScope(text, f))} &middot; ${esc(classifyCluster(text))}${
+            anyTerm(STRUCTURAL_MARKERS, text) ? " &middot; engages structural drivers" : ""}</span></div>
+        <div class="gap-row"><span class="gap-k">Dimension decision</span><span>${esc(dim.reason)}</span></div>`;
 }
 
 /* Standalone builds keep coder overrides in the browser only. This exports every
