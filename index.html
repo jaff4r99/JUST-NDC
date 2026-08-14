@@ -340,6 +340,26 @@
         .samp { background:#fff; border:1px solid #e8e8e8; border-radius:10px; padding:11px 14px; margin-bottom:9px; }
         .samp p { margin:0 0 8px; line-height:1.6; font-size:0.88rem; }
         .ledger-hit { outline:3px solid var(--primary); outline-offset:3px; }
+        /* --- v2.3 collapsible dimension card ------------------------------- */
+        details.dim-card > summary { list-style:none; cursor:pointer; position:relative; }
+        details.dim-card > summary::-webkit-details-marker { display:none; }
+        details.dim-card > summary h4 { margin:0 0 6px; }
+        .dim-score { font-size:0.8rem; color:#555; margin-top:2px; }
+        .dim-more { position:absolute; top:0; right:0; font-size:0.68rem; color:var(--text-muted); border:1px solid #e0e0e0; border-radius:10px; padding:2px 9px; }
+        details.dim-card[open] .dim-more::after { content:" \\2013 hide"; }
+        details.dim-card:not([open]) .dim-more::after { content:" \\002B"; }
+        .dim-body { margin-top:12px; padding-top:11px; border-top:1px solid #eee; }
+        .dscale { position:relative; height:7px; background:#f0f0f2; border-radius:4px; margin:8px 0 6px; overflow:visible; }
+        .dscale-fill { position:absolute; left:0; top:0; height:100%; border-radius:4px; }
+        .dscale-cut { position:absolute; top:-3px; width:1px; height:13px; background:#b0b0b8; }
+        .dcalc { width:100%; border-collapse:collapse; font-size:0.72rem; margin:8px 0; }
+        .dcalc th { text-align:left; font-weight:600; color:#8a8a90; border-bottom:1px solid #eee; padding:4px 6px; font-size:0.66rem; text-transform:uppercase; letter-spacing:.04em; }
+        .dcalc td { padding:5px 6px; border-bottom:1px solid #f5f5f5; vertical-align:top; }
+        .dcalc-pen { color:#a06000; font-size:0.66rem; margin-top:2px; }
+        .dcalc-sum { font-size:0.75rem; color:#555; margin:4px 0 0; }
+        .band-chip { display:inline-block; font-size:0.7rem; padding:3px 10px; border-radius:12px; margin-left:8px; vertical-align:middle; }
+        .flag-row { display:flex; gap:8px; align-items:baseline; margin:6px 0; font-size:0.82rem; }
+        .flag-tag { flex:0 0 auto; font-size:0.68rem; padding:2px 9px; border-radius:11px; background:#fff2cc; color:#7a5b00; }
         .ex-quote { font-family: Georgia, serif; font-style: italic; margin: 10px 0; line-height: 1.6; color: #222; }
         .ex-why { font-size: 0.78rem; color: #555; background: #fafafa; border-radius: 8px; padding: 9px 12px; line-height: 1.6; }
         .ex-override { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
@@ -1029,7 +1049,7 @@
 
                         <div class="ui-box">
                             <h3 style="margin-top:0;">Dimension profile</h3>
-                            <p class="panel-sub">Each dimension takes the strongest tier the document actually evidences. A dimension does not rise because a phrase is repeated.</p>
+                            <p class="panel-sub">Each dimension is scored from the evidence its statements carry, then banded. The strongest statement counts in full and each further one at a decreasing weight, so a dimension cannot be carried by a single sentence and cannot be inflated by repetition. Tokenistic statements score zero, so they neither raise a dimension nor dilute it. Open a card to see the arithmetic.</p>
                             <div id="dimension-profile" class="dim-grid"></div>
                         </div>
 
@@ -1132,7 +1152,7 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.2.0";
+const ENGINE_VERSION = "2.3.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -1159,7 +1179,7 @@ const RULES = {
        least two statements. Whichever governs, both are computed and both
        are reported, and the country verdict is recomputed under the other
        one to show whether it survives the choice.                          */
-    ROLLUP_RULE: "ceiling",      // "ceiling" or "consolidated"
+    ROLLUP_RULE: "score",        // "score" (v2.3 default), "ceiling" (the v2.0 method), or "consolidated"
     MIN_UNIT_CHARS: 25,          // shorter fragments are merged into a neighbouring sentence, never dropped
     DEHYPHENATE: true            // rejoin words broken across a line, unless the hyphen belongs to the term
 };
@@ -2143,40 +2163,114 @@ function splitSentences(text) {
    ========================================================================== */
 
 /* ============================================================================
-   6. DIMENSION ROLL-UP, v2.2
+   6a. THE DIMENSION COMMITMENT SCORE, v2.3
 
-   The question this answers: given every statement coded to one dimension, what
-   is that dimension's level of commitment for the country as a whole?
+   The fault this replaces. Up to v2.2 a dimension took the strongest tier any
+   one statement reached. One embedded sentence among nineteen tokenistic ones
+   graded the whole dimension Embedded. A single sentence should not have that
+   authority, and no amount of reporting around it fixes the rule itself.
 
-   Counting is the wrong instrument. A dimension with forty tokenistic mentions
-   is not stronger than one with four. But taking the single strongest statement
-   and stopping there is also wrong, because it cannot tell the reader whether
-   that statement is the document's working level or a lone sentence.
+   What it is replaced with is an accumulation, not a share.
 
-   So two numbers are produced, not one, and both are reported.
+   A SHARE IS THE WRONG INSTRUMENT and is not used anywhere here. Dividing by
+   the number of statements makes the result a function of document length: an
+   NDC with 80 mentions and 3 anchored commitments would score 4 per cent while
+   a twelve-page NDC with 3 mentions and 1 anchored commitment scores 33, on
+   strictly weaker evidence. Length is a drafting choice, not a justice outcome.
 
-   CEILING        The strongest tier the document evidences, using the evidence
-                  thresholds from v2.0. Repetition-invariant by construction:
-                  adding tokenistic mentions cannot move it, and adding a
-                  second identical embedded statement only moves it if the
-                  first was too thin to stand alone.
+   THE EQUATION
 
-   CONSOLIDATED   The highest tier reached by at least two statements. This is
-                  the ceiling's stress test: it asks what the dimension would
-                  read if its single strongest sentence were struck out.
+     For each distinct statement i in the dimension:
 
-   Both are counted in absolute statements, never as a share of the dimension's
-   total. A share would punish a long document for being long and flatter a
-   short one for being short, which is the same verbosity artefact the tier
-   rules exist to avoid: an NDC with 80 recognitional mentions and 3 partial
-   ones would score 4 per cent, while a 12-page NDC with 3 mentions and 1
-   partial would score 33 per cent, for strictly weaker evidence.
+       v_i = T(tier_i) + B * (f_i / F)                    evidence value
+       v_i = v_i * PI(penalties applicable to i)          discounted value
 
-   RULES.ROLLUP_RULE selects which of the two is the headline tier. The default
-   is "ceiling", which preserves the published method. Whichever is chosen, the
-   other is computed, displayed, exported, and used to test whether the country
-   verdict survives the choice.
+     Statements are ordered by v descending and accumulated with decay:
+
+       S = SUM over i of  v_i * d^(i-1)
+
+     score = min(100, 100 * S / S_ref)
+
+   WHY EACH PART
+
+   T(tier) is 0 for Tokenistic. A tokenistic statement is by definition a
+   mention without an actionable commitment, so it contributes nothing to a
+   measure of commitment. This is what keeps the score repetition-invariant:
+   adding tokenistic sentences cannot move it, in either direction. It is also
+   why tokenistic statements do not dilute: dilution would be a share by the
+   back door, and would penalise a thorough document for saying more.
+
+   f_i / F is the share of evidence features the statement carries, so an
+   embedded commitment naming a law, a budget, a deadline and a monitoring duty
+   outweighs one that names a law alone.
+
+   d = 0.6 is the decay. The strongest statement counts in full, the second at
+   0.6, the third at 0.36. The sum of an unbounded number of identical
+   statements converges to v/(1-d) = 2.5v, so a dimension cannot be inflated by
+   volume, but two independent commitments are still worth materially more than
+   one. This is the term that removes the single-sentence authority: one
+   statement can no longer reach the top band on its own.
+
+   S_ref is the reference configuration: two independent embedded statements
+   each carrying five of eight evidence features. That configuration scores 100.
+
+   Every constant is exposed in RULES.SCORE, so each can be changed and the
+   change reported rather than discovered.
    ========================================================================== */
+
+RULES.SCORE = {
+    TIER_VALUE: { Absent: 0, Tokenistic: 0, Partial: 1.0, Embedded: 2.0 },
+    FEATURES: ["legalAnchor", "institutionAnchor", "financeAnchor", "timeBound",
+               "accountability", "commitVerb", "concreteMeasure", "citedInstrument"],
+    FEATURE_BONUS: 0.5,          // B, the most the feature term can add
+    DECAY: 0.6,                  // d
+    REFERENCE: 4.0,              // S_ref, two well-evidenced embedded statements
+    CUT: { Partial: 35, Embedded: 70 },
+    BORDERLINE: 5,               // within this many points of a cut, say so
+    PENALTY: {
+        conditional: 0.80,       // the commitment depends on external support
+        framing: 0.80,           // it sits in a vision or context section, not an operational one
+        unconfirmed: 0.85,       // its dimension assignment is flagged for a coder
+        paragraphScope: 0.90,    // its tier rests on evidence outside the coded sentence
+        negated: 0.00            // the anchor it names is negated
+    }
+};
+
+/* The evidence value of one statement, with every step recoverable. */
+function statementValue(s) {
+    const C = RULES.SCORE;
+    const base = C.TIER_VALUE[s.tier] || 0;
+    const fired = (s.featureSet || []).filter(f => C.FEATURES.includes(f)).length;
+    const bonus = C.FEATURE_BONUS * (fired / C.FEATURES.length);
+    let v = base + (base > 0 ? bonus : 0);
+    const applied = [];
+    if (s.negated) { v *= C.PENALTY.negated; applied.push("negated anchor"); }
+    if (s.conditional) { v *= C.PENALTY.conditional; applied.push("conditional on external support"); }
+    if (s.section && s.section.narrative) { v *= C.PENALTY.framing; applied.push("in a framing section"); }
+    if (s.needsReview) { v *= C.PENALTY.unconfirmed; applied.push("dimension unconfirmed"); }
+    if (s.scopeLift) { v *= C.PENALTY.paragraphScope; applied.push("tier rests on paragraph evidence"); }
+    return { value: v, base, fired, bonus, penalties: applied };
+}
+
+/* The accumulated score for one dimension. */
+function dimensionScore(statements) {
+    const C = RULES.SCORE;
+    const parts = statements.map(s => ({ s, ...statementValue(s) }))
+                            .sort((a, b) => b.value - a.value);
+    let S = 0;
+    parts.forEach((p, i) => { p.decay = Math.pow(C.DECAY, i); p.contribution = p.value * p.decay; S += p.contribution; });
+    const score = Math.min(100, Math.round((100 * S / C.REFERENCE) * 10) / 10);
+    const band = score >= C.CUT.Embedded ? "Embedded" : score >= C.CUT.Partial ? "Partial" : "Tokenistic";
+    const nextCut = band === "Embedded" ? null : (band === "Partial" ? C.CUT.Embedded : C.CUT.Partial);
+    const prevCut = band === "Tokenistic" ? null : (band === "Partial" ? C.CUT.Partial : C.CUT.Embedded);
+    return {
+        S, score, band, parts,
+        contributors: parts.filter(p => p.contribution >= 0.05).length,
+        borderline: (nextCut !== null && nextCut - score <= C.BORDERLINE)
+                 || (prevCut !== null && score - prevCut <= C.BORDERLINE),
+        toNext: nextCut === null ? null : Math.round((nextCut - score) * 10) / 10
+    };
+}
 
 function rollUpDimension(statements) {
     const mine = statements.filter(s => s.dimension && s.tier);
@@ -2186,96 +2280,171 @@ function rollUpDimension(statements) {
 
     if (total === 0) {
         return {
-            tier: "Absent", ceiling: "Absent", consolidated: "Absent",
+            tier: "Absent", ceiling: "Absent", consolidated: "Absent", scored: "Absent",
+            score: 0, S: 0, contributors: 0, borderline: false, toNext: null, parts: [],
             consolidation: "none", ceilingCount: 0, distribution: dist, total: 0,
             operational: 0, confidence: "high",
             confidenceWhy: ["nothing was assigned to this dimension, which is an unambiguous reading"],
-            support: [], note: "no statements assigned to this dimension"
+            support: [], carriers: [], note: "no statements assigned to this dimension"
         };
     }
 
+    /* --- the score: the governing rule from v2.3 ------------------------ */
+    const sc = dimensionScore(mine);
+
+    /* --- the two earlier readings, kept for sensitivity ------------------ */
     const embedded = mine.filter(s => s.tier === "Embedded");
     const strongEmbedded = embedded.filter(s => (s.strength || 0) >= RULES.EMBEDDED_MIN_FEATURES && !s.negated);
     const partial = mine.filter(s => s.tier === "Partial");
 
-    /* --- the ceiling ---------------------------------------------------- */
-    let ceiling, ceilingSet, note;
+    let ceiling, ceilingSet;
     if (embedded.length >= 2 || strongEmbedded.length >= 1) {
-        ceiling = "Embedded";
-        ceilingSet = strongEmbedded.length ? strongEmbedded : embedded;
-        note = embedded.length >= 2
-            ? "two or more independent embedded statements, in separate paragraphs"
-            : "one embedded statement carrying " + strongEmbedded[0].strength + " evidence features";
+        ceiling = "Embedded"; ceilingSet = strongEmbedded.length ? strongEmbedded : embedded;
     } else if (embedded.length === 1) {
-        ceiling = "Partial";
-        ceilingSet = embedded;
-        note = "one embedded candidate below the evidence threshold, graded down to Partial pending human confirmation";
+        ceiling = "Partial"; ceilingSet = embedded;
     } else if (partial.length >= 1) {
-        ceiling = "Partial";
-        ceilingSet = partial;
-        note = partial.length + " statement(s) with named measures but no legal or financial anchoring";
+        ceiling = "Partial"; ceilingSet = partial;
     } else {
-        ceiling = "Tokenistic";
-        ceilingSet = mine;
-        note = "mentions only, no actionable commitment detected in " + total + " statement(s)";
+        ceiling = "Tokenistic"; ceilingSet = mine;
     }
+    const consolidated = embedded.length >= 2 ? "Embedded"
+                       : (embedded.length + partial.length >= 2 ? "Partial" : "Tokenistic");
 
-    /* --- consolidation: is the ceiling a pattern or a single sentence? --- */
-    const ceilingCount = ceilingSet.length;
-    const consolidation = ceilingCount >= 3 ? "consistent" : ceilingCount === 2 ? "emerging" : "isolated";
+    /* The score may demote a dimension but must never promote it above the
+       strongest commitment the document actually contains. Twenty-five named
+       measures without legal, institutional or financial anchoring are still
+       not an institutionalised commitment, and no accumulation of them should
+       be allowed to read as one. The consequence is worth stating in the
+       methods section: v2.3 can only ever grade a dimension the same as, or
+       lower than, the published v2.0 rule. It never grades one higher. */
+    const highestPresent = mine.reduce((a, s) => tierMax(a, s.tier), "Tokenistic");
+    const scoredBand = tierRank(sc.band) > tierRank(highestPresent) ? highestPresent : sc.band;
+    const capped = scoredBand !== sc.band;
 
-    /* --- the stress test ------------------------------------------------- */
-    let consolidated;
-    if (embedded.length >= 2) consolidated = "Embedded";
-    else if (embedded.length + partial.length >= 2) consolidated = "Partial";
-    else consolidated = "Tokenistic";
+    const governing = RULES.ROLLUP_RULE === "ceiling" ? ceiling
+                    : RULES.ROLLUP_RULE === "consolidated" ? consolidated
+                    : scoredBand;
+
+    /* the statements the score actually rests on, strongest first */
+    const carrying = sc.parts.filter(p => p.contribution >= 0.05).slice(0, 4);
+    const ceilingCount = mine.filter(s => s.tier === governing).length
+                      || (governing === "Tokenistic" ? total : ceilingSet.length);
+    const consolidation = sc.contributors >= 3 ? "consistent" : sc.contributors === 2 ? "emerging"
+                        : sc.contributors === 1 ? "isolated" : "none";
 
     /* --- confidence, derived rather than asserted ------------------------ */
     const operational = ceilingSet.filter(s => s.section && !s.section.narrative).length;
-    let conf = 2;                       // 2 high, 1 medium, 0 low
+    let conf = 2;
     const why = [];
-    if (ceiling === "Tokenistic") {
-        why.push("no statement reaches an actionable commitment, which is itself an unambiguous reading");
+    if (governing === "Tokenistic") {
+        why.push("no statement carries enough evidence to reach an actionable commitment, which is itself an unambiguous reading");
     } else {
-        if (consolidation === "isolated") {
+        if (sc.contributors <= 1) {
             conf--;
-            why.push("the tier rests on a single statement, so it would fall to " + consolidated + " if that one sentence were struck out");
-        } else if (consolidation === "consistent") {
-            why.push(ceilingCount + " separate statements reach this tier");
+            why.push("the score rests on a single statement");
+        }
+        if (sc.borderline) {
+            conf--;
+            why.push("the score sits within " + RULES.SCORE.BORDERLINE + " points of a band boundary, so the band is not robust");
         }
         if (ceilingSet.every(s => s.needsReview)) {
             conf--;
-            why.push("every statement at this tier is flagged for manual confirmation of its dimension");
+            why.push("every statement carrying this band is flagged for manual confirmation of its dimension");
         }
         if (ceilingSet.every(s => s.conditional)) {
             conf--;
-            why.push("every statement at this tier is conditional on external support");
+            why.push("every statement carrying this band is conditional on external support");
         }
         if (operational === 0) {
             conf--;
-            why.push("every statement at this tier sits in a framing section rather than an operational one");
+            why.push("every statement carrying this band sits in a framing section rather than an operational one");
         }
-        if (ceilingSet.every(s => s.scopeLift)) {
-            conf--;
-            why.push("the tier depends on evidence found elsewhere in the paragraph rather than in the coded sentence");
-        }
-        if (embedded.length === 1 && ceiling === "Partial") {
-            why.push("an embedded candidate was graded down for want of evidence features");
-        }
+    }
+    if (capped) {
+        why.push("the accumulated score reaches " + sc.band + ", but the dimension contains no statement above " + highestPresent + ", so it is held at " + highestPresent);
+    }
+    if (ceiling !== scoredBand || consolidated !== scoredBand) {
+        why.push("the earlier ceiling rule reads " + ceiling + " and the consolidated rule reads " + consolidated);
     }
     const confidence = ["low", "medium", "high"][Math.max(0, Math.min(2, conf))];
 
+    const note = governing === "Tokenistic"
+        ? total + " statement(s), scoring " + sc.score + " of a possible 100, below the " + RULES.SCORE.CUT.Partial + "-point threshold for Partial"
+        : "scores " + sc.score + " of 100, on " + sc.contributors + " contributing statement" + (sc.contributors === 1 ? "" : "s");
+
     return {
-        tier: RULES.ROLLUP_RULE === "consolidated" ? consolidated : ceiling,
-        ceiling, consolidated, consolidation, ceilingCount,
-        distribution: dist, total, operational,
+        tier: governing, scored: scoredBand, scoredUncapped: sc.band, capped, ceiling, consolidated,
+        score: sc.score, S: sc.S, contributors: sc.contributors,
+        borderline: sc.borderline, toNext: sc.toNext,
+        parts: carrying.map(p => ({
+            id: p.s.id, locator: p.s.locator || ("p. " + p.s.page), tier: p.s.tier,
+            value: Math.round(p.value * 100) / 100, decay: Math.round(p.decay * 100) / 100,
+            contribution: Math.round(p.contribution * 100) / 100,
+            fired: p.fired, penalties: p.penalties,
+            text: String(p.s.text || "").slice(0, 160)
+        })),
+        consolidation, ceilingCount, distribution: dist, total, operational,
         confidence, confidenceWhy: why,
-        support: ceilingSet.slice(0, 3).map(s => s.id),
-        carriers: ceilingSet.slice(0, 4).map(s => ({
-            id: s.id, locator: s.locator || ("p. " + s.page), tier: s.tier,
-            needsReview: !!s.needsReview, conditional: !!s.conditional
+        support: carrying.map(p => p.s.id),
+        carriers: carrying.map(p => ({
+            id: p.s.id, locator: p.s.locator || ("p. " + p.s.page), tier: p.s.tier,
+            needsReview: !!p.s.needsReview, conditional: !!p.s.conditional
         })),
         note
+    };
+}
+
+/* ============================================================================
+   7a. THE COUNTRY BAND, v2.3
+
+   v2.2 returned one of six verdicts that were not an ordinal scale. Two of them
+   ("Substantive but uneven", "Partial commitment") were hard to order against
+   each other, and one of them ("Process-heavy and outcome-light") was not a
+   level at all but a pattern: a country can show that pattern at almost any
+   level of commitment. Mixing a pattern into a ladder makes the ladder
+   unusable for a map, a matrix or a table.
+
+   So the ladder is now five ordered bands, and the pattern is a flag carried
+   alongside the band rather than a rung on it.
+
+   THE COUNTRY SCORE
+
+     country = 0.5 * mean(dimension scores) + 0.5 * min(dimension scores)
+
+   Half the weight sits on the floor because the policy brief treats
+   transformative climate justice as the intersection of the four dimensions,
+   not their sum: a country cannot buy its way to the top band by developing
+   recognitional justice while leaving restorative justice absent. Half sits on
+   the mean so that strength across the other three is not discarded.
+
+   The top band additionally requires the rubric, so a country cannot arrive
+   there on arithmetic alone while failing on coverage, anchoring or structural
+   engagement. The rubric is unchanged; it now gates band 5 instead of
+   generating the verdict text.
+   ========================================================================== */
+
+const BANDS = [
+    { n: 1, key: "tokenistic",   label: "Tokenistic",
+      blurb: "Justice appears as language. No dimension carries an actionable commitment." },
+    { n: 2, key: "emergent",     label: "Emergent commitment",
+      blurb: "Isolated measures have been attached to justice language, but they do not yet form a pattern and are not anchored." },
+    { n: 3, key: "partial",      label: "Partial commitment",
+      blurb: "Named measures across more than one dimension, without legal, institutional or financial anchoring." },
+    { n: 4, key: "substantive",  label: "Substantive but uneven",
+      blurb: "Anchored commitments are present, but the four dimensions do not hold together: the floor is well below the ceiling." },
+    { n: 5, key: "transformative", label: "Approaching transformative climate justice",
+      blurb: "All four dimensions carry anchored commitments, the two axes are balanced, and the NDC engages the causes of injustice rather than only its symptoms." }
+];
+const BAND_CUT = { 5: 70, 4: 55, 3: 35, 2: 15 };
+const BAND_BY_KEY = {}; BANDS.forEach(b => { BAND_BY_KEY[b.key] = b; });
+
+function countryScore(profile, dims) {
+    const scores = dims.map(d => (profile[d] && typeof profile[d].score === "number") ? profile[d].score : 0);
+    const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const floor = Math.min(...scores);
+    return {
+        score: Math.round((0.5 * mean + 0.5 * floor) * 10) / 10,
+        mean: Math.round(mean * 10) / 10, floor: Math.round(floor * 10) / 10, scores
     };
 }
 
@@ -2309,7 +2478,7 @@ function buildRubric(profile, statements) {
         id: 2, name: "Depth",
         question: "What is the weakest of the four dimensions? Transformative justice is the intersection, so the floor is what counts.",
         result: tiers.every(t => t === "Embedded") ? "PASS" : tiers.every(t => tierRank(t) >= tierRank("Partial")) ? "PARTIAL" : "FAIL",
-        detail: "floor is " + dims.map(d => profile[d].tier).reduce((a, b) => tierMin(a, b)) + " (" + dims.map(d => d[0] + ":" + profile[d].tier).join(", ") + ")"
+        detail: "floor is " + dims.map(d => profile[d].tier).reduce((a, b) => tierMin(a, b)) + " (" + dims.map(d => d[0] + ":" + profile[d].tier + " " + (profile[d].score || 0)).join(", ") + ")"
     });
     C.push({
         id: 3, name: "Balance",
@@ -2340,44 +2509,62 @@ function buildRubric(profile, statements) {
     const fail = C.filter(c => c.result === "FAIL").length;
     const depth = C[1].result, coverage = C[0].result, anchoring = C[3].result;
 
+    /* --- the band -------------------------------------------------------- */
+    const cs = countryScore(profile, dims);
+    const anyContent = dims.some(d => (profile[d].total || 0) > 0);
+
+    let n;
+    if (!anyContent) n = 0;
+    else if (cs.score >= BAND_CUT[5] && pass >= 5 && depth !== "FAIL") n = 5;
+    else if (cs.score >= BAND_CUT[5]) n = 4;          // arithmetic reached band 5 but the rubric did not
+    else if (cs.score >= BAND_CUT[4]) n = 4;
+    else if (cs.score >= BAND_CUT[3]) n = 3;
+    else if (cs.score >= BAND_CUT[2]) n = 2;
+    else n = 1;
+
+    const band = n === 0
+        ? { n: 0, key: "absent", label: "Justice largely absent", blurb: "No statement in the document was assigned to any of the four dimensions." }
+        : BANDS[n - 1];
+
+    /* --- the pattern flag, carried alongside the band -------------------- */
     const washing = tierRank(profile.Recognitional.tier) >= tierRank("Partial")
         && tierRank(profile.Procedural.tier) >= tierRank("Partial")
         && tierRank(profile.Distributive.tier) <= tierRank("Tokenistic")
         && tierRank(profile.Restorative.tier) <= tierRank("Tokenistic");
 
-    let verdict, tone, reasoning = [];
-    const floor = dims.map(d => profile[d].tier).reduce((a, b) => tierMin(a, b));
+    const flags = [];
+    if (washing) flags.push({
+        key: "justice-washing",
+        label: "Process-heavy and outcome-light",
+        detail: "Recognition and participation are developed while both distributive and restorative commitments stay at or below tokenistic. This is the pattern the policy brief identifies as justice-washing. It is recorded as a flag, not as a level, because a country can show it at more than one level of commitment."
+    });
+    if (n >= 3 && dims.some(d => profile[d].borderline)) flags.push({
+        key: "borderline",
+        label: "Band not robust",
+        detail: "At least one dimension sits within " + RULES.SCORE.BORDERLINE + " points of a band boundary, so small coding changes could move the country's band."
+    });
+    if (dims.some(d => profile[d].confidence === "low")) flags.push({
+        key: "low-confidence",
+        label: "Low confidence in at least one dimension",
+        detail: dims.filter(d => profile[d].confidence === "low").join(", ") + " carry low confidence. Read the dimension cards before citing this result."
+    });
 
-    if (pass === 6 || (pass === 5 && depth === "PASS")) {
-        verdict = "Approaching transformative climate justice";
-        tone = "embedded";
-        reasoning.push("All four dimensions are addressed with anchored commitments, they hold together rather than resting on one strong dimension, and the NDC engages the causes of injustice rather than only its symptoms.");
-    } else if (present.length === 0) {
-        verdict = "Justice largely absent";
-        tone = "absent";
-        reasoning.push("No statement met the threshold for any of the four dimensions. Check the extraction diagnostics before recording this result.");
-    } else if (washing) {
-        verdict = "Process-heavy and outcome-light: justice-washing risk";
-        tone = "tokenistic";
-        reasoning.push("Recognition and participation are developed while both distributive and restorative commitments stay at or below tokenistic. This is the pattern the policy brief identifies as justice-washing.");
-    } else if (tiers.every(t => tierRank(t) <= tierRank("Tokenistic"))) {
-        verdict = "Predominantly tokenistic";
-        tone = "tokenistic";
-        reasoning.push("Justice concepts appear but no dimension reaches an actionable commitment.");
-    } else if (coverage === "PASS" && anchoring !== "FAIL" && tierRank(floor) >= tierRank("Partial")) {
-        verdict = "Substantive but uneven";
-        tone = "partial";
-        reasoning.push("All four dimensions carry actionable commitments and at least some are anchored, but the profile is not strong enough across the board to be called transformative.");
-    } else {
-        verdict = "Partial commitment";
-        tone = "partial";
-        reasoning.push("Some dimensions carry named or anchored measures while others do not. The floor across the four dimensions is " + floor + ", and transformative justice is the intersection of all four.");
-    }
+    const verdict = band.label;
+    const tone = n >= 5 ? "embedded" : n >= 3 ? "partial" : n === 0 ? "absent" : "tokenistic";
 
+    const reasoning = [];
+    reasoning.push(band.blurb);
+    reasoning.push(`Country score ${cs.score} of 100: the mean of the four dimension scores is ${cs.mean} and the floor is ${cs.floor}, weighted equally because transformative justice is the intersection of the four dimensions rather than their sum.`);
+    if (n === 4 && cs.score >= BAND_CUT[5]) reasoning.push("The score alone would reach band 5, but the rubric does not: " + C.filter(c => c.result !== "PASS").map(c => c.name).join(", ") + " did not pass, so the country is held at band 4.");
+    flags.forEach(f => reasoning.push(f.label + ": " + f.detail));
     C.filter(c => c.result !== "PASS").forEach(c => reasoning.push(c.name + ": " + c.detail + "."));
     if (anchoring === "FAIL") reasoning.push("No justice commitment in this NDC is tied to a named legal instrument, institution or budget line.");
 
-    return { criteria: C, verdict, tone, reasoning, axisRP, axisDR, washing, pass, fail };
+    return {
+        criteria: C, verdict, band: band.n, bandKey: band.key, bandLabel: band.label,
+        countryScore: cs.score, scoreMean: cs.mean, scoreFloor: cs.floor,
+        tone, reasoning, axisRP, axisDR, washing, flags, pass, fail
+    };
 }
 
 
@@ -3546,30 +3733,48 @@ function renderEvaluation() {
     document.getElementById('dimension-profile').innerHTML = DIMS4.map(d => {
         const p = R.profile[d];
         const total = p.total || 0;
-        const bars = ["Embedded", "Partial", "Tokenistic"].map(t => {
-            const n = (p.distribution && p.distribution[t]) || 0;
-            const pct = total ? Math.round((n / total) * 100) : 0;
-            return n ? `<span class="dbar" style="width:${Math.max(pct, 6)}%;background:${TIER_COLOR[t]}" title="${n} ${t}"></span>` : "";
-        }).join("");
-        const consolidationLabel = {
-            consistent: "consistent", emerging: "emerging", isolated: "isolated", none: ""
-        }[p.consolidation] || "";
-        return `<div class="dim-card" style="border-top:5px solid ${TIER_COLOR[p.tier]};">
-            <h4>${d} justice</h4>
-            <div class="dim-tier" style="color:${TIER_COLOR[p.tier]}">${p.tier}</div>
-            ${p.tier !== "Absent" ? `<div class="dim-consol dim-${p.consolidation}">${consolidationLabel}
-                &middot; ${p.ceilingCount} of ${total} statement${total === 1 ? "" : "s"} at this tier</div>` : ""}
-            ${total ? `<div class="dbar-wrap">${bars}</div>
-            <div class="dbar-key">${p.distribution.Embedded} embedded &middot; ${p.distribution.Partial} partial &middot; ${p.distribution.Tokenistic} tokenistic</div>` : ""}
-            <div class="dim-conf dim-conf-${p.confidence}">confidence: ${p.confidence}</div>
-            ${(p.confidenceWhy && p.confidenceWhy.length) ? `<ul class="dim-why">${p.confidenceWhy.map(w => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}
-            ${p.tier !== "Absent" && p.consolidated !== p.ceiling
-                ? `<div class="dim-alt">strike out the strongest statement and this reads <b>${p.consolidated}</b></div>` : ""}
-            <p class="dim-note">${esc(p.note)}</p>
-            ${(p.carriers && p.carriers.length) ? `<div class="dim-basis"><b>Carried by</b>
-                ${p.carriers.map(c => `<span class="dim-carrier" onclick="jumpToStatement('${c.id}')" title="open this statement in the ledger">${esc(c.locator)}${c.needsReview ? " &middot; check dimension" : ""}${c.conditional ? " &middot; conditional" : ""}</span>`).join("")}
-                </div>` : ""}
+        const score = typeof p.score === "number" ? p.score : 0;
+        const cut = RULES.SCORE.CUT;
+
+        /* the scale, with the two cut points marked, so the number is readable
+           as a position rather than as an unexplained figure */
+        const scale = `<div class="dscale" title="score ${score} of 100">
+            <span class="dscale-fill" style="width:${Math.max(1, score)}%;background:${TIER_COLOR[p.tier] || '#9e9e9e'}"></span>
+            <span class="dscale-cut" style="left:${cut.Partial}%" title="Partial threshold ${cut.Partial}"></span>
+            <span class="dscale-cut" style="left:${cut.Embedded}%" title="Embedded threshold ${cut.Embedded}"></span>
         </div>`;
+
+        const contributions = (p.parts && p.parts.length) ? `
+            <table class="dcalc">
+                <thead><tr><th>statement</th><th>tier</th><th>features</th><th>value</th><th>decay</th><th>adds</th></tr></thead>
+                <tbody>${p.parts.map(x => `<tr>
+                    <td><span class="dim-carrier" onclick="jumpToStatement('${x.id}')">${esc(x.locator)}</span>
+                        ${x.penalties && x.penalties.length ? `<div class="dcalc-pen">${esc(x.penalties.join("; "))}</div>` : ""}</td>
+                    <td>${x.tier}</td><td>${x.fired}/${RULES.SCORE.FEATURES.length}</td>
+                    <td>${x.value}</td><td>&times;${x.decay}</td><td><b>${x.contribution}</b></td>
+                </tr>`).join("")}</tbody>
+            </table>
+            <p class="dcalc-sum">Accumulated ${Math.round(p.S * 100) / 100} of the ${RULES.SCORE.REFERENCE} reference, giving <b>${score}</b> of 100.
+            ${p.toNext !== null ? `${p.toNext} points from the next band.` : "At the top band."}</p>` : "";
+
+        return `<details class="dim-card" style="border-top:5px solid ${TIER_COLOR[p.tier]};">
+            <summary>
+                <h4>${d} justice</h4>
+                <div class="dim-tier" style="color:${TIER_COLOR[p.tier]}">${p.tier}</div>
+                <div class="dim-score">${total ? `<b>${score}</b>/100 &middot; ${p.contributors || 0} contributing of ${total} statement${total === 1 ? "" : "s"}` : "no statements"}</div>
+                ${total ? scale : ""}
+                <div class="dim-conf dim-conf-${p.confidence}">confidence: ${p.confidence}${p.borderline ? " &middot; borderline" : ""}</div>
+                <span class="dim-more">details</span>
+            </summary>
+            <div class="dim-body">
+                ${total ? `<div class="dbar-key">${p.distribution.Embedded} embedded &middot; ${p.distribution.Partial} partial &middot; ${p.distribution.Tokenistic} tokenistic</div>` : ""}
+                ${contributions}
+                ${(p.confidenceWhy && p.confidenceWhy.length) ? `<ul class="dim-why">${p.confidenceWhy.map(w => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}
+                ${p.tier !== "Absent" && (p.ceiling !== p.tier || p.consolidated !== p.tier)
+                    ? `<div class="dim-alt">Under the earlier rules this reads <b>${p.ceiling}</b> (strongest statement) and <b>${p.consolidated}</b> (strongest reached twice). The score rule in force is <b>${RULES.ROLLUP_RULE}</b>.</div>` : ""}
+                <p class="dim-note">${esc(p.note)}</p>
+            </div>
+        </details>`;
     }).join("");
 
     // rubric
@@ -4298,31 +4503,43 @@ function exportNotesMd() {
 
 const VERDICT_ORDER = [
     "Justice largely absent",
-    "Predominantly tokenistic",
-    "Process-heavy and outcome-light: justice-washing risk",
+    "Tokenistic",
+    "Emergent commitment",
     "Partial commitment",
     "Substantive but uneven",
     "Approaching transformative climate justice"
 ];
 const VERDICT_SHORT = {
     "Justice largely absent": "Absent",
-    "Predominantly tokenistic": "Tokenistic",
-    "Process-heavy and outcome-light: justice-washing risk": "Justice-washing risk",
-    "Partial commitment": "Partial",
-    "Substantive but uneven": "Substantive, uneven",
-    "Approaching transformative climate justice": "Approaching transformative",
+    "Tokenistic": "1 Tokenistic",
+    "Emergent commitment": "2 Emergent",
+    "Partial commitment": "3 Partial",
+    "Substantive but uneven": "4 Substantive",
+    "Approaching transformative climate justice": "5 Approaching transformative",
     "Recorded by hand": "By hand"
 };
 const VERDICT_COLOR = {
     "Justice largely absent": "#9e9e9e",
-    "Predominantly tokenistic": "#c62828",
-    "Process-heavy and outcome-light: justice-washing risk": "#8e44ad",
+    "Tokenistic": "#c62828",
+    "Emergent commitment": "#e2703a",
     "Partial commitment": "#e6a700",
     "Substantive but uneven": "#7cb342",
     "Approaching transformative climate justice": "#2e7d32",
-    "Recorded by hand": "#5ac8fa"
+    "Recorded by hand": "#5b6bbf"
 };
-const verdictValue = v => Math.max(1, VERDICT_ORDER.indexOf(v) + 1);
+/* Legacy verdict strings from assessments recorded before v2.3, mapped so an
+   older project record still plots rather than falling off the scale. */
+const LEGACY_VERDICT = {
+    "Predominantly tokenistic": "Tokenistic",
+    "Process-heavy and outcome-light: justice-washing risk": "Partial commitment",
+    "Partial commitment": "Partial commitment",
+    "Substantive but uneven": "Substantive but uneven",
+    "Approaching transformative climate justice": "Approaching transformative climate justice",
+    "Justice largely absent": "Justice largely absent"
+};
+const normaliseVerdict = v => LEGACY_VERDICT[v] || v;
+
+const verdictValue = v => Math.max(1, VERDICT_ORDER.indexOf(normaliseVerdict(v)) + 1);
 
 function renderReporting() {
     const rows = Object.values(getAssessments());
@@ -4330,7 +4547,7 @@ function renderReporting() {
     if (!box) return;
 
     const byVerdict = {};
-    rows.forEach(r => { byVerdict[r.verdict] = (byVerdict[r.verdict] || 0) + 1; });
+    rows.forEach(r => { const nv = normaliseVerdict(r.verdict); byVerdict[nv] = (byVerdict[nv] || 0) + 1; });
     const total = ndcData.length;
 
     box.innerHTML = `
@@ -4425,7 +4642,7 @@ function renderMatrix(rows) {
             const washing = (r >= 1 && c === 0);
             cells += `<div class="m-cell ${corner ? 'm-corner' : ''} ${washing ? 'm-wash' : ''}">
                 <div class="m-count">${here.length || ""}</div>
-                <div class="m-list">${here.map(a => `<span class="m-chip" style="border-color:${VERDICT_COLOR[a.verdict] || '#ccc'}"
+                <div class="m-list">${here.map(a => `<span class="m-chip" style="border-color:${VERDICT_COLOR[normaliseVerdict(a.verdict)] || '#ccc'}"
                     title="${esc(a.verdict)}" onclick="openCountryRecord('${esc(a.country).replace(/'/g, "\\'")}')">${esc(a.country)}</span>`).join("")}</div>
             </div>`;
         }
@@ -4453,7 +4670,7 @@ function renderRecordTable(rows) {
         <th>R+P</th><th>D+R</th><th>Source</th><th>Coder</th><th>Recorded</th><th></th></tr></thead><tbody>
         ${sorted.map(a => `<tr>
             <td><b>${esc(a.country)}</b>${a.sensitiveToRule ? ' <span class="chip chip-review" title="The verdict changes under the other roll-up rule">rule-sensitive</span>' : ''}</td>
-            <td><span class="vdot" style="background:${VERDICT_COLOR[a.verdict] || '#ccc'}"></span> ${esc(VERDICT_SHORT[a.verdict] || a.verdict)}</td>
+            <td><span class="vdot" style="background:${VERDICT_COLOR[normaliseVerdict(a.verdict)] || '#ccc'}"></span> ${esc(VERDICT_SHORT[normaliseVerdict(a.verdict)] || a.verdict)}</td>
             ${DIMS4.map(d => `<td style="color:${TIER_COLOR[a.tiers[d]]};font-weight:600;">${(a.tiers[d] || "?").slice(0, 4)}</td>`).join("")}
             <td>${(a.axisRP || "").slice(0, 4)}</td><td>${(a.axisDR || "").slice(0, 4)}</td>
             <td>${esc(a.source)}</td><td>${esc(a.coder)}</td>
@@ -4479,9 +4696,9 @@ function openCountryRecord(country) {
     let head = `<p class="muted-note">No assessment recorded for this country yet.</p>`;
     if (a) {
         head = `<div class="cr-head">
-            <div><span class="vdot" style="background:${VERDICT_COLOR[a.verdict] || '#ccc'}"></span>
+            <div><span class="vdot" style="background:${VERDICT_COLOR[normaliseVerdict(a.verdict)] || '#ccc'}"></span>
                  <b>${esc(a.verdict)}</b>
-                 ${a.sensitiveToRule ? `<span class="chip chip-review">flips to "${esc(VERDICT_SHORT[a.altVerdict] || a.altVerdict)}" under the other roll-up rule</span>` : ''}</div>
+                 ${a.sensitiveToRule ? `<span class="chip chip-review">flips to "${esc(VERDICT_SHORT[normaliseVerdict(a.altVerdict)] || a.altVerdict)}" under the other roll-up rule</span>` : ''}</div>
             <div class="cr-meta">${esc(a.source)} &middot; ${esc(a.coder)} &middot; ${new Date(a.at).toLocaleString()} &middot; engine ${esc(a.engine)}, lexicon ${esc(a.lexicon)}</div>
         </div>
         <div class="cr-dims">${DIMS4.map(d => `
@@ -4551,7 +4768,7 @@ function renderCountryIndex() {
             <span class="ci-name">${esc(n)}</span>
             <span class="ci-meta">${mine.length} code${mine.length === 1 ? "" : "s"}${a ? " &middot; assessed" : ""}</span>
             <span class="ci-bars">${byDim.map((v, i) => `<span title="${DIMS4[i]}: ${v}" style="height:${Math.min(100, v * 18) + 6}%"></span>`).join("")}</span>
-            ${a ? `<span class="ci-verdict" style="background:${VERDICT_COLOR[a.verdict] || '#ccc'}"></span>` : ""}
+            ${a ? `<span class="ci-verdict" style="background:${VERDICT_COLOR[normaliseVerdict(a.verdict)] || '#ccc'}"></span>` : ""}
         </button>`;
     }).join("")}</div>`;
 }
