@@ -1075,6 +1075,7 @@ const LEXICON = {
 const IMPLICIT_PATTERNS = {
     Recognitional: [
         /(differentiated|specific|particular|distinct|special)\s+(needs|circumstances|requirements|vulnerabilit\p{L}*|situation)\s+(of|for)/iu,
+        /(education|training|awareness)\s+(in|for|on)\s+(integral\s+ecology|environmental\s+justice|climate\s+justice)/iu,
         /(female|women|child|children|youth|elderly|single.parent)[- ]headed\s+household/iu,
         /(without|lacking|no)\s+(secure\s+)?(land\s+)?tenure/iu,
         /(unplanned|informal|irregular|spontaneous)\s+(area|areas|settlement|settlements|neighbourhood|neighborhood)/iu,
@@ -1142,6 +1143,8 @@ const SCREEN_ONLY = [
     "food security", "water security", "resilient cities", "resilience", "vulnerable",
     "inclusive", "inclusion", "fairness", "wellbeing", "well-being", "quality of life",
     "poverty reduction", "sustainable development", "social development",
+    "environmental justice", "climate justice", "integral ecology", "ecological education",
+    "justicia ambiental", "ecología integral", "justice environnementale",
     "renforcement des capacites", "renforcement des capacités", "sensibilisation",
     "desarrollo de capacidades", "sensibilizacion", "sensibilización", "reduccion de la pobreza",
     "наращивание потенциала", "بناء القدرات", "能力建设", "公众意识", "防灾减灾", "粮食安全"
@@ -2134,24 +2137,53 @@ async function extractDocument(fileUrl, log, docLang) {
         const medianH = ordered.map(l => l.h).sort((a, b) => a - b)[Math.floor(ordered.length / 2)] || 10;
 
         const pageUnits = [];
+        let blocks = [];
+        let currentBlock = "";
+
         ordered.forEach(line => {
             const t = line.text;
             if (!t) return;
+            
+            // Check if it's a heading
             if (looksLikeHeading(t) || (line.h > medianH * 1.25 && t.length < 90)) {
+                if (currentBlock.trim()) {
+                    blocks.push({ text: currentBlock.trim(), heading: currentHeading, section: currentSection });
+                    currentBlock = "";
+                }
                 currentHeading = t;
                 currentSection = classifySection(t);
                 diag.funnel.headings++;
-                return;
+            } else {
+                // Reconstruct the paragraph by joining lines.
+                // If a line ends with a hyphen, merge the word. Otherwise, add a space.
+                if (currentBlock.endsWith("-")) {
+                    currentBlock = currentBlock.slice(0, -1) + t;
+                } else {
+                    currentBlock += (currentBlock ? " " : "") + t;
+                }
             }
-            splitSentences(t).forEach(sent => {
+        });
+        if (currentBlock.trim()) {
+            blocks.push({ text: currentBlock.trim(), heading: currentHeading, section: currentSection });
+        }
+
+        // NOW segment sentences out of fully formed paragraphs
+        blocks.forEach(block => {
+            splitSentences(block.text).forEach(sent => {
                 diag.funnel.sentencesSeen++;
                 if (sent.length < 25) { diag.funnel.tooShort++; return; }
                 if (/^[\d\s.,%()/-]+$/.test(sent)) { diag.funnel.numericTable++; return; }
                 if ((sent.match(/\d/g) || []).length / sent.length > 0.35) { diag.funnel.numericTable++; return; }
+                
                 pageUnits.push({
                     id: `p${p}-s${unitIndex++}`,
-                    page: p, text: sent, heading: currentHeading,
-                    section: currentSection, column: twoCol, lang: docLang || "Unknown"
+                    page: p, 
+                    text: sent, 
+                    paragraph: block.text, // <-- Store the full paragraph for human review
+                    heading: block.heading,
+                    section: block.section, 
+                    column: twoCol, 
+                    lang: docLang || "Unknown"
                 });
             });
         });
@@ -2184,7 +2216,8 @@ function analyseUnits(units) {
         const tierRes = classifyTier(u.text, features);
         const record = {
             id: u.id, page: u.page, text: u.text, before: u.before || "", after: u.after || "",
-            context: u.context || u.text, lang: u.lang || "Unknown", heading: u.heading, section: u.section,
+            context: u.context || u.text, paragraph: u.paragraph || "",
+            lang: u.lang || "Unknown", heading: u.heading, section: u.section,
             dimension: dim.dimension, alternates: dim.alternates, needsReview: dim.needsReview,
             dimReason: dim.reason, matched: dim.dimension ? dim.evidence[dim.dimension] : { core: [], supporting: [] },
             screenHits: dim.screenHits,
@@ -2404,7 +2437,7 @@ const GLOSS = {
     "代际公平": "intergenerational equity", "技术转让": "technology transfer",
     "南南合作": "south-south cooperation", "公平": "equity", "损失与损害": "loss and damage",
     "非经济损失": "non-economic losses", "历史责任": "historical responsibility",
-    "生态债务": "ecological debt", "补偿": "compensation", "气候流动": "climate mobility",
+    "生态债务": "ecological debt", "补偿": "compensation", "气候流动": "气候流动",
     "有计划的迁移": "planned relocation", "流离失所": "displacement", "重新安置": "resettlement",
     "赔偿": "compensation", "气候正义": "climate justice", "气候公正": "climate justice",
     "结构性不平等": "structural inequality", "根本原因": "root causes",
@@ -2686,6 +2719,14 @@ function renderLedger() {
             s.override ? `<span class="chip chip-over">coder override</span>` : ""
         ].join("");
 
+        let contextHtml = "";
+        if (s.paragraph && s.paragraph.includes(s.text)) {
+            const parts = s.paragraph.split(s.text);
+            contextHtml = `<span class="ex-ctx">${esc(parts[0])}</span><span class="ex-target">${esc(s.text)}</span><span class="ex-ctx">${esc(parts.slice(1).join(s.text))}</span>`;
+        } else {
+            contextHtml = `${s.before ? `<span class="ex-ctx">${esc(s.before)}</span> ` : ""}<span class="ex-target">${esc(s.text)}</span>${s.after ? ` <span class="ex-ctx">${esc(s.after)}</span>` : ""}`;
+        }
+
         return `<div class="ledger-item" data-id="${s.id}">
             <div class="ex-header">
                 <div>
@@ -2695,7 +2736,7 @@ function renderLedger() {
                 <div class="ex-chips">${chips}</div>
             </div>
             <div class="ex-content">
-                <p class="ex-quote">${s.before ? `<span class="ex-ctx">${esc(s.before)}</span> ` : ""}<span class="ex-target">${esc(s.text)}</span>${s.after ? ` <span class="ex-ctx">${esc(s.after)}</span>` : ""}</p>
+                <p class="ex-quote">${contextHtml}</p>
                 ${renderTranslation(s)}
             </div>
             <div class="ex-why">
@@ -2796,16 +2837,31 @@ async function runBrowserAnalysis() {
         else if (mode === 'review') shown = all.filter(s => s.needsReview || !s.dimension);
         else if (mode === 'operational') shown = all.filter(s => !s.section.narrative);
 
-        shown = shown.sort((a, b) => (a.page - b.page) || a.id.localeCompare(b.id));
+        shown = shown.sort((a, b) => {
+            if (a.page !== b.page) return a.page - b.page;
+            const idA = parseInt(a.id.split('-s')[1]);
+            const idB = parseInt(b.id.split('-s')[1]);
+            return idA - idB;
+        });
 
         const ff = diag.funnel;
         termLog('ai-terminal', `Funnel: ${ff.sentencesSeen} sentence candidates, ${ff.tooShort} fragments and ${ff.numericTable} table rows discarded, ${ff.kept} carried forward. Of those, ${statements.length} assigned a dimension and ${screened.length} caught by the recall net only. Showing ${shown.length} in document order.`);
+        
         term.innerHTML += shown.map(s => {
             const label = s.dimension ? `${s.dimension} / ${s.tier}` : `unassigned (recall net)`;
             const gloss = glossTerms(s);
-            return `<p><span class="scr-loc">[p.${s.page} ${s.section.type}]</span>
+            
+            let contextHtml = "";
+            if (s.paragraph && s.paragraph.includes(s.text)) {
+                const parts = s.paragraph.split(s.text);
+                contextHtml = `<span class="scr-ctx">${esc(parts[0])}</span><span class="scr-target">${esc(s.text)}</span><span class="scr-ctx">${esc(parts.slice(1).join(s.text))}</span>`;
+            } else {
+                contextHtml = `${s.before ? `<span class="scr-ctx">${esc(s.before)}</span> ` : ""}<span class="scr-target">${esc(s.text)}</span>${s.after ? ` <span class="scr-ctx">${esc(s.after)}</span>` : ""}`;
+            }
+
+            return `<p><span class="scr-loc">[p.${s.page} ${s.section.type}]</span> <span style="color:#888; font-size: 0.75rem;">(Ref: ${s.id})</span>
                 <span class="scr-lab">${label}</span>${s.implicit ? ' <span class="scr-imp">implicit</span>' : ''}<br>
-                ${s.before ? `<span class="scr-ctx">${esc(s.before)}</span> ` : ""}<span class="scr-target">${esc(s.text)}</span>${s.after ? ` <span class="scr-ctx">${esc(s.after)}</span>` : ""}
+                ${contextHtml}
                 ${s.translation ? `<br><span class="scr-trans">EN: ${esc(s.translation)}</span>` : ""}
                 ${gloss.length ? `<br><span class="scr-gloss">gloss: ${esc(gloss.map(g => g.source + " = " + g.english).join("; "))}</span>` : ""}
                 <br><span class="scr-terms">${esc([...(s.matched ? s.matched.core : []), ...(s.matched ? s.matched.supporting : []), ...s.screenHits].join(", ")) || "matched on phrasing"}</span></p>`;
@@ -2831,100 +2887,14 @@ function runBrowserAnalysisRender() {
     term.innerHTML = lastScreen.results.map(s => {
         const label = s.dimension ? `${s.dimension} / ${s.tier}` : `unassigned (recall net)`;
         const gloss = glossTerms(s);
-        return `<p><span class="scr-loc">[p.${s.page} ${s.section.type}]</span>
-            <span class="scr-lab">${label}</span>${s.implicit ? ' <span class="scr-imp">implicit</span>' : ''}<br>
-            ${s.before ? `<span class="scr-ctx">${esc(s.before)}</span> ` : ""}<span class="scr-target">${esc(s.text)}</span>${s.after ? ` <span class="scr-ctx">${esc(s.after)}</span>` : ""}
-            ${s.translation ? `<br><span class="scr-trans">EN: ${esc(s.translation)}</span>` : ""}
-            ${gloss.length ? `<br><span class="scr-gloss">gloss: ${esc(gloss.map(g => g.source + " = " + g.english).join("; "))}</span>` : ""}</p>`;
-    }).join("");
-}
 
-/* ---------- Exports ---------- */
+        let contextHtml = "";
+        if (s.paragraph && s.paragraph.includes(s.text)) {
+            const parts = s.paragraph.split(s.text);
+            contextHtml = `<span class="scr-ctx">${esc(parts[0])}</span><span class="scr-target">${esc(s.text)}</span><span class="scr-ctx">${esc(parts.slice(1).join(s.text))}</span>`;
+        } else {
+            contextHtml = `${s.before ? `<span class="scr-ctx">${esc(s.before)}</span> ` : ""}<span class="scr-target">${esc(s.text)}</span>${s.after ? ` <span class="scr-ctx">${esc(s.after)}</span>` : ""}`;
+        }
 
-function download(name, content, mime) {
-    const blob = new Blob(['\ufeff', content], { type: mime });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
-    a.click();
-}
-
-function exportEvaluationDocx() {
-    if (!lastEvaluation) { alert("Run an evaluation first."); return; }
-    const R = lastEvaluation;
-    let h = `<html xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'></head><body style="font-family:Calibri;">
-    <h1>JUST-NDC assessment: ${esc(R.country)}</h1>
-    <p><i>Engine ${R.engine}, lexicon ${R.lexicon}. Run ${esc(R.run)} by ${esc(R.coder)}.
-    Framework: Abbas, Sandholz and van Schie (2025), UNU-EHS Policy Brief No. 16.
-    Machine output requires human confirmation before use.</i></p>
-    <h2>Verdict: ${esc(R.rubric.verdict)}</h2>
-    <ul>${R.rubric.reasoning.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-    <h2>Dimension profile</h2>
-    <table border="1" cellpadding="6" style="border-collapse:collapse;"><tr><th>Dimension</th><th>Level of commitment</th><th>Confidence</th><th>Basis</th></tr>
-    ${DIMS4.map(d => `<tr><td>${d} justice</td><td>${R.profile[d].tier}</td><td>${R.profile[d].confidence}</td><td>${esc(R.profile[d].note)}</td></tr>`).join("")}</table>
-    <h2>Transformative justice rubric</h2>
-    <table border="1" cellpadding="6" style="border-collapse:collapse;"><tr><th>#</th><th>Criterion</th><th>Result</th><th>Detail</th></tr>
-    ${R.rubric.criteria.map(c => `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.result}</td><td>${esc(c.detail)}</td></tr>`).join("")}</table>
-    <p>Composite axes: recognitional and procedural = ${R.rubric.axisRP}; distributive and restorative = ${R.rubric.axisDR}.</p>
-    <h2>Statement ledger</h2>`;
-    R.statements.forEach(s => {
-        const e = effective(s);
-        h += `<p><b>[p.${s.page}] ${e.dimension} / ${e.tier}</b>${s.override ? " (coder override by " + esc(s.override.coder) + ")" : ""}<br>
-        <i>"${esc(s.text)}"</i><br>
-        ${s.translation ? `<span style="color:#444;">English (machine): ${esc(s.translation)}</span><br>` : ""}
-        <small style="color:#777;">In context: ${esc(s.context || s.text)}</small><br>
-        <small>Section: ${s.section.type}. Cluster: ${esc(s.cluster)}. Scope: ${s.scope}.${s.conditional ? " Conditional." : ""}
-        Reason: ${esc(s.tierWhy.join("; "))}. Features: ${esc(s.featureSet.join(", ") || "none")}.</small></p>`;
-    });
-    h += `<h2>Extraction diagnostics</h2><p>${R.diag.pages} pages, ${R.diag.skipped.length} skipped, ${R.diag.lowTextPages} sparse pages${R.diag.scannedRisk ? ", <b>scanned-PDF risk flagged</b>" : ""}.</p></body></html>`;
-    download(`JUSTNDC_${R.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`, h, 'application/msword');
-}
-
-function exportEvaluationCsv() {
-    if (!lastEvaluation) { alert("Run an evaluation first."); return; }
-    const R = lastEvaluation;
-    const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
-    const head = ["country", "statement_id", "page", "section", "heading", "cluster", "scope", "conditional", "structural",
-        "machine_dimension", "machine_tier", "coder_dimension", "coder_tier", "coder_note", "coder",
-        "needs_review", "implicit_match", "evidence_features", "matched_terms", "tier_reason",
-        "statement", "statement_in_context", "language", "english_machine_translation", "translation_source",
-        "engine", "lexicon", "run_utc"];
-    const rows = R.statements.map(s => [
-        R.country, s.id, s.page, s.section.type, s.heading, s.cluster, s.scope, s.conditional, s.structural,
-        s.dimension, s.tier, s.override && s.override.dimension, s.override && s.override.tier,
-        s.override && s.override.note, s.override && s.override.coder,
-        s.needsReview, s.implicit > 0, s.featureSet.join("|"), [...s.matched.core, ...s.matched.supporting].join("|"),
-        s.tierWhy.join("; "), s.text, s.context || s.text, s.lang, s.translation || "", s.translationSource || "",
-        R.engine, R.lexicon, R.run
-    ].map(q).join(","));
-    download(`JUSTNDC_${R.country.replace(/[^a-zA-Z0-9]/g, '_')}_ledger.csv`, [head.join(","), ...rows].join("\n"), 'text/csv');
-}
-
-function exportScrapedDocx() {
-    if (!lastScreen.results.length) { termLog('ai-terminal', "Run the screener first.", 'err'); return; }
-    let h = `<html xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'></head><body style="font-family:Calibri;">
-    <h1>Screened passages: ${esc(lastScreen.country)}</h1>
-    <p><i>Recall-oriented screen, engine ${ENGINE_VERSION}, lexicon ${LEXICON_VERSION}. Not a coding decision.</i></p>`;
-    lastScreen.results.forEach(s => {
-        h += `<p><b>[p.${s.page} ${s.section.type}]</b> ${s.dimension ? s.dimension + " / " + s.tier : "unassigned"}<br>${esc(s.context || s.text)}${s.translation ? `<br><i>EN: ${esc(s.translation)}</i>` : ""}</p>`;
-    });
-    download(`Screened_${lastScreen.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`, h + "</body></html>", 'application/msword');
-}
-
-/* Standalone builds keep coder overrides in the browser only. This exports every
-   override recorded on this machine so it can be merged into the team dataset. */
-function exportAllOverrides() {
-    let store = {};
-    try { store = JSON.parse(localStorage.getItem('justndc_overrides') || '{}'); } catch (e) { }
-    const rows = Object.values(store);
-    if (!rows.length) { alert("No coder overrides recorded in this browser yet."); return; }
-    const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
-    const head = ["country", "statement_id", "page", "machine_dimension", "machine_tier",
-        "coder_dimension", "coder_tier", "note", "coder", "at", "statement", "engine", "lexicon"];
-    const csv = [head.join(",")].concat(rows.map(r => head.map(k => q(r[k])).join(","))).join("\n");
-    download("JUSTNDC_all_overrides.csv", csv, "text/csv");
-}
-
-    </script>
-</body>
-</html>
+        return `<p><span class="scr-loc">[p.${s.page} ${s.section.type}]</span> <span style="color:#888; font-size: 0.75rem;">(Ref: ${s.id})</span>
+            <span class="scr-lab">${label}</span>${s.implicit ? ' <span class="scr-imp">implicit</span>I encountered an error doing what you asked. Could you try again?
