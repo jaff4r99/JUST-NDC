@@ -253,6 +253,12 @@
         .chip-struct { background: #e4f4e8; color: #1f5c2e; }
         .chip-review { background: #fff2cc; color: #7a5b00; }
         .chip-over { background: #ddd7ff; color: #33268a; }
+        .chip-loc { background: #ececf4; color: #3a3a44; font-variant-numeric: tabular-nums; }
+        .chip-frame { background: #e7f6f2; color: #14614f; }
+        .chip-scope { background: #f3e8ff; color: #5b2a86; }
+        .chip-multi { background: #eef3e8; color: #3f5a2a; }
+        .ledger-pending { border-left: 4px solid #14614f; }
+        .ex-concept { margin-top: 7px; padding-top: 7px; border-top: 1px dashed #dcdcdc; color: #444; }
         .ex-quote { font-family: Georgia, serif; font-style: italic; margin: 10px 0; line-height: 1.6; color: #222; }
         .ex-why { font-size: 0.78rem; color: #555; background: #fafafa; border-radius: 8px; padding: 9px 12px; line-height: 1.6; }
         .ex-override { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
@@ -846,14 +852,28 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.0.0";
-const LEXICON_VERSION = "2026-08-11";
+const ENGINE_VERSION = "2.1.0";
+const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
 const RULES = {
     AXIS_RULE: "min",          // composite axis takes the weaker of its two dimensions
     EMBEDDED_MIN_FEATURES: 3,  // evidence features needed to accept a single-statement Embedded
-    TIER_ORDER: ["Absent", "Tokenistic", "Partial", "Embedded"]
+    TIER_ORDER: ["Absent", "Tokenistic", "Partial", "Embedded"],
+
+    /* v2.1 ---------------------------------------------------------------
+       The coding unit is unchanged: one sentence, counted once. What changed
+       is the amount of text the coder reads and the amount of text the tier
+       is judged on. Both are now the paragraph, because a commitment is
+       rarely contained in a single sentence and a tier is a judgement about
+       a commitment. Each is a named constant so it can be switched and
+       reported, not switched silently.                                     */
+    UNIT: "sentence",            // what is counted
+    EXCERPT: "paragraph",        // what is shown, exported and read
+    EVIDENCE_SCOPE: "paragraph", // what the tier is judged on; set to "sentence" to revert to v2.0
+    PARAGRAPH_DEDUPE: true,      // one record per paragraph per dimension, so a wider excerpt cannot inflate counts
+    MIN_UNIT_CHARS: 25,          // shorter fragments are merged into a neighbouring sentence, never dropped
+    DEHYPHENATE: true            // rejoin words broken across a line, unless the hyphen belongs to the term
 };
 
 const tierRank = t => RULES.TIER_ORDER.indexOf(t);
@@ -1064,6 +1084,147 @@ const LEXICON = {
 
 
 /* ============================================================================
+   2a. LEXICON ADDITIONS, v2.1
+   Kept as a separate additive block so that what was added, and when, is
+   auditable against the v2.0 lexicon rather than merged invisibly into it.
+   Nothing here is removed from the arrays above; entries are appended.
+   ========================================================================== */
+
+const LEXICON_ADDITIONS = {
+    Recognitional: {
+        core: [
+            "right to a healthy environment", "cultural rights", "rights of nature",
+            "persons in vulnerable situations", "those most affected", "worst affected",
+            "derecho a un medio ambiente sano", "personas en situacion de vulnerabilidad",
+            "personas en situación de vulnerabilidad", "droit a un environnement sain",
+            "droit à un environnement sain", "personnes en situation de vulnerabilite",
+            "personnes en situation de vulnérabilité"
+        ],
+        supporting: [
+            "human dignity", "dignity of the human person", "the poorest", "poorest",
+            "most fragile", "most vulnerable", "least advantaged", "the needy", "the destitute",
+            "solidarity", "intergenerational solidarity", "common good", "integral human development",
+            "dignidad humana", "los mas pobres", "los más pobres", "los mas vulnerables",
+            "los más vulnerables", "solidaridad", "bien comun", "bien común",
+            "dignite humaine", "dignité humaine", "les plus pauvres", "les plus vulnerables",
+            "les plus vulnérables", "solidarite", "solidarité", "bien commun",
+            "человеческое достоинство", "наиболее уязвимых", "солидарность",
+            "الكرامة الإنسانية", "الأكثر ضعفا", "التضامن", "الصالح العام",
+            "人的尊严", "最脆弱", "团结", "共同利益"
+        ]
+    },
+    Procedural: {
+        core: [
+            "access to remedy", "right to remedy", "effective remedy", "public scrutiny",
+            "acceso a la reparacion", "acceso a la reparación", "acces a un recours",
+            "accès à un recours"
+        ],
+        supporting: [
+            "environmental education", "climate education", "climate change education",
+            "education for sustainable development", "environmental awareness",
+            "education in integral ecology", "ecological education", "civic education",
+            "educacion ambiental", "educación ambiental", "educacion para el desarrollo sostenible",
+            "educación para el desarrollo sostenible",
+            "education environnementale", "éducation environnementale",
+            "education au developpement durable", "éducation au développement durable",
+            "экологическое образование", "التربية البيئية", "环境教育", "气候教育"
+        ]
+    },
+    Distributive: {
+        core: [
+            "fair share", "fair shares", "equitable transition", "equitable outcome",
+            "unequal burden", "unequal burdens", "disproportionate burden", "disproportionately affected",
+            "cuota justa", "reparto justo", "carga desproporcionada", "afectados de manera desproporcionada",
+            "part equitable", "charge disproportionnee", "charge disproportionnée",
+            "непропорциональное бремя", "عبء غير متناسب", "不成比例的负担"
+        ],
+        supporting: [
+            "integral development", "development gap", "brecha de desarrollo", "ecart de developpement",
+            "écart de développement"
+        ]
+    },
+    Restorative: {
+        core: [
+            "reparative justice", "acknowledge the harm", "acknowledges the harm",
+            "make whole", "wrongs of the past", "justicia reparadora", "justice reparatrice",
+            "justice réparatrice"
+        ],
+        supporting: []
+    }
+};
+
+Object.entries(LEXICON_ADDITIONS).forEach(([dim, sets]) => {
+    Object.entries(sets).forEach(([bucket, list]) => {
+        const target = LEXICON[dim][bucket];
+        list.forEach(t => { if (!target.includes(t)) target.push(t); });
+    });
+});
+
+/* ============================================================================
+   2a-ii. EXPLICIT JUSTICE FRAME
+   "Environmental justice can no longer be regarded as an abstract concept" is a
+   justice statement with no dimension term in it. v2.0 scored it zero in all
+   four dimensions, matched no recall term, and dropped it before the ledger.
+
+   Frame terms do not assign a dimension and carry no dimension weight, because
+   transformative climate justice is a judgement made after all four dimensions
+   are assessed, never a code applied to a statement. What they do is guarantee
+   the passage reaches a human: a paragraph that names justice explicitly but
+   cannot be placed in a dimension by its wording is written to the ledger as
+   awaiting a coder's assignment, and enters the profile only once a coder has
+   assigned it.
+   ========================================================================== */
+
+const FRAME_TERMS = [
+    "climate justice", "environmental justice", "ecological justice", "social justice",
+    "economic justice", "intergenerational justice", "distributive justice", "procedural justice",
+    "energy justice", "water justice", "food justice", "gender justice", "epistemic justice",
+    "eco-justice", "just and equitable", "justice and equity", "equity and justice",
+    "integral ecology", "care for creation", "culture of care", "ecological conversion",
+    "moral obligation", "moral imperative", "ethical imperative", "ethical responsibility",
+    "justicia climatica", "justicia climática", "justicia ambiental", "justicia social",
+    "justicia economica", "justicia económica", "ecologia integral", "ecología integral",
+    "cultura del cuidado", "imperativo etico", "imperativo ético",
+    "justice climatique", "justice environnementale", "justice sociale", "justice economique",
+    "justice économique", "ecologie integrale", "écologie intégrale", "culture du soin",
+    "imperatif ethique", "impératif éthique",
+    "климатическая справедливость", "экологическая справедливость", "социальная справедливость",
+    "العدالة المناخية", "العدالة البيئية", "العدالة الاجتماعية",
+    "气候正义", "气候公正", "环境正义", "社会公正", "整体生态学"
+];
+
+/* Phrase-shaped framing, for the cases the term list cannot reach: "a matter of
+   justice - social, economic and human" carries no single frame term. */
+const FRAME_PATTERNS = [
+    { label: "named justice ('X justice')", re: /(?<![\p{L}])(climate|environmental|ecological|social|economic|intergenerational|distributive|procedural|restorative|epistemic|energy|water|food|gender|racial|spatial)\s+justice(?![\p{L}])/iu },
+    { label: "justice qualified by a list", re: /(?<![\p{L}])justice\s*[\u2013\u2014-]\s*(social|economic|human|environmental|climate|ecological)/iu },
+    { label: "justice as the frame of the claim", re: /(?<![\p{L}])(matter|question|issue|imperative|demand|requirement)\s+of\s+justice(?![\p{L}])/iu },
+    { label: "injustice named", re: /(?<![\p{L}])(climate|environmental|ecological|social|historical|structural)\s+injustice(?![\p{L}])/iu },
+    { label: "equity or fairness as the organising principle", re: /(?<![\p{L}])(principles?|grounds?|basis)\s+of\s+(equity|fairness|justice|solidarity)(?![\p{L}])/iu },
+    { label: "duty owed to those least responsible", re: /(least\s+responsib\p{L}*|contributed\s+(the\s+)?least|bear\s+the\s+(greatest|heaviest|brunt))/iu },
+    { label: "justicia / justice nommee", re: /(?<![\p{L}])justicia\s+(clim[aá]tica|social|econ[oó]mica|ambiental|ecol[oó]gica)(?![\p{L}])|(?<![\p{L}])justice\s+(climatique|sociale|[ée]conomique|environnementale|[ée]cologique)(?![\p{L}])/iu }
+];
+
+function whichFrames(text) {
+    const terms = whichTerms(FRAME_TERMS, text);
+    const pats = FRAME_PATTERNS.filter(p => { p.re.lastIndex = 0; return p.re.test(text); }).map(p => p.label);
+    return [...new Set([...terms, ...pats])];
+}
+
+/* Concepts that carry justice content but that a coder has to define before
+   using. Shown in the ledger next to the match rather than silently coded. */
+const CONCEPT_NOTES = {
+    "integral ecology": "Laudato Si' concept: environmental, economic, social and cultural questions treated as one problem, so a claim under it usually spans more than one dimension. Define your reading before coding it.",
+    "care for creation": "Duty-of-stewardship framing. Establishes obligation, not distribution or procedure. Usually Tokenistic unless a measure follows.",
+    "culture of care": "Collective-responsibility framing, close to recognitional justice, but with no named holder of the duty. Confirm before assigning.",
+    "common good": "Distributive in orientation but silent on who receives what. Treat as supporting evidence, not as a distributive commitment.",
+    "ecological conversion": "Change-of-values framing. Structural in ambition, rarely operational. Check whether any measure attaches.",
+    "human dignity": "Recognitional in orientation. Ask whether a specific group is named before coding it as recognitional.",
+    "environmental education": "Capability and participation framing. Sits in cluster 1 of the brief. Procedural only where it enables participation in decisions, not where it is public awareness alone.",
+    "fair share": "A distributive claim about the state's own effort. Check scope: a fair-share claim addressed to other states is an international claim, not a domestic commitment."
+};
+
+/* ============================================================================
    2b. IMPLICIT PATTERNS
    Justice content is often carried by phrasing rather than vocabulary. A tariff
    design that protects poor households, a comment period, a right of appeal or a
@@ -1184,7 +1345,9 @@ const CLUSTERS = {
 
 const FEATURES = {
     legalAnchor: [
-        /(?<![\p{L}])(act|law|statute|legislation|legislative|statutory|legally binding|decree|ordinance|regulation|constitution|code|bill)(?![\p{L}])/iu,
+        /(?<![\p{L}])(law|laws|statute|legislation|legislative|statutory|legally binding|decree|ordinance|regulation|regulations|constitution)(?![\p{L}])/iu,
+        /(?<![\p{L}])(Act|Acts|Code|Bill|Charter|Statute)(?![\p{L}])/u,          // capitalised: the title of an instrument, not the verb
+        /(?<![\p{L}])(act|code|bill)\s+(no\.?|n[°º]|number|of\s+(19|20)\d{2})/iu,
         /\b(law|act|decree|decreto|ley|loi|lei|gesetz)\s*(no\.?|n[°º]|number|#)?\s*\d/iu,
         /\b(act|law|code|charter)\s+(of\s+)?(19|20)\d{2}\b/iu,
         /(?<![\p{L}])(ley|leyes|decreto|reglamento|constitucion|constitución|codigo|código)(?![\p{L}])/iu,
@@ -1229,7 +1392,8 @@ const FEATURES = {
         /(监测|监督|指标|评估|问责|执行)/u
     ],
     commitVerb: [
-        /(?<![\p{L}])(will|shall|commits? to|is committed to|has established|established|adopted|enacted|mandates?|requires?|guarantees?|allocates?|ensures?)(?![\p{L}])/iu,
+        /(?<!(?:good|free|political|strong|iron|ill)\s)(?<![\p{L}])will(?=\s+\p{L})/iu,   // the auxiliary, not the noun in "good will"
+        /(?<![\p{L}])(shall|commits? to|is committed to|has established|established|adopted|enacted|mandates?|requires?|guarantees?|allocates?|ensures?)(?![\p{L}])/iu,
         /(?<![\p{L}])(se compromete|garantiza|establece|asigna|exige|adopta|aprobo|aprobó)(?![\p{L}])/iu,
         /(?<![\p{L}])(s'engage|garantit|etablit|établit|alloue|exige|adopte)(?![\p{L}])/iu,
         /(обязуетс|обеспечит|устанавлива|выделяет|принял)/iu,
@@ -1278,6 +1442,84 @@ const FEATURES = {
     ]
 };
 
+/* ============================================================================
+   3b. FEATURE ADDITIONS, v2.1
+   Appended rather than merged, so the v2.0 feature set stays legible.
+   ========================================================================== */
+
+/* A named normative instrument with a locator. Not a legal anchor: it records
+   that the statement rests on an external instrument rather than on the state's
+   own law, budget or institution. It can carry a statement to Partial. It can
+   never on its own carry one to Embedded, and it is not counted towards the
+   evidence-feature threshold that admits a single-statement Embedded. */
+FEATURES.citedInstrument = [
+    /(?<![\p{L}])(article|articles|art|paragraph|paragraphs|para|section|chapter|annex|clause|recital)\s*\.?\s*\d/iu,
+    /(?<![\p{L}])(encyclical|exhortation|apostolic letter|motu proprio|charter|covenant|declaration|convention|protocol|treaty|accord|resolution|communique|communiqu\u00e9|final document|concluding document)(?![\p{L}])/iu,
+    /(?<![\p{L}])(paris agreement|kyoto protocol|sendai framework|escazu|escaz\u00fa|aarhus|ilo convention|universal declaration|sustainable development goals|sdgs?|cedaw|unclos|ramsar|convention on biological diversity)(?![\p{L}])/iu,
+    /(?<![\p{L}])(articulo|art\u00edculo|parrafo|p\u00e1rrafo|anexo|declaracion|declaraci\u00f3n|convenio|convencion|convenci\u00f3n|protocolo|resolucion|resoluci\u00f3n|enciclica|enc\u00edclica|exhortacion|exhortaci\u00f3n)\s*\.?\s*\d?/iu,
+    /(?<![\p{L}])(article|paragraphe|annexe|declaration|d\u00e9claration|convention|protocole|resolution|r\u00e9solution|encyclique|exhortation)\s*\.?\s*\d?/iu,
+    /(стать[яи]|пункт|приложени|деклараци|конвенци|протокол|резолюци)/iu,
+    /(المادة|الفقرة|الملحق|الإعلان|الاتفاقية|البروتوكول|القرار)/u,
+    /(第\s*\d+\s*条|公约|议定书|宣言|决议|附件)/u
+];
+
+/* Obligation language that is not a commitment verb: a duty stated, an appeal
+   made, a responsibility acknowledged. Reported to the coder, and it lifts a
+   statement to Partial only in combination with a cited instrument. On its own
+   it leaves the statement Tokenistic, which is the correct reading. */
+FEATURES.dutyLanguage = [
+    /(?<![\p{L}])(duty|duties|obligation|obligations|responsibility|responsibilities|called to|calls upon|appeal to|appeals to|incumbent (up)?on|answerable|stewardship)(?![\p{L}])/iu,
+    /(?<![\p{L}])(deber|deberes|obligacion|obligaci\u00f3n|responsabilidad|llamado a|corresponde a)(?![\p{L}])/iu,
+    /(?<![\p{L}])(devoir|obligation|responsabilite|responsabilit\u00e9|appel\u00e9 a|appel\u00e9 \u00e0|il incombe)(?![\p{L}])/iu,
+    /(обязанност|ответственност|призван)/iu,
+    /(واجب|التزام|مسؤولية|مدعو)/u,
+    /(义务|责任|使命|呼吁)/u
+];
+
+/* v2.0 matched "commits to" but not "committing to", which is how a great many
+   NDCs phrase the commitment itself. */
+FEATURES.commitVerb = FEATURES.commitVerb.concat([
+    /(?<![\p{L}])(committing to|commit to|commitment to|commitments to|undertakes?|undertaking to|pledges?|pledging to|resolves? to|reaffirms? its commitment|has committed|have committed|we will|it will)(?![\p{L}])/iu,
+    /(?<![\p{L}])(comprometiendose|comprometi\u00e9ndose|se compromete a|asume el compromiso)(?![\p{L}])/iu,
+    /(?<![\p{L}])(s'engageant|prend l'engagement|s'oblige)(?![\p{L}])/iu
+]);
+
+/* Recall net additions. These never assign a dimension or a tier; they only
+   guarantee a paragraph reaches a human reader. */
+[
+    "education", "training", "awareness", "ethical", "ethics", "moral", "morality",
+    "stewardship", "creation", "spiritual", "faith", "religious", "conscience",
+    "future generations", "our common home", "integral development", "human development",
+    "educacion", "educaci\u00f3n", "etico", "\u00e9tico", "moral", "generaciones futuras",
+    "education", "\u00e9ducation", "ethique", "\u00e9thique", "generations futures", "g\u00e9n\u00e9rations futures",
+    "образование", "этическ", "будущих поколений",
+    "التعليم", "أخلاقي", "الأجيال القادمة",
+    "教育", "伦理", "后代"
+].forEach(t => { if (!SCREEN_ONLY.includes(t)) SCREEN_ONLY.push(t); });
+
+/* Structural markers used by rubric criterion 6. */
+[
+    "integral ecology", "ecological conversion", "throwaway culture", "technocratic paradigm",
+    "consumerism", "overconsumption", "ecological debt", "unequal ecological exchange",
+    "ecologia integral", "ecolog\u00eda integral", "ecologie integrale", "\u00e9cologie int\u00e9grale",
+    "deuda ecologica", "deuda ecol\u00f3gica", "dette ecologique", "dette \u00e9cologique"
+].forEach(t => { if (!STRUCTURAL_MARKERS.includes(t)) STRUCTURAL_MARKERS.push(t); });
+
+/* Hyphenated forms that must survive a line break unchanged. A word broken
+   across a line is rejoined without its hyphen ("environ-" + "mental"), except
+   where the hyphen is part of the term itself ("gender-" + "responsive"), which
+   would otherwise destroy the match. Built from the lexicon so it stays in step
+   with it. */
+const HYPHEN_KEEP = (() => {
+    const set = new Set();
+    const add = list => (list || []).forEach(t => String(t).toLowerCase().split(/[\s\u00a0]+/)
+        .forEach(tok => { const c = tok.replace(/[^\p{L}-]/gu, ""); if (/[\p{L}]-[\p{L}]/u.test(c)) set.add(c); }));
+    Object.values(LEXICON).forEach(d => { add(d.core); add(d.supporting); });
+    add(SCREEN_ONLY); add(STRUCTURAL_MARKERS); add(FRAME_TERMS);
+    Object.values(CLUSTERS).forEach(add);
+    return set;
+})();
+
 function detectFeatures(sentence) {
     const out = {};
     for (const [name, patterns] of Object.entries(FEATURES)) {
@@ -1302,7 +1544,29 @@ function negatesAnchor(sentence) {
    4. CLASSIFICATION
    ========================================================================== */
 
-function classifyDimension(sentence) {
+/* Stock phrases that contain a lexicon term but carry none of its meaning:
+   "all men and women of good will" is not a statement about women. They are
+   blanked for matching only, at equal length so offsets are untouched, and the
+   text itself is never altered. Same device as the existing "leave no one
+   behind" exclusion in negatesAnchor.
+
+   Deliberately narrow. "women and men" on its own is left alone, because
+   "equal participation of women and men" is a recognitional claim and masking
+   the pair would cost more recall than the stock phrase costs precision. */
+const NOISE_PHRASES = [
+    /(?<![\p{L}])(all\s+)?men\s+and\s+women\s+of\s+good\s?will(?![\p{L}])/giu,
+    /(?<![\p{L}])(good\s?will|free\s+will|political\s+will)(?![\p{L}])/giu
+];
+
+function maskNoise(text) {
+    let t = text;
+    NOISE_PHRASES.forEach(re => { re.lastIndex = 0; t = t.replace(re, m => " ".repeat(m.length)); });
+    return t;
+}
+
+function classifyDimension(rawSentence, rawParagraph) {
+    const sentence = maskNoise(rawSentence);
+    const paragraph = rawParagraph ? maskNoise(rawParagraph) : null;
     const scores = {}, evidence = {};
     for (const [dim, sets] of Object.entries(LEXICON)) {
         const coreHits = whichTerms(sets.core, sentence);
@@ -1311,11 +1575,28 @@ function classifyDimension(sentence) {
         scores[dim] = coreHits.length * 3 + patHits.length * 2 + suppHits.length;
         evidence[dim] = { core: coreHits, supporting: suppHits, patterns: patHits.length };
     }
-    const screenHits = whichTerms(SCREEN_ONLY, sentence);
+
+    /* v2.1. The recall net now reads the paragraph, not the sentence alone, so a
+       paragraph is never lost because its justice vocabulary sits one sentence
+       away from the claim. Paragraph-level hits are deduplicated downstream into
+       a single record, so this widens recall without inflating any count. */
+    const para = paragraph || sentence;
+    const screenHits = [...new Set(whichTerms(SCREEN_ONLY, sentence).concat(whichTerms(SCREEN_ONLY, para)))];
+
+    /* Explicit justice framing. Carries no dimension weight by design. */
+    const frameHits = whichFrames(sentence);
 
     const ranked = Object.entries(scores).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
     if (ranked.length === 0) {
-        return { flagged: screenHits.length > 0, dimension: null, alternates: [], evidence, screenHits, needsReview: screenHits.length > 0, reason: screenHits.length ? "screen term only, no dimension term" : "no match" };
+        return {
+            flagged: screenHits.length > 0 || frameHits.length > 0,
+            dimension: null, score: 0, alternates: [], evidence, screenHits, frameHits,
+            needsDimension: frameHits.length > 0,
+            needsReview: screenHits.length > 0 || frameHits.length > 0,
+            reason: frameHits.length
+                ? "names justice explicitly but carries no dimension term, so the dimension is left to the coder"
+                : (screenHits.length ? "screen term only, no dimension term" : "no match")
+        };
     }
 
     const top = ranked[0];
@@ -1345,9 +1626,9 @@ function classifyDimension(sentence) {
 
     return {
         flagged: true,
-        dimension,
+        dimension, score: top[1],
         alternates: ranked.filter(([d]) => d !== dimension).map(([d, v]) => ({ dimension: d, score: v })),
-        evidence, screenHits, needsReview, reason
+        evidence, screenHits, frameHits, needsDimension: false, needsReview, reason
     };
 }
 
@@ -1356,6 +1637,10 @@ function classifyTier(sentence, features) {
     const anchorLegal = features.legalAnchor && !negated;
     const anchorInstFin = features.institutionAnchor && features.financeAnchor && !negated;
     const enforce = features.accountability || features.timeBound;
+    /* v2.1: a cited instrument counts as a named basis for a commitment, at the
+       Partial level only. It is not a legal anchor: the state's own law, budget
+       or institution is what Embedded requires. */
+    const namedBasis = features.concreteMeasure || features.institutionAnchor || features.timeBound || features.citedInstrument;
 
     const featureList = Object.entries(features).filter(([, v]) => v).map(([k]) => k);
     const strength = ["legalAnchor", "institutionAnchor", "financeAnchor", "timeBound", "accountability", "commitVerb"]
@@ -1369,16 +1654,22 @@ function classifyTier(sentence, features) {
         why.push("uses a commitment verb");
         why.push(features.accountability ? "includes accountability or monitoring" : "is time-bound");
         if (features.conditional) why.push("but the commitment is conditional on external support");
-    } else if (features.commitVerb && (features.concreteMeasure || features.institutionAnchor || features.timeBound) && !features.hedge) {
+    } else if (features.commitVerb && namedBasis && !features.hedge) {
         tier = "Partial";
-        why.push("commits to a named measure without legal or financial anchoring");
-    } else if (features.commitVerb && features.concreteMeasure && features.hedge) {
+        why.push(features.citedInstrument && !features.concreteMeasure && !features.institutionAnchor
+            ? "commits by reference to a named instrument, with no legal, institutional or financial anchoring of its own"
+            : "commits to a named measure without legal or financial anchoring");
+    } else if (features.commitVerb && namedBasis && features.hedge) {
         tier = "Partial";
         why.push("names a measure but the language is hedged");
+    } else if (features.citedInstrument && features.dutyLanguage && !negated) {
+        tier = "Partial";
+        why.push("states a duty and grounds it in a named instrument rather than in law, budget or institution");
     } else {
         tier = "Tokenistic";
         if (negated) why.push("the legal or institutional reference is negated");
         else if (features.hedge) why.push("aspirational or hedged language");
+        else if (features.dutyLanguage) why.push("states a duty or responsibility without attaching a measure to it");
         else why.push("mention without an actionable commitment");
     }
 
@@ -1464,22 +1755,97 @@ function isSkippablePage(pageText, lines) {
     return null;
 }
 
-/* Sentence segmentation that survives decimals, abbreviations and bullet lists. */
-const ABBREVIATIONS = ["e.g", "i.e", "etc", "no", "nos", "art", "arts", "para", "paras", "fig", "figs", "vol", "approx", "cf", "vs", "dr", "mr", "mrs", "ms", "st", "jr", "sr", "ltd", "inc", "co", "ej", "p.ej", "art", "n°", "nº", "ср", "рис", "табл"];
+/* Sentence segmentation, v2.1.
+   Two changes from v2.0. It now reports character offsets, so every sentence can
+   be traced back to the line it came from, and it survives quotation marks,
+   guillemets, footnote markers and bracketed ellipses. It is also no longer run
+   on a single physical PDF line: extractDocument rebuilds the paragraph first.
+   Fragments shorter than RULES.MIN_UNIT_CHARS are merged into the neighbouring
+   sentence rather than discarded, so no text is lost between the page and the
+   ledger. */
 
-function splitSentences(text) {
-    let t = " " + text + " ";
-    t = t.replace(/(\d)\.(\d)/g, "$1\u0001$2");                 // decimals
-    t = t.replace(/\b([A-Z])\.(?=\s*[A-Z]\.)/g, "$1\u0001");     // initials U.S.A.
+const ABBREVIATIONS = ["e.g", "i.e", "etc", "no", "nos", "art", "arts", "para", "paras", "fig", "figs",
+    "vol", "approx", "cf", "vs", "dr", "mr", "mrs", "ms", "st", "jr", "sr", "ltd", "inc", "co", "ej",
+    "p.ej", "n°", "nº", "ср", "рис", "табл",
+    /* v2.1: citation and reference abbreviations, which end a great many
+       sentences mid-flow in NDCs that quote instruments and encyclicals */
+    "p", "pp", "n", "nr", "ch", "chap", "sec", "secs", "al", "ed", "eds", "ibid", "op", "cit",
+    "encycl", "exhort", "apost", "resp", "cap", "num", "pág", "pag", "réf", "ref", "col"];
+
+/* Same-length masking. Every protected full stop is replaced by \u0001, which
+   keeps every character offset identical to the source string. */
+function maskNonBoundaries(text) {
+    let t = text;
+    t = t.replace(/(\d)\.(\d)/g, "$1\u0001$2");                       // decimals and 1.2.3 numbering
+    t = t.replace(/([A-Z])\.(?=\s*[A-Z]\.)/g, "$1\u0001");            // initials, U.S.A.
+    t = t.replace(/\.\.\./g, "\u0001\u0001\u0001");                   // ellipsis, including [...]
     ABBREVIATIONS.forEach(a => {
-        const re = new RegExp("(?<![\\p{L}])" + a.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\.", "giu");
-        t = t.replace(re, a + "\u0001");
+        const re = new RegExp("(?<![\\p{L}\\p{N}])" + a.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\.", "giu");
+        t = t.replace(re, m => m.slice(0, -1) + "\u0001");
     });
-    t = t.replace(/([•·▪◦‣])\s*/g, "\u0002$1 ");                 // bullets act as boundaries
-    const parts = t.split(/(?<=[.!?。！？؟])\s+|\u0002|\n{2,}/);
-    return parts
-        .map(s => s.replace(/\u0001/g, ".").replace(/\s+/g, " ").trim())
-        .filter(s => s.length > 0);
+    return t;
+}
+
+function segmentSentences(text) {
+    if (!text) return [];
+    const mask = maskNonBoundaries(text);
+    const bounds = [];
+
+    /* A boundary is terminal punctuation, then any number of closing quotes or
+       brackets, then whitespace. v2.0 required the whitespace to follow the stop
+       directly, so a sentence ending in ." or .» or .) never closed. */
+    const re = /([.!?\u3002\uff01\uff1f\u061f])([)"'\u201d\u2019\u00bb\]\u300d\u300f]*)(\s+)/g;
+    let m;
+    while ((m = re.exec(mask)) !== null) {
+        const end = m.index + m[1].length + m[2].length;
+        const next = re.lastIndex;
+        const tail = text.slice(next, next + 4);
+        // a lower-case Latin continuation is nearly always a false boundary
+        if (/^[\p{Ll}]/u.test(tail) && m[1] === ".") continue;
+        // a footnote marker glued to the stop, "…centre»5. In" style, still closes
+        bounds.push({ end, next });
+    }
+    // bullets and dashes that open a list item also open a new unit
+    const bre = /[\u2022\u00b7\u25aa\u25e6\u2023]/g;
+    while ((m = bre.exec(text)) !== null) if (m.index > 0) bounds.push({ end: m.index, next: m.index });
+    bounds.sort((a, b) => a.end - b.end);
+
+    const pieces = [];
+    let cursor = 0;
+    bounds.forEach(b => {
+        if (b.end <= cursor) return;
+        pieces.push([cursor, b.end]);
+        cursor = b.next;
+    });
+    if (cursor < text.length) pieces.push([cursor, text.length]);
+
+    const out = [];
+    const minChars = (typeof RULES !== "undefined" && RULES.MIN_UNIT_CHARS) || 25;
+    pieces.forEach(([s, e]) => {
+        let a = s, b = e;
+        while (a < b && /\s/.test(text[a])) a++;
+        while (b > a && /\s/.test(text[b - 1])) b--;
+        if (b <= a) return;
+        const seg = { text: text.slice(a, b), start: a, end: b };
+        const letters = (seg.text.match(/[\p{L}\p{N}]/gu) || []).length;
+        if (out.length && (seg.text.length < minChars || letters < 3)) {
+            const prev = out[out.length - 1];          // absorb the fragment, never drop it
+            prev.end = b;
+            prev.text = text.slice(prev.start, b);
+        } else out.push(seg);
+    });
+    // a short opening fragment attaches forwards instead
+    if (out.length > 1 && out[0].text.length < minChars) {
+        out[1].start = out[0].start;
+        out[1].text = text.slice(out[1].start, out[1].end);
+        out.shift();
+    }
+    return out;
+}
+
+/* Kept for compatibility: the string-only view of the same segmentation. */
+function splitSentences(text) {
+    return segmentSentences(text).map(s => s.text);
 }
 
 /* ============================================================================
@@ -2071,9 +2437,10 @@ async function extractDocument(fileUrl, log, docLang) {
     const units = [];
     const diag = { pages: pdf.numPages, lowTextPages: 0, skipped: [], totalChars: 0, columns: 0,
                    lang: docLang || "Unknown",
-                   funnel: { sentencesSeen: 0, tooShort: 0, numericTable: 0, headings: 0, kept: 0 } };
+                   funnel: { sentencesSeen: 0, tooShort: 0, numericTable: 0, headings: 0, kept: 0,
+                             lines: 0, paragraphs: 0, rejoined: 0 } };
     let currentHeading = "", currentSection = { type: "UNKNOWN", narrative: false };
-    let unitIndex = 0;
+    let unitIndex = 0, orderIndex = 0, blockIndex = 0;
 
     for (let p = 1; p <= pdf.numPages; p++) {
         const page = await pdf.getPage(p);
@@ -2133,38 +2500,121 @@ async function extractDocument(fileUrl, log, docLang) {
 
         const medianH = ordered.map(l => l.h).sort((a, b) => a - b)[Math.floor(ordered.length / 2)] || 10;
 
-        const pageUnits = [];
-        ordered.forEach(line => {
+        /* --- v2.1 paragraph reconstruction ---------------------------------
+           v2.0 ran the sentence splitter on each physical PDF line. Any sentence
+           that ran over a line break was therefore cut at the break: the head
+           became one coding unit, the tail became another, and anything under 25
+           characters was discarded. A citation sitting on the last line of a
+           paragraph could never raise the tier of the sentence it belonged to,
+           because it had become a separate record.
+
+           Lines are now numbered in reading order, joined back into paragraphs,
+           and only then split into sentences. The coding unit is still the single
+           sentence, so nothing is counted twice. The excerpt shown, exported and
+           read by the coder is the whole paragraph the sentence sits in.        */
+
+        const numbered = ordered.map((l, i) => ({ y: l.y, h: l.h, text: l.text, no: i + 1 }));
+        diag.funnel.lines += numbered.length;
+
+        const gaps = [];
+        for (let i = 1; i < numbered.length; i++) {
+            const g = Math.abs(numbered[i - 1].y - numbered[i].y);
+            if (g > 0.5 && g < 200) gaps.push(g);
+        }
+        const medGap = gaps.length ? gaps.slice().sort((a, b) => a - b)[Math.floor(gaps.length / 2)] : medianH * 1.2;
+        const lenSorted = numbered.map(l => l.text.length).sort((a, b) => a - b);
+        const medLen = lenSorted[Math.floor(lenSorted.length / 2)] || 60;
+
+        const blocks = [];
+        let cur = null;
+        const closeBlock = () => { if (cur && cur.text.trim().length) blocks.push(cur); cur = null; };
+        const openBlock = line => {
+            cur = { text: "", offsets: [], lineStart: line.no, lineEnd: line.no,
+                    heading: currentHeading, section: currentSection };
+        };
+        const addLine = line => {
+            let sep = cur.text ? " " : "";
+            if (cur.text && RULES.DEHYPHENATE) {
+                const tail = cur.text.match(/([\p{L}]{2,})[-\u2010\u00ad]$/u);
+                const head = line.text.match(/^([\p{Ll}][\p{L}]*)/u);
+                if (tail && head && !HYPHEN_KEEP.has((tail[1] + "-" + head[1]).toLowerCase())) {
+                    cur.text = cur.text.slice(0, -1);
+                    if (cur.offsets.length) cur.offsets[cur.offsets.length - 1].end = cur.text.length;
+                    sep = "";
+                    diag.funnel.rejoined++;
+                }
+            }
+            const start = cur.text.length + sep.length;
+            cur.text += sep + line.text;
+            cur.offsets.push({ start, end: cur.text.length, no: line.no });
+            cur.lineEnd = line.no;
+        };
+
+        numbered.forEach((line, i) => {
             const t = line.text;
             if (!t) return;
             if (looksLikeHeading(t) || (line.h > medianH * 1.25 && t.length < 90)) {
+                closeBlock();
                 currentHeading = t;
                 currentSection = classifySection(t);
                 diag.funnel.headings++;
                 return;
             }
-            splitSentences(t).forEach(sent => {
+            const prev = i > 0 ? numbered[i - 1] : null;
+            const gap = prev ? Math.abs(prev.y - line.y) : 0;
+            const startsList = /^\s*([\u2022\u00b7\u25aa\u25e6\u2023*]|[-\u2013\u2014]\s|\(?[a-z0-9]{1,3}[).]\s)/.test(t);
+            const prevClosed = prev ? /[.!?:;\u3002\uff01\uff1f\u061f]["'\u201d\u2019\u00bb)\]]*\s*$/.test(prev.text) : true;
+            const prevShort = prev ? prev.text.length < medLen * 0.72 : true;
+            const bigGap = prev ? gap > medGap * 1.55 : false;
+            if (!cur || startsList || bigGap || (prevClosed && prevShort)) { closeBlock(); openBlock(line); }
+            addLine(line);
+        });
+        closeBlock();
+
+        const lineNoAt = (b, off) => {
+            for (let k = 0; k < b.offsets.length; k++) {
+                if (off >= b.offsets[k].start && off <= b.offsets[k].end) return b.offsets[k].no;
+            }
+            return b.offsets.length ? b.offsets[b.offsets.length - 1].no : 0;
+        };
+
+        const pageUnits = [];
+        blocks.forEach(b => {
+            if (b.text.trim().length < 2) return;
+            diag.funnel.paragraphs++;
+            const paraId = `p${p}-b${blockIndex++}`;
+            const segs = segmentSentences(b.text);
+            segs.forEach((seg, si) => {
                 diag.funnel.sentencesSeen++;
-                if (sent.length < 25) { diag.funnel.tooShort++; return; }
+                const sent = seg.text;
+                if (sent.length < RULES.MIN_UNIT_CHARS) { diag.funnel.tooShort++; return; }
                 if (/^[\d\s.,%()/-]+$/.test(sent)) { diag.funnel.numericTable++; return; }
                 if ((sent.match(/\d/g) || []).length / sent.length > 0.35) { diag.funnel.numericTable++; return; }
+                const ls = lineNoAt(b, seg.start), le = lineNoAt(b, Math.max(seg.start, seg.end - 1));
                 pageUnits.push({
-                    id: `p${p}-s${unitIndex++}`,
-                    page: p, text: sent, heading: currentHeading,
-                    section: currentSection, column: twoCol, lang: docLang || "Unknown"
+                    id: `p${p}-s${unitIndex++}`, order: orderIndex++,
+                    page: p, text: sent,
+                    lineStart: ls, lineEnd: le,
+                    locator: `p. ${p}, ` + (le > ls ? `lines ${ls}\u2013${le}` : `line ${ls}`),
+                    paraId, excerpt: b.text, sentStart: seg.start, sentEnd: seg.end,
+                    paraLineStart: b.lineStart, paraLineEnd: b.lineEnd,
+                    paraLocator: `p. ${p}, ` + (b.lineEnd > b.lineStart ? `lines ${b.lineStart}\u2013${b.lineEnd}` : `line ${b.lineStart}`),
+                    sentIndex: si, sentCount: segs.length,
+                    heading: b.heading, section: b.section, column: twoCol, lang: docLang || "Unknown"
                 });
             });
         });
 
-        // Attach the neighbouring sentences. The coding unit stays the sentence,
-        // so nothing is double counted, but the coder always reads it in context.
+        /* The coding unit stays the sentence. The context the coder reads is the
+           whole paragraph, and the neighbouring sentences are kept for the CSV. */
         pageUnits.forEach((u, i) => {
             u.before = i > 0 ? pageUnits[i - 1].text : "";
             u.after = i < pageUnits.length - 1 ? pageUnits[i + 1].text : "";
-            u.context = [u.before, u.text, u.after].filter(Boolean).join(" ");
+            u.context = u.excerpt;
         });
         diag.funnel.kept += pageUnits.length;
         pageUnits.forEach(u => units.push(u));
+
     }
 
     diag.scannedRisk = diag.lowTextPages / diag.pages > 0.3 || diag.totalChars / diag.pages < 300;
@@ -2172,34 +2622,126 @@ async function extractDocument(fileUrl, log, docLang) {
 }
 
 /* ============================================================================
-   9. PIPELINE
+   9. PIPELINE, v2.1
+
+   Three changes.
+
+   1. Evidence scope. The dimension is still decided on the sentence, which keeps
+      assignment precise. The tier is decided on the paragraph, because a tier is
+      a judgement about a commitment, and a commitment is rarely contained in one
+      sentence. Both tiers are recorded, so the difference is visible and the
+      scope can be switched back with RULES.EVIDENCE_SCOPE.
+
+   2. Paragraph deduplication. Widening the excerpt to the paragraph would
+      otherwise let one paragraph enter the ledger once per matching sentence.
+      One record is kept per paragraph per dimension, anchored on the sentence
+      with the strongest dimension evidence, and the other matching sentences are
+      recorded on it. Counts therefore fall again relative to v2.0, and are again
+      not comparable across engine versions.
+
+   3. Explicit framing without a dimension is kept rather than dropped. It enters
+      the ledger awaiting a coder's assignment and counts towards no dimension
+      until a coder assigns one.
    ========================================================================== */
 
 function analyseUnits(units) {
     const statements = [], screened = [];
+    const paraScope = RULES.EVIDENCE_SCOPE === "paragraph";
+    const featCache = new Map();
+    const featuresOf = (key, text) => {
+        if (!featCache.has(key)) featCache.set(key, detectFeatures(text));
+        return featCache.get(key);
+    };
+    const byKey = new Map();
+
     units.forEach(u => {
-        const dim = classifyDimension(u.text);
+        const para = u.excerpt || u.context || u.text;
+        const paraId = u.paraId || u.id;
+        const dim = classifyDimension(u.text, para);
         if (!dim.flagged) return;
-        const features = detectFeatures(u.text);
-        const tierRes = classifyTier(u.text, features);
+
+        const fSent = featuresOf("s:" + u.id, u.text);
+        const fPara = featuresOf("b:" + paraId, para);
+        const evidenceText = paraScope ? para : u.text;
+        const fUse = paraScope ? fPara : fSent;
+
+        const tierSent = classifyTier(u.text, fSent);
+        const tierPara = classifyTier(para, fPara);
+        const tierRes = paraScope ? tierPara : tierSent;
+
+        const featureSource = {};
+        Object.keys(fUse).forEach(k => { if (fUse[k]) featureSource[k] = fSent[k] ? "sentence" : "paragraph"; });
+
         const record = {
-            id: u.id, page: u.page, text: u.text, before: u.before || "", after: u.after || "",
-            context: u.context || u.text, lang: u.lang || "Unknown", heading: u.heading, section: u.section,
-            dimension: dim.dimension, alternates: dim.alternates, needsReview: dim.needsReview,
-            dimReason: dim.reason, matched: dim.dimension ? dim.evidence[dim.dimension] : { core: [], supporting: [] },
-            screenHits: dim.screenHits,
-            tier: dim.dimension ? tierRes.tier : null,
-            tierWhy: tierRes.why, featureSet: tierRes.features, strength: tierRes.strength,
-            negated: tierRes.negated, conditional: !!tierRes.conditional,
-            scope: classifyScope(u.text, features),
-            cluster: classifyCluster(u.text),
-            structural: anyTerm(STRUCTURAL_MARKERS, u.text),
-            translation: null, translationSource: null,
-            override: null
+            id: u.id, order: u.order, page: u.page,
+            lineStart: u.lineStart, lineEnd: u.lineEnd, locator: u.locator,
+            paraId, paraLineStart: u.paraLineStart, paraLineEnd: u.paraLineEnd, paraLocator: u.paraLocator,
+            text: u.text, sentStart: u.sentStart, sentEnd: u.sentEnd,
+            excerpt: para, context: para, before: u.before || "", after: u.after || "",
+            lang: u.lang || "Unknown", heading: u.heading, section: u.section,
+            dimension: dim.dimension, dimScore: dim.score, alternates: dim.alternates,
+            needsReview: dim.needsReview, dimReason: dim.reason,
+            matched: dim.dimension ? dim.evidence[dim.dimension] : { core: [], supporting: [], patterns: 0 },
+            implicit: dim.dimension ? dim.evidence[dim.dimension].patterns : 0,
+            screenHits: dim.screenHits, frameHits: dim.frameHits,
+            pendingDimension: !dim.dimension && dim.frameHits.length > 0,
+            tier: tierRes.tier, tierSentence: tierSent.tier, tierParagraph: tierPara.tier,
+            evidenceScope: paraScope ? "paragraph" : "sentence",
+            scopeLift: tierRank(tierPara.tier) > tierRank(tierSent.tier),
+            tierWhy: tierRes.why, featureSet: tierRes.features, featureSource,
+            strength: tierRes.strength, negated: tierRes.negated, conditional: !!tierRes.conditional,
+            scope: classifyScope(evidenceText, fUse),
+            cluster: classifyCluster(evidenceText),
+            structural: anyTerm(STRUCTURAL_MARKERS, evidenceText),
+            sentencesMatched: 1, alsoMatched: [],
+            translation: null, translationSource: null, override: null
         };
-        if (dim.dimension) statements.push(record); else screened.push(record);
+
+        const key = paraId + "||" + (record.dimension || "UNASSIGNED");
+        if (RULES.PARAGRAPH_DEDUPE && byKey.has(key)) {
+            const prev = byKey.get(key);
+            prev.sentencesMatched++;
+            prev.alsoMatched.push(u.id);
+            prev.matched = {
+                core: [...new Set([...(prev.matched.core || []), ...(record.matched.core || [])])],
+                supporting: [...new Set([...(prev.matched.supporting || []), ...(record.matched.supporting || [])])],
+                patterns: Math.max(prev.matched.patterns || 0, record.matched.patterns || 0)
+            };
+            prev.frameHits = [...new Set([...(prev.frameHits || []), ...(record.frameHits || [])])];
+            prev.screenHits = [...new Set([...(prev.screenHits || []), ...(record.screenHits || [])])];
+            prev.implicit = Math.max(prev.implicit || 0, record.implicit || 0);
+            prev.pendingDimension = prev.pendingDimension || record.pendingDimension;
+            if ((record.dimScore || 0) > (prev.dimScore || 0)) {
+                // a stronger sentence in the same paragraph takes over as the anchor
+                prev.id = record.id; prev.order = record.order; prev.text = record.text;
+                prev.sentStart = record.sentStart; prev.sentEnd = record.sentEnd;
+                prev.lineStart = record.lineStart; prev.lineEnd = record.lineEnd;
+                prev.locator = record.locator; prev.dimScore = record.dimScore;
+                prev.dimReason = record.dimReason; prev.needsReview = record.needsReview;
+                prev.alternates = record.alternates;
+            }
+            return;
+        }
+        byKey.set(key, record);
     });
-    return { statements, screened };
+
+    const all = [...byKey.values()];
+    const dimensionedParas = new Set(all.filter(r => r.dimension).map(r => r.paraId));
+    all.forEach(rec => {
+        if (!rec.dimension && dimensionedParas.has(rec.paraId)) {
+            // the paragraph already has a coded record: fold the framing into it
+            // rather than listing the same paragraph twice
+            all.filter(r => r.dimension && r.paraId === rec.paraId).forEach(r => {
+                r.frameHits = [...new Set([...(r.frameHits || []), ...(rec.frameHits || [])])];
+                r.screenHits = [...new Set([...(r.screenHits || []), ...(rec.screenHits || [])])];
+            });
+            return;
+        }
+        if (rec.dimension || rec.pendingDimension) statements.push(rec); else screened.push(rec);
+    });
+
+    const inOrder = (a, b) => (a.order - b.order) || (a.page - b.page);
+    return { statements: statements.sort(inOrder), screened: screened.sort(inOrder) };
 }
 
 function effective(s) {
@@ -2214,30 +2756,39 @@ function evaluateCountry(country, units, diag) {
     const DIMS = ["Recognitional", "Procedural", "Distributive", "Restorative"];
     const profile = {};
     DIMS.forEach(d => {
-        profile[d] = rollUpDimension(statements.filter(s => effective(s).dimension === d).map(s => ({ ...s, tier: effective(s).tier })));
+        profile[d] = rollUpDimension(
+            statements.filter(s => effective(s).dimension === d)
+                      .map(s => ({ ...s, dimension: effective(s).dimension, tier: effective(s).tier }))
+        );
     });
     const rubric = buildRubric(profile, statements.map(s => ({ ...s, dimension: effective(s).dimension, tier: effective(s).tier })));
 
+    const coded = statements.filter(s => effective(s).dimension);
     const descriptive = {
         sentencesRead: (diag && diag.funnel) ? diag.funnel.kept : units.length,
-        flagged: statements.length,
+        paragraphsRead: (diag && diag.funnel) ? diag.funnel.paragraphs : 0,
+        flagged: coded.length,
+        awaitingDimension: statements.filter(s => !effective(s).dimension).length,
         forReview: statements.filter(s => s.needsReview).length,
         screenOnly: screened.length,
-        conditional: statements.filter(s => s.conditional).length,
-        international: statements.filter(s => s.scope === "International").length,
+        conditional: coded.filter(s => s.conditional).length,
+        international: coded.filter(s => s.scope === "International").length,
+        raisedByParagraph: coded.filter(s => s.scopeLift).length,
         byTier: { Embedded: 0, Partial: 0, Tokenistic: 0 },
         clusters: {}
     };
-    statements.forEach(s => {
-        const t = effective(s).tier; if (t) descriptive.byTier[t]++;
-        const key = s.cluster + "||" + effective(s).dimension;
+    coded.forEach(s => {
+        const e = effective(s);
+        if (e.tier && descriptive.byTier[e.tier] !== undefined) descriptive.byTier[e.tier]++;
+        const key = s.cluster + "||" + e.dimension;
         const prev = descriptive.clusters[key] || "Absent";
-        descriptive.clusters[key] = tierMax(prev, t || "Absent");
+        descriptive.clusters[key] = tierMax(prev, e.tier || "Absent");
     });
 
     return {
         country, profile, rubric, statements, screened, descriptive, diag,
         engine: ENGINE_VERSION, lexicon: LEXICON_VERSION,
+        rules: { evidenceScope: RULES.EVIDENCE_SCOPE, excerpt: RULES.EXCERPT, unit: RULES.UNIT, axisRule: RULES.AXIS_RULE },
         run: new Date().toISOString(), coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous")
     };
 }
@@ -2500,7 +3051,7 @@ const DIMS4 = ["Recognitional", "Procedural", "Distributive", "Restorative"];
 
 let lastEvaluation = null;
 let lastScreen = { country: "", results: [], diag: null };
-let ledgerFilter = { dimension: "All", tier: "All", review: false };
+let ledgerFilter = { dimension: "All", tier: "All", review: false, pending: false, recall: false, sort: "document" };
 
 function termLog(nodeId, msg, kind) {
     const n = document.getElementById(nodeId);
@@ -2536,7 +3087,8 @@ async function runFullCountryEvaluation() {
         }
         const f = diag.funnel;
         diagBox.innerHTML += `<div class="diag-ok"><b>Retrieval funnel.</b> ${diag.pages} pages, ${diag.skipped.length} skipped (${diag.skipped.map(s => s.page + ": " + s.reason).join("; ") || "none"}), ${diag.columns} page(s) read as two columns, ${f.headings} headings used to tag sections.
-        Of ${f.sentencesSeen} sentence candidates: ${f.tooShort} discarded as fragments under 25 characters, ${f.numericTable} discarded as table rows, <b>${f.kept} carried forward as coding units</b>. Document language recorded as ${esc(diag.lang)}.</div>`;
+        ${f.lines} text lines were rebuilt into <b>${f.paragraphs} paragraphs</b>, rejoining ${f.rejoined} words broken across a line break. Of ${f.sentencesSeen} sentence candidates: ${f.tooShort} merged into a neighbouring sentence or discarded as fragments, ${f.numericTable} discarded as table rows, <b>${f.kept} carried forward as coding units</b>.
+        The coding unit is the sentence; the excerpt and the tier evidence are the paragraph it sits in (RULES.EVIDENCE_SCOPE = ${RULES.EVIDENCE_SCOPE}). Line numbers count text lines top to bottom on the page as the parser rebuilt it, left column first where a page is read as two columns. Document language recorded as ${esc(diag.lang)}.</div>`;
 
         lastEvaluation = evaluateCountry(cfg.c, units, diag);
         renderEvaluation();
@@ -2649,67 +3201,127 @@ async function translateLedger() {
 
 function setLedgerFilter(kind, value) {
     if (kind === 'review') ledgerFilter.review = !ledgerFilter.review;
+    else if (kind === 'pending') ledgerFilter.pending = !ledgerFilter.pending;
+    else if (kind === 'recall') ledgerFilter.recall = !ledgerFilter.recall;
     else ledgerFilter[kind] = value;
     renderLedger();
 }
 
+/* Renders the paragraph, with the coded sentence highlighted inside it. */
+function excerptHtml(s) {
+    const p = s.excerpt || s.context || s.text;
+    let a = (typeof s.sentStart === "number") ? s.sentStart : p.indexOf(s.text);
+    let b = (typeof s.sentEnd === "number") ? s.sentEnd : (a >= 0 ? a + s.text.length : -1);
+    if (a < 0 || b < 0 || b > p.length || p.slice(a, b) !== s.text) {
+        a = p.indexOf(s.text);
+        b = a >= 0 ? a + s.text.length : -1;
+    }
+    if (a < 0) return `<span class="ex-target">${esc(p)}</span>`;
+    return (a > 0 ? `<span class="ex-ctx">${esc(p.slice(0, a))}</span>` : "")
+        + `<span class="ex-target">${esc(p.slice(a, b))}</span>`
+        + (b < p.length ? `<span class="ex-ctx">${esc(p.slice(b))}</span>` : "");
+}
+
+function conceptNotesFor(s) {
+    const hits = [...(s.frameHits || []), ...((s.matched && s.matched.core) || []), ...((s.matched && s.matched.supporting) || [])];
+    const out = [];
+    hits.forEach(h => {
+        const note = CONCEPT_NOTES[String(h).toLowerCase()];
+        if (note && !out.some(o => o.term === h)) out.push({ term: h, note });
+    });
+    return out;
+}
+
 function renderLedger() {
     const R = lastEvaluation; if (!R) return;
-    const list = R.statements.filter(s => {
+
+    /* The recall net is no longer stranded in the screener tab. A passage the
+       net caught but the classifier could not place is reachable here, and
+       assigning it a dimension promotes it into the coded ledger. */
+    const source = ledgerFilter.recall ? (R.screened || []) : R.statements;
+    const list = source.filter(s => {
         const e = effective(s);
+        if (ledgerFilter.recall) return true;
+        if (ledgerFilter.pending && !(s.pendingDimension && !e.dimension)) return false;
         if (ledgerFilter.dimension !== "All" && e.dimension !== ledgerFilter.dimension) return false;
         if (ledgerFilter.tier !== "All" && e.tier !== ledgerFilter.tier) return false;
         if (ledgerFilter.review && !s.needsReview) return false;
         return true;
     });
 
+    const sorters = {
+        document: (a, b) => (a.order - b.order) || (a.page - b.page),
+        tier: (a, b) => (tierRank(effective(b).tier) - tierRank(effective(a).tier)) || (a.order - b.order),
+        dimension: (a, b) => String(effective(a).dimension).localeCompare(String(effective(b).dimension)) || (a.order - b.order)
+    };
+    list.sort(sorters[ledgerFilter.sort] || sorters.document);
+
+    const CAP = 300;
+    const capped = list.length > CAP ? list.slice(0, CAP) : list;
+    const pending = R.statements.filter(s => s.pendingDimension && !effective(s).dimension).length;
+
     document.getElementById('ledger-controls').innerHTML = `
         <div class="lf-group"><span>Dimension:</span>
         ${["All", ...DIMS4].map(d => `<button class="lf-btn ${ledgerFilter.dimension === d ? 'lf-on' : ''}" onclick="setLedgerFilter('dimension','${d}')">${d}</button>`).join("")}</div>
         <div class="lf-group"><span>Tier:</span>
         ${["All", "Embedded", "Partial", "Tokenistic"].map(t => `<button class="lf-btn ${ledgerFilter.tier === t ? 'lf-on' : ''}" onclick="setLedgerFilter('tier','${t}')">${t}</button>`).join("")}</div>
+        <div class="lf-group"><span>Order:</span>
+        ${[["document", "Document order"], ["tier", "Strongest first"], ["dimension", "Dimension"]].map(([k, lbl]) => `<button class="lf-btn ${ledgerFilter.sort === k ? 'lf-on' : ''}" onclick="setLedgerFilter('sort','${k}')">${lbl}</button>`).join("")}</div>
         <div class="lf-group"><button class="lf-btn ${ledgerFilter.review ? 'lf-on' : ''}" onclick="setLedgerFilter('review')">Needs manual check only</button>
-        <span class="lf-count">${list.length} of ${R.statements.length} shown</span></div>
+        ${pending ? `<button class="lf-btn ${ledgerFilter.pending ? 'lf-on' : ''}" onclick="setLedgerFilter('pending')">Justice named, dimension not assigned (${pending})</button>` : ''}
+        ${(R.screened && R.screened.length) ? `<button class="lf-btn ${ledgerFilter.recall ? 'lf-on' : ''}" onclick="setLedgerFilter('recall')">Recall net, unplaced (${R.screened.length})</button>` : ''}
+        <span class="lf-count">${capped.length} of ${source.length} shown${list.length > CAP ? `, capped at ${CAP}` : ''}${ledgerFilter.recall ? '. These carry no dimension and count towards nothing until you assign one.' : ''}</span></div>
         ${R.statements.some(s => needsTranslation(s)) ? `<div class="lf-group"><button id="translate-btn" class="lf-btn" onclick="translateLedger()">Translate to English</button><span id="translate-note" class="lf-count"></span></div>` : ''}`;
 
-    document.getElementById('eval-statement-ledger').innerHTML = list.map(s => {
+    document.getElementById('eval-statement-ledger').innerHTML = capped.map(s => {
         const e = effective(s);
+        const unassigned = !e.dimension;
+        const notes = conceptNotesFor(s);
         const chips = [
+            `<span class="chip chip-loc">${esc(s.locator || ("p. " + s.page))}</span>`,
             `<span class="chip chip-sec">${s.section.type}${s.section.narrative ? " (framing)" : ""}</span>`,
-            `<span class="chip">p. ${s.page}</span>`,
             `<span class="chip">${esc(s.cluster)}</span>`,
-            `<span class="chip chip-${s.scope.toLowerCase()}">${s.scope}</span>`,
+            `<span class="chip chip-${String(s.scope).toLowerCase()}">${s.scope}</span>`,
             s.conditional ? `<span class="chip chip-cond">conditional</span>` : "",
             s.structural ? `<span class="chip chip-struct">structural</span>` : "",
             s.implicit ? `<span class="chip chip-implicit">implicit phrasing</span>` : "",
+            (s.frameHits && s.frameHits.length) ? `<span class="chip chip-frame">justice named explicitly</span>` : "",
+            s.scopeLift ? `<span class="chip chip-scope">tier rests on the paragraph</span>` : "",
+            s.sentencesMatched > 1 ? `<span class="chip chip-multi">${s.sentencesMatched} sentences in this paragraph</span>` : "",
             s.needsReview ? `<span class="chip chip-review">check dimension</span>` : "",
             s.override ? `<span class="chip chip-over">coder override</span>` : ""
         ].join("");
 
-        return `<div class="ledger-item" data-id="${s.id}">
+        return `<div class="ledger-item${unassigned ? ' ledger-pending' : ''}" data-id="${s.id}">
             <div class="ex-header">
                 <div>
-                    <span class="ex-badge" style="background:${TIER_COLOR[e.tier]}">${e.tier}</span>
-                    <span class="ex-dim">${e.dimension} justice</span>
+                    <span class="ex-badge" style="background:${TIER_COLOR[e.tier] || '#9e9e9e'}">${e.tier || "ungraded"}</span>
+                    <span class="ex-dim">${unassigned ? "dimension not assigned" : e.dimension + " justice"}</span>
                 </div>
                 <div class="ex-chips">${chips}</div>
             </div>
             <div class="ex-content">
-                <p class="ex-quote">${s.before ? `<span class="ex-ctx">${esc(s.before)}</span> ` : ""}<span class="ex-target">${esc(s.text)}</span>${s.after ? ` <span class="ex-ctx">${esc(s.after)}</span>` : ""}</p>
+                <p class="ex-quote">${excerptHtml(s)}</p>
                 ${renderTranslation(s)}
             </div>
             <div class="ex-why">
+                ${unassigned ? `<b>Why this is here:</b> ${esc(s.dimReason)}. The machine will not place it in a dimension; assign one below or leave it out.<br>` : ""}
+                ${(unassigned && s.screenHits && s.screenHits.length) ? `<b>Recall-net terms:</b> ${esc(s.screenHits.join(", "))}.<br>` : ""}
                 <b>Why this tier:</b> ${esc(s.tierWhy.join("; "))}.
-                <b>Evidence features:</b> ${s.featureSet.length ? esc(s.featureSet.join(", ")) : "none"}.
-                <b>Dimension terms:</b> ${esc([...s.matched.core, ...s.matched.supporting].join(", ") || "none")}.
+                <b>Evidence read over the ${esc(s.evidenceScope || "sentence")}</b>${s.tierSentence !== s.tierParagraph ? ` (this sentence alone: ${s.tierSentence}; the paragraph: ${s.tierParagraph})` : ""}.
+                <b>Features:</b> ${s.featureSet.length ? esc(s.featureSet.map(f => f + (s.featureSource && s.featureSource[f] === "paragraph" ? " (elsewhere in the paragraph)" : "")).join(", ")) : "none"}.
+                <b>Dimension terms:</b> ${esc([...(s.matched.core || []), ...(s.matched.supporting || [])].join(", ") || "none")}.
+                ${(s.frameHits && s.frameHits.length) ? "<b>Justice framing:</b> " + esc(s.frameHits.join(", ")) + "." : ""}
                 ${s.alternates.length ? "<b>Alternate dimension(s):</b> " + esc(s.alternates.map(a => a.dimension).join(", ")) + "." : ""}
                 ${s.heading ? "<b>Under heading:</b> " + esc(s.heading) + "." : ""}
+                <b>Locate it:</b> ${esc(s.paraLocator || s.locator || ("p. " + s.page))} of the PDF as the parser rebuilt the page, reading top to bottom.
+                ${notes.length ? `<div class="ex-concept">${notes.map(n => `<b>${esc(n.term)}:</b> ${esc(n.note)}`).join("<br>")}</div>` : ""}
             </div>
             <div class="ex-override">
-                <label>Reassign dimension
+                <label>${unassigned ? "Assign dimension" : "Reassign dimension"}
                     <select onchange="overrideStatement('${s.id}','dimension',this.value)">
-                        <option value="">machine: ${e.dimension}</option>
-                        ${DIMS4.map(d => `<option value="${d}">${d}</option>`).join("")}
+                        <option value="">${unassigned ? "leave unassigned" : "machine: " + e.dimension}</option>
+                        ${DIMS4.map(d => `<option value="${d}"${e.dimension === d && s.override && s.override.dimension === d ? " selected" : ""}>${d}</option>`).join("")}
                     </select>
                 </label>
                 <label>Reassign tier
@@ -2726,8 +3338,18 @@ function renderLedger() {
 }
 
 async function overrideStatement(id, field, value) {
-    const s = lastEvaluation.statements.find(x => x.id === id);
-    if (!s) return;
+    let s = lastEvaluation.statements.find(x => x.id === id);
+    if (!s) {
+        const idx = (lastEvaluation.screened || []).findIndex(x => x.id === id);
+        if (idx < 0) return;
+        s = lastEvaluation.screened[idx];
+        if (field === 'dimension' && value) {
+            lastEvaluation.screened.splice(idx, 1);
+            lastEvaluation.statements.push(s);
+            lastEvaluation.statements.sort((a, b) => (a.order - b.order) || (a.page - b.page));
+            s.promotedFromRecallNet = true;
+        }
+    }
     s.override = s.override || { dimension: null, tier: null, note: "" };
     s.override[field] = value || null;
     s.override.coder = (typeof currentUser !== "undefined" ? currentUser : "Anonymous");
@@ -2796,20 +3418,12 @@ async function runBrowserAnalysis() {
         else if (mode === 'review') shown = all.filter(s => s.needsReview || !s.dimension);
         else if (mode === 'operational') shown = all.filter(s => !s.section.narrative);
 
-        shown = shown.sort((a, b) => (a.page - b.page) || a.id.localeCompare(b.id));
+        shown = shown.sort((a, b) => (a.order - b.order) || (a.page - b.page));
 
         const ff = diag.funnel;
-        termLog('ai-terminal', `Funnel: ${ff.sentencesSeen} sentence candidates, ${ff.tooShort} fragments and ${ff.numericTable} table rows discarded, ${ff.kept} carried forward. Of those, ${statements.length} assigned a dimension and ${screened.length} caught by the recall net only. Showing ${shown.length} in document order.`);
-        term.innerHTML += shown.map(s => {
-            const label = s.dimension ? `${s.dimension} / ${s.tier}` : `unassigned (recall net)`;
-            const gloss = glossTerms(s);
-            return `<p><span class="scr-loc">[p.${s.page} ${s.section.type}]</span>
-                <span class="scr-lab">${label}</span>${s.implicit ? ' <span class="scr-imp">implicit</span>' : ''}<br>
-                ${s.before ? `<span class="scr-ctx">${esc(s.before)}</span> ` : ""}<span class="scr-target">${esc(s.text)}</span>${s.after ? ` <span class="scr-ctx">${esc(s.after)}</span>` : ""}
-                ${s.translation ? `<br><span class="scr-trans">EN: ${esc(s.translation)}</span>` : ""}
-                ${gloss.length ? `<br><span class="scr-gloss">gloss: ${esc(gloss.map(g => g.source + " = " + g.english).join("; "))}</span>` : ""}
-                <br><span class="scr-terms">${esc([...(s.matched ? s.matched.core : []), ...(s.matched ? s.matched.supporting : []), ...s.screenHits].join(", ")) || "matched on phrasing"}</span></p>`;
-        }).join("");
+        termLog('ai-terminal', `Funnel: ${ff.lines} lines rebuilt into ${ff.paragraphs} paragraphs (${ff.rejoined} words rejoined across line breaks). ${ff.sentencesSeen} sentence candidates, ${ff.tooShort} short fragments merged into a neighbour or discarded, ${ff.numericTable} table rows discarded, ${ff.kept} carried forward as coding units. Of those, ${statements.length} paragraphs assigned a dimension and ${screened.length} held by the recall net only. Showing ${shown.length} in document order. Line numbers count text lines top to bottom on the page as the parser rebuilt it.`);
+        term.innerHTML += shown.map(screenItemHtml).join("");
+
         const nonEng = shown.filter(s => needsTranslation(s));
         if (nonEng.length) termLog('ai-terminal', `<button class="lf-btn" onclick="translateScreen()">Translate ${nonEng.length} non-English passages to English</button>`);
         term.scrollTop = term.scrollHeight;
@@ -2828,15 +3442,28 @@ async function translateScreen() {
 
 function runBrowserAnalysisRender() {
     const term = document.getElementById('ai-terminal');
-    term.innerHTML = lastScreen.results.map(s => {
-        const label = s.dimension ? `${s.dimension} / ${s.tier}` : `unassigned (recall net)`;
-        const gloss = glossTerms(s);
-        return `<p><span class="scr-loc">[p.${s.page} ${s.section.type}]</span>
-            <span class="scr-lab">${label}</span>${s.implicit ? ' <span class="scr-imp">implicit</span>' : ''}<br>
-            ${s.before ? `<span class="scr-ctx">${esc(s.before)}</span> ` : ""}<span class="scr-target">${esc(s.text)}</span>${s.after ? ` <span class="scr-ctx">${esc(s.after)}</span>` : ""}
-            ${s.translation ? `<br><span class="scr-trans">EN: ${esc(s.translation)}</span>` : ""}
-            ${gloss.length ? `<br><span class="scr-gloss">gloss: ${esc(gloss.map(g => g.source + " = " + g.english).join("; "))}</span>` : ""}</p>`;
-    }).join("");
+    term.innerHTML = lastScreen.results.slice()
+        .sort((a, b) => (a.order - b.order) || (a.page - b.page))
+        .map(screenItemHtml).join("");
+}
+
+/* ---------- SCREENER RENDER ---------- */
+function screenItemHtml(s) {
+    const label = s.dimension ? `${s.dimension} / ${s.tier}` : (s.pendingDimension ? `justice named, dimension not assigned` : `unassigned (recall net)`);
+    const gloss = glossTerms(s);
+    const p = s.excerpt || s.context || s.text;
+    let a = (typeof s.sentStart === "number") ? s.sentStart : p.indexOf(s.text);
+    let b = (typeof s.sentEnd === "number") ? s.sentEnd : (a >= 0 ? a + s.text.length : -1);
+    if (a < 0 || b > p.length || p.slice(a, b) !== s.text) { a = p.indexOf(s.text); b = a >= 0 ? a + s.text.length : -1; }
+    const body = a < 0
+        ? `<span class="scr-target">${esc(p)}</span>`
+        : `${a > 0 ? `<span class="scr-ctx">${esc(p.slice(0, a))}</span>` : ""}<span class="scr-target">${esc(p.slice(a, b))}</span>${b < p.length ? `<span class="scr-ctx">${esc(p.slice(b))}</span>` : ""}`;
+    return `<p><span class="scr-loc">[${esc(s.locator || ("p. " + s.page))} ${s.section.type}]</span>
+        <span class="scr-lab">${label}</span>${s.implicit ? ' <span class="scr-imp">implicit</span>' : ''}${(s.frameHits && s.frameHits.length) ? ' <span class="scr-imp">justice named</span>' : ''}<br>
+        ${body}
+        ${s.translation ? `<br><span class="scr-trans">EN: ${esc(s.translation)}</span>` : ""}
+        ${gloss.length ? `<br><span class="scr-gloss">gloss: ${esc(gloss.map(g => g.source + " = " + g.english).join("; "))}</span>` : ""}
+        <br><span class="scr-terms">${esc([...(s.matched ? s.matched.core : []), ...(s.matched ? s.matched.supporting : []), ...(s.frameHits || []), ...s.screenHits].join(", ")) || "matched on phrasing"}</span></p>`;
 }
 
 /* ---------- Exports ---------- */
@@ -2856,6 +3483,7 @@ function exportEvaluationDocx() {
     <h1>JUST-NDC assessment: ${esc(R.country)}</h1>
     <p><i>Engine ${R.engine}, lexicon ${R.lexicon}. Run ${esc(R.run)} by ${esc(R.coder)}.
     Framework: Abbas, Sandholz and van Schie (2025), UNU-EHS Policy Brief No. 16.
+    Coding unit: the sentence. Excerpt and tier evidence: the paragraph it sits in.
     Machine output requires human confirmation before use.</i></p>
     <h2>Verdict: ${esc(R.rubric.verdict)}</h2>
     <ul>${R.rubric.reasoning.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
@@ -2866,17 +3494,18 @@ function exportEvaluationDocx() {
     <table border="1" cellpadding="6" style="border-collapse:collapse;"><tr><th>#</th><th>Criterion</th><th>Result</th><th>Detail</th></tr>
     ${R.rubric.criteria.map(c => `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.result}</td><td>${esc(c.detail)}</td></tr>`).join("")}</table>
     <p>Composite axes: recognitional and procedural = ${R.rubric.axisRP}; distributive and restorative = ${R.rubric.axisDR}.</p>
-    <h2>Statement ledger</h2>`;
-    R.statements.forEach(s => {
+    <h2>Statement ledger, in document order</h2>`;
+    R.statements.slice().sort((a, b) => (a.order - b.order) || (a.page - b.page)).forEach(s => {
         const e = effective(s);
-        h += `<p><b>[p.${s.page}] ${e.dimension} / ${e.tier}</b>${s.override ? " (coder override by " + esc(s.override.coder) + ")" : ""}<br>
-        <i>"${esc(s.text)}"</i><br>
+        h += `<p><b>[${esc(s.paraLocator || s.locator || ("p. " + s.page))}] ${e.dimension || "dimension not assigned"} / ${e.tier}</b>${s.override ? " (coder override by " + esc(s.override.coder) + ")" : ""}<br>
+        <i>${esc(s.excerpt || s.text)}</i><br>
+        <small style="color:#777;">Coded sentence: ${esc(s.text)}</small><br>
         ${s.translation ? `<span style="color:#444;">English (machine): ${esc(s.translation)}</span><br>` : ""}
-        <small style="color:#777;">In context: ${esc(s.context || s.text)}</small><br>
         <small>Section: ${s.section.type}. Cluster: ${esc(s.cluster)}. Scope: ${s.scope}.${s.conditional ? " Conditional." : ""}
-        Reason: ${esc(s.tierWhy.join("; "))}. Features: ${esc(s.featureSet.join(", ") || "none")}.</small></p>`;
+        Reason: ${esc(s.tierWhy.join("; "))}. Evidence read over the ${esc(s.evidenceScope || "sentence")}${s.tierSentence !== s.tierParagraph ? " (sentence alone: " + s.tierSentence + ")" : ""}.
+        Features: ${esc(s.featureSet.join(", ") || "none")}.${(s.frameHits && s.frameHits.length) ? " Justice framing: " + esc(s.frameHits.join(", ")) + "." : ""}</small></p>`;
     });
-    h += `<h2>Extraction diagnostics</h2><p>${R.diag.pages} pages, ${R.diag.skipped.length} skipped, ${R.diag.lowTextPages} sparse pages${R.diag.scannedRisk ? ", <b>scanned-PDF risk flagged</b>" : ""}.</p></body></html>`;
+    h += `<h2>Extraction diagnostics</h2><p>${R.diag.pages} pages, ${R.diag.skipped.length} skipped, ${R.diag.lowTextPages} sparse pages${R.diag.scannedRisk ? ", <b>scanned-PDF risk flagged</b>" : ""}. ${R.diag.funnel.paragraphs} paragraphs rebuilt from ${R.diag.funnel.lines} lines.</p></body></html>`;
     download(`JUSTNDC_${R.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`, h, 'application/msword');
 }
 
@@ -2884,17 +3513,29 @@ function exportEvaluationCsv() {
     if (!lastEvaluation) { alert("Run an evaluation first."); return; }
     const R = lastEvaluation;
     const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
-    const head = ["country", "statement_id", "page", "section", "heading", "cluster", "scope", "conditional", "structural",
-        "machine_dimension", "machine_tier", "coder_dimension", "coder_tier", "coder_note", "coder",
-        "needs_review", "implicit_match", "evidence_features", "matched_terms", "tier_reason",
-        "statement", "statement_in_context", "language", "english_machine_translation", "translation_source",
+    const head = ["country", "doc_order", "statement_id", "paragraph_id", "page", "line_start", "line_end",
+        "paragraph_line_start", "paragraph_line_end", "locator",
+        "section", "heading", "cluster", "scope", "conditional", "structural",
+        "machine_dimension", "machine_tier", "tier_sentence_only", "tier_paragraph", "evidence_scope", "tier_raised_by_paragraph",
+        "coder_dimension", "coder_tier", "coder_note", "coder",
+        "needs_review", "awaiting_dimension", "implicit_match", "justice_frame_terms",
+        "evidence_features", "evidence_features_from_paragraph", "matched_terms", "screen_terms", "tier_reason",
+        "sentences_matched_in_paragraph", "sentence", "paragraph", "preceding_sentence", "following_sentence",
+        "language", "english_machine_translation", "translation_source",
         "engine", "lexicon", "run_utc"];
-    const rows = R.statements.map(s => [
-        R.country, s.id, s.page, s.section.type, s.heading, s.cluster, s.scope, s.conditional, s.structural,
-        s.dimension, s.tier, s.override && s.override.dimension, s.override && s.override.tier,
+    const rows = R.statements.slice().sort((a, b) => (a.order - b.order) || (a.page - b.page)).map(s => [
+        R.country, s.order, s.id, s.paraId, s.page, s.lineStart, s.lineEnd,
+        s.paraLineStart, s.paraLineEnd, s.locator,
+        s.section.type, s.heading, s.cluster, s.scope, s.conditional, s.structural,
+        s.dimension, s.tier, s.tierSentence, s.tierParagraph, s.evidenceScope, s.scopeLift,
+        s.override && s.override.dimension, s.override && s.override.tier,
         s.override && s.override.note, s.override && s.override.coder,
-        s.needsReview, s.implicit > 0, s.featureSet.join("|"), [...s.matched.core, ...s.matched.supporting].join("|"),
-        s.tierWhy.join("; "), s.text, s.context || s.text, s.lang, s.translation || "", s.translationSource || "",
+        s.needsReview, !!s.pendingDimension, s.implicit > 0, (s.frameHits || []).join("|"),
+        s.featureSet.join("|"),
+        s.featureSet.filter(f => s.featureSource && s.featureSource[f] === "paragraph").join("|"),
+        [...(s.matched.core || []), ...(s.matched.supporting || [])].join("|"), (s.screenHits || []).join("|"),
+        s.tierWhy.join("; "), s.sentencesMatched, s.text, s.excerpt || s.text, s.before, s.after,
+        s.lang, s.translation || "", s.translationSource || "",
         R.engine, R.lexicon, R.run
     ].map(q).join(","));
     download(`JUSTNDC_${R.country.replace(/[^a-zA-Z0-9]/g, '_')}_ledger.csv`, [head.join(","), ...rows].join("\n"), 'text/csv');
@@ -2904,9 +3545,9 @@ function exportScrapedDocx() {
     if (!lastScreen.results.length) { termLog('ai-terminal', "Run the screener first.", 'err'); return; }
     let h = `<html xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'></head><body style="font-family:Calibri;">
     <h1>Screened passages: ${esc(lastScreen.country)}</h1>
-    <p><i>Recall-oriented screen, engine ${ENGINE_VERSION}, lexicon ${LEXICON_VERSION}. Not a coding decision.</i></p>`;
-    lastScreen.results.forEach(s => {
-        h += `<p><b>[p.${s.page} ${s.section.type}]</b> ${s.dimension ? s.dimension + " / " + s.tier : "unassigned"}<br>${esc(s.context || s.text)}${s.translation ? `<br><i>EN: ${esc(s.translation)}</i>` : ""}</p>`;
+    <p><i>Recall-oriented screen, engine ${ENGINE_VERSION}, lexicon ${LEXICON_VERSION}. Passages are whole paragraphs, in document order, with the line span as the parser rebuilt the page. Not a coding decision.</i></p>`;
+    lastScreen.results.slice().sort((a, b) => (a.order - b.order) || (a.page - b.page)).forEach(s => {
+        h += `<p><b>[${esc(s.paraLocator || s.locator || ("p. " + s.page))} ${s.section.type}]</b> ${s.dimension ? s.dimension + " / " + s.tier : (s.pendingDimension ? "justice named, dimension not assigned" : "unassigned")}<br>${esc(s.excerpt || s.context || s.text)}${s.translation ? `<br><i>EN: ${esc(s.translation)}</i>` : ""}</p>`;
     });
     download(`Screened_${lastScreen.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`, h + "</body></html>", 'application/msword');
 }
