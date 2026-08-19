@@ -360,6 +360,24 @@
         .band-chip { display:inline-block; font-size:0.7rem; padding:3px 10px; border-radius:12px; margin-left:8px; vertical-align:middle; }
         .flag-row { display:flex; gap:8px; align-items:baseline; margin:6px 0; font-size:0.82rem; }
         .flag-tag { flex:0 0 auto; font-size:0.68rem; padding:2px 9px; border-radius:11px; background:#fff2cc; color:#7a5b00; }
+        /* --- v2.4 editing loop --------------------------------------------- */
+        .rc-note { min-height:0; font-size:0.8rem; color:#444; margin-bottom:8px; line-height:1.6; }
+        .rc-note:empty { display:none; }
+        .rc-what { font-weight:600; color:#1d1d1f; }
+        .rc-diff { color:#555; }
+        .rc-flash { animation:rcflash 1.2s ease; }
+        @keyframes rcflash { 0% { background:#fff3c4; } 100% { background:transparent; } }
+        .lf-danger { color:#a3261f; border-color:#e8c9c6; }
+        .lf-danger:hover { background:#fdeaea; }
+        .ledger-excluded { opacity:0.55; }
+        .ledger-excluded .ex-quote { text-decoration:line-through; text-decoration-color:#c9c9c9; }
+        .chip-table { background:#e8f0fe; color:#1a4480; }
+        .chip-filed { background:#e7f6f2; color:#14614f; }
+        .chip-excl { background:#f2f2f4; color:#666; }
+        .ex-country-btn { background:none; border:none; font:inherit; font-weight:700; color:var(--primary); cursor:pointer; margin-left:10px; font-size:0.9rem; padding:0; }
+        .ex-country-btn:hover { text-decoration:underline; }
+        .ex-filter-on { font-weight:600; color:var(--primary); }
+        .ex-prov { margin-top:6px; font-size:0.7rem; color:var(--text-muted); }
         .ex-quote { font-family: Georgia, serif; font-style: italic; margin: 10px 0; line-height: 1.6; color: #222; }
         .ex-why { font-size: 0.78rem; color: #555; background: #fafafa; border-radius: 8px; padding: 9px 12px; line-height: 1.6; }
         .ex-override { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
@@ -746,10 +764,11 @@
                                 <input type="text" id="new-page" class="search-box" placeholder="e.g. p. 34, para 5.2"></div>
                             <div class="form-group"><label for="new-section">Section of the NDC</label>
                                 <select id="new-section" class="search-box">
-                                    <option>CONTEXT</option><option>MITIGATION</option><option>ADAPTATION</option>
-                                    <option>LOSS_DAMAGE</option><option>MEANS</option><option>GOVERNANCE</option>
-                                    <option>PARTICIPATION</option><option>MRV</option><option>FAIRNESS</option>
-                                    <option>ANNEX</option><option>OTHER</option>
+                                    <option>Introduction</option>
+                                    <option selected>Main body</option>
+                                    <option>Context</option>
+                                    <option>Annex</option>
+                                    <option>Conclusion</option>
                                 </select></div>
                             <div class="form-group"><label for="new-scope">Direction of the claim</label>
                                 <select id="new-scope" class="search-box">
@@ -774,6 +793,8 @@
                         <div id="country-index"></div>
                     </div>
 
+                    <h2 id="examples-heading" style="margin-top:26px;">Examples</h2>
+                    <div id="examples-filter-bar" class="ledger-controls"></div>
                     <div id="examples-list-embedded"></div>
 
                     <h3 style="color: var(--partial); margin-top: 30px; border-bottom: 2px solid var(--partial); padding-bottom: 5px;">Partial Commitments</h3>
@@ -807,6 +828,10 @@
                                     <option value="019">Americas</option>
                                 </select>
                                 <button class="download-btn" onclick="exportAssessmentsCsv()">Export record (CSV)</button>
+                                <button class="download-btn" onclick="exportProjectJson()" title="assessments, notes, coding examples, overrides and local terms in one file">Back up everything (JSON)</button>
+                                <label class="download-btn" style="cursor:pointer;">Restore
+                                    <input type="file" accept="application/json" style="display:none" onchange="importProjectJson(this, 'merge')">
+                                </label>
                             </div>
                         </div>
                         <div style="width:100%;overflow-x:auto;">
@@ -1067,6 +1092,7 @@
                         <div class="ui-box">
                             <h3 style="margin-top: 0;">Statement ledger</h3>
                             <p class="panel-sub">Every entry shows why the machine graded it that way. Reassign anything that is wrong: the dimension profile, the rubric and the verdict recompute immediately from your corrections, and the override is written to the shared database with your name against it.</p>
+                            <div id="recompute-note" class="rc-note"></div>
                             <div id="ledger-controls" class="ledger-controls"></div>
                             <div id="eval-statement-ledger"></div>
                             <p id="descriptive-stats" class="descriptive"></p>
@@ -1152,7 +1178,7 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.3.0";
+const ENGINE_VERSION = "2.4.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -2010,29 +2036,55 @@ function classifyCluster(sentence) {
    5. DOCUMENT SEGMENTATION
    ========================================================================== */
 
+/* ============================================================================
+   Section taxonomy, v2.4
+
+   The eleven-way split was built for an analysis it was not doing. What the
+   method actually needs from a section is one thing: is this the part of the
+   NDC where the country says what it will do, or the part where it explains
+   itself? That distinction feeds the framing penalty in the score and criterion
+   5 of the rubric. Everything else was detail that a coder had to choose
+   between without it mattering.
+
+   Five buckets: Introduction, Context, Main body, Annex, Conclusion, plus front
+   matter which is skipped. The finer label is still detected and kept on
+   `detail`, so nothing is lost and a later analysis can still use it.        */
+
 const SECTION_MAP = [
-    { type: "FRONT", narrative: true, terms: ["table of contents", "contents", "acronym", "abbreviation", "glossary", "foreword", "preface", "acknowledg", "list of figures", "indice", "índice", "acronimos", "acrónimos", "sommaire", "sigles", "содержание", "المحتويات", "目录", "缩略语"] },
-    { type: "CONTEXT", narrative: true, terms: ["introduction", "background", "national circumstances", "vision", "context", "overview", "executive summary", "introduccion", "introducción", "circunstancias nacionales", "resumen ejecutivo", "contexte", "circonstances nationales", "resume", "résumé", "введение", "национальные обстоятельства", "مقدمة", "الظروف الوطنية", "引言", "国情", "背景"] },
-    { type: "FAIRNESS", narrative: false, terms: ["fair and ambitious", "fairness and ambition", "equity and ambition", "justice", "equidad", "justicia", "equite", "équité", "justice climatique", "справедлив", "الإنصاف", "公平与雄心"] },
-    { type: "MITIGATION", narrative: false, terms: ["mitigation", "emission reduction", "ghg target", "mitigacion", "mitigación", "attenuation", "atténuation", "смягчени", "التخفيف", "减缓"] },
-    { type: "ADAPTATION", narrative: false, terms: ["adaptation", "resilience", "adaptacion", "adaptación", "adaptation", "адаптаци", "التكيف", "适应"] },
-    { type: "LOSS_DAMAGE", narrative: false, terms: ["loss and damage", "perdidas y danos", "pérdidas y daños", "pertes et prejudices", "pertes et préjudices", "потери и ущерб", "الخسائر والأضرار", "损失与损害"] },
-    { type: "MEANS", narrative: false, terms: ["means of implementation", "finance", "financing", "technology", "capacity", "support needs", "medios de implementacion", "medios de implementación", "financiamiento", "moyens de mise en oeuvre", "financement", "средства осуществлени", "финансировани", "وسائل التنفيذ", "التمويل", "实施手段", "资金"] },
-    { type: "GOVERNANCE", narrative: false, terms: ["institutional arrangement", "governance", "implementation arrangement", "planning process", "legal framework", "arreglos institucionales", "gobernanza", "marco legal", "dispositions institutionnelles", "gouvernance", "cadre juridique", "институциональн", "الترتيبات المؤسسية", "机构安排", "治理"] },
-    { type: "PARTICIPATION", narrative: false, terms: ["stakeholder", "consultation", "participatory process", "engagement", "consulta", "participacion", "participación", "concertation", "consultation", "консультаци", "المشاورات", "利益相关方", "公众参与"] },
-    { type: "MRV", narrative: false, terms: ["monitoring", "reporting", "verification", "mrv", "transparency framework", "monitoreo", "seguimiento", "suivi", "мониторинг", "الرصد", "监测", "报告"] },
-    { type: "ANNEX", narrative: false, terms: ["annex", "appendix", "ictu", "information to facilitate clarity", "anexo", "annexe", "приложени", "الملحق", "附件"] }
+    { type: "Front matter", detail: "Front matter", narrative: true, terms: ["table of contents", "contents", "acronym", "abbreviation", "glossary", "list of figures", "indice", "índice", "acronimos", "acrónimos", "sommaire", "sigles", "содержание", "المحتويات", "目录", "缩略语"] },
+    { type: "Introduction", detail: "Introduction", narrative: true, terms: ["introduction", "foreword", "preface", "executive summary", "acknowledg", "introduccion", "introducción", "resumen ejecutivo", "prefacio", "avant-propos", "resume", "résumé", "введение", "مقدمة", "引言", "前言"] },
+    { type: "Context", detail: "Context", narrative: true, terms: ["background", "national circumstances", "context", "overview", "vision", "circunstancias nacionales", "contexto", "vision", "visión", "contexte", "circonstances nationales", "национальные обстоятельства", "الظروف الوطنية", "国情", "背景"] },
+    { type: "Conclusion", detail: "Conclusion", narrative: true, terms: ["conclusion", "concluding", "final remarks", "way forward", "next steps", "closing", "conclusiones", "conclusión", "camino a seguir", "próximos pasos", "perspectives", "prochaines etapes", "заключение", "الخاتمة", "结论", "结语"] },
+    { type: "Annex", detail: "Annex", narrative: false, terms: ["annex", "appendix", "ictu", "information to facilitate clarity", "anexo", "annexe", "приложени", "الملحق", "附件"] },
+    { type: "Main body", detail: "Fairness and ambition", narrative: false, terms: ["fair and ambitious", "fairness and ambition", "equity and ambition", "justice", "equidad", "justicia", "equite", "équité", "justice climatique", "справедлив", "الإنصاف", "公平与雄心"] },
+    { type: "Main body", detail: "Mitigation", narrative: false, terms: ["mitigation", "emission reduction", "ghg target", "mitigacion", "mitigación", "attenuation", "atténuation", "смягчени", "التخفيف", "减缓"] },
+    { type: "Main body", detail: "Adaptation", narrative: false, terms: ["adaptation", "resilience", "adaptacion", "adaptación", "адаптаци", "التكيف", "适应"] },
+    { type: "Main body", detail: "Loss and damage", narrative: false, terms: ["loss and damage", "perdidas y danos", "pérdidas y daños", "pertes et prejudices", "pertes et préjudices", "потери и ущерб", "الخسائر والأضرار", "损失与损害"] },
+    { type: "Main body", detail: "Means of implementation", narrative: false, terms: ["means of implementation", "finance", "financing", "technology", "capacity", "support needs", "medios de implementacion", "medios de implementación", "financiamiento", "moyens de mise en oeuvre", "financement", "средства осуществлени", "финансировани", "وسائل التنفيذ", "التمويل", "实施手段", "资金"] },
+    { type: "Main body", detail: "Governance and planning", narrative: false, terms: ["institutional arrangement", "governance", "implementation arrangement", "planning process", "legal framework", "arreglos institucionales", "gobernanza", "marco legal", "dispositions institutionnelles", "gouvernance", "cadre juridique", "институциональн", "الترتيبات المؤسسية", "机构安排", "治理"] },
+    { type: "Main body", detail: "Participation", narrative: false, terms: ["stakeholder", "consultation", "participatory process", "engagement", "consulta", "participacion", "participación", "concertation", "консультаци", "المشاورات", "利益相关方", "公众参与"] },
+    { type: "Main body", detail: "Monitoring and reporting", narrative: false, terms: ["monitoring", "reporting", "verification", "mrv", "transparency framework", "monitoreo", "seguimiento", "suivi", "мониторинг", "الرصد", "监测", "报告"] }
 ];
 
+const SECTION_CHOICES = ["Introduction", "Context", "Main body", "Annex", "Conclusion"];
+
 function classifySection(headingText) {
-    if (!headingText) return { type: "UNKNOWN", narrative: false };
+    if (!headingText) return { type: "Main body", detail: "Unmarked", narrative: false };
     const h = headingText.toLowerCase();
     for (const s of SECTION_MAP) {
         if (s.terms.some(t => (CJK_RE.test(t) ? h.replace(/\s+/g, "").includes(t) : h.includes(t)))) {
-            return { type: s.type, narrative: s.narrative };
+            return { type: s.type, detail: s.detail, narrative: s.narrative };
         }
     }
-    return { type: "OTHER", narrative: false };
+    return { type: "Main body", detail: "Unmarked", narrative: false };
+}
+
+/* One place that turns a section object into the label shown and exported. */
+function sectionLabel(section) {
+    if (!section) return "Main body";
+    return section.detail && section.detail !== section.type
+        ? section.type + " \u00b7 " + section.detail
+        : section.type;
 }
 
 function looksLikeHeading(line) {
@@ -2755,108 +2807,164 @@ function buildRubric(profile, statements) {
             }
         }
 
-        function renderExamples() {
-            const containerEmb = document.getElementById('examples-list-embedded');
-            const containerPar = document.getElementById('examples-list-partial');
-            const containerTok = document.getElementById('examples-list-tokenistic');
-            if(!containerEmb) return;
+        /* ============================================================================
+   Coding examples, v2.4
+   Filtering by country now filters the lists, not just the panel above them.
+   The form's extra fields were being collected and thrown away; they are kept.
+   Examples filed from the ledger carry their locator and their provenance.
+   ========================================================================== */
 
-            let htmlEmb = '', htmlPar = '', htmlTok = '';
+let exampleFilter = { country: "", dimension: "All" };
 
-            codingExamples.forEach((ex) => {
-                let boxClass = ex.level === "Tokenistic" ? "ex-tokenistic" : (ex.level === "Partial" ? "ex-partial" : "ex-embedded");
-                let badgeClass = ex.level === "Tokenistic" ? "badge-tok" : (ex.level === "Partial" ? "badge-par" : "badge-emb");
-                let countryName = ex.country || "Unspecified Country";
-                let dimName = ex.dimension || "Unspecified";
-                
-                let actionButtons = `
-                    <button onclick="editExample('${ex.id}')" class="download-btn" style="padding: 4px 10px; margin-right: 5px;">Edit</button>
-                    <button onclick="deleteExample('${ex.id}')" class="download-btn btn-danger" style="padding: 4px 10px;">Delete</button>
-                `;
+function setExampleCountry(name) {
+    exampleFilter.country = (exampleFilter.country === name) ? "" : name;
+    renderExamples();
+    const el = document.getElementById('examples-heading');
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
-                const cardHtml = `
-                <div class="example-box ${boxClass}">
-                    <div class="ex-header">
-                        <div>
-                            <span class="ex-badge ${badgeClass}">${ex.level}</span>
-                            <span class="ex-badge" style="background:#e0e0e0;">${dimName} Justice</span>
-                            <span style="font-weight: 700; color: var(--primary); margin-left: 10px; font-size: 0.9rem;">📍 ${countryName}</span>
-                        </div>
-                        <div>${actionButtons}</div>
-                    </div>
-                    <div class="ex-content">
-                        <strong>Statement:</strong>
-                        <p style="font-family: Georgia, serif; font-style: italic;">"${ex.statement}"</p>
-                        <strong>Analysis:</strong>
-                        <p>${ex.analysis}</p>
-                    </div>
-                </div>`;
+function setExampleDimension(d) {
+    exampleFilter.dimension = d;
+    renderExamples();
+}
 
-                if(ex.level === "Embedded") htmlEmb += cardHtml;
-                else if(ex.level === "Partial") htmlPar += cardHtml;
-                else htmlTok += cardHtml;
-            });
-            
-            containerEmb.innerHTML = htmlEmb || "<p style='color:#888;'>No embedded examples added yet.</p>";
-            containerPar.innerHTML = htmlPar || "<p style='color:#888;'>No partial examples added yet.</p>";
-            containerTok.innerHTML = htmlTok || "<p style='color:#888;'>No tokenistic examples added yet.</p>";
-        }
+function renderExamples() {
+    const containerEmb = document.getElementById('examples-list-embedded');
+    const containerPar = document.getElementById('examples-list-partial');
+    const containerTok = document.getElementById('examples-list-tokenistic');
+    if (!containerEmb) return;
 
-        function submitExample() {
-            const country = document.getElementById('new-country').value.trim() || "Unspecified Country";
-            const level = document.getElementById('new-level').value;
-            const dimension = document.getElementById('new-dimension').value;
-            const statement = document.getElementById('new-statement').value.trim();
-            const analysis = document.getElementById('new-analysis').value.trim();
+    const all = codingExamples || [];
+    const shown = all.filter(ex => {
+        if (exampleFilter.country && (ex.country || "").trim().toLowerCase() !== exampleFilter.country.trim().toLowerCase()) return false;
+        if (exampleFilter.dimension !== "All" && (ex.dimension || "") !== exampleFilter.dimension) return false;
+        return true;
+    });
 
-            if (!statement || !analysis) { alert("Please fill in both the statement and analysis fields."); return; }
+    const bar = document.getElementById('examples-filter-bar');
+    if (bar) {
+        bar.innerHTML = `
+            <div class="lf-group"><span>Dimension:</span>
+            ${["All", ...DIMS4].map(d => `<button class="lf-btn ${exampleFilter.dimension === d ? 'lf-on' : ''}" onclick="setExampleDimension('${d}')">${d}</button>`).join("")}</div>
+            ${exampleFilter.country ? `<div class="lf-group"><span class="ex-filter-on">Showing ${esc(exampleFilter.country)} only</span>
+                <button class="lf-btn" onclick="setExampleCountry('')">show every country</button></div>` : ""}
+            <span class="lf-count">${shown.length} of ${all.length} example${all.length === 1 ? "" : "s"}</span>`;
+    }
 
-            if (editingIndex !== -1) {
-                const idx = codingExamples.findIndex(e => e.id == editingIndex);
-                if(idx !== -1) {
-                    codingExamples[idx] = { id: editingIndex, country, level, dimension, statement, analysis };
-                }
-                editingIndex = -1;
-                document.getElementById('submit-example-btn').innerText = "Save Example to Hub";
-            } else {
-                const newId = 'ex-' + Date.now();
-                codingExamples.push({ id: newId, country, level, dimension, statement, analysis });
-            }
+    let htmlEmb = '', htmlPar = '', htmlTok = '';
 
-            try {
-                localStorage.setItem('codingExamplesState', JSON.stringify(codingExamples));
-            } catch(e) {}
+    shown.forEach(ex => {
+        const boxClass = ex.level === "Tokenistic" ? "ex-tokenistic" : (ex.level === "Partial" ? "ex-partial" : "ex-embedded");
+        const badgeClass = ex.level === "Tokenistic" ? "badge-tok" : (ex.level === "Partial" ? "badge-par" : "badge-emb");
+        const countryName = ex.country || "Unspecified Country";
+        const dimName = ex.dimension || "Unspecified";
 
-            document.getElementById('new-country').value = '';
-            document.getElementById('new-statement').value = '';
-            document.getElementById('new-analysis').value = '';
-            
-            renderExamples();
-        }
+        const meta = [
+            ex.page ? `<span class="chip chip-loc">${esc(ex.page)}</span>` : "",
+            ex.section ? `<span class="chip chip-sec">${esc(ex.section)}</span>` : "",
+            ex.cluster ? `<span class="chip">${esc(ex.cluster)}</span>` : "",
+            ex.scope ? `<span class="chip chip-${String(ex.scope).toLowerCase()}">${esc(ex.scope)}</span>` : "",
+            (ex.conditional && ex.conditional !== "No") ? `<span class="chip chip-cond">conditional</span>` : "",
+            ex.source === "ledger" ? `<span class="chip chip-frame">from the ledger</span>` : ""
+        ].filter(Boolean).join("");
 
-        function editExample(id) {
-            const ex = codingExamples.find(e => e.id == id);
-            if(ex) {
-                document.getElementById('new-country').value = ex.country || '';
-                document.getElementById('new-level').value = ex.level;
-                if(ex.dimension) document.getElementById('new-dimension').value = ex.dimension;
-                document.getElementById('new-statement').value = ex.statement;
-                document.getElementById('new-analysis').value = ex.analysis;
-                editingIndex = id;
-                document.getElementById('submit-example-btn').innerText = "Update Example";
-                document.getElementById('new-statement').focus();
-            }
-        }
+        const cardHtml = `
+        <div class="example-box ${boxClass}">
+            <div class="ex-header">
+                <div>
+                    <span class="ex-badge ${badgeClass}">${ex.level}</span>
+                    <span class="ex-badge" style="background:#e0e0e0;">${dimName} Justice</span>
+                    <button class="ex-country-btn" onclick="setExampleCountry('${esc(countryName).replace(/'/g, "\\'")}')" title="show only this country">&#128205; ${esc(countryName)}</button>
+                </div>
+                <div>
+                    <button onclick="editExample('${ex.id}')" class="download-btn" style="padding:4px 10px;margin-right:5px;">Edit</button>
+                    <button onclick="deleteExample('${ex.id}')" class="download-btn btn-danger" style="padding:4px 10px;">Delete</button>
+                </div>
+            </div>
+            <div class="ex-content">
+                <p class="ex-quote">${esc(ex.statement || "")}</p>
+                ${meta ? `<div class="ex-chips" style="margin:6px 0;">${meta}</div>` : ""}
+                <div class="ex-why">${esc(ex.analysis || "")}
+                ${ex.coder ? `<div class="ex-prov">filed by ${esc(ex.coder)}${ex.at ? " on " + new Date(ex.at).toLocaleDateString() : ""}${ex.engine ? ", engine " + esc(ex.engine) : ""}</div>` : ""}</div>
+            </div>
+        </div>`;
 
-        function deleteExample(id) {
-            if(confirm("Are you sure you want to delete this example?")) {
-                codingExamples = codingExamples.filter(e => e.id != id);
-                try {
-                    localStorage.setItem('codingExamplesState', JSON.stringify(codingExamples));
-                } catch(e) {}
-                renderExamples();
-            }
-        }
+        if (ex.level === "Embedded") htmlEmb += cardHtml;
+        else if (ex.level === "Partial") htmlPar += cardHtml;
+        else htmlTok += cardHtml;
+    });
+
+    const empty = lvl => `<p class="muted-note">No ${lvl} examples${exampleFilter.country ? " for " + esc(exampleFilter.country) : ""}${exampleFilter.dimension !== "All" ? " in " + exampleFilter.dimension + " justice" : ""}.</p>`;
+    containerEmb.innerHTML = htmlEmb || empty("embedded");
+    containerPar.innerHTML = htmlPar || empty("partial");
+    containerTok.innerHTML = htmlTok || empty("tokenistic");
+
+    if (typeof renderCountryIndex === "function") renderCountryIndex();
+}
+
+function submitExample() {
+    const val = id => { const el = document.getElementById(id); return el ? el.value : ""; };
+    const country = val('new-country').trim() || "Unspecified Country";
+    const statement = val('new-statement').trim();
+    const analysis = val('new-analysis').trim();
+    if (!statement || !analysis) { alert("Please fill in both the statement and the analysis."); return; }
+
+    const row = {
+        country, level: val('new-level'), dimension: val('new-dimension'),
+        statement, analysis,
+        page: val('new-page').trim(), section: val('new-section'),
+        scope: val('new-scope'), conditional: val('new-conditional'),
+        source: "manual",
+        engine: ENGINE_VERSION,
+        lexicon: (typeof lexiconStamp === "function" ? lexiconStamp() : LEXICON_VERSION),
+        coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"),
+        at: new Date().toISOString()
+    };
+
+    if (editingIndex !== -1) {
+        const idx = codingExamples.findIndex(e => e.id == editingIndex);
+        if (idx !== -1) codingExamples[idx] = { ...codingExamples[idx], ...row };
+        editingIndex = -1;
+        document.getElementById('submit-example-btn').innerText = "Save example";
+    } else {
+        codingExamples.push({ id: 'ex-' + Date.now(), ...row });
+    }
+
+    persistExamples();
+    ['new-country', 'new-statement', 'new-analysis', 'new-page'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+    });
+    renderExamples();
+}
+
+function editExample(id) {
+    const ex = codingExamples.find(e => e.id == id);
+    if (!ex) return;
+    const set = (i, v) => { const el = document.getElementById(i); if (el) el.value = v || ""; };
+    set('new-country', ex.country); set('new-level', ex.level); set('new-dimension', ex.dimension);
+    set('new-statement', ex.statement); set('new-analysis', ex.analysis);
+    set('new-page', ex.page); set('new-section', ex.section);
+    set('new-scope', ex.scope); set('new-conditional', ex.conditional);
+    editingIndex = id;
+    const btn = document.getElementById('submit-example-btn');
+    if (btn) { btn.innerText = "Update example"; btn.scrollIntoView({ behavior: "smooth", block: "center" }); }
+}
+
+function deleteExample(id) {
+    const ex = codingExamples.find(e => e.id == id);
+    if (!ex) return;
+    if (!confirm(`Delete this ${ex.level} example for ${ex.country}?`)) return;
+    const i = codingExamples.findIndex(e => e.id == id);
+    if (i >= 0) codingExamples.splice(i, 1);
+    persistExamples();
+    renderExamples();
+}
+
+        
+
+        
+
+        
 
         function showPage(pageId, btnElement) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3029,7 +3137,7 @@ async function extractDocument(fileUrl, log, docLang) {
     const diag = { pages: pdf.numPages, lowTextPages: 0, skipped: [], totalChars: 0, columns: 0,
                    lang: docLang || "Unknown",
                    funnel: { sentencesSeen: 0, tooShort: 0, numericTable: 0, headings: 0, kept: 0,
-                             lines: 0, paragraphs: 0, rejoined: 0 } };
+                             lines: 0, paragraphs: 0, rejoined: 0, tableRegions: 0, tableCells: 0 } };
     let currentHeading = "", currentSection = { type: "UNKNOWN", narrative: false };
     let unitIndex = 0, orderIndex = 0, blockIndex = 0;
 
@@ -3060,24 +3168,153 @@ async function extractDocument(fileUrl, log, docLang) {
         const twoCol = rows.size > 8 && (leftOnly + rightOnly) / rows.size > 0.75 && leftOnly > 2 && rightOnly > 2;
         if (twoCol) diag.columns++;
 
-        const toLine = r => r.sort((a, b) => a.x - b.x)
-            .reduce((acc, it, i, arr) => {
-                const gap = i > 0 ? it.x - (arr[i - 1].x + arr[i - 1].w) : 0;
-                return acc + (i > 0 && gap > 1.2 ? " " : "") + it.str;
-            }, "").replace(/\s+/g, " ").trim();
+        /* --- v2.4 table-aware row reading ---------------------------------
+           v2.3 joined every text item sharing a baseline into one line across
+           the full width of the page. In the two-column tables that carry the
+           ICTU information in most NDCs, that concatenates the label cell and
+           the value cell into a single sentence, and the paragraph builder then
+           interleaves the two columns:
+
+             "The NDC was prepared on the basis of ... Information on the
+              planning processes that the implementation plan for ..."
+
+           which is two different texts spliced together. Cells are now split on
+           the horizontal gap, runs of rows that agree on where their columns
+           start are treated as a table region, and each region is read column
+           by column. Prose rows are read exactly as before.                  */
+
+        const pageW = vp.width;
+
+        /* A geometric threshold, not an adaptive one. Adapting to the median
+           gap on the page fails on exactly the documents this is for: when a
+           PDF emits each table cell as a single text item, the median gap IS
+           the column gap, and any multiple of it hides the thing being looked
+           for. Inter-word gaps are 2-6pt and justified text stretches them to
+           perhaps 12; a column gutter is far wider. False splits inside prose
+           are caught by the column-agreement test below and rejoined. */
+        const CELL_GAP = Math.max(14, pageW * 0.028);
+        const COL_TOL = pageW * 0.06;
+
+        const cellsOf = r => {
+            const s = r.slice().sort((a, b) => a.x - b.x);
+            const out = [];
+            let cur = null;
+            s.forEach((it, i) => {
+                const gap = i > 0 ? it.x - (s[i - 1].x + s[i - 1].w) : 0;
+                if (!cur || gap > CELL_GAP) { cur = { x: it.x, x2: it.x + it.w, text: it.str }; out.push(cur); }
+                else { cur.text += (gap > 1.2 ? " " : "") + it.str; cur.x2 = it.x + it.w; }
+            });
+            return out.map(c => ({ x: c.x, x2: c.x2, text: c.text.replace(/\s+/g, " ").trim() }))
+                      .filter(c => c.text.length);
+        };
+
+        const clusterCols = starts => {
+            const s = starts.slice().sort((a, b) => a - b);
+            const cols = [];
+            s.forEach(v => {
+                const last = cols[cols.length - 1];
+                if (last && v - last.v <= COL_TOL) { last.n++; last.sum += v; last.v = last.sum / last.n; }
+                else cols.push({ v, n: 1, sum: v });
+            });
+            return cols.map(c => c.v);
+        };
+
+        const nearestCol = (x, cols) => {
+            let best = 0, bd = Infinity;
+            cols.forEach((v, k) => { const d = Math.abs(x - v); if (d < bd) { bd = d; best = k; } });
+            return best;
+        };
+
+        /* Second pass. The gap test finds the columns using the rows whose
+           gutter is wide; it cannot find them on a row whose left cell happens
+           to fill almost to the gutter, and a 20pt gutter is common. Once the
+           columns are known from the rest of the block, every row is re-split
+           against those column positions instead of against a gap threshold. */
+        const splitByCols = (items, cols) => {
+            const buckets = cols.map(() => []);
+            items.slice().sort((a, b) => a.x - b.x).forEach(it => buckets[nearestCol(it.x, cols)].push(it));
+            return buckets.map((b, ci) => b.length ? {
+                x: cols[ci],
+                text: b.reduce((acc, it, i, arr) => acc + (i > 0 && (it.x - (arr[i - 1].x + arr[i - 1].w)) > 1.2 ? " " : "") + it.str, "")
+                       .replace(/\s+/g, " ").trim()
+            } : null);
+        };
+
+        const flowLine = (r, joiner) => ({
+            y: r.y, h: r.h, text: r.cells.map(c => c.text).join(joiner || " ").replace(/\s+/g, " ").trim(),
+            col: 0, table: false, region: 0
+        });
+
+        const readRows = rowArr => {
+            const out = [];
+            let region = 0, i = 0;
+            while (i < rowArr.length) {
+                if (rowArr[i].cells.length < 2) { out.push(flowLine(rowArr[i])); i++; continue; }
+                let j = i;
+                const block = [];
+                while (j < rowArr.length && rowArr[j].cells.length >= 2) { block.push(rowArr[j]); j++; }
+
+                /* Is this a table? Not "do two rows agree on their second cell",
+                   which a header row with a different shape defeats, but "are
+                   there at least two columns that each appear in at least two
+                   rows". A hanging indent or a stray tab stop cannot satisfy
+                   that; a table always does. */
+                const cols = clusterCols(block.flatMap(r => r.cells.map(c => c.x)));
+                const rowsPerCol = cols.map((v, ci) =>
+                    block.filter(r => r.cells.some(c => nearestCol(c.x, cols) === ci)).length);
+                const tabular = block.length >= 2 && cols.length >= 2
+                             && rowsPerCol.filter(n => n >= 2).length >= 2;
+
+                if (!tabular) {
+                    block.forEach(r => out.push(flowLine(r, "  ")));
+                    i = j; continue;
+                }
+
+                /* A cell's text usually runs on over rows that carry only that
+                   column: the second paragraph of a wide value cell sits alone
+                   on its own lines. Those rows belong to the table, not to the
+                   prose after it. Only indented columns extend the region,
+                   because a continuation at the left margin cannot be told
+                   apart from the paragraph that follows the table. */
+                while (j < rowArr.length) {
+                    const touchesInner = rowArr[j].items.some(it => {
+                        const ci = nearestCol(it.x, cols);
+                        return ci > 0 && Math.abs(it.x - cols[ci]) <= COL_TOL;
+                    });
+                    if (!touchesInner) break;
+                    block.push(rowArr[j]); j++;
+                }
+
+                region++;
+                diag.funnel.tableRegions++;
+                block.forEach(r => { r.parts = splitByCols(r.items, cols); });
+                cols.forEach((cx, ci) => {
+                    block.forEach(r => {
+                        if (r.parts[ci]) {
+                            out.push({ y: r.y, h: r.h, text: r.parts[ci].text, col: ci, table: true, region });
+                            diag.funnel.tableCells++;
+                        }
+                    });
+                });
+                i = j;
+            }
+            return out;
+        };
+
+        const rowObjs = [...rows.entries()].sort((a, b) => b[0] - a[0])
+            .map(([y, r]) => ({ y, h: Math.max(...r.map(i => i.h)), items: r, cells: cellsOf(r) }))
+            .filter(r => r.cells.length);
 
         let ordered;
         if (twoCol) {
             const L = [], R = [];
-            [...rows.entries()].forEach(([y, r]) => {
-                const maxX = Math.max(...r.map(i => i.x + i.w));
-                (maxX < mid + band ? L : R).push([y, r]);
+            rowObjs.forEach(r => {
+                const maxX = Math.max(...r.cells.map(c => c.x2));
+                (maxX < mid + band ? L : R).push(r);
             });
-            const bySide = arr => arr.sort((a, b) => b[0] - a[0]).map(([y, r]) => ({ y, h: Math.max(...r.map(i => i.h)), text: toLine(r) }));
-            ordered = bySide(L).concat(bySide(R));
+            ordered = readRows(L).concat(readRows(R));
         } else {
-            ordered = [...rows.entries()].sort((a, b) => b[0] - a[0])
-                .map(([y, r]) => ({ y, h: Math.max(...r.map(i => i.h)), text: toLine(r) }));
+            ordered = readRows(rowObjs);
         }
 
         const lines = ordered.map(l => l.text).filter(Boolean);
@@ -3104,7 +3341,8 @@ async function extractDocument(fileUrl, log, docLang) {
            sentence, so nothing is counted twice. The excerpt shown, exported and
            read by the coder is the whole paragraph the sentence sits in.        */
 
-        const numbered = ordered.map((l, i) => ({ y: l.y, h: l.h, text: l.text, no: i + 1 }));
+        const numbered = ordered.map((l, i) => ({ y: l.y, h: l.h, text: l.text, no: i + 1,
+                                                  col: l.col || 0, table: !!l.table, region: l.region || 0 }));
         diag.funnel.lines += numbered.length;
 
         const gaps = [];
@@ -3121,7 +3359,8 @@ async function extractDocument(fileUrl, log, docLang) {
         const closeBlock = () => { if (cur && cur.text.trim().length) blocks.push(cur); cur = null; };
         const openBlock = line => {
             cur = { text: "", offsets: [], lineStart: line.no, lineEnd: line.no,
-                    heading: currentHeading, section: currentSection };
+                    heading: currentHeading, section: currentSection,
+                    table: !!line.table, col: line.col || 0 };
         };
         const addLine = line => {
             let sep = cur.text ? " " : "";
@@ -3157,7 +3396,8 @@ async function extractDocument(fileUrl, log, docLang) {
             const prevClosed = prev ? /[.!?:;\u3002\uff01\uff1f\u061f]["'\u201d\u2019\u00bb)\]]*\s*$/.test(prev.text) : true;
             const prevShort = prev ? prev.text.length < medLen * 0.72 : true;
             const bigGap = prev ? gap > medGap * 1.55 : false;
-            if (!cur || startsList || bigGap || (prevClosed && prevShort)) { closeBlock(); openBlock(line); }
+            const cellChange = prev && (line.col !== prev.col || line.table !== prev.table || line.region !== prev.region);
+            if (!cur || startsList || bigGap || cellChange || (prevClosed && prevShort)) { closeBlock(); openBlock(line); }
             addLine(line);
         });
         closeBlock();
@@ -3191,7 +3431,8 @@ async function extractDocument(fileUrl, log, docLang) {
                     paraLineStart: b.lineStart, paraLineEnd: b.lineEnd,
                     paraLocator: `p. ${p}, ` + (b.lineEnd > b.lineStart ? `lines ${b.lineStart}\u2013${b.lineEnd}` : `line ${b.lineStart}`),
                     sentIndex: si, sentCount: segs.length,
-                    heading: b.heading, section: b.section, column: twoCol, lang: docLang || "Unknown"
+                    heading: b.heading, section: b.section, column: twoCol, lang: docLang || "Unknown",
+                    table: !!b.table, cellColumn: b.col || 0
                 });
             });
         });
@@ -3928,6 +4169,8 @@ function renderLedger() {
         if (ledgerFilter.dimension !== "All" && e.dimension !== ledgerFilter.dimension) return false;
         if (ledgerFilter.tier !== "All" && e.tier !== ledgerFilter.tier) return false;
         if (ledgerFilter.review && !s.needsReview) return false;
+        if (!ledgerFilter.excluded && s.excluded) return false;
+        if (ledgerFilter.excluded && !s.excluded) return false;
         return true;
     });
 
@@ -3952,6 +4195,8 @@ function renderLedger() {
         <div class="lf-group"><button class="lf-btn ${ledgerFilter.review ? 'lf-on' : ''}" onclick="setLedgerFilter('review')">Needs manual check only</button>
         ${pending ? `<button class="lf-btn ${ledgerFilter.pending ? 'lf-on' : ''}" onclick="setLedgerFilter('pending')">Justice named, dimension not assigned (${pending})</button>` : ''}
         ${(R.screened && R.screened.length) ? `<button class="lf-btn ${ledgerFilter.recall ? 'lf-on' : ''}" onclick="setLedgerFilter('recall')">Recall net, unplaced (${R.screened.length})</button>` : ''}
+        ${R.statements.some(s => s.excluded) ? `<button class="lf-btn ${ledgerFilter.excluded ? 'lf-on' : ''}" onclick="setLedgerFilter('excluded')">Excluded (${R.statements.filter(s => s.excluded).length})</button>` : ''}
+        <button class="lf-btn" onclick="fileAllCoded()" title="file every coded statement in this ledger into the coding examples">File all coded to examples</button>
         <span class="lf-count">${capped.length} of ${source.length} shown${list.length > CAP ? `, capped at ${CAP}` : ''}${ledgerFilter.recall ? '. These carry no dimension and count towards nothing until you assign one.' : ''}</span></div>
         ${R.statements.some(s => needsTranslation(s)) ? `<div class="lf-group"><button id="translate-btn" class="lf-btn" onclick="translateLedger()">Translate to English</button><span id="translate-note" class="lf-count"></span></div>` : ''}`;
 
@@ -3961,7 +4206,10 @@ function renderLedger() {
         const notes = conceptNotesFor(s);
         const chips = [
             `<span class="chip chip-loc">${esc(s.locator || ("p. " + s.page))}</span>`,
-            `<span class="chip chip-sec">${s.section.type}${s.section.narrative ? " (framing)" : ""}</span>`,
+            `<span class="chip chip-sec" title="${esc((s.section && s.section.detail) || "")}">${esc(sectionLabel(s.section))}${s.section.narrative ? " (framing)" : ""}</span>`,
+            s.table ? `<span class="chip chip-table">table cell, column ${(s.cellColumn || 0) + 1}</span>` : "",
+            s.filed ? `<span class="chip chip-filed">filed as an example</span>` : "",
+            s.excluded ? `<span class="chip chip-excl">excluded: ${esc(s.excludedReason || "")}</span>` : "",
             `<span class="chip">${esc(s.cluster)}</span>`,
             `<span class="chip chip-${String(s.scope).toLowerCase()}">${s.scope}</span>`,
             s.conditional ? `<span class="chip chip-cond">conditional</span>` : "",
@@ -3974,7 +4222,7 @@ function renderLedger() {
             s.override ? `<span class="chip chip-over">coder override</span>` : ""
         ].join("");
 
-        return `<div class="ledger-item${unassigned ? ' ledger-pending' : ''}" data-id="${s.id}">
+        return `<div class="ledger-item${unassigned ? ' ledger-pending' : ''}${s.excluded ? ' ledger-excluded' : ''}" data-id="${s.id}">
             <div class="ex-header">
                 <div>
                     <span class="ex-badge" style="background:${TIER_COLOR[e.tier] || '#9e9e9e'}">${e.tier || "ungraded"}</span>
@@ -4014,9 +4262,106 @@ function renderLedger() {
                 </label>
                 <input type="text" placeholder="coder note (why)" value="${esc((s.override && s.override.note) || '')}"
                        onchange="overrideStatement('${s.id}','note',this.value)">
+                <button class="lf-btn" onclick="fileStatementAsExample('${s.id}')" title="write this statement, its locator and its reasoning into the coding examples">${s.filed ? "update filed example" : "file as coding example"}</button>
+                ${s.excluded
+                    ? `<button class="lf-btn" onclick="restoreStatement('${s.id}')">put back in the assessment</button>`
+                    : `<button class="lf-btn lf-danger" onclick="excludeStatement('${s.id}')" title="take out of the assessment, reversibly, with a reason">exclude</button>`}
             </div>
         </div>`;
     }).join("") || "<p style='color:var(--text-muted)'>No statements match this filter.</p>";
+}
+
+/* ============================================================================
+   10b. EDITING THE LEDGER, v2.4
+
+   The ledger is the source of truth for the score. Anything a coder does to it
+   has to move the score, the band and the project record in the same action,
+   or the coder is maintaining two records by hand and they will diverge.
+
+   Three operations:
+     override   change the dimension or the tier of a statement
+     exclude    take a statement out of the assessment, reversibly
+     file       write it to the shared coding examples
+
+   All three end in recomputeEvaluation(), which rebuilds the profile and the
+   rubric, redraws the page, tells the coder what moved, and updates the
+   recorded assessment if this country has already been recorded.
+   ========================================================================== */
+
+/* An excluded statement stays in the ledger, greyed, behind its own filter. It
+   is never deleted, because a deletion that leaves no trace cannot be reviewed
+   and cannot be undone. It is written to the CSV with excluded = true and the
+   coder's reason, so the exclusions are part of the record rather than a silent
+   difference between the machine output and the published table. */
+function includedStatements() {
+    if (!lastEvaluation) return [];
+    return lastEvaluation.statements.filter(s => !s.excluded);
+}
+
+function snapshotScores() {
+    if (!lastEvaluation) return null;
+    const out = { band: lastEvaluation.rubric.band, verdict: lastEvaluation.rubric.verdict,
+                  country: lastEvaluation.rubric.countryScore, dims: {} };
+    DIMS4.forEach(d => { out.dims[d] = { score: lastEvaluation.profile[d].score, tier: lastEvaluation.profile[d].tier }; });
+    return out;
+}
+
+function describeChange(before, after) {
+    if (!before || !after) return "";
+    const bits = [];
+    DIMS4.forEach(d => {
+        const b = before.dims[d], a = after.dims[d];
+        if (!b || !a) return;
+        if (b.tier !== a.tier || Math.abs((b.score || 0) - (a.score || 0)) >= 0.1) {
+            bits.push(`${d} ${b.score}\u2192${a.score}${b.tier !== a.tier ? ` (${b.tier} \u2192 ${a.tier})` : ""}`);
+        }
+    });
+    if (before.country !== after.country) bits.push(`country score ${before.country}\u2192${after.country}`);
+    if (before.band !== after.band) bits.push(`<b>band ${before.band} \u2192 ${after.band}: ${esc(after.verdict)}</b>`);
+    if (!bits.length) {
+        const flat = DIMS4.every(d => after.dims[d].score === before.dims[d].score);
+        return flat
+            ? "No score moved. Tokenistic statements score zero by design, so adding or reassigning one changes coverage but not a dimension's score."
+            : "No score moved.";
+    }
+    return bits.join(" &middot; ");
+}
+
+function recomputeEvaluation(reason) {
+    if (!lastEvaluation) return;
+    const before = snapshotScores();
+    const live = includedStatements();
+
+    DIMS4.forEach(d => {
+        lastEvaluation.profile[d] = rollUpDimension(
+            live.filter(x => effective(x).dimension === d)
+                .map(x => ({ ...x, dimension: effective(x).dimension, tier: effective(x).tier }))
+        );
+    });
+    lastEvaluation.rubric = buildRubric(lastEvaluation.profile,
+        live.map(x => ({ ...x, dimension: effective(x).dimension, tier: effective(x).tier })));
+    lastEvaluation.edited = true;
+    lastEvaluation.editedAt = new Date().toISOString();
+
+    renderEvaluation();
+    const after = snapshotScores();
+
+    /* If this country is already in the project record, the record follows the
+       ledger automatically. A record that lags behind the ledger is worse than
+       no record: it is a number that looks checked and is not. */
+    let recorded = "";
+    try {
+        const all = getAssessments();
+        if (all[lastEvaluation.country]) { recordAssessment(true); recorded = " Project record updated."; }
+    } catch (e) { /* record unavailable, the ledger is still correct */ }
+
+    const box = document.getElementById('recompute-note');
+    if (box) {
+        box.innerHTML = `<span class="rc-what">${esc(reason || "Edit applied")}.</span>
+            <span class="rc-diff">${describeChange(before, after)}</span>${recorded}`;
+        box.classList.add("rc-flash");
+        setTimeout(() => box.classList.remove("rc-flash"), 1200);
+    }
 }
 
 async function overrideStatement(id, field, value) {
@@ -4037,18 +4382,9 @@ async function overrideStatement(id, field, value) {
     s.override.coder = (typeof currentUser !== "undefined" ? currentUser : "Anonymous");
     s.override.at = new Date().toISOString();
 
-    // recompute profile and verdict from the corrected data
-    const DIMS = DIMS4;
-    DIMS.forEach(d => {
-        lastEvaluation.profile[d] = rollUpDimension(
-            lastEvaluation.statements.filter(x => effective(x).dimension === d).map(x => ({ ...x, tier: effective(x).tier }))
-        );
-    });
-    lastEvaluation.rubric = buildRubric(lastEvaluation.profile,
-        lastEvaluation.statements.map(x => ({ ...x, dimension: effective(x).dimension, tier: effective(x).tier })));
-    renderEvaluation();
+    recomputeEvaluation(`${field === 'note' ? "Note saved" : "Reassigned " + field} on ${s.locator || s.id}`);
+    if (s.filed) fileStatementAsExample(id, true);   // keep the filed copy in step
 
-    // always keep a local copy so the standalone build does not lose coder work
     try {
         const key = 'justndc_overrides';
         const store = JSON.parse(localStorage.getItem(key) || '{}');
@@ -4057,7 +4393,7 @@ async function overrideStatement(id, field, value) {
             machine_dimension: s.dimension, machine_tier: s.tier,
             coder_dimension: s.override.dimension, coder_tier: s.override.tier,
             note: s.override.note || "", coder: s.override.coder, at: s.override.at,
-            statement: s.text, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION
+            excluded: !!s.excluded, statement: s.text, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION
         };
         localStorage.setItem(key, JSON.stringify(store));
     } catch (e) { console.warn("local override store unavailable", e); }
@@ -4072,6 +4408,91 @@ async function overrideStatement(id, field, value) {
                 statement: s.text, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION
             }, { onConflict: 'country,statement_id' });
         } catch (e) { console.warn("override not synced", e); }
+    }
+}
+
+function excludeStatement(id) {
+    const s = lastEvaluation && lastEvaluation.statements.find(x => x.id === id);
+    if (!s) return;
+    const why = prompt("Why is this statement being taken out of the assessment?\n\nIt stays in the ledger and in the export, marked excluded with this reason.", s.excludedReason || "");
+    if (why === null) return;
+    s.excluded = true;
+    s.excludedReason = why.trim() || "no reason given";
+    s.excludedBy = (typeof currentUser !== "undefined" ? currentUser : "Anonymous");
+    s.excludedAt = new Date().toISOString();
+    recomputeEvaluation(`Excluded ${s.locator || s.id}`);
+}
+
+function restoreStatement(id) {
+    const s = lastEvaluation && lastEvaluation.statements.find(x => x.id === id);
+    if (!s) return;
+    s.excluded = false;
+    recomputeEvaluation(`Restored ${s.locator || s.id}`);
+}
+
+/* Filing a ledger statement into the shared coding examples. The excerpt, the
+   locator, the machine reading and the coder's reasoning all travel with it, so
+   the example carries its provenance instead of becoming a loose quotation. */
+function fileStatementAsExample(id, quiet) {
+    const s = lastEvaluation && lastEvaluation.statements.find(x => x.id === id);
+    if (!s) return;
+    const e = effective(s);
+    if (!e.dimension) { alert("Assign a dimension before filing this as a coding example."); return; }
+
+    const analysis = [
+        s.override && s.override.note ? "Coder: " + s.override.note : "",
+        "Machine reading: " + (s.tierWhy || []).join("; ") + ".",
+        (s.override && (s.override.dimension || s.override.tier))
+            ? "Reassigned by " + s.override.coder + " from " + s.dimension + " / " + s.tier + "."
+            : ""
+    ].filter(Boolean).join(" ");
+
+    const row = {
+        id: s.exampleId || ("ex-" + s.id + "-" + Date.now()),
+        country: lastEvaluation.country,
+        level: e.tier, dimension: e.dimension,
+        statement: s.excerpt || s.text,
+        analysis,
+        page: s.paraLocator || s.locator || ("p. " + s.page),
+        section: sectionLabel(s.section), scope: s.scope,
+        conditional: s.conditional ? "Yes" : "No",
+        cluster: s.cluster,
+        source: "ledger", statementId: s.id,
+        engine: ENGINE_VERSION, lexicon: (typeof lexiconStamp === "function" ? lexiconStamp() : LEXICON_VERSION),
+        coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"),
+        at: new Date().toISOString()
+    };
+
+    const idx = codingExamples.findIndex(x => x.statementId === s.id && x.country === row.country);
+    if (idx >= 0) codingExamples[idx] = { ...codingExamples[idx], ...row, id: codingExamples[idx].id };
+    else codingExamples.push(row);
+    s.filed = true;
+    s.exampleId = (idx >= 0 ? codingExamples[idx].id : row.id);
+
+    persistExamples();
+    if (typeof renderExamples === "function") renderExamples();
+    if (!quiet) {
+        renderLedger();
+        const box = document.getElementById('recompute-note');
+        if (box) box.innerHTML = `<span class="rc-what">Filed to coding examples</span> as ${esc(e.dimension)} / ${esc(e.tier)}, with its locator and reasoning.`;
+    }
+}
+
+function fileAllCoded() {
+    if (!lastEvaluation) return;
+    const todo = includedStatements().filter(s => effective(s).dimension && !s.filed);
+    if (!todo.length) { alert("Every coded statement in this ledger has already been filed."); return; }
+    if (!confirm(`File ${todo.length} coded statement(s) from this ledger into the coding examples for ${lastEvaluation.country}?`)) return;
+    todo.forEach(s => fileStatementAsExample(s.id, true));
+    renderLedger();
+    const box = document.getElementById('recompute-note');
+    if (box) box.innerHTML = `<span class="rc-what">${todo.length} statement(s) filed to coding examples.</span>`;
+}
+
+function persistExamples() {
+    try { localStorage.setItem('codingExamplesState', JSON.stringify(codingExamples)); } catch (e) {}
+    if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        try { supabaseClient.from('coding_examples').upsert(codingExamples.slice(-1)[0]); } catch (e) {}
     }
 }
 
@@ -4338,7 +4759,7 @@ function removeCustomTerm(term, dimension, bucket) {
 function getAssessments() { return storeGet(STORE_KEYS.assessments, {}); }
 function getAssessment(country) { return getAssessments()[country] || null; }
 
-function recordAssessment() {
+function recordAssessment(quiet) {
     const R = lastEvaluation;
     if (!R) { alert("Run an assessment first."); return; }
     const all = getAssessments();
@@ -4370,7 +4791,9 @@ function recordAssessment() {
         if (c && c.s !== 1) { c.s = 1; try { localStorage.setItem('ndcTrackerState', JSON.stringify(ndcData.map(i => ({ c: i.c, s: i.s })))); } catch (e) {} loadTables(); }
         renderEvaluation();
         renderReporting();
-        alert("Recorded. " + R.country + " now appears on the reporting map and in the matrix.");
+        if (!quiet) alert("Recorded. " + R.country + " now appears on the reporting map and in the matrix.");
+        const note = document.getElementById('record-assessment-note');
+        if (note) note.textContent = "Recorded " + new Date().toLocaleTimeString() + (R.edited ? ", following your edits" : "") + ".";
     }
 }
 
@@ -4495,6 +4918,89 @@ function exportNotesMd() {
     download("JUSTNDC_notes.md", md, "text/markdown");
 }
 
+
+/* ============================================================================
+   Backup and restore, v2.4
+   Browser storage is not an archive. One file carries the whole project: the
+   recorded assessments, the coding examples, the notes, the coder overrides,
+   any locally added lexicon terms and the recall audit. Restoring merges by
+   default rather than replacing, so work done on two machines can be brought
+   together instead of one overwriting the other.
+   ========================================================================== */
+
+function exportProjectJson() {
+    const bundle = {
+        format: "justndc-project", version: 1,
+        engine: ENGINE_VERSION, lexicon: (typeof lexiconStamp === "function" ? lexiconStamp() : LEXICON_VERSION),
+        exported: new Date().toISOString(),
+        coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"),
+        assessments: getAssessments(),
+        notes: getNotes(),
+        codingExamples: (typeof codingExamples !== "undefined" ? codingExamples : []),
+        overrides: storeGet('justndc_overrides', {}),
+        customTerms: storeGet(STORE_KEYS.customTerms, []),
+        audit: storeGet(STORE_KEYS.audit, [])
+    };
+    download(`JUSTNDC_project_${new Date().toISOString().slice(0, 10)}.json`,
+             JSON.stringify(bundle, null, 2), 'application/json');
+}
+
+function importProjectJson(input, mode) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        let b;
+        try { b = JSON.parse(reader.result); }
+        catch (e) { alert("That file is not readable JSON."); return; }
+        if (!b || b.format !== "justndc-project") {
+            if (!confirm("This file does not identify itself as a JUST-NDC project export. Try to read it anyway?")) return;
+        }
+        const replace = mode === "replace";
+        const report = [];
+
+        if (b.assessments) {
+            const cur = replace ? {} : getAssessments();
+            let n = 0;
+            Object.entries(b.assessments).forEach(([k, v]) => {
+                if (!cur[k] || replace || new Date(v.at || 0) > new Date(cur[k].at || 0)) { cur[k] = v; n++; }
+            });
+            storeSet(STORE_KEYS.assessments, cur);
+            report.push(`${n} assessment(s)`);
+        }
+        if (b.notes) {
+            const cur = replace ? [] : getNotes();
+            const ids = new Set(cur.map(x => x.id));
+            let n = 0;
+            b.notes.forEach(x => { if (!ids.has(x.id)) { cur.push(x); n++; } });
+            storeSet(STORE_KEYS.notes, cur);
+            report.push(`${n} note(s)`);
+        }
+        if (b.codingExamples && typeof codingExamples !== "undefined") {
+            if (replace) codingExamples.length = 0;
+            const ids = new Set(codingExamples.map(x => String(x.id)));
+            let n = 0;
+            b.codingExamples.forEach(x => { if (!ids.has(String(x.id))) { codingExamples.push(x); n++; } });
+            persistExamples();
+            report.push(`${n} coding example(s)`);
+        }
+        if (b.overrides) {
+            const cur = replace ? {} : storeGet('justndc_overrides', {});
+            Object.assign(cur, b.overrides);
+            storeSet('justndc_overrides', cur);
+        }
+        if (b.customTerms) storeSet(STORE_KEYS.customTerms, b.customTerms);
+        if (b.audit) storeSet(STORE_KEYS.audit, b.audit);
+
+        alert(`Restored: ${report.join(", ") || "nothing recognisable"}.\n\nExported ${b.exported ? new Date(b.exported).toLocaleString() : "date unknown"} by ${b.coder || "unknown"}, engine ${b.engine || "unknown"}.\n\nAssessments made under an earlier engine keep the engine stamp they were made with, so they can be told apart from current ones.`);
+        if (typeof renderReporting === "function") renderReporting();
+        if (typeof renderNotes === "function") renderNotes();
+        if (typeof renderExamples === "function") renderExamples();
+        input.value = "";
+    };
+    reader.readAsText(file);
+}
+
 /* ============================================================================
    13. REPORTING
    The project record, drawn three ways: where the corpus stands, what each
@@ -4548,7 +5054,7 @@ function renderReporting() {
 
     const byVerdict = {};
     rows.forEach(r => { const nv = normaliseVerdict(r.verdict); byVerdict[nv] = (byVerdict[nv] || 0) + 1; });
-    const total = ndcData.length;
+    const total = Math.max(ndcData.length, rows.length);
 
     box.innerHTML = `
         <div class="rep-stat"><span class="rep-n">${rows.length}</span><span class="rep-l">assessments recorded</span></div>
