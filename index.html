@@ -1183,7 +1183,7 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.7.0";
+const ENGINE_VERSION = "2.8.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -2117,7 +2117,8 @@ function sectionLabel(section) {
    context than the line-by-line reading ever gave.
    ========================================================================== */
 
-const ROW_INDEX_RE = /^\(?\d{1,2}\s*[a-z]?\)?[.)]?$/i;
+/* Row numbering as NDCs actually write it: 4, 4a, 3c, (a), (d), (iv), 12. */
+const ROW_INDEX_RE = /^\(?(?:\d{1,2}\s*[a-z]?|[a-z]|[ivxlc]{1,4})\)?[.)]?$/i;
 
 const ICTU_TEMPLATE = [
     "quantifiable information on the reference",
@@ -3246,7 +3247,9 @@ async function extractDocument(fileUrl, log, docLang) {
         items.forEach(it => {
             const y = Math.round(it.transform[5] / 2) * 2;
             if (!rows.has(y)) rows.set(y, []);
-            rows.get(y).push({ x: it.transform[4], w: it.width || 0, h: Math.abs(it.transform[3]) || 10, str: it.str });
+            const fsz = Math.abs(it.transform[0]) || Math.abs(it.transform[3]) || 10;
+            rows.get(y).push({ x: it.transform[4], w: it.width || (it.str.length * fsz * 0.5),
+                               h: Math.abs(it.transform[3]) || 10, str: it.str });
         });
 
         // two-column detection: are most lines confined to one side of the page?
@@ -3261,73 +3264,78 @@ async function extractDocument(fileUrl, log, docLang) {
         const twoCol = rows.size > 8 && (leftOnly + rightOnly) / rows.size > 0.75 && leftOnly > 2 && rightOnly > 2;
         if (twoCol) diag.columns++;
 
-        /* --- v2.7 tables found by column alignment ------------------------
-           Three earlier attempts failed for the same underlying reason: each
-           measured the GAP between the columns and required it to be wide.
-             v2.4/2.5 required a gap of 23.6pt between neighbouring items.
-             v2.6 required a corridor of whitespace at least 8pt wide.
-           Japan's ICTU table has a gutter of about ten points, and its label
-           column is justified hard against it, so both tests failed and the
-           page fell back to reading each line straight across:
+        /* --- v2.8 tables: alignment found on items, verified on whitespace ---
+           Why the previous four attempts failed, stated so it is not repeated.
+           Each one was tested against fixtures that emitted ONE text item per
+           line. Real PDFs emit one item PER WORD, and in justified columns the
+           spacing between those words is stretched. Every detector built on the
+           gap between neighbouring items, or on runs of items merged by a small
+           gap, therefore saw a line of forty fragments instead of two cells, and
+           fell back to reading the line straight across:
 
-             "(a) Information on the planning processes that the Party
-              undertook to prepare At the joint meetings of the Climate Change
-              Countermeasures towards Net Zero by 2050 its nationally
-              determined contribution and, if available, on the Party's ..."
+             "(d) Mitigation co-benefits resulting from Parties' adaptation
+              actions and/or Not applicable."
 
-           The gutter is the wrong thing to measure. What is unmistakable in a
-           table, and what does not depend on how tight the typesetting is, is
-           that every line of a column STARTS AT THE SAME x. Eleven lines
-           beginning at 748.0 is a column. That holds whether the gutter is two
-           points or two hundred, and whether or not the columns share
-           baselines.
+           Two things are true of a table column no matter how it is typeset,
+           how narrow its gutter is, or whether it shares baselines with its
+           neighbour:
 
-           So: cut the page into slabs on vertical whitespace, take the x
-           positions where lines begin, cluster them, and keep the clusters with
-           real support. A slab is a table when two or more of those columns
-           appear in it, they are well separated, and no line crosses from one
-           into the next. That last test is what keeps running prose out: a
-           prose line starts at the left margin and runs straight through where
-           the second column would begin.                                      */
+             1. every line of it begins at the same x, so that x carries far
+                more items than any position a word happens to fall on;
+             2. the few points immediately to its left are empty on every line,
+                because that is the gutter.
+
+           Columns are found with the first and confirmed with the second. The
+           first survives word-level items because word positions scatter and
+           column starts do not. The second needs only two or three points of
+           clearance, so a ten-point gutter passes where an eight-point width
+           test failed. Running prose fails the second test on nearly every
+           line, which is what keeps it out.                                   */
 
         const pageW = vp.width;
-        const START_TOL = 4;          // two line starts within 4pt are the same column
-        const MIN_COL_SEP = 40;       // columns closer than this are an indent, not a column
+        const START_TOL = 2.0;        // item starts within 2pt are the same column
+        const MIN_COL_SEP = 40;       // closer than this is an indent, not a column
+        const STRIP_OUTER = 6.0;      // the gutter strip tested for clearance
+        const STRIP_INNER = 1.5;
+        const STRIP_BLOCKED_MAX = 0.08;
 
         const rowList = [...rows.entries()].sort((a, b) => b[0] - a[0])
-            .map(([y, its]) => {
-                const sorted = its.slice().sort((a, b) => a.x - b.x);
-                const spans = [];
-                sorted.forEach(it => {
-                    const a = it.x, b = it.x + it.w;
-                    const last = spans[spans.length - 1];
-                    if (last && a - last[1] <= 1.5) last[1] = Math.max(last[1], b);
-                    else spans.push([a, b]);
-                });
-                return { y, items: sorted, spans, h: Math.max(...its.map(i => i.h)) };
-            });
+            .map(([y, its]) => ({
+                y, h: Math.max(...its.map(i => i.h)),
+                items: its.slice().sort((a, b) => a.x - b.x)
+            }));
+        const nRows = rowList.length;
 
         const joinItems = its => its.slice().sort((a, b) => a.x - b.x)
             .reduce((acc, it, i, arr) => acc + (i > 0 && (it.x - (arr[i - 1].x + arr[i - 1].w)) > 1.2 ? " " : "") + it.str, "")
             .replace(/\s+/g, " ").trim();
         const flowLine = r => ({ y: r.y, h: r.h, text: joinItems(r.items), col: 0, table: false, region: 0, cellId: "" });
 
+        /* is the gutter strip immediately left of cx clear on these rows */
+        const stripClear = (rowsArr, cx) => {
+            if (!rowsArr.length) return false;
+            const a = cx - STRIP_OUTER, b = cx - STRIP_INNER;
+            let blocked = 0;
+            rowsArr.forEach(r => { if (r.items.some(it => it.x < b && it.x + it.w > a)) blocked++; });
+            return blocked / rowsArr.length <= STRIP_BLOCKED_MAX;
+        };
+
         let ordered = [];
         const twoColFallback = () => {
             const L = [], R = [];
             rowList.forEach(r => {
-                const maxX = Math.max(...r.spans.map(s => s[1]));
+                const maxX = Math.max(...r.items.map(i => i.x + i.w));
                 (maxX < mid + band ? L : R).push(r);
             });
             return L.map(flowLine).concat(R.map(flowLine));
         };
 
-        if (rowList.length < 3) {
-            ordered = twoCol ? twoColFallback() : rowList.map(flowLine);
+        if (nRows < 2) {
+            ordered = rowList.map(flowLine);
         } else {
-            /* 1. horizontal cuts: slabs separated by vertical whitespace */
+            /* 1. horizontal cuts */
             const vg = [];
-            for (let i = 1; i < rowList.length; i++) vg.push(Math.abs(rowList[i - 1].y - rowList[i].y));
+            for (let i = 1; i < nRows; i++) vg.push(Math.abs(rowList[i - 1].y - rowList[i].y));
             const vgSorted = vg.slice().sort((a, b) => a - b);
             const medV = vgSorted.length ? vgSorted[Math.floor(vgSorted.length / 2)] : 12;
             const slabCut = Math.max(medV * 1.6, medV + 5);
@@ -3337,7 +3345,8 @@ async function extractDocument(fileUrl, log, docLang) {
                 slabs[slabs.length - 1].push(r);
             });
 
-            /* 2. where do lines begin, across the whole page */
+            /* 2. candidate column starts: x positions that many items begin at.
+                  Word starts scatter; column starts repeat on every line. */
             const clusterX = vals => {
                 const s = vals.slice().sort((a, b) => a - b);
                 const out = [];
@@ -3348,52 +3357,78 @@ async function extractDocument(fileUrl, log, docLang) {
                 });
                 return out;
             };
-            const colStarts = clusterX(rowList.flatMap(r => r.spans.map(s => s[0])))
-                .filter(c => c.n >= 3)
+            /* Not every item x is a candidate. Inside justified text the words
+               are spread by whatever gap the line needs, and on a badly set
+               page those gaps are as wide as a gutter. What separates the two is
+               scale: a gutter is wide RELATIVE TO THE TYPICAL WORD GAP ON THIS
+               PAGE, and a stretched word space is not. So the page's own word
+               spacing sets the threshold. */
+            const allGaps = [];
+            rowList.forEach(r => {
+                for (let i = 1; i < r.items.length; i++) {
+                    const g = r.items[i].x - (r.items[i - 1].x + r.items[i - 1].w);
+                    if (g > 0.2) allGaps.push(g);
+                }
+            });
+            const gSorted = allGaps.slice().sort((a, b) => a - b);
+            const p20 = gSorted.length ? gSorted[Math.floor(gSorted.length * 0.2)] : 3;
+            const SEG_GAP = Math.max(p20 * 2.2, p20 + 4, 5);
+            /* PDFs differ in how much text they put in one item: some emit a
+               word, some a line, some a whole cell. Where a page emits whole
+               cells there are no word gaps at all and the relative threshold
+               above is calibrated on gutters, so it would hide them. A gap of
+               25pt is never word spacing at the sizes these documents use, so
+               it counts regardless of what the rest of the page looks like. */
+            const SEG_ABS = 25;
+
+            /* a segment start is the first item on a line, or an item that
+               follows a gap wide enough not to be word spacing */
+            const segStarts = [];
+            rowList.forEach(r => {
+                r.items.forEach((it, i) => {
+                    if (i === 0) { segStarts.push(it.x); return; }
+                    const g = it.x - (r.items[i - 1].x + r.items[i - 1].w);
+                    if (g > SEG_GAP || g >= SEG_ABS) segStarts.push(it.x);
+                });
+            });
+
+            const candidates = clusterX(segStarts)
+                .filter(c => c.n >= Math.max(2, Math.floor(nRows * 0.10)))
                 .map(c => c.c)
                 .sort((a, b) => a - b);
+            /* The gutter is confirmed per slab, not per page. A table halfway
+               down a page has a gutter that the prose above it runs straight
+               through, and testing page-wide would throw that gutter away. */
 
-            /* 3. per slab: which of those columns are present, and does any line
-                  run straight through one of them */
+            /* 3. per slab */
             const parts = [];
             let region = 0;
             slabs.forEach(slab => {
-                const present = [];
-                colStarts.forEach(cx => {
-                    if (!slab.some(r => r.spans.some(s => Math.abs(s[0] - cx) <= START_TOL))) return;
-                    if (present.length && cx - present[present.length - 1] < MIN_COL_SEP) return;
-                    present.push(cx);
+                const here = [];
+                candidates.forEach(cx => {
+                    if (!slab.some(r => r.items.some(it => Math.abs(it.x - cx) <= START_TOL))) return;
+                    if (here.length && cx - here[here.length - 1] < MIN_COL_SEP) return;
+                    if (here.length && !stripClear(slab, cx)) return;            // gutter must hold here too
+                    here.push(cx);
                 });
-                /* A row-number column is narrow and appears once per row, so it
-                   rarely reaches the support a content column does. Anything
-                   sitting to the left of the first content column is treated as
-                   its own leading column: that is what "3c" and "(a)" are. */
-                if (present.length >= 2) {
-                    const lefts = slab.flatMap(r => r.spans.map(s => s[0])).filter(x => x < present[0] - START_TOL);
+
+                if (here.length >= 2) {
+                    const lefts = slab.flatMap(r => r.items.map(i => i.x)).filter(x => x < here[0] - START_TOL);
                     if (lefts.length) {
                         const lead = Math.min(...lefts);
-                        if (present[0] - lead >= START_TOL * 2) present.unshift(lead);
+                        if (here[0] - lead >= 8) here.unshift(lead);
                     }
                 }
 
-                const crossing = present.length >= 2 && slab.some(r => r.spans.some(s =>
-                    present.some((cx, k) => k > 0 && s[0] < cx - START_TOL && s[1] > cx + START_TOL)));
+                /* every column must actually hold text in this slab */
+                const bandOf = x => { let k = 0; here.forEach((cx, i) => { if (x >= cx - START_TOL) k = i; }); return k; };
+                const filled = here.length >= 2 && here.every((cx, k) => slab.some(r => r.items.some(it => bandOf(it.x) === k)));
 
-                if (present.length < 2 || crossing) { parts.push({ flow: slab }); return; }
+                if (!filled) { parts.push({ flow: slab }); return; }
 
                 region++;
                 diag.funnel.tableRegions++;
-                const bandOf = x => {
-                    let k = 0;
-                    present.forEach((cx, i) => { if (x >= cx - START_TOL) k = i; });
-                    return k;
-                };
-                const nBands = present.length;
-
-                /* rows inside the slab: if every line fills every column the
-                   cells do not wrap and each line is its own row; otherwise the
-                   cells wrap and the slab is one row, which the slab cut above
-                   has already isolated */
+                const nBands = here.length;
                 const bandsOn = r => { const s = new Set(); r.items.forEach(it => s.add(bandOf(it.x))); return s; };
                 const allFull = slab.every(r => bandsOn(r).size === nBands);
                 const groups = allFull ? slab.map(r => [r]) : [slab];
@@ -3408,7 +3443,7 @@ async function extractDocument(fileUrl, log, docLang) {
                         });
                         if (!lines.length) continue;
                         cells.push({
-                            band: b, region, row: gi, key: Math.round(present[b] / 10) * 10,
+                            band: b, region, row: gi, key: Math.round(here[b] / 10) * 10,
                             lines, text: lines.map(l => l.text).join(" ").replace(/\s+/g, " ").trim()
                         });
                     }
@@ -3416,8 +3451,7 @@ async function extractDocument(fileUrl, log, docLang) {
                 });
             });
 
-            /* 4. classify the columns once for the whole document, so a table
-                  broken across slabs or pages is still read as one table */
+            /* 4. classify columns once for the document */
             const foundTable = parts.some(pt => pt.cells);
             const byKey = new Map();
             parts.forEach(pt => (pt.cells || []).forEach(c => {
@@ -3430,10 +3464,7 @@ async function extractDocument(fileUrl, log, docLang) {
                 else if (RULES.TEMPLATE_COLUMNS && cs.filter(c => isTemplateText(c.text)).length / cs.length >= 0.5) templateKeys.add(key);
             });
 
-            if (!foundTable && twoCol) {
-                ordered = twoColFallback();
-                parts.length = 0;
-            }
+            if (!foundTable && twoCol) { ordered = twoColFallback(); parts.length = 0; }
 
             parts.forEach((pt, pi) => {
                 if (pt.flow) { pt.flow.forEach(r => ordered.push(flowLine(r))); return; }
