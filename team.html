@@ -1211,7 +1211,7 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.6.0";
+const ENGINE_VERSION = "2.7.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -3355,25 +3355,39 @@ async function extractDocument(fileUrl, log, docLang) {
         const twoCol = rows.size > 8 && (leftOnly + rightOnly) / rows.size > 0.75 && leftOnly > 2 && rightOnly > 2;
         if (twoCol) diag.columns++;
 
-        /* --- v2.6 tables read by whitespace corridor ----------------------
-           Every earlier attempt looked for two cells sharing one baseline. Real
-           NDC tables do not work that way: the label column and the answer
-           column are typeset on independent line grids, so no baseline carries
-           both, no row has two cells, and the detector never fires. What is left
-           is a y-sorted stream alternating between columns, which is where
+        /* --- v2.7 tables found by column alignment ------------------------
+           Three earlier attempts failed for the same underlying reason: each
+           measured the GAP between the columns and required it to be wide.
+             v2.4/2.5 required a gap of 23.6pt between neighbouring items.
+             v2.6 required a corridor of whitespace at least 8pt wide.
+           Japan's ICTU table has a gutter of about ten points, and its label
+           column is justified hard against it, so both tests failed and the
+           page fell back to reading each line straight across:
 
-             "How the Party has taken into consideration 3c Iceland's national
-              inventory document describes the sources considered"
+             "(a) Information on the planning processes that the Party
+              undertook to prepare At the joint meetings of the Climate Change
+              Countermeasures towards Net Zero by 2050 its nationally
+              determined contribution and, if available, on the Party's ..."
 
-           comes from: a line of the question followed by a line of the answer.
+           The gutter is the wrong thing to measure. What is unmistakable in a
+           table, and what does not depend on how tight the typesetting is, is
+           that every line of a column STARTS AT THE SAME x. Eleven lines
+           beginning at 748.0 is a column. That holds whether the gutter is two
+           points or two hundred, and whether or not the columns share
+           baselines.
 
-           The page is therefore cut horizontally first, into slabs separated by
-           vertical whitespace, and each slab is then cut vertically at any x
-           that every line in that slab leaves empty. A gutter must have text on
-           both sides of it inside the slab, which is what tells a column
-           boundary apart from a margin. Baselines are never consulted.        */
+           So: cut the page into slabs on vertical whitespace, take the x
+           positions where lines begin, cluster them, and keep the clusters with
+           real support. A slab is a table when two or more of those columns
+           appear in it, they are well separated, and no line crosses from one
+           into the next. That last test is what keeps running prose out: a
+           prose line starts at the left margin and runs straight through where
+           the second column would begin.                                      */
 
         const pageW = vp.width;
+        const START_TOL = 4;          // two line starts within 4pt are the same column
+        const MIN_COL_SEP = 40;       // columns closer than this are an indent, not a column
+
         const rowList = [...rows.entries()].sort((a, b) => b[0] - a[0])
             .map(([y, its]) => {
                 const sorted = its.slice().sort((a, b) => a.x - b.x);
@@ -3391,7 +3405,6 @@ async function extractDocument(fileUrl, log, docLang) {
             .reduce((acc, it, i, arr) => acc + (i > 0 && (it.x - (arr[i - 1].x + arr[i - 1].w)) > 1.2 ? " " : "") + it.str, "")
             .replace(/\s+/g, " ").trim();
         const flowLine = r => ({ y: r.y, h: r.h, text: joinItems(r.items), col: 0, table: false, region: 0, cellId: "" });
-        const rowClear = (r, x) => !r.spans.some(s => s[0] - 0.5 <= x && x <= s[1] + 0.5);
 
         let ordered = [];
         const twoColFallback = () => {
@@ -3418,46 +3431,66 @@ async function extractDocument(fileUrl, log, docLang) {
                 slabs[slabs.length - 1].push(r);
             });
 
-            /* 2. vertical cuts inside each slab */
-            const parts = [];      // { flow: rows } or { cells: [...] }
+            /* 2. where do lines begin, across the whole page */
+            const clusterX = vals => {
+                const s = vals.slice().sort((a, b) => a - b);
+                const out = [];
+                s.forEach(v => {
+                    const last = out[out.length - 1];
+                    if (last && v - last.max <= START_TOL) { last.n++; last.sum += v; last.max = v; last.c = last.sum / last.n; }
+                    else out.push({ n: 1, sum: v, max: v, c: v });
+                });
+                return out;
+            };
+            const colStarts = clusterX(rowList.flatMap(r => r.spans.map(s => s[0])))
+                .filter(c => c.n >= 3)
+                .map(c => c.c)
+                .sort((a, b) => a - b);
+
+            /* 3. per slab: which of those columns are present, and does any line
+                  run straight through one of them */
+            const parts = [];
             let region = 0;
             slabs.forEach(slab => {
-                if (slab.length < 2) { parts.push({ flow: slab }); return; }
-                const sMin = Math.min(...slab.flatMap(r => r.spans.map(s => s[0])));
-                const sMax = Math.max(...slab.flatMap(r => r.spans.map(s => s[1])));
-                const cors = [];
-                let run = null;
-                for (let x = sMin + 4; x <= sMax - 4; x += 2) {
-                    if (slab.every(r => rowClear(r, x))) { if (run) run.x1 = x; else run = { x0: x, x1: x }; }
-                    else { if (run && run.x1 - run.x0 >= 8) cors.push(run); run = null; }
+                const present = [];
+                colStarts.forEach(cx => {
+                    if (!slab.some(r => r.spans.some(s => Math.abs(s[0] - cx) <= START_TOL))) return;
+                    if (present.length && cx - present[present.length - 1] < MIN_COL_SEP) return;
+                    present.push(cx);
+                });
+                /* A row-number column is narrow and appears once per row, so it
+                   rarely reaches the support a content column does. Anything
+                   sitting to the left of the first content column is treated as
+                   its own leading column: that is what "3c" and "(a)" are. */
+                if (present.length >= 2) {
+                    const lefts = slab.flatMap(r => r.spans.map(s => s[0])).filter(x => x < present[0] - START_TOL);
+                    if (lefts.length) {
+                        const lead = Math.min(...lefts);
+                        if (present[0] - lead >= START_TOL * 2) present.unshift(lead);
+                    }
                 }
-                if (run && run.x1 - run.x0 >= 8) cors.push(run);
 
-                const gutters = cors.filter(g =>
-                    slab.some(r => r.spans.some(s => s[1] <= g.x0 + 0.5)) &&
-                    slab.some(r => r.spans.some(s => s[0] >= g.x1 - 0.5)));
+                const crossing = present.length >= 2 && slab.some(r => r.spans.some(s =>
+                    present.some((cx, k) => k > 0 && s[0] < cx - START_TOL && s[1] > cx + START_TOL)));
 
-                if (!gutters.length) { parts.push({ flow: slab }); return; }
+                if (present.length < 2 || crossing) { parts.push({ flow: slab }); return; }
 
                 region++;
                 diag.funnel.tableRegions++;
-                const edges = [sMin - 1, ...gutters.map(g => (g.x0 + g.x1) / 2), sMax + 1];
-                const nBands = edges.length - 1;
-                const bandOf = x => { for (let k = 1; k < edges.length; k++) if (x < edges[k]) return k - 1; return nBands - 1; };
+                const bandOf = x => {
+                    let k = 0;
+                    present.forEach((cx, i) => { if (x >= cx - START_TOL) k = i; });
+                    return k;
+                };
+                const nBands = present.length;
 
-                /* Rows inside a slab. A line carrying content in every band is
-                   the first line of a new table row; a line that leaves a band
-                   empty is the continuation of the row above it. This separates
-                   a tightly spaced table whose rows are single lines without
-                   splitting a table whose cells wrap, and needs no assumption
-                   about spacing at all. */
+                /* rows inside the slab: if every line fills every column the
+                   cells do not wrap and each line is its own row; otherwise the
+                   cells wrap and the slab is one row, which the slab cut above
+                   has already isolated */
                 const bandsOn = r => { const s = new Set(); r.items.forEach(it => s.add(bandOf(it.x))); return s; };
-                const isFull = r => { const s = bandsOn(r); return s.size === nBands; };
-                const groups = [];
-                slab.forEach(r => {
-                    if (!groups.length || isFull(r)) groups.push([]);
-                    groups[groups.length - 1].push(r);
-                });
+                const allFull = slab.every(r => bandsOn(r).size === nBands);
+                const groups = allFull ? slab.map(r => [r]) : [slab];
 
                 groups.forEach((grp, gi) => {
                     const cells = [];
@@ -3469,8 +3502,7 @@ async function extractDocument(fileUrl, log, docLang) {
                         });
                         if (!lines.length) continue;
                         cells.push({
-                            band: b, region, row: gi,
-                            key: Math.round(edges[b] / 10) * 10,
+                            band: b, region, row: gi, key: Math.round(present[b] / 10) * 10,
                             lines, text: lines.map(l => l.text).join(" ").replace(/\s+/g, " ").trim()
                         });
                     }
@@ -3478,9 +3510,8 @@ async function extractDocument(fileUrl, log, docLang) {
                 });
             });
 
-            /* 3. which columns are index columns and which are the UNFCCC
-                  question text, decided over the whole page so a table split
-                  across slabs is still read as one table */
+            /* 4. classify the columns once for the whole document, so a table
+                  broken across slabs or pages is still read as one table */
             const foundTable = parts.some(pt => pt.cells);
             const byKey = new Map();
             parts.forEach(pt => (pt.cells || []).forEach(c => {
@@ -3489,19 +3520,11 @@ async function extractDocument(fileUrl, log, docLang) {
             }));
             const indexKeys = new Set(), templateKeys = new Set();
             byKey.forEach((cs, key) => {
-                if (cs.length < 2) return;
                 if (cs.filter(c => ROW_INDEX_RE.test(c.text)).length / cs.length >= 0.6) indexKeys.add(key);
                 else if (RULES.TEMPLATE_COLUMNS && cs.filter(c => isTemplateText(c.text)).length / cs.length >= 0.5) templateKeys.add(key);
             });
-            /* a single-row table cannot be judged by proportion, so the question
-               text is still recognised on its own wording */
-            byKey.forEach((cs, key) => {
-                if (cs.length === 1 && RULES.TEMPLATE_COLUMNS && isTemplateText(cs[0].text)) templateKeys.add(key);
-            });
 
             if (!foundTable && twoCol) {
-                /* no table here: a genuinely two-column page is read as two
-                   independent flows, which is what v2.0 did */
                 ordered = twoColFallback();
                 parts.length = 0;
             }
@@ -3511,7 +3534,7 @@ async function extractDocument(fileUrl, log, docLang) {
                 const rowLabel = (pt.cells.find(c => indexKeys.has(c.key)) || {}).text || "";
                 const prompt = (pt.cells.find(c => templateKeys.has(c.key)) || {}).text || "";
                 pt.cells.forEach(c => {
-                    if (indexKeys.has(c.key)) return;                 // the row number is not a statement
+                    if (indexKeys.has(c.key)) return;
                     const isTpl = templateKeys.has(c.key);
                     diag.funnel.tableCells++;
                     if (isTpl) diag.funnel.templateCells++;
@@ -3523,7 +3546,7 @@ async function extractDocument(fileUrl, log, docLang) {
                 });
             });
 
-            if (diag.funnel.tableRegions && !templateKeys.size && !indexKeys.size) {
+            if (foundTable && !templateKeys.size && !indexKeys.size) {
                 diag.tableWarnings.push(`p. ${p}: a table with neither row numbering nor recognisable question text; its cells are read but the rows are not labelled`);
             }
         }
