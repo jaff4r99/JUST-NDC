@@ -378,6 +378,8 @@
         .ex-country-btn:hover { text-decoration:underline; }
         .ex-filter-on { font-weight:600; color:var(--primary); }
         .ex-prov { margin-top:6px; font-size:0.7rem; color:var(--text-muted); }
+        .ex-prompt { font-size:0.76rem; color:#5a5a62; background:#f6f7fb; border-left:3px solid #ccd; border-radius:0 6px 6px 0; padding:6px 10px; margin-bottom:8px; line-height:1.5; }
+        .ex-prompt b { color:#3a3a44; }
         .ex-quote { font-family: Georgia, serif; font-style: italic; margin: 10px 0; line-height: 1.6; color: #222; }
         .ex-why { font-size: 0.78rem; color: #555; background: #fafafa; border-radius: 8px; padding: 9px 12px; line-height: 1.6; }
         .ex-override { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
@@ -1178,7 +1180,7 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.4.0";
+const ENGINE_VERSION = "2.5.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -1207,7 +1209,14 @@ const RULES = {
        one to show whether it survives the choice.                          */
     ROLLUP_RULE: "score",        // "score" (v2.3 default), "ceiling" (the v2.0 method), or "consolidated"
     MIN_UNIT_CHARS: 25,          // shorter fragments are merged into a neighbouring sentence, never dropped
-    DEHYPHENATE: true            // rejoin words broken across a line, unless the hyphen belongs to the term
+    DEHYPHENATE: true,           // rejoin words broken across a line, unless the hyphen belongs to the term
+
+    /* v2.5. Inside a table the coding unit is the cell, not the line and not
+       the column, and the UNFCCC question column is not coded as though the
+       country had written it. Set TEMPLATE_COLUMNS to false to code every
+       column and report that you did. */
+    TABLE_UNIT: "cell",
+    TEMPLATE_COLUMNS: true
 };
 
 const tierRank = t => RULES.TIER_ORDER.indexOf(t);
@@ -1815,7 +1824,8 @@ FEATURES.dutyLanguage = [
 FEATURES.commitVerb = FEATURES.commitVerb.concat([
     /(?<![\p{L}])(committing to|commit to|commitment to|commitments to|undertakes?|undertaking to|pledges?|pledging to|resolves? to|reaffirms? its commitment|has committed|have committed|we will|it will)(?![\p{L}])/iu,
     /(?<![\p{L}])(comprometiendose|comprometi\u00e9ndose|se compromete a|asume el compromiso)(?![\p{L}])/iu,
-    /(?<![\p{L}])(s'engageant|prend l'engagement|s'oblige)(?![\p{L}])/iu
+    /(?<![\p{L}])(s'engageant|prend l'engagement|s'oblige)(?![\p{L}])/iu,
+    /(?<![\p{L}])(has|have|was|were|is|are|been)\s+(allocated|earmarked|committed|designated|approved|ring-?fenced|set aside)(?![\p{L}])/iu
 ]);
 
 /* Recall net additions. These never assign a dimension or a tier; they only
@@ -2085,6 +2095,69 @@ function sectionLabel(section) {
     return section.detail && section.detail !== section.type
         ? section.type + " \u00b7 " + section.detail
         : section.type;
+}
+
+/* ============================================================================
+   ICTU template text, v2.5
+
+   Most NDCs present the information necessary for clarity, transparency and
+   understanding as a table whose left column is the question text from
+   decision 4/CMA.1, annex I, and whose right column is the country's answer.
+   The question text is identical in every NDC in the corpus. Coding it produces
+   the same false positive in every country: "Information on the planning
+   processes that the Party undertook" is a procedural-sounding sentence that no
+   country wrote and that commits no one to anything.
+
+   Template cells are therefore detected, kept, shown and exported, but not
+   coded. They are attached to the answer cell in the same row as its prompt, so
+   the coder reads the answer against the question it answers, which is more
+   context than the line-by-line reading ever gave.
+   ========================================================================== */
+
+const ROW_INDEX_RE = /^\(?\d{1,2}\s*[a-z]?\)?[.)]?$/i;
+
+const ICTU_TEMPLATE = [
+    "quantifiable information on the reference",
+    "time frames and/or periods for implementation",
+    "time frame and/or period for implementation",
+    "scope and coverage",
+    "planning processes",
+    "assumptions and methodological approaches",
+    "how the party considers that its nationally determined contribution is fair and ambitious",
+    "contributes towards achieving the objective of the convention",
+    "information on the planning processes that the party undertook",
+    "reference year(s), base year(s)",
+    "single-year or multi-year target",
+    "sectors, gases, categories and pools",
+    "mitigation co-benefits resulting from",
+    "decision 1/cp.21",
+    "any other information the party may wish to provide",
+    "information necessary for clarity, transparency and understanding",
+    "target relative to the reference indicator",
+    "information on sources of data used in quantifying the reference",
+    "circumstances under which the party may update the values",
+    "specific information applicable to parties, including regional economic integration",
+    "contextual matters, including, inter alia, as appropriate",
+    "consideration of the fairness and ambition",
+    "social and economic consequences of response measures",
+    "how the party has addressed",
+    "fair and ambitious in the light of its national circumstances",
+    "informacion cuantificable sobre el punto de referencia",
+    "informations quantifiables sur le point de reference",
+    "informations quantifiables sur le point de référence"
+];
+
+function isTemplateText(t) {
+    const s = String(t || "").toLowerCase().replace(/\s+/g, " ").trim()
+        .replace(/^\(?\d{1,2}\s*[a-z]?\)?[.)]?\s+/, "");   // drop a leading row index: "4a Information on..."
+    if (!s || s.length > 600) return false;
+    if (ICTU_TEMPLATE.some(p => s.includes(p))) return true;
+    /* the generic shape of the question column: a third-person prompt about
+       "the Party" or "the nationally determined contribution", usually closing
+       on a semicolon rather than a full stop */
+    return /^(information on|whether|how the party|how the nationally|how each|description of|general description|specific information|contextual matters|any other information)/.test(s)
+        && /\bpart(y|y's|ies)\b|\bnationally determined contribution\b/.test(s)
+        && s.length < 400;
 }
 
 function looksLikeHeading(line) {
@@ -2814,10 +2887,13 @@ function buildRubric(profile, statements) {
    Examples filed from the ledger carry their locator and their provenance.
    ========================================================================== */
 
-let exampleFilter = { country: "", dimension: "All" };
+/* Nothing is listed until a country is chosen. With a corpus of 190 parties an
+   undifferentiated list of every example is not a reading surface, and the
+   country index above it is the way in. "All countries" stays available. */
+let exampleFilter = { country: null, dimension: "All" };
 
 function setExampleCountry(name) {
-    exampleFilter.country = (exampleFilter.country === name) ? "" : name;
+    exampleFilter.country = (exampleFilter.country === name) ? null : name;
     renderExamples();
     const el = document.getElementById('examples-heading');
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2835,7 +2911,9 @@ function renderExamples() {
     if (!containerEmb) return;
 
     const all = codingExamples || [];
-    const shown = all.filter(ex => {
+    const none = exampleFilter.country === null;
+    const shown = none ? [] : all.filter(ex => {
+        if (exampleFilter.country === "" ) return true;
         if (exampleFilter.country && (ex.country || "").trim().toLowerCase() !== exampleFilter.country.trim().toLowerCase()) return false;
         if (exampleFilter.dimension !== "All" && (ex.dimension || "") !== exampleFilter.dimension) return false;
         return true;
@@ -2846,9 +2924,13 @@ function renderExamples() {
         bar.innerHTML = `
             <div class="lf-group"><span>Dimension:</span>
             ${["All", ...DIMS4].map(d => `<button class="lf-btn ${exampleFilter.dimension === d ? 'lf-on' : ''}" onclick="setExampleDimension('${d}')">${d}</button>`).join("")}</div>
-            ${exampleFilter.country ? `<div class="lf-group"><span class="ex-filter-on">Showing ${esc(exampleFilter.country)} only</span>
-                <button class="lf-btn" onclick="setExampleCountry('')">show every country</button></div>` : ""}
-            <span class="lf-count">${shown.length} of ${all.length} example${all.length === 1 ? "" : "s"}</span>`;
+            <div class="lf-group">
+                ${exampleFilter.country ? `<span class="ex-filter-on">Showing ${esc(exampleFilter.country)} only</span>
+                    <button class="lf-btn" onclick="setExampleCountry(null)">clear</button>` : ""}
+                <button class="lf-btn ${exampleFilter.country === "" ? 'lf-on' : ''}" onclick="setExampleCountry('')">All countries</button>
+            </div>
+            <span class="lf-count">${none ? `${all.length} example(s) on file. Choose a country above to read them.`
+                : `${shown.length} of ${all.length} example${all.length === 1 ? "" : "s"}`}</span>`;
     }
 
     let htmlEmb = '', htmlPar = '', htmlTok = '';
@@ -2894,10 +2976,17 @@ function renderExamples() {
         else htmlTok += cardHtml;
     });
 
-    const empty = lvl => `<p class="muted-note">No ${lvl} examples${exampleFilter.country ? " for " + esc(exampleFilter.country) : ""}${exampleFilter.dimension !== "All" ? " in " + exampleFilter.dimension + " justice" : ""}.</p>`;
-    containerEmb.innerHTML = htmlEmb || empty("embedded");
-    containerPar.innerHTML = htmlPar || empty("partial");
-    containerTok.innerHTML = htmlTok || empty("tokenistic");
+    if (none) {
+        const prompt = `<p class="muted-note">Choose a country above to read its coding examples.</p>`;
+        containerEmb.innerHTML = prompt;
+        containerPar.innerHTML = "";
+        containerTok.innerHTML = "";
+    } else {
+        const empty = lvl => `<p class="muted-note">No ${lvl} examples${exampleFilter.country ? " for " + esc(exampleFilter.country) : ""}${exampleFilter.dimension !== "All" ? " in " + exampleFilter.dimension + " justice" : ""}.</p>`;
+        containerEmb.innerHTML = htmlEmb || empty("embedded");
+        containerPar.innerHTML = htmlPar || empty("partial");
+        containerTok.innerHTML = htmlTok || empty("tokenistic");
+    }
 
     if (typeof renderCountryIndex === "function") renderCountryIndex();
 }
@@ -3137,7 +3226,8 @@ async function extractDocument(fileUrl, log, docLang) {
     const diag = { pages: pdf.numPages, lowTextPages: 0, skipped: [], totalChars: 0, columns: 0,
                    lang: docLang || "Unknown",
                    funnel: { sentencesSeen: 0, tooShort: 0, numericTable: 0, headings: 0, kept: 0,
-                             lines: 0, paragraphs: 0, rejoined: 0, tableRegions: 0, tableCells: 0 } };
+                             lines: 0, paragraphs: 0, rejoined: 0, tableRegions: 0, tableCells: 0,
+                             templateCells: 0, templateSkipped: 0 }, templateSamples: [], tableWarnings: [] };
     let currentHeading = "", currentSection = { type: "UNKNOWN", narrative: false };
     let unitIndex = 0, orderIndex = 0, blockIndex = 0;
 
@@ -3193,7 +3283,12 @@ async function extractDocument(fileUrl, log, docLang) {
            perhaps 12; a column gutter is far wider. False splits inside prose
            are caught by the column-agreement test below and rejoined. */
         const CELL_GAP = Math.max(14, pageW * 0.028);
-        const COL_TOL = pageW * 0.06;
+        /* Tolerance for treating two cell starts as the same column. At 6% of
+           the page a narrow index column merges into the label column beside
+           it, which then hides the row numbering and defeats template
+           detection. 3% keeps them apart while still absorbing the small
+           variation in where a wrapped line starts. */
+        const COL_TOL = Math.max(18, pageW * 0.03);
 
         const cellsOf = r => {
             const s = r.slice().sort((a, b) => a.x - b.x);
@@ -3245,6 +3340,17 @@ async function extractDocument(fileUrl, log, docLang) {
             col: 0, table: false, region: 0
         });
 
+        /* The coding unit inside a table is the CELL, never the line and never
+           the column. A column read end to end runs one row's answer into the
+           next row's answer; a line read across runs the question into the
+           answer. Both destroy the thing being coded, which is one party's
+           statement about one matter.
+
+           So: split rows into cells, group physical rows into logical rows on
+           the row gap or on an index column, and emit each (row, column) cell
+           as one atomic block that the paragraph builder may never join to
+           another. Reading order is row by row, then left to right, which is
+           how the table is meant to be read. */
         const readRows = rowArr => {
             const out = [];
             let region = 0, i = 0;
@@ -3254,11 +3360,6 @@ async function extractDocument(fileUrl, log, docLang) {
                 const block = [];
                 while (j < rowArr.length && rowArr[j].cells.length >= 2) { block.push(rowArr[j]); j++; }
 
-                /* Is this a table? Not "do two rows agree on their second cell",
-                   which a header row with a different shape defeats, but "are
-                   there at least two columns that each appear in at least two
-                   rows". A hanging indent or a stray tab stop cannot satisfy
-                   that; a table always does. */
                 const cols = clusterCols(block.flatMap(r => r.cells.map(c => c.x)));
                 const rowsPerCol = cols.map((v, ci) =>
                     block.filter(r => r.cells.some(c => nearestCol(c.x, cols) === ci)).length);
@@ -3270,30 +3371,98 @@ async function extractDocument(fileUrl, log, docLang) {
                     i = j; continue;
                 }
 
-                /* A cell's text usually runs on over rows that carry only that
-                   column: the second paragraph of a wide value cell sits alone
-                   on its own lines. Those rows belong to the table, not to the
-                   prose after it. Only indented columns extend the region,
-                   because a continuation at the left margin cannot be told
-                   apart from the paragraph that follows the table. */
+                /* Keep absorbing rows into the region. A row with two or more
+                   cells is another table row. A row with one cell continues the
+                   cell above it only when it sits in an indented column and is
+                   not running the width of the page, which is what prose after
+                   the table does. */
                 while (j < rowArr.length) {
-                    const touchesInner = rowArr[j].items.some(it => {
-                        const ci = nearestCol(it.x, cols);
-                        return ci > 0 && Math.abs(it.x - cols[ci]) <= COL_TOL;
-                    });
-                    if (!touchesInner) break;
-                    block.push(rowArr[j]); j++;
+                    const r = rowArr[j];
+                    if (r.cells.length >= 2) { block.push(r); j++; continue; }
+                    const c = r.cells[0];
+                    const width = c.x2 - c.x;
+                    const ci = nearestCol(c.x, cols);
+                    if (width <= pageW * 0.55 && ci > 0 && Math.abs(c.x - cols[ci]) <= COL_TOL) {
+                        block.push(r); j++; continue;
+                    }
+                    break;
                 }
 
                 region++;
                 diag.funnel.tableRegions++;
                 block.forEach(r => { r.parts = splitByCols(r.items, cols); });
-                cols.forEach((cx, ci) => {
-                    block.forEach(r => {
-                        if (r.parts[ci]) {
-                            out.push({ y: r.y, h: r.h, text: r.parts[ci].text, col: ci, table: true, region });
-                            diag.funnel.tableCells++;
-                        }
+
+                /* What kind of column is each one? An index column is short
+                   numerals (4, 4a, (3)). A template column is the UNFCCC
+                   question text, which is identical in every NDC and is not the
+                   country's statement about anything. */
+                const stats = cols.map((v, ci) => {
+                    const cells = block.map(r => r.parts[ci]).filter(Boolean);
+                    return {
+                        n: cells.length,
+                        idx: cells.filter(c => ROW_INDEX_RE.test(c.text)).length,
+                        tpl: cells.filter(c => isTemplateText(c.text)).length
+                    };
+                });
+                const indexCol = stats.findIndex(s => s.n >= 2 && s.idx / s.n >= 0.6);
+                const templateCol = RULES.TEMPLATE_COLUMNS
+                    ? stats.findIndex((s, ci) => ci !== indexCol && s.n >= 2 && s.tpl / s.n >= 0.5)
+                    : -1;
+
+                /* Logical rows. Three signals, because no single one is
+                   reliable across the formats NDCs use.
+                     1. an index column marks rows exactly (4a, 4b, ...)
+                     2. failing that, cell padding between rows is wider than
+                        line spacing inside a cell
+                     3. failing both, a row that fills every core column, where
+                        the row above it also did, is a single-line row in a
+                        table whose cells do not wrap
+                   Where none applies the rows cannot be separated with
+                   confidence, and the region is flagged rather than guessed at,
+                   because merging two parties' measures into one statement and
+                   splitting one sentence in two are both worse than saying so. */
+                const vgaps = [];
+                for (let k = 1; k < block.length; k++) vgaps.push(Math.abs(block[k - 1].y - block[k].y));
+                const sortedV = vgaps.slice().sort((a, b) => a - b);
+                const medRowGap = sortedV.length ? sortedV[Math.floor(sortedV.length / 2)] : 12;
+                const gapVaries = sortedV.length > 1 && sortedV[sortedV.length - 1] > Math.max(medRowGap * 1.45, medRowGap + 4);
+                const coreCols = cols.map((v, ci) => ci)
+                    .filter(ci => block.filter(r => r.parts[ci]).length >= block.length * 0.5);
+                const isFull = r => coreCols.length > 0 && coreCols.every(ci => !!r.parts[ci]);
+
+                if (indexCol < 0 && !gapVaries && !block.every(isFull)) {
+                    diag.tableWarnings.push(`p. ${p}: a table with no row numbering and even line spacing; rows may not be separated correctly`);
+                }
+
+                const bands = [];
+                block.forEach((r, k) => {
+                    const gap = k ? Math.abs(block[k - 1].y - r.y) : 0;
+                    let isNew;
+                    if (k === 0) isNew = true;
+                    else if (indexCol >= 0) isNew = !!r.parts[indexCol];
+                    else isNew = gap > Math.max(medRowGap * 1.45, medRowGap + 4)
+                              || (isFull(r) && isFull(block[k - 1]));
+                    if (isNew) bands.push([]);
+                    bands[bands.length - 1].push(r);
+                });
+
+                bands.forEach((bandRows, bi) => {
+                    const cellText = ci => bandRows.map(r => r.parts[ci]).filter(Boolean).map(c => c.text).join(" ");
+                    const rowLabel = indexCol >= 0 ? cellText(indexCol) : "";
+                    const prompt = templateCol >= 0 ? cellText(templateCol) : "";
+                    cols.forEach((cx, ci) => {
+                        if (ci === indexCol) return;
+                        const rowsHere = bandRows.filter(r => r.parts[ci]);
+                        if (!rowsHere.length) return;
+                        const cellId = "t" + region + "r" + bi + "c" + ci;
+                        const isTpl = ci === templateCol;
+                        diag.funnel.tableCells++;
+                        if (isTpl) diag.funnel.templateCells++;
+                        rowsHere.forEach(r => out.push({
+                            y: r.y, h: r.h, text: r.parts[ci].text,
+                            col: ci, table: true, region, cellId,
+                            template: isTpl, prompt, rowLabel
+                        }));
                     });
                 });
                 i = j;
@@ -3342,7 +3511,9 @@ async function extractDocument(fileUrl, log, docLang) {
            read by the coder is the whole paragraph the sentence sits in.        */
 
         const numbered = ordered.map((l, i) => ({ y: l.y, h: l.h, text: l.text, no: i + 1,
-                                                  col: l.col || 0, table: !!l.table, region: l.region || 0 }));
+                                                  col: l.col || 0, table: !!l.table, region: l.region || 0,
+                                                  cellId: l.cellId || "", template: !!l.template,
+                                                  prompt: l.prompt || "", rowLabel: l.rowLabel || "" }));
         diag.funnel.lines += numbered.length;
 
         const gaps = [];
@@ -3360,7 +3531,8 @@ async function extractDocument(fileUrl, log, docLang) {
         const openBlock = line => {
             cur = { text: "", offsets: [], lineStart: line.no, lineEnd: line.no,
                     heading: currentHeading, section: currentSection,
-                    table: !!line.table, col: line.col || 0 };
+                    table: !!line.table, col: line.col || 0, cellId: line.cellId || "",
+                    template: !!line.template, prompt: line.prompt || "", rowLabel: line.rowLabel || "" };
         };
         const addLine = line => {
             let sep = cur.text ? " " : "";
@@ -3396,7 +3568,8 @@ async function extractDocument(fileUrl, log, docLang) {
             const prevClosed = prev ? /[.!?:;\u3002\uff01\uff1f\u061f]["'\u201d\u2019\u00bb)\]]*\s*$/.test(prev.text) : true;
             const prevShort = prev ? prev.text.length < medLen * 0.72 : true;
             const bigGap = prev ? gap > medGap * 1.55 : false;
-            const cellChange = prev && (line.col !== prev.col || line.table !== prev.table || line.region !== prev.region);
+            const cellChange = prev && (line.cellId !== prev.cellId || line.col !== prev.col
+                                     || line.table !== prev.table || line.region !== prev.region);
             if (!cur || startsList || bigGap || cellChange || (prevClosed && prevShort)) { closeBlock(); openBlock(line); }
             addLine(line);
         });
@@ -3412,6 +3585,14 @@ async function extractDocument(fileUrl, log, docLang) {
         const pageUnits = [];
         blocks.forEach(b => {
             if (b.text.trim().length < 2) return;
+            /* The question column of an ICTU table is the same text in every
+               NDC. It is recorded as the prompt on the answer cell rather than
+               coded as though the country had written it. */
+            if (b.template) {
+                diag.funnel.templateSkipped++;
+                if (diag.templateSamples.length < 4) diag.templateSamples.push(b.text.slice(0, 140));
+                return;
+            }
             diag.funnel.paragraphs++;
             const paraId = `p${p}-b${blockIndex++}`;
             const segs = segmentSentences(b.text);
@@ -3432,7 +3613,8 @@ async function extractDocument(fileUrl, log, docLang) {
                     paraLocator: `p. ${p}, ` + (b.lineEnd > b.lineStart ? `lines ${b.lineStart}\u2013${b.lineEnd}` : `line ${b.lineStart}`),
                     sentIndex: si, sentCount: segs.length,
                     heading: b.heading, section: b.section, column: twoCol, lang: docLang || "Unknown",
-                    table: !!b.table, cellColumn: b.col || 0
+                    table: !!b.table, cellColumn: b.col || 0, cellId: b.cellId || "",
+                    prompt: b.prompt || "", rowLabel: b.rowLabel || ""
                 });
             });
         });
@@ -3511,6 +3693,8 @@ function analyseUnits(units) {
             text: u.text, sentStart: u.sentStart, sentEnd: u.sentEnd,
             excerpt: para, context: para, before: u.before || "", after: u.after || "",
             lang: u.lang || "Unknown", heading: u.heading, section: u.section,
+            table: !!u.table, cellColumn: u.cellColumn || 0, cellId: u.cellId || "",
+            prompt: u.prompt || "", rowLabel: u.rowLabel || "",
             dimension: dim.dimension, dimScore: dim.score, alternates: dim.alternates,
             needsReview: dim.needsReview, dimReason: dim.reason,
             matched: dim.dimension ? dim.evidence[dim.dimension] : { core: [], supporting: [], patterns: 0 },
@@ -3940,6 +4124,8 @@ async function runFullCountryEvaluation() {
         diagBox.innerHTML += `<div class="diag-ok"><b>Retrieval funnel.</b> ${diag.pages} pages, ${diag.skipped.length} skipped (${diag.skipped.map(s => s.page + ": " + s.reason).join("; ") || "none"}), ${diag.columns} page(s) read as two columns, ${f.headings} headings used to tag sections.
         ${f.lines} text lines were rebuilt into <b>${f.paragraphs} paragraphs</b>, rejoining ${f.rejoined} words broken across a line break. Of ${f.sentencesSeen} sentence candidates: ${f.tooShort} merged into a neighbouring sentence or discarded as fragments, ${f.numericTable} discarded as table rows, <b>${f.kept} carried forward as coding units</b>.
         The coding unit is the sentence; the excerpt and the tier evidence are the paragraph it sits in (RULES.EVIDENCE_SCOPE = ${RULES.EVIDENCE_SCOPE}). Line numbers count text lines top to bottom on the page as the parser rebuilt it, left column first where a page is read as two columns. Document language recorded as ${esc(diag.lang)}.</div>`;
+        if (f.tableRegions) diagBox.innerHTML += `<div class="diag-ok"><b>Tables.</b> ${f.tableRegions} table region(s) read cell by cell rather than line by line, giving ${f.tableCells} cells. ${f.templateSkipped} cell(s) were the standard UNFCCC question text and were kept as the prompt on the answer beside them rather than coded as the country's own words${diag.templateSamples.length ? ", for example: " + esc(diag.templateSamples[0]) + "…" : ""}.</div>`;
+        (diag.tableWarnings || []).forEach(w => { diagBox.innerHTML += `<div class="diag-warn"><b>Check this table.</b> ${esc(w)}.</div>`; });
 
         lastEvaluation = evaluateCountry(cfg.c, units, diag);
         renderEvaluation();
@@ -4231,6 +4417,7 @@ function renderLedger() {
                 <div class="ex-chips">${chips}</div>
             </div>
             <div class="ex-content">
+                ${s.prompt ? `<div class="ex-prompt"><b>Answering${s.rowLabel ? " item " + esc(s.rowLabel) : ""}:</b> ${esc(s.prompt)}</div>` : ""}
                 <p class="ex-quote">${excerptHtml(s)}</p>
                 ${renderTranslation(s)}
             </div>
@@ -4619,6 +4806,7 @@ function exportEvaluationCsv() {
     const head = ["country", "doc_order", "statement_id", "paragraph_id", "page", "line_start", "line_end",
         "paragraph_line_start", "paragraph_line_end", "locator",
         "section", "heading", "cluster", "scope", "conditional", "structural",
+        "from_table", "table_column", "table_row_label", "template_prompt",
         "machine_dimension", "machine_tier", "tier_sentence_only", "tier_paragraph", "evidence_scope", "tier_raised_by_paragraph",
         "coder_dimension", "coder_tier", "coder_note", "coder",
         "needs_review", "awaiting_dimension", "implicit_match", "justice_frame_terms",
@@ -4629,7 +4817,8 @@ function exportEvaluationCsv() {
     const rows = R.statements.slice().sort((a, b) => (a.order - b.order) || (a.page - b.page)).map(s => [
         R.country, s.order, s.id, s.paraId, s.page, s.lineStart, s.lineEnd,
         s.paraLineStart, s.paraLineEnd, s.locator,
-        s.section.type, s.heading, s.cluster, s.scope, s.conditional, s.structural,
+        sectionLabel(s.section), s.heading, s.cluster, s.scope, s.conditional, s.structural,
+        !!s.table, s.table ? (s.cellColumn || 0) + 1 : "", s.rowLabel || "", s.prompt || "",
         s.dimension, s.tier, s.tierSentence, s.tierParagraph, s.evidenceScope, s.scopeLift,
         s.override && s.override.dimension, s.override && s.override.tier,
         s.override && s.override.note, s.override && s.override.coder,
