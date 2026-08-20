@@ -380,6 +380,9 @@
         .ex-prov { margin-top:6px; font-size:0.7rem; color:var(--text-muted); }
         .ex-prompt { font-size:0.76rem; color:#5a5a62; background:#f6f7fb; border-left:3px solid #ccd; border-radius:0 6px 6px 0; padding:6px 10px; margin-bottom:8px; line-height:1.5; }
         .ex-prompt b { color:#3a3a44; }
+        .ci-card.ci-on { border-color:var(--primary); box-shadow:0 0 0 2px rgba(0,113,227,.12); }
+        .ci-record { position:absolute; bottom:9px; right:11px; font-size:0.64rem; color:var(--text-muted); border:1px solid #e4e4e8; border-radius:9px; padding:1px 7px; background:#fff; }
+        .ci-record:hover { color:var(--primary); border-color:var(--primary); }
         .ex-quote { font-family: Georgia, serif; font-style: italic; margin: 10px 0; line-height: 1.6; color: #222; }
         .ex-why { font-size: 0.78rem; color: #555; background: #fafafa; border-radius: 8px; padding: 9px 12px; line-height: 1.6; }
         .ex-override { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
@@ -788,6 +791,8 @@
                         <button id="submit-example-btn" onclick="submitExample()" class="download-btn" style="background: var(--primary); color:#fff;">Save Example to Hub</button>
                     </div>
 
+                    <h2 id="examples-heading" style="margin-top:26px;">Examples</h2>
+                    <div id="examples-filter-bar" class="ledger-controls"></div>
                     <h3 style="color: var(--embedded); margin-top: 30px; border-bottom: 2px solid var(--embedded); padding-bottom: 5px;">Embedded Commitments</h3>
                     <div class="ui-box">
                         <h3 style="margin-top:0;">By country</h3>
@@ -795,8 +800,6 @@
                         <div id="country-index"></div>
                     </div>
 
-                    <h2 id="examples-heading" style="margin-top:26px;">Examples</h2>
-                    <div id="examples-filter-bar" class="ledger-controls"></div>
                     <div id="examples-list-embedded"></div>
 
                     <h3 style="color: var(--partial); margin-top: 30px; border-bottom: 2px solid var(--partial); padding-bottom: 5px;">Partial Commitments</h3>
@@ -1180,7 +1183,7 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.5.0";
+const ENGINE_VERSION = "2.6.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -3258,232 +3261,177 @@ async function extractDocument(fileUrl, log, docLang) {
         const twoCol = rows.size > 8 && (leftOnly + rightOnly) / rows.size > 0.75 && leftOnly > 2 && rightOnly > 2;
         if (twoCol) diag.columns++;
 
-        /* --- v2.4 table-aware row reading ---------------------------------
-           v2.3 joined every text item sharing a baseline into one line across
-           the full width of the page. In the two-column tables that carry the
-           ICTU information in most NDCs, that concatenates the label cell and
-           the value cell into a single sentence, and the paragraph builder then
-           interleaves the two columns:
+        /* --- v2.6 tables read by whitespace corridor ----------------------
+           Every earlier attempt looked for two cells sharing one baseline. Real
+           NDC tables do not work that way: the label column and the answer
+           column are typeset on independent line grids, so no baseline carries
+           both, no row has two cells, and the detector never fires. What is left
+           is a y-sorted stream alternating between columns, which is where
 
-             "The NDC was prepared on the basis of ... Information on the
-              planning processes that the implementation plan for ..."
+             "How the Party has taken into consideration 3c Iceland's national
+              inventory document describes the sources considered"
 
-           which is two different texts spliced together. Cells are now split on
-           the horizontal gap, runs of rows that agree on where their columns
-           start are treated as a table region, and each region is read column
-           by column. Prose rows are read exactly as before.                  */
+           comes from: a line of the question followed by a line of the answer.
+
+           The page is therefore cut horizontally first, into slabs separated by
+           vertical whitespace, and each slab is then cut vertically at any x
+           that every line in that slab leaves empty. A gutter must have text on
+           both sides of it inside the slab, which is what tells a column
+           boundary apart from a margin. Baselines are never consulted.        */
 
         const pageW = vp.width;
-
-        /* A geometric threshold, not an adaptive one. Adapting to the median
-           gap on the page fails on exactly the documents this is for: when a
-           PDF emits each table cell as a single text item, the median gap IS
-           the column gap, and any multiple of it hides the thing being looked
-           for. Inter-word gaps are 2-6pt and justified text stretches them to
-           perhaps 12; a column gutter is far wider. False splits inside prose
-           are caught by the column-agreement test below and rejoined. */
-        const CELL_GAP = Math.max(14, pageW * 0.028);
-        /* Tolerance for treating two cell starts as the same column. At 6% of
-           the page a narrow index column merges into the label column beside
-           it, which then hides the row numbering and defeats template
-           detection. 3% keeps them apart while still absorbing the small
-           variation in where a wrapped line starts. */
-        const COL_TOL = Math.max(18, pageW * 0.03);
-
-        const cellsOf = r => {
-            const s = r.slice().sort((a, b) => a.x - b.x);
-            const out = [];
-            let cur = null;
-            s.forEach((it, i) => {
-                const gap = i > 0 ? it.x - (s[i - 1].x + s[i - 1].w) : 0;
-                if (!cur || gap > CELL_GAP) { cur = { x: it.x, x2: it.x + it.w, text: it.str }; out.push(cur); }
-                else { cur.text += (gap > 1.2 ? " " : "") + it.str; cur.x2 = it.x + it.w; }
+        const rowList = [...rows.entries()].sort((a, b) => b[0] - a[0])
+            .map(([y, its]) => {
+                const sorted = its.slice().sort((a, b) => a.x - b.x);
+                const spans = [];
+                sorted.forEach(it => {
+                    const a = it.x, b = it.x + it.w;
+                    const last = spans[spans.length - 1];
+                    if (last && a - last[1] <= 1.5) last[1] = Math.max(last[1], b);
+                    else spans.push([a, b]);
+                });
+                return { y, items: sorted, spans, h: Math.max(...its.map(i => i.h)) };
             });
-            return out.map(c => ({ x: c.x, x2: c.x2, text: c.text.replace(/\s+/g, " ").trim() }))
-                      .filter(c => c.text.length);
-        };
 
-        const clusterCols = starts => {
-            const s = starts.slice().sort((a, b) => a - b);
-            const cols = [];
-            s.forEach(v => {
-                const last = cols[cols.length - 1];
-                if (last && v - last.v <= COL_TOL) { last.n++; last.sum += v; last.v = last.sum / last.n; }
-                else cols.push({ v, n: 1, sum: v });
+        const joinItems = its => its.slice().sort((a, b) => a.x - b.x)
+            .reduce((acc, it, i, arr) => acc + (i > 0 && (it.x - (arr[i - 1].x + arr[i - 1].w)) > 1.2 ? " " : "") + it.str, "")
+            .replace(/\s+/g, " ").trim();
+        const flowLine = r => ({ y: r.y, h: r.h, text: joinItems(r.items), col: 0, table: false, region: 0, cellId: "" });
+        const rowClear = (r, x) => !r.spans.some(s => s[0] - 0.5 <= x && x <= s[1] + 0.5);
+
+        let ordered = [];
+        const twoColFallback = () => {
+            const L = [], R = [];
+            rowList.forEach(r => {
+                const maxX = Math.max(...r.spans.map(s => s[1]));
+                (maxX < mid + band ? L : R).push(r);
             });
-            return cols.map(c => c.v);
+            return L.map(flowLine).concat(R.map(flowLine));
         };
 
-        const nearestCol = (x, cols) => {
-            let best = 0, bd = Infinity;
-            cols.forEach((v, k) => { const d = Math.abs(x - v); if (d < bd) { bd = d; best = k; } });
-            return best;
-        };
+        if (rowList.length < 3) {
+            ordered = twoCol ? twoColFallback() : rowList.map(flowLine);
+        } else {
+            /* 1. horizontal cuts: slabs separated by vertical whitespace */
+            const vg = [];
+            for (let i = 1; i < rowList.length; i++) vg.push(Math.abs(rowList[i - 1].y - rowList[i].y));
+            const vgSorted = vg.slice().sort((a, b) => a - b);
+            const medV = vgSorted.length ? vgSorted[Math.floor(vgSorted.length / 2)] : 12;
+            const slabCut = Math.max(medV * 1.6, medV + 5);
+            const slabs = [[]];
+            rowList.forEach((r, i) => {
+                if (i > 0 && Math.abs(rowList[i - 1].y - r.y) > slabCut) slabs.push([]);
+                slabs[slabs.length - 1].push(r);
+            });
 
-        /* Second pass. The gap test finds the columns using the rows whose
-           gutter is wide; it cannot find them on a row whose left cell happens
-           to fill almost to the gutter, and a 20pt gutter is common. Once the
-           columns are known from the rest of the block, every row is re-split
-           against those column positions instead of against a gap threshold. */
-        const splitByCols = (items, cols) => {
-            const buckets = cols.map(() => []);
-            items.slice().sort((a, b) => a.x - b.x).forEach(it => buckets[nearestCol(it.x, cols)].push(it));
-            return buckets.map((b, ci) => b.length ? {
-                x: cols[ci],
-                text: b.reduce((acc, it, i, arr) => acc + (i > 0 && (it.x - (arr[i - 1].x + arr[i - 1].w)) > 1.2 ? " " : "") + it.str, "")
-                       .replace(/\s+/g, " ").trim()
-            } : null);
-        };
-
-        const flowLine = (r, joiner) => ({
-            y: r.y, h: r.h, text: r.cells.map(c => c.text).join(joiner || " ").replace(/\s+/g, " ").trim(),
-            col: 0, table: false, region: 0
-        });
-
-        /* The coding unit inside a table is the CELL, never the line and never
-           the column. A column read end to end runs one row's answer into the
-           next row's answer; a line read across runs the question into the
-           answer. Both destroy the thing being coded, which is one party's
-           statement about one matter.
-
-           So: split rows into cells, group physical rows into logical rows on
-           the row gap or on an index column, and emit each (row, column) cell
-           as one atomic block that the paragraph builder may never join to
-           another. Reading order is row by row, then left to right, which is
-           how the table is meant to be read. */
-        const readRows = rowArr => {
-            const out = [];
-            let region = 0, i = 0;
-            while (i < rowArr.length) {
-                if (rowArr[i].cells.length < 2) { out.push(flowLine(rowArr[i])); i++; continue; }
-                let j = i;
-                const block = [];
-                while (j < rowArr.length && rowArr[j].cells.length >= 2) { block.push(rowArr[j]); j++; }
-
-                const cols = clusterCols(block.flatMap(r => r.cells.map(c => c.x)));
-                const rowsPerCol = cols.map((v, ci) =>
-                    block.filter(r => r.cells.some(c => nearestCol(c.x, cols) === ci)).length);
-                const tabular = block.length >= 2 && cols.length >= 2
-                             && rowsPerCol.filter(n => n >= 2).length >= 2;
-
-                if (!tabular) {
-                    block.forEach(r => out.push(flowLine(r, "  ")));
-                    i = j; continue;
+            /* 2. vertical cuts inside each slab */
+            const parts = [];      // { flow: rows } or { cells: [...] }
+            let region = 0;
+            slabs.forEach(slab => {
+                if (slab.length < 2) { parts.push({ flow: slab }); return; }
+                const sMin = Math.min(...slab.flatMap(r => r.spans.map(s => s[0])));
+                const sMax = Math.max(...slab.flatMap(r => r.spans.map(s => s[1])));
+                const cors = [];
+                let run = null;
+                for (let x = sMin + 4; x <= sMax - 4; x += 2) {
+                    if (slab.every(r => rowClear(r, x))) { if (run) run.x1 = x; else run = { x0: x, x1: x }; }
+                    else { if (run && run.x1 - run.x0 >= 8) cors.push(run); run = null; }
                 }
+                if (run && run.x1 - run.x0 >= 8) cors.push(run);
 
-                /* Keep absorbing rows into the region. A row with two or more
-                   cells is another table row. A row with one cell continues the
-                   cell above it only when it sits in an indented column and is
-                   not running the width of the page, which is what prose after
-                   the table does. */
-                while (j < rowArr.length) {
-                    const r = rowArr[j];
-                    if (r.cells.length >= 2) { block.push(r); j++; continue; }
-                    const c = r.cells[0];
-                    const width = c.x2 - c.x;
-                    const ci = nearestCol(c.x, cols);
-                    if (width <= pageW * 0.55 && ci > 0 && Math.abs(c.x - cols[ci]) <= COL_TOL) {
-                        block.push(r); j++; continue;
-                    }
-                    break;
-                }
+                const gutters = cors.filter(g =>
+                    slab.some(r => r.spans.some(s => s[1] <= g.x0 + 0.5)) &&
+                    slab.some(r => r.spans.some(s => s[0] >= g.x1 - 0.5)));
+
+                if (!gutters.length) { parts.push({ flow: slab }); return; }
 
                 region++;
                 diag.funnel.tableRegions++;
-                block.forEach(r => { r.parts = splitByCols(r.items, cols); });
+                const edges = [sMin - 1, ...gutters.map(g => (g.x0 + g.x1) / 2), sMax + 1];
+                const nBands = edges.length - 1;
+                const bandOf = x => { for (let k = 1; k < edges.length; k++) if (x < edges[k]) return k - 1; return nBands - 1; };
 
-                /* What kind of column is each one? An index column is short
-                   numerals (4, 4a, (3)). A template column is the UNFCCC
-                   question text, which is identical in every NDC and is not the
-                   country's statement about anything. */
-                const stats = cols.map((v, ci) => {
-                    const cells = block.map(r => r.parts[ci]).filter(Boolean);
-                    return {
-                        n: cells.length,
-                        idx: cells.filter(c => ROW_INDEX_RE.test(c.text)).length,
-                        tpl: cells.filter(c => isTemplateText(c.text)).length
-                    };
-                });
-                const indexCol = stats.findIndex(s => s.n >= 2 && s.idx / s.n >= 0.6);
-                const templateCol = RULES.TEMPLATE_COLUMNS
-                    ? stats.findIndex((s, ci) => ci !== indexCol && s.n >= 2 && s.tpl / s.n >= 0.5)
-                    : -1;
-
-                /* Logical rows. Three signals, because no single one is
-                   reliable across the formats NDCs use.
-                     1. an index column marks rows exactly (4a, 4b, ...)
-                     2. failing that, cell padding between rows is wider than
-                        line spacing inside a cell
-                     3. failing both, a row that fills every core column, where
-                        the row above it also did, is a single-line row in a
-                        table whose cells do not wrap
-                   Where none applies the rows cannot be separated with
-                   confidence, and the region is flagged rather than guessed at,
-                   because merging two parties' measures into one statement and
-                   splitting one sentence in two are both worse than saying so. */
-                const vgaps = [];
-                for (let k = 1; k < block.length; k++) vgaps.push(Math.abs(block[k - 1].y - block[k].y));
-                const sortedV = vgaps.slice().sort((a, b) => a - b);
-                const medRowGap = sortedV.length ? sortedV[Math.floor(sortedV.length / 2)] : 12;
-                const gapVaries = sortedV.length > 1 && sortedV[sortedV.length - 1] > Math.max(medRowGap * 1.45, medRowGap + 4);
-                const coreCols = cols.map((v, ci) => ci)
-                    .filter(ci => block.filter(r => r.parts[ci]).length >= block.length * 0.5);
-                const isFull = r => coreCols.length > 0 && coreCols.every(ci => !!r.parts[ci]);
-
-                if (indexCol < 0 && !gapVaries && !block.every(isFull)) {
-                    diag.tableWarnings.push(`p. ${p}: a table with no row numbering and even line spacing; rows may not be separated correctly`);
-                }
-
-                const bands = [];
-                block.forEach((r, k) => {
-                    const gap = k ? Math.abs(block[k - 1].y - r.y) : 0;
-                    let isNew;
-                    if (k === 0) isNew = true;
-                    else if (indexCol >= 0) isNew = !!r.parts[indexCol];
-                    else isNew = gap > Math.max(medRowGap * 1.45, medRowGap + 4)
-                              || (isFull(r) && isFull(block[k - 1]));
-                    if (isNew) bands.push([]);
-                    bands[bands.length - 1].push(r);
+                /* Rows inside a slab. A line carrying content in every band is
+                   the first line of a new table row; a line that leaves a band
+                   empty is the continuation of the row above it. This separates
+                   a tightly spaced table whose rows are single lines without
+                   splitting a table whose cells wrap, and needs no assumption
+                   about spacing at all. */
+                const bandsOn = r => { const s = new Set(); r.items.forEach(it => s.add(bandOf(it.x))); return s; };
+                const isFull = r => { const s = bandsOn(r); return s.size === nBands; };
+                const groups = [];
+                slab.forEach(r => {
+                    if (!groups.length || isFull(r)) groups.push([]);
+                    groups[groups.length - 1].push(r);
                 });
 
-                bands.forEach((bandRows, bi) => {
-                    const cellText = ci => bandRows.map(r => r.parts[ci]).filter(Boolean).map(c => c.text).join(" ");
-                    const rowLabel = indexCol >= 0 ? cellText(indexCol) : "";
-                    const prompt = templateCol >= 0 ? cellText(templateCol) : "";
-                    cols.forEach((cx, ci) => {
-                        if (ci === indexCol) return;
-                        const rowsHere = bandRows.filter(r => r.parts[ci]);
-                        if (!rowsHere.length) return;
-                        const cellId = "t" + region + "r" + bi + "c" + ci;
-                        const isTpl = ci === templateCol;
-                        diag.funnel.tableCells++;
-                        if (isTpl) diag.funnel.templateCells++;
-                        rowsHere.forEach(r => out.push({
-                            y: r.y, h: r.h, text: r.parts[ci].text,
-                            col: ci, table: true, region, cellId,
-                            template: isTpl, prompt, rowLabel
-                        }));
-                    });
+                groups.forEach((grp, gi) => {
+                    const cells = [];
+                    for (let b = 0; b < nBands; b++) {
+                        const lines = [];
+                        grp.forEach(r => {
+                            const mine = r.items.filter(it => bandOf(it.x) === b);
+                            if (mine.length) lines.push({ y: r.y, h: r.h, text: joinItems(mine) });
+                        });
+                        if (!lines.length) continue;
+                        cells.push({
+                            band: b, region, row: gi,
+                            key: Math.round(edges[b] / 10) * 10,
+                            lines, text: lines.map(l => l.text).join(" ").replace(/\s+/g, " ").trim()
+                        });
+                    }
+                    if (cells.length) parts.push({ cells });
                 });
-                i = j;
-            }
-            return out;
-        };
-
-        const rowObjs = [...rows.entries()].sort((a, b) => b[0] - a[0])
-            .map(([y, r]) => ({ y, h: Math.max(...r.map(i => i.h)), items: r, cells: cellsOf(r) }))
-            .filter(r => r.cells.length);
-
-        let ordered;
-        if (twoCol) {
-            const L = [], R = [];
-            rowObjs.forEach(r => {
-                const maxX = Math.max(...r.cells.map(c => c.x2));
-                (maxX < mid + band ? L : R).push(r);
             });
-            ordered = readRows(L).concat(readRows(R));
-        } else {
-            ordered = readRows(rowObjs);
+
+            /* 3. which columns are index columns and which are the UNFCCC
+                  question text, decided over the whole page so a table split
+                  across slabs is still read as one table */
+            const foundTable = parts.some(pt => pt.cells);
+            const byKey = new Map();
+            parts.forEach(pt => (pt.cells || []).forEach(c => {
+                if (!byKey.has(c.key)) byKey.set(c.key, []);
+                byKey.get(c.key).push(c);
+            }));
+            const indexKeys = new Set(), templateKeys = new Set();
+            byKey.forEach((cs, key) => {
+                if (cs.length < 2) return;
+                if (cs.filter(c => ROW_INDEX_RE.test(c.text)).length / cs.length >= 0.6) indexKeys.add(key);
+                else if (RULES.TEMPLATE_COLUMNS && cs.filter(c => isTemplateText(c.text)).length / cs.length >= 0.5) templateKeys.add(key);
+            });
+            /* a single-row table cannot be judged by proportion, so the question
+               text is still recognised on its own wording */
+            byKey.forEach((cs, key) => {
+                if (cs.length === 1 && RULES.TEMPLATE_COLUMNS && isTemplateText(cs[0].text)) templateKeys.add(key);
+            });
+
+            if (!foundTable && twoCol) {
+                /* no table here: a genuinely two-column page is read as two
+                   independent flows, which is what v2.0 did */
+                ordered = twoColFallback();
+                parts.length = 0;
+            }
+
+            parts.forEach((pt, pi) => {
+                if (pt.flow) { pt.flow.forEach(r => ordered.push(flowLine(r))); return; }
+                const rowLabel = (pt.cells.find(c => indexKeys.has(c.key)) || {}).text || "";
+                const prompt = (pt.cells.find(c => templateKeys.has(c.key)) || {}).text || "";
+                pt.cells.forEach(c => {
+                    if (indexKeys.has(c.key)) return;                 // the row number is not a statement
+                    const isTpl = templateKeys.has(c.key);
+                    diag.funnel.tableCells++;
+                    if (isTpl) diag.funnel.templateCells++;
+                    const cellId = "t" + c.region + "s" + pi + "r" + (c.row || 0) + "c" + c.band;
+                    c.lines.forEach(l => ordered.push({
+                        y: l.y, h: l.h, text: l.text, col: c.band, table: true, region: c.region,
+                        cellId, template: isTpl, prompt, rowLabel
+                    }));
+                });
+            });
+
+            if (diag.funnel.tableRegions && !templateKeys.size && !indexKeys.size) {
+                diag.tableWarnings.push(`p. ${p}: a table with neither row numbering nor recognisable question text; its cells are read but the rows are not labelled`);
+            }
         }
 
         const lines = ordered.map(l => l.text).filter(Boolean);
@@ -5459,11 +5407,13 @@ function renderCountryIndex() {
         const mine = codes.filter(c => (c.country || "").trim().toLowerCase() === n.toLowerCase());
         const a = assessed[n];
         const byDim = DIMS4.map(d => mine.filter(c => c.dimension === d).length);
-        return `<button class="ci-card" onclick="openCountryRecord('${esc(n).replace(/'/g, "\\'")}')">
+        const q = esc(n).replace(/'/g, "\\'");
+        return `<button class="ci-card${exampleFilter && exampleFilter.country === n ? ' ci-on' : ''}" onclick="setExampleCountry('${q}')" title="show only this country's coding examples">
             <span class="ci-name">${esc(n)}</span>
             <span class="ci-meta">${mine.length} code${mine.length === 1 ? "" : "s"}${a ? " &middot; assessed" : ""}</span>
             <span class="ci-bars">${byDim.map((v, i) => `<span title="${DIMS4[i]}: ${v}" style="height:${Math.min(100, v * 18) + 6}%"></span>`).join("")}</span>
             ${a ? `<span class="ci-verdict" style="background:${VERDICT_COLOR[normaliseVerdict(a.verdict)] || '#ccc'}"></span>` : ""}
+            <span class="ci-record" onclick="event.stopPropagation();openCountryRecord('${q}')" title="open the full country record">record</span>
         </button>`;
     }).join("")}</div>`;
 }
