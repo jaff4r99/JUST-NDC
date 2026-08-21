@@ -461,6 +461,98 @@
         .scr-gloss { color: #a0a0a0; font-size: 0.78rem; }
         .scr-imp { color: #ffbd2e; font-size: 0.72rem; text-transform: uppercase; letter-spacing: .5px; }
         .verify-backlog { display: block; margin-top: 6px; font-size: 0.85rem; color: var(--primary); background: #eef4fb; padding: 7px 11px; border-radius: 6px; }
+
+        /* ---- Framework & Method: the explanatory visuals -------------------
+           Everything here is static and self-contained, so the page can be read
+           and screenshotted without an assessment loaded. Colours are taken
+           from the same constants the tool grades with, so a reader who learns
+           the colour here reads it correctly everywhere else. */
+        .m-toc { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px; }
+        .m-toc a { font-size:0.8rem; text-decoration:none; color:#2a4a6a; background:#eef3f8;
+                   border:1px solid #d7e2ec; border-radius:20px; padding:5px 12px; }
+        .m-toc a:hover { background:#dce8f3; }
+
+        .m-pipe { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:18px 0 6px; }
+        .m-step { background:#fff; border:1px solid #e3e3e6; border-top:4px solid #001f40; border-radius:12px; padding:14px 15px; position:relative; }
+        .m-step .m-num { font-size:0.66rem; letter-spacing:.09em; text-transform:uppercase; color:#8a8a90; font-weight:700; }
+        .m-step h4 { margin:4px 0 7px; font-size:1rem; color:#1d1d1f; }
+        .m-step p { margin:0; font-size:0.85rem; line-height:1.5; color:#444; }
+        .m-step .m-out { margin-top:9px; font-size:0.74rem; color:#2a4a6a; background:#eef3f8; border-radius:6px; padding:5px 8px; }
+        .m-arrow { text-align:center; font-size:1.4rem; color:#b6bcc4; line-height:1; }
+
+        .m-band { display:flex; align-items:stretch; gap:0; border-radius:10px; overflow:hidden; border:1px solid #e3e3e6; margin-bottom:9px; background:#fff; }
+        .m-band-key { width:74px; flex:none; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; padding:10px 4px; }
+        .m-band-key b { font-size:1.5rem; line-height:1; }
+        .m-band-key span { font-size:0.6rem; letter-spacing:.06em; text-transform:uppercase; opacity:.9; margin-top:3px; }
+        .m-band-body { padding:11px 15px; flex:1; }
+        .m-band-body h4 { margin:0 0 4px; font-size:1rem; }
+        .m-band-body p { margin:0 0 5px; font-size:0.87rem; line-height:1.55; color:#444; }
+        .m-band-cut { font-size:0.74rem; color:var(--text-muted); }
+        .m-band-cut b { color:#444; }
+
+        .m-feat { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px; }
+        .m-feat span { font-size:0.74rem; background:#f2f5f8; border:1px solid #e0e6ec; border-radius:14px; padding:3px 10px; color:#33465c; }
+
+        .m-eg { border:1px solid #e3e3e6; border-radius:12px; overflow:hidden; margin-top:14px; background:#fff; }
+        .m-eg-row { display:grid; grid-template-columns:130px 1fr; border-bottom:1px solid #f0f0f2; }
+        .m-eg-row:last-child { border-bottom:none; }
+        .m-eg-lab { padding:12px 14px; font-size:0.78rem; font-weight:700; color:#fff; display:flex; align-items:center; }
+        .m-eg-txt { padding:12px 15px; }
+        .m-eg-txt q { display:block; font-style:italic; color:#1d1d1f; font-size:0.9rem; line-height:1.55; }
+        .m-eg-txt .m-eg-why { margin-top:7px; font-size:0.8rem; color:#555; }
+
+        .m-mini { display:grid; grid-template-columns:96px repeat(3,1fr); gap:6px; margin:14px 0 4px; }
+        .m-mini-cell { min-height:72px; border-radius:9px; padding:8px 9px; border:1px solid rgba(0,0,0,.06); font-size:0.74rem; color:#2a2a32; }
+        .m-mini-tick { display:flex; align-items:center; justify-content:flex-end; font-size:0.74rem; color:#6a6a72; padding-right:5px; }
+        .m-mini-cell b { display:block; font-size:0.7rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; opacity:.85; }
+        .m-mini-pin { display:inline-block; background:rgba(255,255,255,.92); border:1px solid rgba(0,0,0,.1); border-radius:11px;
+                      padding:1px 8px; font-size:0.72rem; margin:2px 3px 0 0; }
+
+        .m-calc { width:100%; border-collapse:collapse; font-size:0.8rem; margin:12px 0 6px; background:#fff; }
+        .m-calc th { text-align:left; font-size:0.68rem; text-transform:uppercase; letter-spacing:.05em; color:#8a8a90;
+                     border-bottom:1px solid #e8e8ea; padding:6px 8px; font-weight:600; }
+        .m-calc td { padding:7px 8px; border-bottom:1px solid #f4f4f6; vertical-align:top; }
+        .m-calc tr:last-child td { border-bottom:none; }
+        .m-calc .m-tot td { background:#f7f9fb; font-weight:600; }
+        .m-eqn { background:#0f2233; color:#e8eef4; border-radius:10px; padding:14px 18px; font-family:"SF Mono",Menlo,Consolas,monospace;
+                 font-size:0.84rem; line-height:1.8; overflow-x:auto; margin:14px 0 6px; }
+        .m-eqn i { color:#8fd3b0; font-style:normal; }
+        .m-eqn em { color:#9fc6e8; font-style:normal; }
+
+        .m-qa { border-left:3px solid var(--primary); padding:2px 0 2px 15px; margin:14px 0; }
+        .m-qa h4 { margin:0 0 5px; font-size:0.95rem; color:#1d1d1f; }
+        .m-qa p { margin:0 0 12px; font-size:0.9rem; line-height:1.6; color:#444; }
+        .m-qa p:last-child { margin-bottom:0; }
+
+        .m-callout { background:#fff8e6; border:1px solid #f0dfae; border-radius:10px; padding:13px 16px; margin:14px 0; font-size:0.88rem; line-height:1.6; }
+        .m-callout b { color:#7a5a00; }
+        .m-key { background:#eef3f8; border:1px solid #d7e2ec; border-radius:10px; padding:13px 16px; margin:14px 0; font-size:0.88rem; line-height:1.6; }
+
+        @media (max-width: 900px) {
+            .m-pipe { grid-template-columns:1fr; }
+            .m-eg-row { grid-template-columns:1fr; }
+            .m-eg-lab { padding:8px 14px; }
+            .m-mini { grid-template-columns:60px repeat(3,1fr); }
+        }
+
+        /* a country chip in the reporting matrix opens that country's profile */
+        .mx-chip { cursor:pointer; transition:background .15s, box-shadow .15s; }
+        .mx-chip:hover, .mx-chip:focus { background:#fff; box-shadow:0 0 0 2px rgba(0,102,204,.35); outline:none; }
+
+        /* ---- country record: the dimension cards, opened -------------------
+           An open card carries a table, so it takes the full width of the grid
+           rather than staying in a 230px column with the arithmetic wrapped
+           into unreadable slivers. */
+        .cr-lead { font-size:0.85rem; color:#555; margin:14px 0 10px; line-height:1.55; }
+        .cr-profile details.dim-card[open] { grid-column:1 / -1; }
+        .cr-part-q { font-style:italic; color:#3a3a40; font-size:0.72rem; line-height:1.45; margin-top:3px; max-width:52ch; }
+        .dim-whyh { font-size:0.68rem; text-transform:uppercase; letter-spacing:.05em; color:#8a8a90; margin-top:10px; font-weight:600; }
+        .dim-why { margin:5px 0 0; padding-left:18px; font-size:0.78rem; color:#555; line-height:1.5; }
+        .dim-why li { margin-bottom:3px; }
+        .dim-alt { font-size:0.76rem; color:#555; background:#f7f7f9; border-radius:7px; padding:7px 10px; margin-top:9px; }
+        .dbar-key { font-size:0.74rem; color:var(--text-muted); margin-bottom:6px; }
+        .dim-conf-low { color:#b06000; }
+        .dim-conf-high { color:#3a7a45; }
     </style>
 </head>
 <body>
@@ -539,6 +631,17 @@
                 <div id="methodology" class="page">
                     <h1 class="header-light-blue" style="font-size: 2.1rem; margin-bottom: 10px;">Framework and Methodology</h1>
                     <p style="margin-top: 0;">This page is the working manual for the JUST-NDC analysis. It sets out why the project exists, the framework we apply, how a statement is coded, what the tool does on its own, and where its judgement stops and yours begins. If you are joining the team, read it end to end before you code anything.</p>
+                    <div class="m-toc">
+                        <a href="#m-ladder">The four steps</a>
+                        <a href="#m-tiers">Grading a statement</a>
+                        <a href="#m-score">Scoring a dimension</a>
+                        <a href="#m-matrix">The axes and the matrix</a>
+                        <a href="#m-rubric">The country score and checks</a>
+                        <a href="#m-bands">The six bands</a>
+                        <a href="#m-worked">Worked examples</a>
+                        <a href="#m-qa">FAQ</a>
+                    </div>
+                    <p class="panel-sub" style="margin-top:6px;">Sections 4 to 11 set out the scoring method from end to end: how a sentence becomes a tier, how tiers become a dimension score, and how four dimension scores become a band.</p>
 
                     <h2 class="header-light-blue">1. Why this project exists</h2>
                     <div class="ui-box" style="margin-top: 15px;">
@@ -595,7 +698,92 @@
                         </ol>
                     </div>
 
-                    <h2 class="header-light-blue">4. Commitment grading matrix</h2>
+                    <h2 class="header-light-blue" id="m-ladder">4. The four steps: from one sentence to one verdict</h2>
+                    <div class="ui-box" style="margin-top:15px; background:#fff;">
+                        <p style="margin-top:0;">The assessment runs in four steps. Each step decides one thing and passes its result to the next. No step skips ahead. A single sentence never produces a country verdict, and a country verdict is never read back onto a single sentence.</p>
+
+                        <div class="m-pipe">
+                            <div class="m-step" style="border-top-color:#659b6c;">
+                                <div class="m-num">Step 1 &middot; the sentence</div>
+                                <h4>Dimension and tier</h4>
+                                <p>Each coded sentence is placed in one of the four dimensions and given one of three commitment tiers, on the evidence that sentence contains.</p>
+                                <div class="m-out">out: Procedural &middot; Partial</div>
+                            </div>
+                            <div class="m-step" style="border-top-color:#427356;">
+                                <div class="m-num">Step 2 &middot; the dimension</div>
+                                <h4>A score out of 100</h4>
+                                <p>The statements in a dimension are added together with diminishing returns. The total is then converted back into a tier.</p>
+                                <div class="m-out">out: Procedural = 52 / 100, Partial</div>
+                            </div>
+                            <div class="m-step" style="border-top-color:#8f5242;">
+                                <div class="m-num">Step 3 &middot; the axes</div>
+                                <h4>Two axes, one grid</h4>
+                                <p>The four dimensions are paired into two axes. Each axis takes the lower of its two dimensions. The pair fixes the country's position on the 3&times;3 matrix.</p>
+                                <div class="m-out">out: R+P Partial, D+R Tokenistic</div>
+                            </div>
+                            <div class="m-step" style="border-top-color:#001f40;">
+                                <div class="m-num">Step 4 &middot; the country</div>
+                                <h4>Score, checks, band</h4>
+                                <p>A country score combines the average and the lowest of the four dimension scores. Six checks then decide whether the band that score reaches is confirmed or held back.</p>
+                                <div class="m-out">out: band 3, Partial commitment</div>
+                            </div>
+                        </div>
+
+                        <div class="m-key" style="margin-top:18px;">
+                            <b>Why every step takes the lower reading.</b> Transformative climate justice is defined here as the intersection of the four dimensions rather than their sum. Each step therefore takes the lower of the readings available to it. An axis takes the weaker of its two dimensions. Half of the country score is the lowest dimension score. The checks ask what the weakest dimension is before they ask what the strongest is. A country with one strong dimension and three weak ones scores low.
+                        </div>
+                    </div>
+
+                    <h2 class="header-light-blue" id="m-tiers">5. Step 1: grading a single statement</h2>
+                    <div class="ui-box" style="margin-top:15px; background:#fff;">
+                        <p style="margin-top:0;">Each coded sentence receives one of three tiers. A fourth label, <em>absent</em>, applies to a dimension the document never mentions.</p>
+                        <p>The tier describes how a claim is written and what it is attached to. It does not describe whether the policy behind it is a good one. A broad promise with nothing behind it is tokenistic. A modest measure written into law with a budget line is embedded.</p>
+
+                        <div class="m-eg">
+                            <div class="m-eg-row">
+                                <div class="m-eg-lab" style="background:#c62828;">TOKENISTIC</div>
+                                <div class="m-eg-txt">
+                                    <q>The Government recognises the importance of stakeholder participation in climate planning.</q>
+                                    <div class="m-eg-why"><b>Why:</b> a mention with nothing attached. No measure, no responsible body, no date. Nothing in the sentence could be checked in three years' time.</div>
+                                </div>
+                            </div>
+                            <div class="m-eg-row">
+                                <div class="m-eg-lab" style="background:#e6a700;">PARTIAL</div>
+                                <div class="m-eg-txt">
+                                    <q>A national climate consultation forum will convene civil society, indigenous organisations and youth representatives twice a year to review implementation of this NDC.</q>
+                                    <div class="m-eg-why"><b>Why:</b> a commitment verb, a named measure, a named body and a frequency. What is missing is the anchoring. No law requires it, no budget funds it, and nothing follows if it does not happen.</div>
+                                </div>
+                            </div>
+                            <div class="m-eg-row">
+                                <div class="m-eg-lab" style="background:#2e7d32;">EMBEDDED</div>
+                                <div class="m-eg-txt">
+                                    <q>Under Article 12 of the Climate Framework Act (No. 70/2019), the National Climate Council shall publish every sectoral plan for a 60-day public comment period, and the Ministry of Finance allocates USD 2 million a year to support participation by affected communities; compliance is reported annually to Parliament.</q>
+                                    <div class="m-eg-why"><b>Why:</b> a named law, a named institution, a budget line, a deadline and a reporting duty. A commitment written this way survives a change of minister.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="panel-sub" style="margin-top:10px;">These three sentences were written for this page to show the ladder clearly. They are not quotations from any NDC.</p>
+
+                        <p style="margin-top:18px;"><strong>The eight kinds of evidence.</strong> The classifier does not look for a single word. It tests each sentence for eight kinds of evidence, and the tier follows from which of them are present:</p>
+                        <div class="m-feat">
+                            <span>legal anchor: a named act, decree or article</span>
+                            <span>institution anchor: a named body made responsible</span>
+                            <span>finance anchor: a budget line or monetary figure</span>
+                            <span>time bound: a date, deadline or frequency</span>
+                            <span>accountability: monitoring, reporting or enforcement</span>
+                            <span>commitment verb: will, shall, commits, undertakes</span>
+                            <span>concrete measure: a named programme or instrument</span>
+                            <span>cited instrument: an external plan or convention invoked</span>
+                        </div>
+                        <p style="margin-top:12px;">Three further signals adjust the reading rather than adding to it: hedging (may, aims to, where feasible), conditionality (subject to international support), and negation, where a law is named only to say that it does not apply.</p>
+
+                        <div class="m-callout">
+                            <b>The rule in short.</b> <b>Embedded</b>: a named legal instrument, or a named institution together with money, plus a commitment verb, plus either an accountability provision or a deadline, with the anchor not negated. <b>Partial</b>: a commitment verb plus a named basis, meaning a measure, an institution, a deadline or a cited external instrument, without legal or financial anchoring. Hedged language stays at partial. <b>Tokenistic</b>: everything else, including a duty stated with no measure attached, and any sentence whose anchor is negated.
+                        </div>
+                    </div>
+
+                    <h3 class="header-light-blue" style="margin-top:26px; font-size:1.15rem;">5.1 &nbsp;The commitment grading matrix, dimension by dimension</h3>
+                    <p style="margin-top:6px;">The same three tiers, written out for each of the four dimensions. This is the table a coder works from and the table the classifier implements.</p>
                     <div class="matrix-table-wrapper">
                         <table class="matrix-table">
                             <thead>
@@ -617,7 +805,254 @@
                     </div>
                     <p class="panel-sub" style="margin-top:12px;">One caveat applies to every cell above. The assessment is qualitative and text-based. We evaluate the content and commitments of the NDCs on paper, not the implementation of those commitments or the intent of whoever drafted them.</p>
 
-                    <h2 class="header-light-blue">5. What the 2025 policy brief found</h2>
+                    <h2 class="header-light-blue" id="m-score">6. Step 2: scoring a dimension</h2>
+                    <div class="ui-box" style="margin-top:15px; background:#fff;">
+                        <p style="margin-top:0;"><strong>Why a dimension is scored rather than read off its strongest sentence.</strong> A dimension could be graded by taking the highest tier that any one of its sentences reached. That method is simple to explain, and imprecise in practice. One anchored sentence among twenty mentions would grade the whole dimension embedded, and the grade would rest on whichever sentence happened to be strongest. Scoring the dimension instead gives a reading that reflects how much of the document stands behind the grade. Several commitments count for more than one. Repetition counts for nothing.</p>
+
+                        <p><strong>Why the score is not a percentage.</strong> A share of statements is not used anywhere in this project. Dividing by the number of statements makes the result depend on the length of the document. An NDC with 80 mentions and 3 anchored commitments would score 4 per cent, while a twelve-page NDC with 3 mentions and 1 anchored commitment would score 33 on weaker evidence. Length is a drafting choice. What the score accumulates is evidence, and it accumulates it with diminishing returns.</p>
+
+                        <div class="m-eqn">
+for each statement <i>i</i> in the dimension:<br>
+&nbsp;&nbsp;<i>v</i> = T(tier) + B &times; (features present / 8)&nbsp;&nbsp;&nbsp;<em>&larr; evidence value</em><br>
+&nbsp;&nbsp;<i>v</i> = <i>v</i> &times; (every penalty that applies)&nbsp;&nbsp;&nbsp;<em>&larr; discounted value</em><br><br>
+order the statements by <i>v</i>, strongest first, then:<br>
+&nbsp;&nbsp;<i>S</i> = <i>v</i>&#8321; + 0.6&middot;<i>v</i>&#8322; + 0.36&middot;<i>v</i>&#8323; + 0.216&middot;<i>v</i>&#8324; &hellip;<br>
+&nbsp;&nbsp;<b>score</b> = 100 &times; <i>S</i> / 4.0 &nbsp;&nbsp;(capped at 100)
+                        </div>
+
+                        <p style="margin-top:14px;"><strong>What each term does.</strong></p>
+                        <ul style="line-height:1.75;">
+                            <li><strong>T(tier)</strong> is 0 for tokenistic, 1.0 for partial and 2.0 for embedded. A tokenistic statement is a mention without an actionable commitment, so it adds nothing to a measure of commitment. Adding more tokenistic sentences cannot raise the score, and it cannot lower it either. Letting them dilute the score would be a percentage by another name, and would count length against a document that says more.</li>
+                            <li><strong>B = 0.5</strong> is the evidence bonus. A statement carrying all eight kinds of evidence adds the full 0.5. One carrying two adds 0.125. An embedded commitment that names a law, a budget, a deadline and a monitoring duty therefore counts for more than one that names a law alone.</li>
+                            <li><strong>0.6 is the decay.</strong> The strongest statement counts in full, the second at 0.6, the third at 0.36. Any number of identical statements converges on 2.5 times the value of one, so volume cannot inflate a dimension. Two independent commitments are still worth clearly more than one.</li>
+                            <li><strong>4.0 is the reference.</strong> Two statements graded embedded, each carrying all eight kinds of evidence, add up to 2.5 + (0.6 &times; 2.5) = 4.0 and score 100. Every other document is read against that.</li>
+                            <li><strong>The penalties multiply rather than subtract.</strong> Conditional on external support &times;0.80. Sitting in a vision or context section rather than an operational one &times;0.80. Dimension flagged for manual confirmation &times;0.85. Tier resting on evidence outside the coded sentence &times;0.90. A negated anchor &times;0, which removes the statement from the total.</li>
+                        </ul>
+
+                        <p style="margin-top:16px;"><strong>A worked dimension.</strong> Procedural justice in a document with four coded statements:</p>
+                        <table class="m-calc">
+                            <thead><tr><th>statement</th><th>tier</th><th>evidence</th><th>value <i>v</i></th><th>penalty</th><th>decay</th><th>adds</th></tr></thead>
+                            <tbody>
+                                <tr><td>p. 7, consultation forum written into the Climate Act, with a budget</td><td style="color:#2e7d32;font-weight:600;">Embedded</td><td>6 of 8</td><td>2.0 + 0.375 = 2.375</td><td>none</td><td>&times;1</td><td><b>2.38</b></td></tr>
+                                <tr><td>p. 11, annual stakeholder review, named body, no anchoring</td><td style="color:#e6a700;font-weight:600;">Partial</td><td>3 of 8</td><td>1.0 + 0.188 = 1.188</td><td>none</td><td>&times;0.6</td><td><b>0.71</b></td></tr>
+                                <tr><td>p. 4, participation promised, conditional on international support</td><td style="color:#e6a700;font-weight:600;">Partial</td><td>2 of 8</td><td>1.125 &times; 0.80 = 0.90</td><td>conditional</td><td>&times;0.36</td><td><b>0.32</b></td></tr>
+                                <tr><td>p. 2, "the Government values inclusive dialogue"</td><td style="color:#c62828;font-weight:600;">Tokenistic</td><td>0 of 8</td><td>0</td><td>none</td><td>&times;0.216</td><td><b>0.00</b></td></tr>
+                                <tr class="m-tot"><td colspan="6">total <i>S</i> = 3.41 against the reference of 4.0</td><td><b>85.3</b>/100</td></tr>
+                            </tbody>
+                        </table>
+                        <p style="margin-top:8px;">85.3 is above the embedded threshold of 70, so this dimension reads <b style="color:#2e7d32;">Embedded</b>. The tokenistic sentence added nothing. The conditional one added about a seventh of what the first statement added, because it was both discounted and third in line.</p>
+
+                        <p style="margin-top:16px;"><strong>Turning the score back into a tier.</strong> Below 35 the dimension reads tokenistic. From 35 to 69 it reads partial. From 70 upwards it reads embedded. Within 5 points of either threshold the dimension is marked borderline, because one coding change would move it.</p>
+                        <div class="dscale" style="height:11px; margin:14px 0 6px;">
+                            <span class="dscale-fill" style="width:35%;background:#c62828;"></span>
+                            <span class="dscale-fill" style="width:35%;left:35%;background:#e6a700;"></span>
+                            <span class="dscale-fill" style="width:30%;left:70%;background:#2e7d32;"></span>
+                            <span class="dscale-cut" style="left:35%"></span>
+                            <span class="dscale-cut" style="left:70%"></span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);">
+                            <span>0, tokenistic</span><span>35, partial</span><span>70, embedded</span><span>100</span>
+                        </div>
+
+                        <div class="m-callout" style="margin-top:18px;">
+                            <b>Two results that follow from the formula.</b><br>
+                            <b>1. No single sentence can make a dimension embedded.</b> The highest value one statement can reach is 2.5, meaning embedded, all eight kinds of evidence, no penalties. That scores 62.5, below the threshold of 70. An embedded dimension always rests on at least two separate commitments.<br>
+                            <b>2. One partial statement on its own does not make a dimension partial.</b> A partial sentence with no evidence features scores 25. Two of them score 40. A dimension reaches partial when the document returns to the subject with something new.
+                        </div>
+
+                        <p style="margin-top:16px;"><strong>The score can lower a grade but never raise it.</strong> A dimension is never graded above the strongest statement it actually contains. Twenty-five named measures with no legal, institutional or financial backing are still not an institutionalised commitment, and no accumulation of them is allowed to read as one. The score can therefore confirm or lower the grade that the strongest statement would give, and cannot raise it. Where this cap applies, the dimension card says so.</p>
+
+                        <p style="margin-top:16px;"><strong>Confidence is derived, not assigned.</strong> Each dimension reports high, medium or low confidence. It begins at high and drops one level for each of the following: the score rests on a single statement; the score sits within 5 points of a threshold; every statement carrying the grade is flagged for manual confirmation of its dimension; every one of them is conditional on external support; every one of them sits in a framing section rather than an operational one. The dimension card lists whichever of these applied. A tokenistic dimension is reported at high confidence, because a finding that nothing in it is actionable leaves little room for doubt.</p>
+                    </div>
+
+                    <h2 class="header-light-blue" id="m-matrix">7. Step 3: the two axes and the matrix</h2>
+                    <div class="ui-box" style="margin-top:15px; background:#fff;">
+                        <p style="margin-top:0;">The four dimensions are paired into two axes:</p>
+                        <ul style="line-height:1.75;">
+                            <li><strong>Recognitional and procedural</strong>, the vertical axis: whether the NDC identifies affected groups and gives them a way into decisions.</li>
+                            <li><strong>Distributive and restorative</strong>, the horizontal axis: whether resources actually move to those groups, and whether past harm is addressed.</li>
+                        </ul>
+                        <p>Each axis takes the lower of its two dimensions. A country with embedded recognitional justice and tokenistic procedural justice sits at tokenistic on the vertical axis. The pairing treats the two dimensions as a set that has to hold together, rather than averaging them. The rule is a named setting in the code (<code>AXIS_RULE</code>), so it can be changed and reported rather than changed quietly.</p>
+
+                        <div class="m-mini">
+                            <div class="m-mini-tick">embedded</div>
+                            <div class="m-mini-cell" style="background:#dfe5d2;"><b>seen but not served</b><span class="m-mini-pin">Country A</span></div>
+                            <div class="m-mini-cell" style="background:#a8c69a;"><b>strong, one axis short</b></div>
+                            <div class="m-mini-cell" style="background:#4f8f52;color:#fff;"><b>approaching transformative</b><span class="m-mini-pin">Country C</span></div>
+                            <div class="m-mini-tick">partial</div>
+                            <div class="m-mini-cell" style="background:#d9c04a;"><b>process-heavy</b></div>
+                            <div class="m-mini-cell" style="background:#dfe5d2;"><b>even, unanchored</b><span class="m-mini-pin">Country B</span></div>
+                            <div class="m-mini-cell" style="background:#a8c69a;"><b>outcome-led</b></div>
+                            <div class="m-mini-tick">tokenistic</div>
+                            <div class="m-mini-cell" style="background:#c8543f;color:#fff;"><b>language only</b></div>
+                            <div class="m-mini-cell" style="background:#d9c04a;"><b>redistribution without process</b></div>
+                            <div class="m-mini-cell" style="background:#dfe5d2;"><b>delivery without voice</b></div>
+                            <div class="m-mini-tick"></div>
+                            <div style="text-align:center;font-size:0.74rem;color:#6a6a72;">tokenistic</div>
+                            <div style="text-align:center;font-size:0.74rem;color:#6a6a72;">partial</div>
+                            <div style="text-align:center;font-size:0.74rem;color:#6a6a72;">embedded</div>
+                        </div>
+                        <p class="panel-sub" style="margin-top:2px;">Vertical axis: recognitional and procedural. Horizontal axis: distributive and restorative. Shading runs from furthest from the intersection to closest. Countries A, B and C are the worked examples in section 10.</p>
+
+                        <p style="margin-top:14px;"><strong>The left-hand column.</strong> Countries in the left column with a developed vertical axis have built recognition and participation while distributive and restorative commitments stay at or below tokenistic. The 2025 policy brief identifies this pattern as a justice-washing risk. The tool records it as a flag on the country record, described as process-heavy and outcome-light. It is not printed as a label on the matrix, because a label over a cell would apply to every country in that cell on the basis of position alone, and because the pattern occurs at more than one level of commitment.</p>
+                    </div>
+
+                    <h2 class="header-light-blue" id="m-rubric">8. Step 4: the country score and the six checks</h2>
+                    <div class="ui-box" style="margin-top:15px; background:#fff;">
+                        <p style="margin-top:0;">Two things happen at country level. An arithmetic score proposes a band, and six qualitative checks decide whether the country keeps it.</p>
+
+                        <div class="m-eqn">
+country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 0.5 &times; <em>lowest</em> of the four
+                        </div>
+                        <p>Half of the country score is the weakest dimension. A country with two dimensions at 80 and two at 0 has an average of 40 and a lowest score of 0, giving a country score of 20. A country with all four dimensions at 20 also scores 20. The framework treats those two documents as equally far from transformative justice.</p>
+
+                        <p style="margin-top:16px;"><strong>The six checks.</strong> Each returns pass, partial or fail, and each is reported with its evidence on the country record.</p>
+                        <div class="rub-list" style="margin-top:10px;">
+                            <div class="rub-item"><span class="rub-badge" style="background:#eef3f8;color:#33465c;">1</span><div class="rub-body"><b>Coverage</b><div class="rub-q">Are all four justice dimensions addressed at all?</div><div class="rub-detail">Pass on four present, partial on three, fail below that. This is the only check that asks about breadth.</div></div></div>
+                            <div class="rub-item"><span class="rub-badge" style="background:#eef3f8;color:#33465c;">2</span><div class="rub-body"><b>Depth</b><div class="rub-q">What is the weakest of the four dimensions?</div><div class="rub-detail">Pass only when all four are embedded, partial when all four are at least partial. This check decides whether the top band is reachable.</div></div></div>
+                            <div class="rub-item"><span class="rub-badge" style="background:#eef3f8;color:#33465c;">3</span><div class="rub-body"><b>Balance</b><div class="rub-q">Is the recognitional and procedural axis matched by the distributive and restorative axis?</div><div class="rub-detail">Pass when both axes are embedded, partial when both are at least partial. A justice-washing pattern fails here.</div></div></div>
+                            <div class="rub-item"><span class="rub-badge" style="background:#eef3f8;color:#33465c;">4</span><div class="rub-body"><b>Anchoring</b><div class="rub-q">Are justice commitments tied to named law, institutions or money?</div><div class="rub-detail">Pass needs a legal anchor in at least one dimension and an institutional or financial anchor in at least one. Either on its own returns partial.</div></div></div>
+                            <div class="rub-item"><span class="rub-badge" style="background:#eef3f8;color:#33465c;">5</span><div class="rub-body"><b>Integration</b><div class="rub-q">Does justice appear in the operational parts of the NDC, or only in the framing?</div><div class="rub-detail">Pass needs three of the four dimensions carrying actionable statements outside the vision and context sections, and presence in at least four of the nine thematic clusters. Justice confined to a preamble fails here.</div></div></div>
+                            <div class="rub-item"><span class="rub-badge" style="background:#eef3f8;color:#33465c;">6</span><div class="rub-body"><b>Structural engagement</b><div class="rub-q">Does the NDC address the causes of injustice or only its symptoms?</div><div class="rub-detail">Pass on at least one structural statement at partial or above, or on the NDC defining climate justice and linking that definition to policy alongside two structural statements.</div></div></div>
+                        </div>
+
+                        <div class="m-callout" style="margin-top:18px;">
+                            <b>How the score and the checks combine.</b> The score sets the band. The top band carries one extra condition: a score of 70 or more is not sufficient on its own, because at least five of the six checks must also pass and the depth check must not fail. Where the score reaches the top band and the checks do not, the country is held one band lower and the record names the checks that failed. The checks can hold a country back. They cannot move one up.
+                        </div>
+
+                        <p style="margin-top:16px;"><strong>Three flags travel alongside the band</strong> rather than inside it: process-heavy and outcome-light, band not stable (a dimension sits within 5 points of a threshold, so small coding changes could move the country), and low confidence in at least one dimension. A flag is a prompt to read the record.</p>
+                    </div>
+
+                    <h2 class="header-light-blue" id="m-bands">9. The six bands</h2>
+                    <p style="margin-top:6px;">Six bands describe a document as a whole. Each band describes what the document does. None of them describes the country behind it.</p>
+
+                    <div style="margin-top:16px;">
+                        <div class="m-band">
+                            <div class="m-band-key" style="background:#9e9e9e;"><b>0</b><span>absent</span></div>
+                            <div class="m-band-body">
+                                <h4 style="color:#6d6d6d;">Justice largely absent</h4>
+                                <p>No statement in the document was assigned to any of the four dimensions. The NDC is a technical document that does not engage justice.</p>
+                                <div class="m-band-cut">Reached when <b>no dimension has a single coded statement</b>. The extraction diagnostics should be checked before this is recorded, since a scanned PDF produces the same result for a different reason.</div>
+                            </div>
+                        </div>
+                        <div class="m-band">
+                            <div class="m-band-key" style="background:#c62828;"><b>1</b><span>tokenistic</span></div>
+                            <div class="m-band-body">
+                                <h4 style="color:#c62828;">Tokenistic</h4>
+                                <p>Justice appears as language. Groups are named, participation is affirmed and equity is invoked, and no dimension carries an actionable commitment behind any of it.</p>
+                                <div class="m-band-cut">Country score <b>below 15</b>. In practice, a document whose justice content is entirely mentions.</div>
+                            </div>
+                        </div>
+                        <div class="m-band">
+                            <div class="m-band-key" style="background:#e2703a;"><b>2</b><span>emergent</span></div>
+                            <div class="m-band-body">
+                                <h4 style="color:#e2703a;">Emergent commitment</h4>
+                                <p>Isolated measures have been attached to the justice language, but they do not yet form a pattern and nothing is anchored. One dimension may be well developed while the others are language only. Since half of the country score is the lowest dimension, that unevenness holds the band here.</p>
+                                <div class="m-band-cut">Country score <b>15 to 34</b>.</div>
+                            </div>
+                        </div>
+                        <div class="m-band">
+                            <div class="m-band-key" style="background:#e6a700;"><b>3</b><span>partial</span></div>
+                            <div class="m-band-body">
+                                <h4 style="color:#c99200;">Partial commitment</h4>
+                                <p>Named measures across more than one dimension, without legal, institutional or financial anchoring. This is the most common band in the corpus. These documents contain real measures, none of which is yet written into anything that outlives the drafting.</p>
+                                <div class="m-band-cut">Country score <b>35 to 54</b>.</div>
+                            </div>
+                        </div>
+                        <div class="m-band">
+                            <div class="m-band-key" style="background:#7cb342;"><b>4</b><span>substantive</span></div>
+                            <div class="m-band-body">
+                                <h4 style="color:#5f8c33;">Substantive but uneven</h4>
+                                <p>Anchored commitments are present, but the four dimensions do not hold together and the lowest sits well below the highest. This band also takes the country whose score reached band 5 while the checks did not, in which case the record names the checks that failed.</p>
+                                <div class="m-band-cut">Country score <b>55 to 69</b>, or <b>70 and above with fewer than five checks passing</b>.</div>
+                            </div>
+                        </div>
+                        <div class="m-band">
+                            <div class="m-band-key" style="background:#2e7d32;"><b>5</b><span>approaching</span></div>
+                            <div class="m-band-body">
+                                <h4 style="color:#2e7d32;">Approaching transformative climate justice</h4>
+                                <p>All four dimensions carry anchored commitments, the two axes are balanced, and the NDC addresses the causes of injustice as well as its symptoms. The word <em>approaching</em> is deliberate: the evidence here is a document, and arrival is a matter of implementation.</p>
+                                <div class="m-band-cut">Country score <b>70 or above</b>, at least <b>five of the six checks passing</b>, and the depth check not failing.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="m-key">
+                        <b>Tier or band?</b> The two scales are easy to confuse in writing. A <b>tier</b> (absent, tokenistic, partial, embedded) describes a statement or a dimension. A <b>band</b> (0 to 5, the ladder above) describes a country. A country in band 3 may contain several embedded statements, and a dimension graded embedded does not place its country in band 5.
+                    </div>
+
+                    <h2 class="header-light-blue" id="m-worked">10. Three worked examples</h2>
+                    <div class="ui-box" style="margin-top:15px; background:#fff;">
+                        <p style="margin-top:0;">Three constructed examples, so that the arithmetic can be followed from dimension scores through to a band. No real country is described here. Recorded results are on the Reporting page.</p>
+
+                        <table class="m-calc" style="margin-top:14px;">
+                            <thead><tr><th></th><th>Recog.</th><th>Proced.</th><th>Distrib.</th><th>Restor.</th><th>average</th><th>lowest</th><th>country score</th><th>band</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>Country A</b><br><span style="font-size:0.75rem;color:var(--text-muted);">two strong dimensions, two empty</span></td>
+                                    <td style="color:#2e7d32;font-weight:600;">78</td><td style="color:#2e7d32;font-weight:600;">74</td>
+                                    <td style="color:#c62828;font-weight:600;">12</td><td style="color:#9e9e9e;font-weight:600;">0</td>
+                                    <td>41.0</td><td>0</td><td><b>20.5</b></td>
+                                    <td><span style="color:#e2703a;font-weight:600;">2 &middot; Emergent</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Country B</b><br><span style="font-size:0.75rem;color:var(--text-muted);">four even dimensions, none anchored</span></td>
+                                    <td style="color:#e6a700;font-weight:600;">45</td><td style="color:#e6a700;font-weight:600;">52</td>
+                                    <td style="color:#e6a700;font-weight:600;">41</td><td style="color:#e6a700;font-weight:600;">38</td>
+                                    <td>44.0</td><td>38</td><td><b>41.0</b></td>
+                                    <td><span style="color:#c99200;font-weight:600;">3 &middot; Partial</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Country C</b><br><span style="font-size:0.75rem;color:var(--text-muted);">four anchored dimensions, balanced</span></td>
+                                    <td style="color:#2e7d32;font-weight:600;">78</td><td style="color:#2e7d32;font-weight:600;">80</td>
+                                    <td style="color:#2e7d32;font-weight:600;">72</td><td style="color:#2e7d32;font-weight:600;">70</td>
+                                    <td>75.0</td><td>70</td><td><b>72.5</b></td>
+                                    <td><span style="color:#2e7d32;font-weight:600;">5 &middot; Approaching</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p style="margin-top:16px;"><strong>Country A</strong> has the two highest dimension scores of the three examples and lands one band below Country B. Half of the country score is the lowest dimension, and its lowest is zero. On the matrix it sits in the top left, since recognitional and procedural read embedded while distributive and restorative read absent. Coverage returns partial, depth fails, balance fails, and the record carries the process-heavy, outcome-light flag. Written out in a sentence: this NDC identifies and consults the people it affects, and commits no resources to them.</p>
+
+                        <p><strong>Country B</strong> reaches a higher band on lower scores. Nothing in it is anchored and no dimension reads embedded, but all four are present and close together, so the average and the lowest score sit near each other. It falls in the centre of the matrix. Written out: consistent work across the whole framework, none of it yet attached to law, budget or institution. The first recommendation of the policy brief applies directly, which is to attach each commitment to the policy it belongs to, the responsible institution, a budget line, a timeline and a monitoring indicator.</p>
+
+                        <p style="margin-bottom:0;"><strong>Country C</strong> shows what the six checks are for. A score of 72.5 clears the top band on the arithmetic. Whether the country keeps that band depends on the checks. If the anchored commitments all sit in the vision chapter, integration fails. If the NDC addresses symptoms only, structural engagement fails. With four or fewer checks passing, the country is held at band 4, substantive but uneven, and the record names the checks that failed. Two countries can reach the same score and end in different bands, and the record states why.</p>
+                    </div>
+
+                    <h2 class="header-light-blue" id="m-qa">11. Frequently asked questions</h2>
+                    <div class="ui-box" style="margin-top:15px; background:#fff;">
+                        <div class="m-qa">
+                            <h4>Why is transformative climate justice not a fifth dimension?</h4>
+                            <p>Because it describes how the four dimensions fit together, rather than a kind of content that a sentence can contain. It is never coded on a statement. It is judged once, at country level, after all four dimensions have been assessed. Treated as a fifth dimension, it could be scored well by a country that failed the other four, which is the reading the framework is built to prevent.</p>
+                        </div>
+                        <div class="m-qa">
+                            <h4>Why does the number of justice mentions not affect the result?</h4>
+                            <p>Because it measures how much a country wrote, rather than what it committed to. Tokenistic statements are worth zero, so repeating them changes nothing, and the decay means the fourth anchored commitment adds about a fifth of what the first added. A 460-page NDC and a 14-page NDC are assessed on the same terms. Counts are still reported, under a heading stating that they feed no score, because they describe the corpus and are useful in a paper.</p>
+                        </div>
+                        <div class="m-qa">
+                            <h4>Is taking the lower dimension on each axis unfair to a country that does one thing well?</h4>
+                            <p>It is a strict rule, and it follows from the definition of transformative justice used here rather than from convenience. Recognition without redistribution is the pattern the policy brief documents. A country that consults widely and moves no resources has completed the cheaper half of the work. Both readings are calculated in every assessment. Where the verdict would change under the alternative rule, the record is marked rule-sensitive and the alternative verdict is named.</p>
+                        </div>
+                        <div class="m-qa">
+                            <h4>How can a country contain embedded statements and still be graded tokenistic?</h4>
+                            <p>In two ways. A single embedded statement scores 62.5, below the 70 an embedded dimension needs, so one anchored commitment leaves its dimension at partial. And half of the country score is the lowest dimension, so strength in one dimension does not compensate for silence in another. The dimension cards on the country record show which statements carried each score and what each one contributed.</p>
+                        </div>
+                        <div class="m-qa">
+                            <h4>What happens when the tool is wrong about a sentence?</h4>
+                            <p>Each statement in the ledger shows the terms that assigned its dimension, the evidence that set its tier, any close alternative dimension, and the page and line it came from. Where two dimensions are close, or where only supporting terms matched, the statement is flagged for confirmation instead of being assigned quietly. A coder's override replaces the machine label, carries a name, a timestamp and an engine version, and the country score is recalculated from the corrected set. The machine output is a first draft and the dataset is the human layer.</p>
+                        </div>
+                        <div class="m-qa">
+                            <h4>Can results from different engine versions be compared?</h4>
+                            <p>Counts cannot, and scores should not be compared directly. Retrieval changes between versions, so the number of statements in the ledger is not comparable. Compare the dimension profile and the checks instead, and state the engine and lexicon version in any published table. Both are stamped on every export and on every country record.</p>
+                        </div>
+                        <div class="m-qa" style="border-left-color:#2e7d32;">
+                            <h4>The method in one paragraph</h4>
+                            <p>Every sentence that engages climate justice is assigned to one of four dimensions and graded on how it is written: a mention, a named measure, or a measure attached to law, an institution or a budget. Each dimension is then scored out of 100 by accumulating its commitments with diminishing returns, so that neither repetition nor a single strong sentence can carry it. The four dimensions are paired into two axes, each taking the lower of its pair, and a country score is formed from half the average and half the lowest of the four dimension scores. That score proposes one of six bands, running from justice largely absent to approaching transformative climate justice. Six checks, covering coverage, depth, balance, anchoring, integration and structural engagement, can hold a country below the top band but cannot raise one. Every step is recorded against the page and line it came from, and every step can be corrected by a coder.</p>
+                        </div>
+                    </div>
+
+                    <h2 class="header-light-blue">12. What the 2025 policy brief found</h2>
                     <div class="ui-box" style="margin-top: 15px; background:#fff;">
                         <p style="margin-top:0;">The brief coded 27 NDCs submitted to the UNFCCC as of July 2025, line by line, by hand. Four were in Spanish and one in French; those were handled with professional translation software and secondary manual verification by fluent speakers, with discrepancies resolved through blind cross-review. Content was also organised into nine thematic clusters, guided by prevalent topics in the texts and the CAN Guidelines for NDCs, to see where justice is integrated and where it is neglected. The findings that the tool now has to reproduce at scale are these.</p>
                         <ul style="line-height:1.8;">
@@ -633,7 +1068,7 @@
                         <p style="margin-bottom:0;">The brief's three recommendations shape what the tool looks for. Pair commitments with the law or policy they attach to, the responsible institution, a budget line, a timeline and a monitoring indicator. Translate participation commitments into outcomes on distribution and remediation. Adapt the drafting patterns of the countries already close to transformative justice.</p>
                     </div>
 
-                    <h2 class="header-light-blue">6. How the tool works</h2>
+                    <h2 class="header-light-blue">13. How the tool works</h2>
                     <div class="ui-box" style="margin-top: 15px; background:#fff;">
                         <p style="margin-top:0;"><strong>What kind of AI this is.</strong> It is a natural language processing pipeline, not a large language model. Nothing is sent to an external model and nothing is generated. Every decision is made by rules you can read in the page source, so the same document produces the same result every time, and any grade can be traced to the exact words that produced it. That is a deliberate choice: a black box cannot be defended in a methods section, and a generated summary cannot be checked against the text it came from. The trade-off is that the tool has no understanding. It reads patterns. That is why every output is a proposal for a human coder rather than a result.</p>
 
@@ -651,26 +1086,12 @@
 
                         <p><strong>Stage two: classification, tuned for precision.</strong> Each sentence is scored across the four dimensions and assigned to the highest scoring one. There is no default dimension and no fallback. Where two dimensions are close, or where only supporting terms matched, the statement is marked for manual confirmation and both candidates are shown.</p>
 
-                        <p><strong>How the grade is decided.</strong> The tool does not look for a magic word. It checks the sentence for ten kinds of evidence: a named legal instrument, a named institution, a budget line or monetary figure, a time bound, an accountability or monitoring provision, a commitment verb, a named measure, hedging, conditionality, and negation. Embedded requires a legal anchor, or an institution together with money, plus a commitment verb and either accountability or a deadline, with no negation nearby. Partial requires a commitment verb and a named measure, institution or deadline, without legal or financial anchoring. Everything else is tokenistic. Each entry in the ledger states which of the ten fired and why the grade followed.</p>
-
-                        <p><strong>What else is recorded.</strong> Each statement also carries the direction of the claim, meaning whether it is a domestic commitment about the state's own conduct or an international claim about what others should do; whether it is conditional on external support; which section of the NDC it sits in and whether that section is framing or operational; which of the nine thematic clusters it belongs to; and whether it engages structural drivers of injustice. None of these change the grade. They are what make the dataset worth analysing afterwards.</p>
+                        <p><strong>What else is recorded.</strong> Each statement also carries the direction of the claim, meaning whether it is a domestic commitment about the state's own conduct or an international claim about what others should do; whether it is conditional on external support; which section of the NDC it sits in and whether that section is framing or operational; which of the nine thematic clusters it belongs to; and whether it engages structural drivers of injustice. None of these change the dimension or the tier, but several of them discount the score, and all of them are what make the dataset worth analysing afterwards.</p>
 
                         <p style="margin-bottom:0;"><strong>What the tool never does.</strong> It never applies a transformative label to a statement. It never counts mentions to reach a conclusion. It never decides that a country is doing well because it repeats a phrase.</p>
                     </div>
 
-                    <h2 class="header-light-blue">7. How a country verdict is produced</h2>
-                    <div class="ui-box" style="background:#fff;">
-                        <p style="margin-top:0;"><strong>Nothing in the verdict is a count.</strong> How many times an NDC mentions justice moves no score. A 460-page submission and a 14-page submission are assessed on the same terms.</p>
-                        <ol style="line-height:1.75;">
-                            <li><strong>Statement level.</strong> Each sentence gets one of the four dimensions and one of the three commitment grades, on the evidence present in that sentence.</li>
-                            <li><strong>Dimension level.</strong> Each dimension takes the strongest grade the document actually evidences. Embedded requires either two independent embedded statements or one carrying at least three kinds of evidence. A single weak candidate is graded down to partial and marked for confirmation. Every dimension reports a confidence level alongside its grade.</li>
-                            <li><strong>Country level.</strong> Six criteria are checked, each returning pass, partial or fail. <em>Coverage</em>: are all four dimensions addressed at all. <em>Depth</em>: what is the weakest of the four, since transformative justice is the intersection and the floor is what counts. <em>Balance</em>: is the recognitional and procedural axis matched by the distributive and restorative axis. <em>Anchoring</em>: are commitments tied to named law, institutions or money. <em>Integration</em>: does justice appear in the operational parts of the NDC or only in the framing. <em>Structural engagement</em>: does the NDC address the causes of injustice or only its symptoms.</li>
-                            <li><strong>The verdict.</strong> Approaching transformative climate justice requires all six criteria to pass, or five with depth passing. Where the recognitional and procedural dimensions are developed while distributive and restorative are both at or below tokenistic, the tool reports a justice-washing risk, which is the pattern identified in the brief. The remaining outcomes are substantive but uneven, partial commitment, predominantly tokenistic, and justice largely absent.</li>
-                        </ol>
-                        <p style="margin-bottom:0; font-size:0.9rem; color:var(--text-muted);">Composite axis rule: each axis takes the weaker of its two dimensions. This follows the intersection logic of the framework rather than flattering a country for one strong dimension. The rule is a named setting in the code so it can be changed and reported, but not changed silently.</p>
-                    </div>
-
-                    <h2 class="header-light-blue">8. What the tool cannot do</h2>
+                    <h2 class="header-light-blue">14. What the tool cannot do</h2>
                     <div class="ui-box" style="background:#fff;">
                         <ul style="line-height:1.75;">
                             <li><strong>It reads what is written, not what will happen.</strong> A well-drafted commitment scores the same whether or not it is ever delivered. This limitation is stated in the policy brief and has not changed.</li>
@@ -848,19 +1269,21 @@
 
                     <h2 id="examples-heading" style="margin-top:26px;">Examples</h2>
                     <div id="examples-filter-bar" class="ledger-controls"></div>
-                    <h3 style="color: var(--embedded); margin-top: 30px; border-bottom: 2px solid var(--embedded); padding-bottom: 5px;">Embedded Commitments</h3>
                     <div class="ui-box">
                         <h3 style="margin-top:0;">By country</h3>
                         <p class="panel-sub">Every country with a coding example or a recorded assessment. Open one to see its codes grouped by dimension and commitment level.</p>
                         <div id="country-index"></div>
                     </div>
 
+                    <div id="examples-empty-note"></div>
+
+                    <h3 id="examples-h-embedded" style="color: var(--embedded); margin-top: 30px; border-bottom: 2px solid var(--embedded); padding-bottom: 5px;">Embedded Commitments</h3>
                     <div id="examples-list-embedded"></div>
 
-                    <h3 style="color: var(--partial); margin-top: 30px; border-bottom: 2px solid var(--partial); padding-bottom: 5px;">Partial Commitments</h3>
+                    <h3 id="examples-h-partial" style="color: var(--partial); margin-top: 30px; border-bottom: 2px solid var(--partial); padding-bottom: 5px;">Partial Commitments</h3>
                     <div id="examples-list-partial"></div>
 
-                    <h3 style="color: var(--tokenistic); margin-top: 30px; border-bottom: 2px solid var(--tokenistic); padding-bottom: 5px;">Tokenistic Mentions</h3>
+                    <h3 id="examples-h-tokenistic" style="color: var(--tokenistic); margin-top: 30px; border-bottom: 2px solid var(--tokenistic); padding-bottom: 5px;">Tokenistic Mentions</h3>
                     <div id="examples-list-tokenistic"></div>
                 </div>
 
@@ -904,7 +1327,7 @@
 
                     <div class="ui-box">
                         <h3 style="margin-top:0;">Transformative justice matrix</h3>
-                        <p class="panel-sub">Each axis takes the weaker of its two dimensions, following the intersection logic of the policy brief. The upper-right cell is the region the brief describes as approaching transformative climate justice; the upper-left is the justice-washing pattern of insight 2. Countries are placed from their recorded assessment. A country can be moved by hand, and a manual placement is kept separately from the machine one and marked in the export.</p>
+                        <p class="panel-sub">Each axis takes the weaker of its two dimensions, following the intersection logic of the policy brief. The upper-right cell is the region the brief describes as approaching transformative climate justice. Countries are placed from their recorded assessment; <b>click any country to open its justice dimension profile</b>. A country can be moved by hand, and a manual placement is kept separately from the machine one and marked in the export.</p>
                         <div id="report-matrix"></div>
                         <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:14px;">
                             <div class="form-group" style="margin-bottom:0;">
@@ -3149,12 +3572,23 @@ function renderExamples() {
         else htmlTok += cardHtml;
     });
 
+    const note = document.getElementById('examples-empty-note');
+    const showLevels = on => ["embedded", "partial", "tokenistic"].forEach(k => {
+        const h = document.getElementById('examples-h-' + k);
+        const l = document.getElementById('examples-list-' + k);
+        if (h) h.style.display = on ? "" : "none";
+        if (l) l.style.display = on ? "" : "none";
+    });
+
     if (none) {
-        const prompt = `<p class="muted-note">Choose a country above to read its coding examples.</p>`;
-        containerEmb.innerHTML = prompt;
+        if (note) note.innerHTML = `<p class="muted-note">Choose a country above to read its coding examples.</p>`;
+        showLevels(false);
+        containerEmb.innerHTML = "";
         containerPar.innerHTML = "";
         containerTok.innerHTML = "";
     } else {
+        if (note) note.innerHTML = "";
+        showLevels(true);
         const empty = lvl => `<p class="muted-note">No ${lvl} examples${exampleFilter.country ? " for " + esc(exampleFilter.country) : ""}${exampleFilter.dimension !== "All" ? " in " + exampleFilter.dimension + " justice" : ""}.</p>`;
         containerEmb.innerHTML = htmlEmb || empty("embedded");
         containerPar.innerHTML = htmlPar || empty("partial");
@@ -5694,11 +6128,19 @@ function drawVerdictMap() {
 }
 
 /* The matrix as the policy brief draws it: shaded by distance from the
-   intersection of the two axes, countries as separated chips with a count, and
-   nothing clickable. The names were running together into an unreadable block
-   and were also the only way to open a record, which meant hunting for a
-   two-pixel target. Records are opened from the picker below and from the
-   table underneath instead. */
+   intersection of the two axes, countries as separated chips with a count.
+
+   Two changes in v2.10. The chips are clickable again, and open the country's
+   profile: they were made inert when the names ran together into an unreadable
+   block, but the block was the problem and the chip spacing fixed it, so the
+   obvious target no longer needs to be a dead one. The picker below and the
+   table underneath still work, for anyone who prefers to search by name.
+
+   The justice-washing label is also gone from the cells. The pattern is still
+   detected and still reported, as a flag on the country record where it can be
+   read with the evidence beside it. On the matrix it was a label attached to a
+   whole cell, which said it of every country in that cell at once, on nothing
+   more than its position. */
 const MX_SHADE = ["mx-s0", "mx-s1", "mx-s2", "mx-s3", "mx-s4"];
 
 function renderMatrix(rows) {
@@ -5712,12 +6154,13 @@ function renderMatrix(rows) {
         for (let c = 0; c < 3; c++) {
             const here = rows.filter(a => idx(a.axisRP) === r && idx(a.axisDR) === c)
                              .sort((a, b) => a.country.localeCompare(b.country));
-            const corner = (r === 2 && c === 2), washing = (r >= 1 && c === 0);
+            const corner = (r === 2 && c === 2);
             grid += `<div class="mx-cell ${MX_SHADE[r + c]}${corner ? ' mx-corner' : ''}">
                 <div class="mx-head"><span class="mx-n">${here.length}</span>
-                    ${corner ? '<span class="mx-flag">approaching transformative</span>' : ''}
-                    ${washing && here.length ? '<span class="mx-flag mx-flag-w">justice-washing</span>' : ''}</div>
-                <div class="mx-list">${here.map(a => `<span class="mx-chip" title="${esc(a.verdict)}">${esc(a.country)}${a.sensitiveToRule ? '<i class="mx-rs">*</i>' : ''}</span>`).join("")}</div>
+                    ${corner ? '<span class="mx-flag">approaching transformative</span>' : ''}</div>
+                <div class="mx-list">${here.map(a => `<button type="button" class="mx-chip"
+                    title="${esc(a.verdict)} \u2014 open this country's justice dimension profile"
+                    onclick="openCountryRecord('${esc(a.country).replace(/'/g, "\\'")}')">${esc(a.country)}${a.sensitiveToRule ? '<i class="mx-rs">*</i>' : ''}</button>`).join("")}</div>
             </div>`;
         }
         grid += `</div>`;
@@ -5731,13 +6174,15 @@ function renderMatrix(rows) {
     <div class="mx-legend"><span>further from the intersection</span>
         ${MX_SHADE.map(s => `<i class="mx-key ${s}"></i>`).join("")}<span>closer</span>
         ${rows.some(a => a.sensitiveToRule) ? '<span class="mx-note">* verdict changes under the other roll-up rule</span>' : ''}</div>
-    <div class="mx-open"><label>Open a country record
+    <div class="mx-open"><label>Open a country profile
         <select class="search-box" style="margin-bottom:0;" onchange="if(this.value) openCountryRecord(this.value)">
             <option value="">Select a country\u2026</option>
             ${names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}</select></label></div>
     <p class="q-note">Each axis takes the <b>weaker</b> of its two dimensions (rule: ${RULES.AXIS_RULE}), following the
     intersection logic in the policy brief. The upper-right cell is the region the brief describes as approaching
-    transformative climate justice; the left column is the justice-washing pattern of insight 2.</p>`;
+    transformative climate justice. Countries in the left column with a developed vertical axis show the
+    process-heavy, outcome-light pattern of insight 2; it is reported as a flag on each country's own record,
+    with the evidence beside it, rather than as a label over the cell. Select a country to open its profile.</p>`;
 }
 
 let reportSort = { key: "verdict", dir: -1 };
@@ -5780,6 +6225,75 @@ function renderRecordTable(rows) {
         </tr>`).join("")}</tbody></table></div>`;
 }
 
+
+/* The four dimension cards on a country record now open to the same arithmetic
+   the Assessment page shows: the score, the statements it rests on, what each
+   one contributed, and why the confidence is what it is. Until v2.10 these
+   cards were flat, a tier and a confidence word, and the reasoning stayed
+   behind on a page that had since been cleared. A reader could see that
+   Distributive was graded Tokenistic and had no way to find out why, which is
+   the one question a reader of a record actually has. */
+function recordDimensionCards(a) {
+    const cut = RULES.SCORE.CUT;
+    return `<div class="cr-profile">${DIMS4.map(d => {
+        const pf = (a.profileDetail && a.profileDetail[d]) || {};
+        const tier = pf.tier || (a.tiers || {})[d] || "?";
+        const conf = pf.confidence || (a.confidence || {})[d] || "";
+        const total = (typeof pf.total === "number") ? pf.total : ((a.counts || {})[d] || 0);
+        const score = (typeof pf.score === "number") ? pf.score : null;
+        const colour = TIER_COLOR[tier] || "#9e9e9e";
+        const stored = !!(a.profileDetail && a.profileDetail[d]);
+
+        const scale = score === null ? "" : `<div class="dscale" title="score ${score} of 100">
+            <span class="dscale-fill" style="width:${Math.max(1, score)}%;background:${colour}"></span>
+            <span class="dscale-cut" style="left:${cut.Partial}%" title="Partial threshold ${cut.Partial}"></span>
+            <span class="dscale-cut" style="left:${cut.Embedded}%" title="Embedded threshold ${cut.Embedded}"></span>
+        </div>`;
+
+        const parts = (pf.parts && pf.parts.length) ? `
+            <table class="dcalc">
+                <thead><tr><th>statement</th><th>tier</th><th>evidence</th><th>value</th><th>decay</th><th>adds</th></tr></thead>
+                <tbody>${pf.parts.map(x => `<tr>
+                    <td>${esc(x.locator || "")}
+                        ${x.text ? `<div class="cr-part-q">${esc(x.text)}${String(x.text).length >= 160 ? "\u2026" : ""}</div>` : ""}
+                        ${(x.penalties && x.penalties.length) ? `<div class="dcalc-pen">${esc(x.penalties.join("; "))}</div>` : ""}</td>
+                    <td style="color:${TIER_COLOR[x.tier] || '#666'};font-weight:600;">${esc(x.tier || "")}</td>
+                    <td>${x.fired}/${RULES.SCORE.FEATURES.length}</td>
+                    <td>${x.value}</td><td>&times;${x.decay}</td><td><b>${x.contribution}</b></td>
+                </tr>`).join("")}</tbody>
+            </table>
+            ${(typeof pf.score === "number") ? `<p class="dcalc-sum">Accumulated ${Math.round((pf.S || 0) * 100) / 100} of the ${RULES.SCORE.REFERENCE} reference, giving <b>${pf.score}</b> of 100. The statements above are the ones the score rests on, strongest first.</p>` : ""}` : "";
+
+        const body = stored ? `
+            ${pf.distribution ? `<div class="dbar-key">${pf.distribution.Embedded} embedded &middot; ${pf.distribution.Partial} partial &middot; ${pf.distribution.Tokenistic} tokenistic</div>` : ""}
+            ${parts}
+            ${(pf.confidenceWhy && pf.confidenceWhy.length) ? `<div class="dim-whyh">Why the confidence is ${esc(conf || "?")}</div><ul class="dim-why">${pf.confidenceWhy.map(w => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}
+            ${(pf.ceiling && (pf.ceiling !== tier || pf.consolidated !== tier)) ? `<div class="dim-alt">Under the earlier rules this reads <b>${esc(pf.ceiling)}</b> (strongest statement) and <b>${esc(pf.consolidated)}</b> (strongest reached twice).</div>` : ""}
+            ${pf.note ? `<p class="dim-note">${esc(pf.note)}</p>` : ""}`
+        : `<p class="dim-note">This assessment was recorded before the scoring detail was stored, so the arithmetic behind this grade is not in the record. What is stored: tier <b>${esc(tier)}</b>${conf ? `, confidence <b>${esc(conf)}</b>` : ""}${total ? `, from <b>${total}</b> coded statement${total === 1 ? "" : "s"}` : ""}${((a.ceiling || {})[d] && (a.ceiling || {})[d] !== tier) ? `, ceiling rule <b>${esc(a.ceiling[d])}</b>` : ""}${((a.consolidated || {})[d] && (a.consolidated || {})[d] !== tier) ? `, consolidated rule <b>${esc(a.consolidated[d])}</b>` : ""}. Re-run the document on the Assessment tab and record it again to capture the full scoring.</p>`;
+
+        return `<details class="dim-card" style="border-top:5px solid ${colour};">
+            <summary>
+                <h4>${d} justice</h4>
+                <div class="dim-tier" style="color:${colour}">${esc(tier)}</div>
+                <div class="dim-score">${total ? [score !== null ? `<b>${score}</b>/100` : "", `${total} statement${total === 1 ? "" : "s"}`].filter(Boolean).join(" &middot; ") : "no statements"}</div>
+                ${scale}
+                <div class="dim-conf dim-conf-${esc(conf)}">confidence: ${esc(conf || "not recorded")}${pf.borderline ? " &middot; borderline" : ""}</div>
+                <span class="dim-more"></span>
+            </summary>
+            <div class="dim-body">${body}</div>
+        </details>`;
+    }).join("")}</div>`;
+}
+
+/* "Holy See" becomes "Holy See's"; a name already ending in s takes the bare
+   apostrophe, so "United States'" rather than "United States's". */
+function possessive(name) {
+    const n = String(name || "").trim();
+    if (!n) return n;
+    return /[sS]$/.test(n) ? n + "\u2019" : n + "\u2019s";
+}
+
 /* The country record: the recorded assessment, plus every coding example filed
    against that country, grouped by dimension and then by commitment level.
    Sub-dimension is the thematic cluster where the analyser recorded one. */
@@ -5788,7 +6302,7 @@ function openCountryRecord(country) {
     const box = document.getElementById('country-record-box');
     const el = document.getElementById('country-record');
     if (!box || !el) return;
-    document.getElementById('country-record-title').textContent = country;
+    document.getElementById('country-record-title').textContent = possessive(country) + " Justice Dimension Profile";
     box.style.display = "block";
 
     const codes = (typeof codingExamples !== "undefined" ? codingExamples : [])
@@ -5802,14 +6316,9 @@ function openCountryRecord(country) {
                  ${a.sensitiveToRule ? `<span class="chip chip-review">flips to "${esc(VERDICT_SHORT[normaliseVerdict(a.altVerdict)] || a.altVerdict)}" under the other roll-up rule</span>` : ''}</div>
             <div class="cr-meta">${esc(a.source)} &middot; ${esc(a.coder)} &middot; ${new Date(a.at).toLocaleString()} &middot; engine ${esc(a.engine)}, lexicon ${esc(a.lexicon)}</div>
         </div>
-        <div class="cr-dims">${DIMS4.map(d => `
-            <div class="cr-dim" style="border-top:4px solid ${TIER_COLOR[a.tiers[d]] || '#ccc'}">
-                <h5>${d}</h5>
-                <div class="cr-tier" style="color:${TIER_COLOR[a.tiers[d]] || '#666'}">${esc(a.tiers[d] || "?")}</div>
-                ${a.confidence && a.confidence[d] ? `<div class="cr-sub">confidence: ${esc(a.confidence[d])}</div>` : ""}
-                ${(a.ceiling && a.consolidated && a.ceiling[d] !== a.consolidated[d])
-                    ? `<div class="cr-sub">ceiling ${esc(a.ceiling[d])}, consolidated ${esc(a.consolidated[d])}</div>` : ""}
-            </div>`).join("")}</div>
+        <p class="cr-lead">Each dimension is scored from the evidence its statements carry, then banded.
+        <b>Open a card</b> for the statements the score rests on, what each one contributed, and why the confidence is what it is.</p>
+        ${recordDimensionCards(a)}
         <p class="muted-note">Axes: recognitional + procedural = <b>${esc(a.axisRP)}</b>, distributive + restorative = <b>${esc(a.axisDR)}</b>.
         ${a.awaitingDimension ? `<b>${a.awaitingDimension}</b> passage(s) named justice without a dimension and are still unassigned. ` : ""}
         ${a.overrides ? `<b>${a.overrides}</b> coder override(s) applied.` : ""}</p>`;
@@ -5852,30 +6361,10 @@ function openCountryRecord(country) {
        who recoded statements by hand can read the result without re-running the
        assessment, which would discard that work. Each dimension opens to the
        same arithmetic the assessment page shows. */
+    /* The dimension cards are drawn once, at the top, beside the verdict they
+       explain. What is left down here is the rubric: the six country-level
+       checks, which read as a set rather than per dimension. */
     let detail = "";
-    if (a && a.profileDetail) {
-        detail = `<h4 class="cr-h">Dimension profile as recorded</h4>
-        <p class="muted-note">Each dimension is scored from the evidence its statements carry, then banded. Open a card for the arithmetic.</p>
-        <div class="cr-profile">${DIMS4.map(d => {
-            const pf = a.profileDetail[d] || {};
-            return `<details class="dim-card" style="border-top:4px solid ${TIER_COLOR[pf.tier] || '#ccc'};">
-                <summary><h4>${d} justice</h4>
-                    <div class="dim-tier" style="color:${TIER_COLOR[pf.tier] || '#666'}">${esc(pf.tier || "?")}</div>
-                    <div class="dim-score">${typeof pf.score === "number" ? `<b>${pf.score}</b>/100` : ""}${pf.total ? ` &middot; ${pf.total} statement${pf.total === 1 ? "" : "s"}` : ""}</div>
-                    <div class="dim-conf">confidence: ${esc(pf.confidence || "?")}${pf.borderline ? " &middot; borderline" : ""}</div>
-                    <span class="dim-more"></span></summary>
-                <div class="dim-body">
-                    ${pf.distribution ? `<div class="dbar-key">${pf.distribution.Embedded} embedded &middot; ${pf.distribution.Partial} partial &middot; ${pf.distribution.Tokenistic} tokenistic</div>` : ""}
-                    ${(pf.parts && pf.parts.length) ? `<table class="dcalc"><thead><tr><th>statement</th><th>tier</th><th>features</th><th>value</th><th>decay</th><th>adds</th></tr></thead><tbody>${
-                        pf.parts.map(x => `<tr><td>${esc(x.locator || "")}${(x.penalties && x.penalties.length) ? `<div class="dcalc-pen">${esc(x.penalties.join("; "))}</div>` : ""}</td><td>${esc(x.tier || "")}</td><td>${x.fired}</td><td>${x.value}</td><td>&times;${x.decay}</td><td><b>${x.contribution}</b></td></tr>`).join("")}</tbody></table>` : ""}
-                    ${(pf.confidenceWhy && pf.confidenceWhy.length) ? `<ul class="dim-why">${pf.confidenceWhy.map(w => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}
-                    ${(pf.ceiling && (pf.ceiling !== pf.tier || pf.consolidated !== pf.tier)) ? `<div class="dim-alt">Ceiling rule reads <b>${esc(pf.ceiling)}</b>, consolidated rule reads <b>${esc(pf.consolidated)}</b>.</div>` : ""}
-                    <p class="dim-note">${esc(pf.note || "")}</p>
-                </div></details>`;
-        }).join("")}</div>`;
-    } else if (a) {
-        detail = `<p class="muted-note">This assessment was recorded before the profile detail was stored. Re-record it from the Assessment tab to capture the scoring.</p>`;
-    }
     if (a && a.rubricDetail && a.rubricDetail.criteria && a.rubricDetail.criteria.length) {
         const rb = a.rubricDetail;
         detail += `<h4 class="cr-h">Transformative justice rubric as recorded</h4>
