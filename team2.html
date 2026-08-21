@@ -654,62 +654,6 @@
                         <a href="#m-qa">FAQ</a>
                     </div>
                     <p class="panel-sub" style="margin-top:6px;">Sections 4 to 11 set out the scoring method from end to end: how a sentence becomes a tier, how tiers become a dimension score, and how four dimension scores become a band.</p>
-                    
-                    <div class="ui-box" style="border-left: 5px solid var(--primary); background: rgba(0,102,204,0.03);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                            <div>
-                                <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">📍 Current Timeline Marker</span>
-                                <h3 id="current-date-display" style="margin: 4px 0 0 0; color: var(--primary); font-size: 1.3rem;">Loading...</h3>
-                            </div>
-                            <div style="text-align: right;">
-                                <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Active Phase</span>
-                                <h3 id="current-phase-display" style="margin: 4px 0 0 0; color: var(--accent); font-size: 1.2rem;">Data Execution and Initial Mapping</h3>
-                                <p id="corpus-count" style="margin: 8px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">Corpus loading...</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ui-box" style="overflow-x: auto;">
-                        <div id="gantt_chart" style="width: 100%; min-width: 600px; height: 310px;"></div>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
-                        <div class="ui-box">
-                            <h3 style="margin-top:0;">Detailed Project Roadmap</h3>
-                            <ul class="timeline-list">
-                                <li><span class="timeline-date">July 20 – July 31: Project Setup and Calibration</span>Translating the framework into structured AI prompts. Includes UN-Habitat alignment meeting and pilot testing.</li>
-                                <li><span class="timeline-date">August 1 – August 31: Data Execution and Mapping</span>Corpus locked at <b>120 NDC documents covering 146 countries</b>, snapshot taken from the UNFCCC registry on 1 August 2026. Running the corpus through the screener and the assessment, then mapping results onto the two-axis matrix.</li>
-                                <li><span class="timeline-date">September 1 – September 30: Paternity Leave</span>Human verification of machine-assessed documents continues, led by the student assistant. <span id="verify-backlog" class="verify-backlog">Verification queue loading...</span></li>
-                                <li><span class="timeline-date">October 1 – October 31: Synthesis and Drafting</span>Synthesizing results, drafting core findings, and evaluating justice-washing risks.</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="ui-box">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <h3 style="margin:0; color: var(--primary);">Live Team Activity Feed</h3>
-                            </div>
-                            <div class="activity-log" id="activity-log-container">
-                                <div class="activity-item" style="color: #888; font-style: italic;">Loading team activity...</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PAGE 2: METHODOLOGY -->
-                <div id="methodology" class="page">
-                    <h1 class="header-light-blue" style="font-size: 2.1rem; margin-bottom: 10px;">Framework and Methodology</h1>
-                    <p style="margin-top: 0;">This page is the working manual for the JUST-NDC analysis. It sets out why the project exists, the framework we apply, how a statement is coded, what the tool does on its own, and where its judgement stops and yours begins. If you are joining the team, read it end to end before you code anything.</p>
-                    <div class="m-toc">
-                        <a href="#m-ladder">The four levels</a>
-                        <a href="#m-tiers">Grading a statement</a>
-                        <a href="#m-score">Scoring a dimension</a>
-                        <a href="#m-matrix">The axes and the matrix</a>
-                        <a href="#m-rubric">The rubric</a>
-                        <a href="#m-bands">The six bands</a>
-                        <a href="#m-worked">Worked examples</a>
-                        <a href="#m-qa">Questions you will be asked</a>
-                    </div>
-                    <p class="panel-sub" style="margin-top:6px;">Sections 4 to 11 are the scoring method end to end: how a sentence becomes a tier, how tiers become a dimension score, how four scores become a band. They are written to be lifted into a methods section or read aloud to someone who has never seen the tool.</p>
 
                     <h2 class="header-light-blue">1. Why this project exists</h2>
                     <div class="ui-box" style="margin-top: 15px;">
@@ -1337,19 +1281,21 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
 
                     <h2 id="examples-heading" style="margin-top:26px;">Examples</h2>
                     <div id="examples-filter-bar" class="ledger-controls"></div>
-                    <h3 style="color: var(--embedded); margin-top: 30px; border-bottom: 2px solid var(--embedded); padding-bottom: 5px;">Embedded Commitments</h3>
                     <div class="ui-box">
                         <h3 style="margin-top:0;">By country</h3>
                         <p class="panel-sub">Every country with a coding example or a recorded assessment. Open one to see its codes grouped by dimension and commitment level.</p>
                         <div id="country-index"></div>
                     </div>
 
+                    <div id="examples-empty-note"></div>
+
+                    <h3 id="examples-h-embedded" style="color: var(--embedded); margin-top: 30px; border-bottom: 2px solid var(--embedded); padding-bottom: 5px;">Embedded Commitments</h3>
                     <div id="examples-list-embedded"></div>
 
-                    <h3 style="color: var(--partial); margin-top: 30px; border-bottom: 2px solid var(--partial); padding-bottom: 5px;">Partial Commitments</h3>
+                    <h3 id="examples-h-partial" style="color: var(--partial); margin-top: 30px; border-bottom: 2px solid var(--partial); padding-bottom: 5px;">Partial Commitments</h3>
                     <div id="examples-list-partial"></div>
 
-                    <h3 style="color: var(--tokenistic); margin-top: 30px; border-bottom: 2px solid var(--tokenistic); padding-bottom: 5px;">Tokenistic Mentions</h3>
+                    <h3 id="examples-h-tokenistic" style="color: var(--tokenistic); margin-top: 30px; border-bottom: 2px solid var(--tokenistic); padding-bottom: 5px;">Tokenistic Mentions</h3>
                     <div id="examples-list-tokenistic"></div>
                 </div>
 
@@ -3717,12 +3663,23 @@ function renderExamples() {
         else htmlTok += cardHtml;
     });
 
+    const note = document.getElementById('examples-empty-note');
+    const showLevels = on => ["embedded", "partial", "tokenistic"].forEach(k => {
+        const h = document.getElementById('examples-h-' + k);
+        const l = document.getElementById('examples-list-' + k);
+        if (h) h.style.display = on ? "" : "none";
+        if (l) l.style.display = on ? "" : "none";
+    });
+
     if (none) {
-        const prompt = `<p class="muted-note">Choose a country above to read its coding examples.</p>`;
-        containerEmb.innerHTML = prompt;
+        if (note) note.innerHTML = `<p class="muted-note">Choose a country above to read its coding examples.</p>`;
+        showLevels(false);
+        containerEmb.innerHTML = "";
         containerPar.innerHTML = "";
         containerTok.innerHTML = "";
     } else {
+        if (note) note.innerHTML = "";
+        showLevels(true);
         const empty = lvl => `<p class="muted-note">No ${lvl} examples${exampleFilter.country ? " for " + esc(exampleFilter.country) : ""}${exampleFilter.dimension !== "All" ? " in " + exampleFilter.dimension + " justice" : ""}.</p>`;
         containerEmb.innerHTML = htmlEmb || empty("embedded");
         containerPar.innerHTML = htmlPar || empty("partial");
