@@ -393,6 +393,18 @@
         .ex-country-btn:hover { text-decoration:underline; }
         .ex-filter-on { font-weight:600; color:var(--primary); }
         .ex-prov { margin-top:6px; font-size:0.7rem; color:var(--text-muted); }
+        .ex-prompt { font-size:0.76rem; color:#5a5a62; background:#f6f7fb; border-left:3px solid #ccd; border-radius:0 6px 6px 0; padding:6px 10px; margin-bottom:8px; line-height:1.5; }
+        .ex-prompt b { color:#3a3a44; }
+        .ci-card.ci-on { border-color:var(--primary); box-shadow:0 0 0 2px rgba(0,113,227,.12); }
+        .ci-record { position:absolute; bottom:9px; right:11px; font-size:0.64rem; color:var(--text-muted); border:1px solid #e4e4e8; border-radius:9px; padding:1px 7px; background:#fff; }
+        .ci-record:hover { color:var(--primary); border-color:var(--primary); }
+        .cr-profile { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin-bottom:8px; }
+        .rub-table { width:100%; border-collapse:collapse; font-size:0.78rem; margin-top:8px; }
+        .rub-table th { text-align:left; font-size:0.66rem; text-transform:uppercase; letter-spacing:.04em; color:#8a8a90; border-bottom:1px solid #eee; padding:5px 7px; }
+        .rub-table td { padding:6px 7px; border-bottom:1px solid #f5f5f5; vertical-align:top; }
+        .rub-pass { color:#1f6b33; font-weight:600; }
+        .rub-partial { color:#a06000; font-weight:600; }
+        .rub-fail { color:#a3261f; font-weight:600; }
         .ex-quote { font-family: Georgia, serif; font-style: italic; margin: 10px 0; line-height: 1.6; color: #222; }
         .ex-why { font-size: 0.78rem; color: #555; background: #fafafa; border-radius: 8px; padding: 9px 12px; line-height: 1.6; }
         .ex-override { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
@@ -798,6 +810,8 @@
                         <button id="submit-example-btn" onclick="submitExample()" class="download-btn" style="background: var(--primary); color:#fff;">Save Example to Cloud Database</button>
                     </div>
 
+                    <h2 id="examples-heading" style="margin-top:26px;">Examples</h2>
+                    <div id="examples-filter-bar" class="ledger-controls"></div>
                     <h3 style="color: var(--embedded); margin-top: 30px; border-bottom: 2px solid var(--embedded); padding-bottom: 5px;">Embedded Commitments</h3>
                     <div class="ui-box">
                         <h3 style="margin-top:0;">By country</h3>
@@ -805,8 +819,6 @@
                         <div id="country-index"></div>
                     </div>
 
-                    <h2 id="examples-heading" style="margin-top:26px;">Examples</h2>
-                    <div id="examples-filter-bar" class="ledger-controls"></div>
                     <div id="examples-list-embedded"></div>
 
                     <h3 style="color: var(--partial); margin-top: 30px; border-bottom: 2px solid var(--partial); padding-bottom: 5px;">Partial Commitments</h3>
@@ -1206,7 +1218,7 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.4.0";
+const ENGINE_VERSION = "2.9.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -1235,7 +1247,14 @@ const RULES = {
        one to show whether it survives the choice.                          */
     ROLLUP_RULE: "score",        // "score" (v2.3 default), "ceiling" (the v2.0 method), or "consolidated"
     MIN_UNIT_CHARS: 25,          // shorter fragments are merged into a neighbouring sentence, never dropped
-    DEHYPHENATE: true            // rejoin words broken across a line, unless the hyphen belongs to the term
+    DEHYPHENATE: true,           // rejoin words broken across a line, unless the hyphen belongs to the term
+
+    /* v2.5. Inside a table the coding unit is the cell, not the line and not
+       the column, and the UNFCCC question column is not coded as though the
+       country had written it. Set TEMPLATE_COLUMNS to false to code every
+       column and report that you did. */
+    TABLE_UNIT: "cell",
+    TEMPLATE_COLUMNS: true
 };
 
 const tierRank = t => RULES.TIER_ORDER.indexOf(t);
@@ -1843,7 +1862,8 @@ FEATURES.dutyLanguage = [
 FEATURES.commitVerb = FEATURES.commitVerb.concat([
     /(?<![\p{L}])(committing to|commit to|commitment to|commitments to|undertakes?|undertaking to|pledges?|pledging to|resolves? to|reaffirms? its commitment|has committed|have committed|we will|it will)(?![\p{L}])/iu,
     /(?<![\p{L}])(comprometiendose|comprometi\u00e9ndose|se compromete a|asume el compromiso)(?![\p{L}])/iu,
-    /(?<![\p{L}])(s'engageant|prend l'engagement|s'oblige)(?![\p{L}])/iu
+    /(?<![\p{L}])(s'engageant|prend l'engagement|s'oblige)(?![\p{L}])/iu,
+    /(?<![\p{L}])(has|have|was|were|is|are|been)\s+(allocated|earmarked|committed|designated|approved|ring-?fenced|set aside)(?![\p{L}])/iu
 ]);
 
 /* Recall net additions. These never assign a dimension or a tier; they only
@@ -1881,6 +1901,118 @@ const HYPHEN_KEEP = (() => {
     Object.values(CLUSTERS).forEach(add);
     return set;
 })();
+
+
+/* ============================================================================
+   LEXICON ADDITIONS v2.9
+   Gaps found by reading what the analyser missed in Serbia, Yemen and others.
+   Three kinds of gap, and they need three different remedies.
+
+   1. SYNONYMS the term list simply did not hold: public hearing, comment
+      period, gender mainstreaming, gender-sensitive.
+   2. WORD ORDER. "public participation" and "participation of the public" are
+      the same claim; "loss and damage" is written "losses and damages" and
+      "damages and losses". A term list cannot enumerate these, so they are
+      matched as phrase patterns, which also flags them as implicit so a coder
+      confirms the reading.
+   3. CLIMATE INJUSTICE described without justice vocabulary: water scarcity,
+      protracted conflict, displaced communities, undermined livelihoods. These
+      are put in the RECALL NET, not in a dimension. They are evidence that a
+      passage concerns the distribution of climate harm, but they are not
+      themselves a commitment, and coding them as one would be wrong.
+   ========================================================================== */
+
+const LEXICON_ADDITIONS_29 = {
+    Procedural: {
+        core: ["public consultation", "public consultations", "public hearing", "public hearings",
+               "public comment", "public comments", "comment period", "consultation period",
+               "public review", "public inquiry", "citizen participation", "citizens participation",
+               "community consultation", "stakeholder consultation", "stakeholder engagement",
+               "consultative process", "consultation process", "social dialogue", "public dialogue",
+               "public debate", "participation of the public", "participation of citizens",
+               "consulta publica", "consulta pública", "audiencia publica", "audiencia pública",
+               "participacion ciudadana", "participación ciudadana", "dialogo social", "diálogo social",
+               "consultation publique", "enquete publique", "enquête publique", "debat public",
+               "débat public", "participation citoyenne", "dialogue social",
+               "общественные консультации", "общественные слушания",
+               "المشاورات العامة", "الاستماع العام", "公众咨询", "公众听证"],
+        supporting: ["multi-stakeholder", "multistakeholder", "town hall", "advisory council",
+                     "advisory committee", "working group", "public awareness", "public information",
+                     "grupo de trabajo", "comite consultivo", "comité consultivo",
+                     "groupe de travail", "comite consultatif", "comité consultatif"]
+    },
+    Recognitional: {
+        core: ["gender-sensitive", "gender sensitive", "gender perspective", "gender perspectives",
+               "gender mainstreaming", "gender equality", "gender equity", "gender balance",
+               "gender parity", "gender analysis", "gender action plan", "gender equal participation",
+               "participation of women", "women's participation", "womens participation",
+               "women in decision-making", "gender-differentiated", "gender-disaggregated",
+               "perspectiva de genero", "perspectiva de género", "igualdad de genero",
+               "igualdad de género", "transversalizacion de genero", "transversalización de género",
+               "perspective de genre", "egalite des genres", "égalité des genres",
+               "integration du genre", "intégration du genre",
+               "гендерное равенство", "гендерн", "المساواة بين الجنسين", "性别平等", "社会性别"],
+        supporting: ["equal rights", "equal status", "non-discrimination", "nondiscrimination",
+                     "igualdad de derechos", "no discriminacion", "no discriminación",
+                     "egalite des droits", "égalité des droits", "non-discrimination"]
+    },
+    Distributive: {
+        core: ["socially just", "socially equitable", "just pathway", "equitable pathway",
+               "fair pathway", "equitable access", "equitable distribution", "equitable outcomes",
+               "socialmente justo", "acceso equitativo", "distribucion equitativa",
+               "distribución equitativa", "socialement juste", "acces equitable", "accès équitable"],
+        supporting: ["social and economic impacts", "socio-economic impacts", "socioeconomic impacts",
+                     "economic and social consequences", "social, economic and environmental",
+                     "impactos sociales y economicos", "impactos sociales y económicos",
+                     "impacts sociaux et economiques", "impacts sociaux et économiques"]
+    },
+    Restorative: {
+        core: ["losses and damages", "damages and losses", "loss and damages", "damage and loss",
+               "perdidas y danos", "pérdidas y daños", "danos y perdidas", "daños y pérdidas",
+               "pertes et dommages", "dommages et pertes"],
+        supporting: []
+    }
+};
+Object.entries(LEXICON_ADDITIONS_29).forEach(([dim, sets]) => {
+    Object.entries(sets).forEach(([bucket, list]) => {
+        const target = LEXICON[dim][bucket];
+        list.forEach(x => { if (!target.includes(x)) target.push(x); });
+    });
+});
+
+/* Word order, matched as shape rather than enumerated */
+IMPLICIT_PATTERNS.Procedural.push(
+    /(?<![\p{L}])participation\s+(of|by)\s+(the\s+)?(public|citizens?|communit\p{L}*|stakeholders?|civil society|women|youth|indigenous\s+\p{L}+)/iu,
+    /(?<![\p{L}])(public|citizens?|communit\p{L}*|stakeholders?|civil society)\s+(consultation|participation|engagement|hearing|input|comment)/iu,
+    /(?<![\p{L}])(consulted|consulting|consultation)\s+(with\s+)?(the\s+)?(public|citizens?|communities|stakeholders|civil society)/iu,
+    /(?<![\p{L}])(open|available)\s+(for|to)\s+(public\s+)?(comment|consultation|review|scrutiny)/iu,
+    /(?<![\p{L}])(draft|proposal|plan)\s+\p{L}*\s*(was|were|is|are)\s+(published|circulated|submitted)\s+for\s+(public\s+)?(comment|consultation|review)/iu
+);
+IMPLICIT_PATTERNS.Recognitional.push(
+    /(?<![\p{L}])gender[\s-]?(sensitiv\p{L}*|responsiv\p{L}*|equal\p{L}*|perspectiv\p{L}*|mainstream\p{L}*|balanc\p{L}*|parit\p{L}*|disaggregat\p{L}*|differentiat\p{L}*)/iu,
+    /(?<![\p{L}])(women|girls|indigenous\s+\p{L}+|persons\s+with\s+disabilit\p{L}*|youth)\s+(and\s+\p{L}+\s+)?(are|were|shall be|will be|is)\s+(represented|included|consulted|engaged|involved)/iu
+);
+IMPLICIT_PATTERNS.Restorative.push(
+    /(?<![\p{L}])(loss(es)?\s+and\s+damages?|damages?\s+and\s+loss(es)?)(?![\p{L}])/iu
+);
+
+/* Climate injustice described without justice vocabulary. Recall net only:
+   evidence that a passage concerns the distribution of climate harm, never a
+   commitment in itself. */
+[
+    "water scarcity", "water stress", "food insecurity", "food security", "human security",
+    "social cohesion", "public health", "protracted conflict", "armed conflict", "fragility",
+    "fragile context", "displacement", "displaced", "displacing", "internally displaced",
+    "livelihood", "livelihoods", "undermining livelihoods", "humanitarian", "limited access",
+    "lack of access", "unequal access", "socio-economic", "socioeconomic", "marginalisation",
+    "marginalization", "exclusion", "poverty", "inequality", "inequalities", "disparities",
+    "escasez de agua", "seguridad alimentaria", "medios de vida", "desplazamiento", "desigualdad",
+    "penurie d'eau", "pénurie d'eau", "securite alimentaire", "sécurité alimentaire",
+    "moyens de subsistance", "deplacement", "déplacement", "inegalite", "inégalité",
+    "нехватка воды", "продовольственная безопасность", "перемещение", "неравенство",
+    "ندرة المياه", "الأمن الغذائي", "النزوح", "عدم المساواة",
+    "缺水", "粮食安全", "流离失所", "不平等"
+].forEach(x => { if (!SCREEN_ONLY.includes(x)) SCREEN_ONLY.push(x); });
 
 function detectFeatures(sentence) {
     const out = {};
@@ -2113,6 +2245,70 @@ function sectionLabel(section) {
     return section.detail && section.detail !== section.type
         ? section.type + " \u00b7 " + section.detail
         : section.type;
+}
+
+/* ============================================================================
+   ICTU template text, v2.5
+
+   Most NDCs present the information necessary for clarity, transparency and
+   understanding as a table whose left column is the question text from
+   decision 4/CMA.1, annex I, and whose right column is the country's answer.
+   The question text is identical in every NDC in the corpus. Coding it produces
+   the same false positive in every country: "Information on the planning
+   processes that the Party undertook" is a procedural-sounding sentence that no
+   country wrote and that commits no one to anything.
+
+   Template cells are therefore detected, kept, shown and exported, but not
+   coded. They are attached to the answer cell in the same row as its prompt, so
+   the coder reads the answer against the question it answers, which is more
+   context than the line-by-line reading ever gave.
+   ========================================================================== */
+
+/* Row numbering as NDCs actually write it: 4, 4a, 3c, (a), (d), (iv), 12. */
+const ROW_INDEX_RE = /^\(?(?:\d{1,2}\s*[a-z]?|[a-z]|[ivxlc]{1,4})\)?[.)]?$/i;
+
+const ICTU_TEMPLATE = [
+    "quantifiable information on the reference",
+    "time frames and/or periods for implementation",
+    "time frame and/or period for implementation",
+    "scope and coverage",
+    "planning processes",
+    "assumptions and methodological approaches",
+    "how the party considers that its nationally determined contribution is fair and ambitious",
+    "contributes towards achieving the objective of the convention",
+    "information on the planning processes that the party undertook",
+    "reference year(s), base year(s)",
+    "single-year or multi-year target",
+    "sectors, gases, categories and pools",
+    "mitigation co-benefits resulting from",
+    "decision 1/cp.21",
+    "any other information the party may wish to provide",
+    "information necessary for clarity, transparency and understanding",
+    "target relative to the reference indicator",
+    "information on sources of data used in quantifying the reference",
+    "circumstances under which the party may update the values",
+    "specific information applicable to parties, including regional economic integration",
+    "contextual matters, including, inter alia, as appropriate",
+    "consideration of the fairness and ambition",
+    "social and economic consequences of response measures",
+    "how the party has addressed",
+    "fair and ambitious in the light of its national circumstances",
+    "informacion cuantificable sobre el punto de referencia",
+    "informations quantifiables sur le point de reference",
+    "informations quantifiables sur le point de référence"
+];
+
+function isTemplateText(t) {
+    const s = String(t || "").toLowerCase().replace(/\s+/g, " ").trim()
+        .replace(/^\(?\d{1,2}\s*[a-z]?\)?[.)]?\s+/, "");   // drop a leading row index: "4a Information on..."
+    if (!s || s.length > 600) return false;
+    if (ICTU_TEMPLATE.some(p => s.includes(p))) return true;
+    /* the generic shape of the question column: a third-person prompt about
+       "the Party" or "the nationally determined contribution", usually closing
+       on a semicolon rather than a full stop */
+    return /^(information on|whether|how |description of|general description|specific information|contextual matters|any other information|each party|for strategies|target relative|reference year|time frame|assumptions and method)/.test(s)
+        && /\bpart(y|y's|ies)\b|\bnationally determined contribution\b/.test(s)
+        && s.length < 400;
 }
 
 function looksLikeHeading(line) {
@@ -2905,10 +3101,13 @@ function buildRubric(profile, statements) {
    Examples filed from the ledger carry their locator and their provenance.
    ========================================================================== */
 
-let exampleFilter = { country: "", dimension: "All" };
+/* Nothing is listed until a country is chosen. With a corpus of 190 parties an
+   undifferentiated list of every example is not a reading surface, and the
+   country index above it is the way in. "All countries" stays available. */
+let exampleFilter = { country: null, dimension: "All" };
 
 function setExampleCountry(name) {
-    exampleFilter.country = (exampleFilter.country === name) ? "" : name;
+    exampleFilter.country = (exampleFilter.country === name) ? null : name;
     renderExamples();
     const el = document.getElementById('examples-heading');
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2926,7 +3125,9 @@ function renderExamples() {
     if (!containerEmb) return;
 
     const all = codingExamples || [];
-    const shown = all.filter(ex => {
+    const none = exampleFilter.country === null;
+    const shown = none ? [] : all.filter(ex => {
+        if (exampleFilter.country === "" ) return true;
         if (exampleFilter.country && (ex.country || "").trim().toLowerCase() !== exampleFilter.country.trim().toLowerCase()) return false;
         if (exampleFilter.dimension !== "All" && (ex.dimension || "") !== exampleFilter.dimension) return false;
         return true;
@@ -2937,9 +3138,13 @@ function renderExamples() {
         bar.innerHTML = `
             <div class="lf-group"><span>Dimension:</span>
             ${["All", ...DIMS4].map(d => `<button class="lf-btn ${exampleFilter.dimension === d ? 'lf-on' : ''}" onclick="setExampleDimension('${d}')">${d}</button>`).join("")}</div>
-            ${exampleFilter.country ? `<div class="lf-group"><span class="ex-filter-on">Showing ${esc(exampleFilter.country)} only</span>
-                <button class="lf-btn" onclick="setExampleCountry('')">show every country</button></div>` : ""}
-            <span class="lf-count">${shown.length} of ${all.length} example${all.length === 1 ? "" : "s"}</span>`;
+            <div class="lf-group">
+                ${exampleFilter.country ? `<span class="ex-filter-on">Showing ${esc(exampleFilter.country)} only</span>
+                    <button class="lf-btn" onclick="setExampleCountry(null)">clear</button>` : ""}
+                <button class="lf-btn ${exampleFilter.country === "" ? 'lf-on' : ''}" onclick="setExampleCountry('')">All countries</button>
+            </div>
+            <span class="lf-count">${none ? `${all.length} example(s) on file. Choose a country above to read them.`
+                : `${shown.length} of ${all.length} example${all.length === 1 ? "" : "s"}`}</span>`;
     }
 
     let htmlEmb = '', htmlPar = '', htmlTok = '';
@@ -2951,11 +3156,11 @@ function renderExamples() {
         const dimName = ex.dimension || "Unspecified";
 
         const meta = [
-            ex.page ? `<span class="chip chip-loc">${esc(ex.page)}</span>` : "",
+            (ex.locator || ex.page) ? `<span class="chip chip-loc">${esc(ex.locator || ex.page)}</span>` : "",
             ex.section ? `<span class="chip chip-sec">${esc(ex.section)}</span>` : "",
             ex.cluster ? `<span class="chip">${esc(ex.cluster)}</span>` : "",
             ex.scope ? `<span class="chip chip-${String(ex.scope).toLowerCase()}">${esc(ex.scope)}</span>` : "",
-            (ex.conditional && ex.conditional !== "No") ? `<span class="chip chip-cond">conditional</span>` : "",
+            ((ex.conditionality || ex.conditional) && (ex.conditionality || ex.conditional) !== "No") ? `<span class="chip chip-cond">conditional</span>` : "",
             ex.source === "ledger" ? `<span class="chip chip-frame">from the ledger</span>` : ""
         ].filter(Boolean).join("");
 
@@ -2985,10 +3190,17 @@ function renderExamples() {
         else htmlTok += cardHtml;
     });
 
-    const empty = lvl => `<p class="muted-note">No ${lvl} examples${exampleFilter.country ? " for " + esc(exampleFilter.country) : ""}${exampleFilter.dimension !== "All" ? " in " + exampleFilter.dimension + " justice" : ""}.</p>`;
-    containerEmb.innerHTML = htmlEmb || empty("embedded");
-    containerPar.innerHTML = htmlPar || empty("partial");
-    containerTok.innerHTML = htmlTok || empty("tokenistic");
+    if (none) {
+        const prompt = `<p class="muted-note">Choose a country above to read its coding examples.</p>`;
+        containerEmb.innerHTML = prompt;
+        containerPar.innerHTML = "";
+        containerTok.innerHTML = "";
+    } else {
+        const empty = lvl => `<p class="muted-note">No ${lvl} examples${exampleFilter.country ? " for " + esc(exampleFilter.country) : ""}${exampleFilter.dimension !== "All" ? " in " + exampleFilter.dimension + " justice" : ""}.</p>`;
+        containerEmb.innerHTML = htmlEmb || empty("embedded");
+        containerPar.innerHTML = htmlPar || empty("partial");
+        containerTok.innerHTML = htmlTok || empty("tokenistic");
+    }
 
     if (typeof renderCountryIndex === "function") renderCountryIndex();
 }
@@ -3003,8 +3215,8 @@ function submitExample() {
     const row = {
         country, level: val('new-level'), dimension: val('new-dimension'),
         statement, analysis,
-        page: val('new-page').trim(), section: val('new-section'),
-        scope: val('new-scope'), conditional: val('new-conditional'),
+        locator: val('new-page').trim(), section: val('new-section'),
+        scope: val('new-scope'), conditionality: val('new-conditional'),
         source: "manual",
         engine: ENGINE_VERSION,
         lexicon: (typeof lexiconStamp === "function" ? lexiconStamp() : LEXICON_VERSION),
@@ -3012,16 +3224,19 @@ function submitExample() {
         at: new Date().toISOString()
     };
 
+    let changed;
     if (editingIndex !== -1) {
         const idx = codingExamples.findIndex(e => e.id == editingIndex);
-        if (idx !== -1) codingExamples[idx] = { ...codingExamples[idx], ...row };
+        if (idx !== -1) { codingExamples[idx] = { ...codingExamples[idx], ...row }; changed = codingExamples[idx]; }
         editingIndex = -1;
         document.getElementById('submit-example-btn').innerText = "Save example";
     } else {
-        codingExamples.push({ id: 'ex-' + Date.now(), ...row });
+        changed = { id: 'ex-' + Date.now(), ...row };
+        codingExamples.push(changed);
     }
 
-    persistExamples();
+    persistExamples(changed);
+    exampleFilter.country = row.country;
     ['new-country', 'new-statement', 'new-analysis', 'new-page'].forEach(id => {
         const el = document.getElementById(id); if (el) el.value = '';
     });
@@ -3034,8 +3249,8 @@ function editExample(id) {
     const set = (i, v) => { const el = document.getElementById(i); if (el) el.value = v || ""; };
     set('new-country', ex.country); set('new-level', ex.level); set('new-dimension', ex.dimension);
     set('new-statement', ex.statement); set('new-analysis', ex.analysis);
-    set('new-page', ex.page); set('new-section', ex.section);
-    set('new-scope', ex.scope); set('new-conditional', ex.conditional);
+    set('new-page', ex.locator || ex.page); set('new-section', ex.section);
+    set('new-scope', ex.scope); set('new-conditional', ex.conditionality || ex.conditional);
     editingIndex = id;
     const btn = document.getElementById('submit-example-btn');
     if (btn) { btn.innerText = "Update example"; btn.scrollIntoView({ behavior: "smooth", block: "center" }); }
@@ -3047,7 +3262,12 @@ function deleteExample(id) {
     if (!confirm(`Delete this ${ex.level} example for ${ex.country}?`)) return;
     const i = codingExamples.findIndex(e => e.id == id);
     if (i >= 0) codingExamples.splice(i, 1);
-    persistExamples();
+    try { localStorage.setItem('codingExamplesState', JSON.stringify(codingExamples)); } catch (e) {}
+    if (typeof supabaseClient !== "undefined" && supabaseClient && String(id).match(/^\d+$/)) {
+        supabaseClient.from('coding_examples').delete().eq('id', id).then(() => {
+            if (typeof logActivity === "function") logActivity("deleted a coding example");
+        });
+    }
     renderExamples();
 }
 
@@ -3231,7 +3451,8 @@ async function extractDocument(fileUrl, log, docLang) {
     const diag = { pages: pdf.numPages, lowTextPages: 0, skipped: [], totalChars: 0, columns: 0,
                    lang: docLang || "Unknown",
                    funnel: { sentencesSeen: 0, tooShort: 0, numericTable: 0, headings: 0, kept: 0,
-                             lines: 0, paragraphs: 0, rejoined: 0, tableRegions: 0, tableCells: 0 } };
+                             lines: 0, paragraphs: 0, rejoined: 0, tableRegions: 0, tableCells: 0,
+                             templateCells: 0, templateSkipped: 0 }, templateSamples: [], tableWarnings: [] };
     let currentHeading = "", currentSection = { type: "UNKNOWN", narrative: false };
     let unitIndex = 0, orderIndex = 0, blockIndex = 0;
 
@@ -3247,7 +3468,9 @@ async function extractDocument(fileUrl, log, docLang) {
         items.forEach(it => {
             const y = Math.round(it.transform[5] / 2) * 2;
             if (!rows.has(y)) rows.set(y, []);
-            rows.get(y).push({ x: it.transform[4], w: it.width || 0, h: Math.abs(it.transform[3]) || 10, str: it.str });
+            const fsz = Math.abs(it.transform[0]) || Math.abs(it.transform[3]) || 10;
+            rows.get(y).push({ x: it.transform[4], w: it.width || (it.str.length * fsz * 0.5),
+                               h: Math.abs(it.transform[3]) || 10, str: it.str });
         });
 
         // two-column detection: are most lines confined to one side of the page?
@@ -3262,153 +3485,261 @@ async function extractDocument(fileUrl, log, docLang) {
         const twoCol = rows.size > 8 && (leftOnly + rightOnly) / rows.size > 0.75 && leftOnly > 2 && rightOnly > 2;
         if (twoCol) diag.columns++;
 
-        /* --- v2.4 table-aware row reading ---------------------------------
-           v2.3 joined every text item sharing a baseline into one line across
-           the full width of the page. In the two-column tables that carry the
-           ICTU information in most NDCs, that concatenates the label cell and
-           the value cell into a single sentence, and the paragraph builder then
-           interleaves the two columns:
+        /* --- v2.8 tables: alignment found on items, verified on whitespace ---
+           Why the previous four attempts failed, stated so it is not repeated.
+           Each one was tested against fixtures that emitted ONE text item per
+           line. Real PDFs emit one item PER WORD, and in justified columns the
+           spacing between those words is stretched. Every detector built on the
+           gap between neighbouring items, or on runs of items merged by a small
+           gap, therefore saw a line of forty fragments instead of two cells, and
+           fell back to reading the line straight across:
 
-             "The NDC was prepared on the basis of ... Information on the
-              planning processes that the implementation plan for ..."
+             "(d) Mitigation co-benefits resulting from Parties' adaptation
+              actions and/or Not applicable."
 
-           which is two different texts spliced together. Cells are now split on
-           the horizontal gap, runs of rows that agree on where their columns
-           start are treated as a table region, and each region is read column
-           by column. Prose rows are read exactly as before.                  */
+           Two things are true of a table column no matter how it is typeset,
+           how narrow its gutter is, or whether it shares baselines with its
+           neighbour:
+
+             1. every line of it begins at the same x, so that x carries far
+                more items than any position a word happens to fall on;
+             2. the few points immediately to its left are empty on every line,
+                because that is the gutter.
+
+           Columns are found with the first and confirmed with the second. The
+           first survives word-level items because word positions scatter and
+           column starts do not. The second needs only two or three points of
+           clearance, so a ten-point gutter passes where an eight-point width
+           test failed. Running prose fails the second test on nearly every
+           line, which is what keeps it out.                                   */
 
         const pageW = vp.width;
+        const START_TOL = 2.0;        // item starts within 2pt are the same column
+        const MIN_COL_SEP = 40;       // closer than this is an indent, not a column
+        const CROSS_MAX = 0.08;       // share of lines allowed to cross a boundary
 
-        /* A geometric threshold, not an adaptive one. Adapting to the median
-           gap on the page fails on exactly the documents this is for: when a
-           PDF emits each table cell as a single text item, the median gap IS
-           the column gap, and any multiple of it hides the thing being looked
-           for. Inter-word gaps are 2-6pt and justified text stretches them to
-           perhaps 12; a column gutter is far wider. False splits inside prose
-           are caught by the column-agreement test below and rejoined. */
-        const CELL_GAP = Math.max(14, pageW * 0.028);
-        const COL_TOL = pageW * 0.06;
+        const rowList = [...rows.entries()].sort((a, b) => b[0] - a[0])
+            .map(([y, its]) => ({
+                y, h: Math.max(...its.map(i => i.h)),
+                items: its.slice().sort((a, b) => a.x - b.x)
+            }));
+        const nRows = rowList.length;
 
-        const cellsOf = r => {
-            const s = r.slice().sort((a, b) => a.x - b.x);
-            const out = [];
-            let cur = null;
-            s.forEach((it, i) => {
-                const gap = i > 0 ? it.x - (s[i - 1].x + s[i - 1].w) : 0;
-                if (!cur || gap > CELL_GAP) { cur = { x: it.x, x2: it.x + it.w, text: it.str }; out.push(cur); }
-                else { cur.text += (gap > 1.2 ? " " : "") + it.str; cur.x2 = it.x + it.w; }
+        const joinItems = its => its.slice().sort((a, b) => a.x - b.x)
+            .reduce((acc, it, i, arr) => acc + (i > 0 && (it.x - (arr[i - 1].x + arr[i - 1].w)) > 1.2 ? " " : "") + it.str, "")
+            .replace(/\s+/g, " ").trim();
+        const flowLine = r => ({ y: r.y, h: r.h, text: joinItems(r.items), col: 0, table: false, region: 0, cellId: "" });
+
+        /* Does anything cross this boundary? Measuring the WIDTH of the gutter
+           was the mistake: Japan sets a 5.4pt gutter and a 6pt clearance test
+           rejected it. What is definitive, and needs no clearance at all, is
+           that a table cell never spans the boundary while a line of running
+           prose always does. */
+        const boundaryHolds = (rowsArr, cx) => {
+            if (!rowsArr.length) return false;
+            const b = cx - 0.5;
+            let crossed = 0;
+            rowsArr.forEach(r => { if (r.items.some(it => it.x < b && it.x + it.w > b)) crossed++; });
+            return crossed / rowsArr.length <= CROSS_MAX;
+        };
+
+        let ordered = [];
+        const twoColFallback = () => {
+            const L = [], R = [];
+            rowList.forEach(r => {
+                const maxX = Math.max(...r.items.map(i => i.x + i.w));
+                (maxX < mid + band ? L : R).push(r);
             });
-            return out.map(c => ({ x: c.x, x2: c.x2, text: c.text.replace(/\s+/g, " ").trim() }))
-                      .filter(c => c.text.length);
+            return L.map(flowLine).concat(R.map(flowLine));
         };
 
-        const clusterCols = starts => {
-            const s = starts.slice().sort((a, b) => a - b);
-            const cols = [];
-            s.forEach(v => {
-                const last = cols[cols.length - 1];
-                if (last && v - last.v <= COL_TOL) { last.n++; last.sum += v; last.v = last.sum / last.n; }
-                else cols.push({ v, n: 1, sum: v });
+        if (nRows < 2) {
+            ordered = rowList.map(flowLine);
+        } else {
+            /* 1. horizontal cuts */
+            const vg = [];
+            for (let i = 1; i < nRows; i++) vg.push(Math.abs(rowList[i - 1].y - rowList[i].y));
+            const vgSorted = vg.slice().sort((a, b) => a - b);
+            const medV = vgSorted.length ? vgSorted[Math.floor(vgSorted.length / 2)] : 12;
+            const slabCut = Math.max(medV * 1.6, medV + 5);
+            const slabs = [[]];
+            rowList.forEach((r, i) => {
+                if (i > 0 && Math.abs(rowList[i - 1].y - r.y) > slabCut) slabs.push([]);
+                slabs[slabs.length - 1].push(r);
             });
-            return cols.map(c => c.v);
-        };
 
-        const nearestCol = (x, cols) => {
-            let best = 0, bd = Infinity;
-            cols.forEach((v, k) => { const d = Math.abs(x - v); if (d < bd) { bd = d; best = k; } });
-            return best;
-        };
+            /* 2. candidate column starts: x positions that many items begin at.
+                  Word starts scatter; column starts repeat on every line. */
+            const clusterX = vals => {
+                const s = vals.slice().sort((a, b) => a - b);
+                const out = [];
+                s.forEach(v => {
+                    const last = out[out.length - 1];
+                    if (last && v - last.max <= START_TOL) { last.n++; last.sum += v; last.max = v; last.c = last.sum / last.n; }
+                    else out.push({ n: 1, sum: v, max: v, c: v });
+                });
+                return out;
+            };
+            /* Not every item x is a candidate. Inside justified text the words
+               are spread by whatever gap the line needs, and on a badly set
+               page those gaps are as wide as a gutter. What separates the two is
+               scale: a gutter is wide RELATIVE TO THE TYPICAL WORD GAP ON THIS
+               PAGE, and a stretched word space is not. So the page's own word
+               spacing sets the threshold. */
+            const allGaps = [];
+            rowList.forEach(r => {
+                for (let i = 1; i < r.items.length; i++) {
+                    const g = r.items[i].x - (r.items[i - 1].x + r.items[i - 1].w);
+                    if (g > 0.2) allGaps.push(g);
+                }
+            });
+            const gSorted = allGaps.slice().sort((a, b) => a - b);
+            const p20 = gSorted.length ? gSorted[Math.floor(gSorted.length * 0.2)] : 3;
+            const SEG_GAP = Math.max(p20 * 2.2, p20 + 4, 5);
+            /* PDFs differ in how much text they put in one item: some emit a
+               word, some a line, some a whole cell. Where a page emits whole
+               cells there are no word gaps at all and the relative threshold
+               above is calibrated on gutters, so it would hide them. A gap of
+               25pt is never word spacing at the sizes these documents use, so
+               it counts regardless of what the rest of the page looks like. */
+            const SEG_ABS = 25;
 
-        /* Second pass. The gap test finds the columns using the rows whose
-           gutter is wide; it cannot find them on a row whose left cell happens
-           to fill almost to the gutter, and a 20pt gutter is common. Once the
-           columns are known from the rest of the block, every row is re-split
-           against those column positions instead of against a gap threshold. */
-        const splitByCols = (items, cols) => {
-            const buckets = cols.map(() => []);
-            items.slice().sort((a, b) => a.x - b.x).forEach(it => buckets[nearestCol(it.x, cols)].push(it));
-            return buckets.map((b, ci) => b.length ? {
-                x: cols[ci],
-                text: b.reduce((acc, it, i, arr) => acc + (i > 0 && (it.x - (arr[i - 1].x + arr[i - 1].w)) > 1.2 ? " " : "") + it.str, "")
-                       .replace(/\s+/g, " ").trim()
-            } : null);
-        };
+            /* a segment start is the first item on a line, or an item that
+               follows a gap wide enough not to be word spacing */
+            const segStarts = [];
+            rowList.forEach(r => {
+                r.items.forEach((it, i) => {
+                    if (i === 0) { segStarts.push(it.x); return; }
+                    const g = it.x - (r.items[i - 1].x + r.items[i - 1].w);
+                    if (g > SEG_GAP || g >= SEG_ABS) segStarts.push(it.x);
+                });
+            });
 
-        const flowLine = (r, joiner) => ({
-            y: r.y, h: r.h, text: r.cells.map(c => c.text).join(joiner || " ").replace(/\s+/g, " ").trim(),
-            col: 0, table: false, region: 0
-        });
+            const candidates = clusterX(segStarts)
+                .filter(c => c.n >= Math.max(2, Math.floor(nRows * 0.10)))
+                .map(c => c.c)
+                .sort((a, b) => a - b);
+            /* The gutter is confirmed per slab, not per page. A table halfway
+               down a page has a gutter that the prose above it runs straight
+               through, and testing page-wide would throw that gutter away. */
 
-        const readRows = rowArr => {
-            const out = [];
-            let region = 0, i = 0;
-            while (i < rowArr.length) {
-                if (rowArr[i].cells.length < 2) { out.push(flowLine(rowArr[i])); i++; continue; }
-                let j = i;
-                const block = [];
-                while (j < rowArr.length && rowArr[j].cells.length >= 2) { block.push(rowArr[j]); j++; }
+            /* 3. per slab */
+            const parts = [];
+            let region = 0;
+            slabs.forEach(slab => {
+                const here = [];
+                candidates.forEach(cx => {
+                    if (!slab.some(r => r.items.some(it => Math.abs(it.x - cx) <= START_TOL))) return;
+                    if (here.length && cx - here[here.length - 1] < MIN_COL_SEP) return;
+                    if (here.length && !boundaryHolds(slab, cx)) return;         // nothing may cross it
+                    here.push(cx);
+                });
 
-                /* Is this a table? Not "do two rows agree on their second cell",
-                   which a header row with a different shape defeats, but "are
-                   there at least two columns that each appear in at least two
-                   rows". A hanging indent or a stray tab stop cannot satisfy
-                   that; a table always does. */
-                const cols = clusterCols(block.flatMap(r => r.cells.map(c => c.x)));
-                const rowsPerCol = cols.map((v, ci) =>
-                    block.filter(r => r.cells.some(c => nearestCol(c.x, cols) === ci)).length);
-                const tabular = block.length >= 2 && cols.length >= 2
-                             && rowsPerCol.filter(n => n >= 2).length >= 2;
-
-                if (!tabular) {
-                    block.forEach(r => out.push(flowLine(r, "  ")));
-                    i = j; continue;
+                if (here.length >= 2) {
+                    const lefts = slab.flatMap(r => r.items.map(i => i.x)).filter(x => x < here[0] - START_TOL);
+                    if (lefts.length) {
+                        const lead = Math.min(...lefts);
+                        if (here[0] - lead >= 8) here.unshift(lead);
+                    }
                 }
 
-                /* A cell's text usually runs on over rows that carry only that
-                   column: the second paragraph of a wide value cell sits alone
-                   on its own lines. Those rows belong to the table, not to the
-                   prose after it. Only indented columns extend the region,
-                   because a continuation at the left margin cannot be told
-                   apart from the paragraph that follows the table. */
-                while (j < rowArr.length) {
-                    const touchesInner = rowArr[j].items.some(it => {
-                        const ci = nearestCol(it.x, cols);
-                        return ci > 0 && Math.abs(it.x - cols[ci]) <= COL_TOL;
-                    });
-                    if (!touchesInner) break;
-                    block.push(rowArr[j]); j++;
-                }
+                /* every column must actually hold text in this slab */
+                const bandOf = x => { let k = 0; here.forEach((cx, i) => { if (x >= cx - START_TOL) k = i; }); return k; };
+                const filled = here.length >= 2 && here.every((cx, k) => slab.some(r => r.items.some(it => bandOf(it.x) === k)));
+
+                if (!filled) { parts.push({ flow: slab }); return; }
 
                 region++;
                 diag.funnel.tableRegions++;
-                block.forEach(r => { r.parts = splitByCols(r.items, cols); });
-                cols.forEach((cx, ci) => {
-                    block.forEach(r => {
-                        if (r.parts[ci]) {
-                            out.push({ y: r.y, h: r.h, text: r.parts[ci].text, col: ci, table: true, region });
-                            diag.funnel.tableCells++;
-                        }
-                    });
+                const nBands = here.length;
+                const bandsOn = r => { const s = new Set(); r.items.forEach(it => s.add(bandOf(it.x))); return s; };
+
+                /* Which band is the row numbering? Japan writes (a), (d); Iceland
+                   writes 3c, 4a. It is decided here, inside the slab, because it
+                   is what tells the rows apart. */
+                let idxBand = -1;
+                for (let b = 0; b < nBands; b++) {
+                    const texts = slab.map(r => {
+                        const mine = r.items.filter(it => bandOf(it.x) === b);
+                        return mine.length ? joinItems(mine) : null;
+                    }).filter(Boolean);
+                    if (texts.length >= 2 && texts.filter(x => ROW_INDEX_RE.test(x)).length / texts.length >= 0.6) { idxBand = b; break; }
+                }
+
+                /* A line begins a new table row when it carries a row number, or
+                   when it fills every column, or when it runs across a boundary
+                   as a full-width heading row does. Vertical whitespace is NOT
+                   used: Japan separates its rows with ruled lines, so every gap
+                   on the page is the same and no slab cut can find them. */
+                const crossesAny = r => r.items.some(it => here.some((cx, k) =>
+                    k > 0 && it.x < cx - 0.5 && it.x + it.w > cx - 0.5));
+                const allFull = slab.every(r => bandsOn(r).size === nBands);
+                const groups = [];
+                slab.forEach(r => {
+                    const startsRow = groups.length === 0
+                        || (idxBand >= 0 && bandsOn(r).has(idxBand))
+                        || (idxBand < 0 && allFull)
+                        || crossesAny(r);
+                    if (startsRow) groups.push([]);
+                    groups[groups.length - 1].push(r);
                 });
-                i = j;
-            }
-            return out;
-        };
+                if (idxBand < 0 && !allFull) {
+                    diag.tableWarnings.push(`p. ${p}: a table with no row numbering; its cells are read but the rows may not be separated correctly`);
+                }
 
-        const rowObjs = [...rows.entries()].sort((a, b) => b[0] - a[0])
-            .map(([y, r]) => ({ y, h: Math.max(...r.map(i => i.h)), items: r, cells: cellsOf(r) }))
-            .filter(r => r.cells.length);
-
-        let ordered;
-        if (twoCol) {
-            const L = [], R = [];
-            rowObjs.forEach(r => {
-                const maxX = Math.max(...r.cells.map(c => c.x2));
-                (maxX < mid + band ? L : R).push(r);
+                groups.forEach((grp, gi) => {
+                    const cells = [];
+                    for (let b = 0; b < nBands; b++) {
+                        const lines = [];
+                        grp.forEach(r => {
+                            const mine = r.items.filter(it => bandOf(it.x) === b);
+                            if (mine.length) lines.push({ y: r.y, h: r.h, text: joinItems(mine) });
+                        });
+                        if (!lines.length) continue;
+                        cells.push({
+                            band: b, region, row: gi, key: Math.round(here[b] / 10) * 10,
+                            lines, text: lines.map(l => l.text).join(" ").replace(/\s+/g, " ").trim()
+                        });
+                    }
+                    if (cells.length) parts.push({ cells });
+                });
             });
-            ordered = readRows(L).concat(readRows(R));
-        } else {
-            ordered = readRows(rowObjs);
+
+            /* 4. classify columns once for the document */
+            const foundTable = parts.some(pt => pt.cells);
+            const byKey = new Map();
+            parts.forEach(pt => (pt.cells || []).forEach(c => {
+                if (!byKey.has(c.key)) byKey.set(c.key, []);
+                byKey.get(c.key).push(c);
+            }));
+            const indexKeys = new Set(), templateKeys = new Set();
+            byKey.forEach((cs, key) => {
+                if (cs.filter(c => ROW_INDEX_RE.test(c.text)).length / cs.length >= 0.6) indexKeys.add(key);
+                else if (RULES.TEMPLATE_COLUMNS && cs.filter(c => isTemplateText(c.text)).length / cs.length >= 0.5) templateKeys.add(key);
+            });
+
+            if (!foundTable && twoCol) { ordered = twoColFallback(); parts.length = 0; }
+
+            parts.forEach((pt, pi) => {
+                if (pt.flow) { pt.flow.forEach(r => ordered.push(flowLine(r))); return; }
+                const rowLabel = (pt.cells.find(c => indexKeys.has(c.key)) || {}).text || "";
+                const prompt = (pt.cells.find(c => templateKeys.has(c.key)) || {}).text || "";
+                pt.cells.forEach(c => {
+                    if (indexKeys.has(c.key)) return;
+                    const isTpl = templateKeys.has(c.key);
+                    diag.funnel.tableCells++;
+                    if (isTpl) diag.funnel.templateCells++;
+                    const cellId = "t" + c.region + "s" + pi + "r" + (c.row || 0) + "c" + c.band;
+                    c.lines.forEach(l => ordered.push({
+                        y: l.y, h: l.h, text: l.text, col: c.band, table: true, region: c.region,
+                        cellId, template: isTpl, prompt, rowLabel
+                    }));
+                });
+            });
+
+            if (foundTable && !templateKeys.size && !indexKeys.size) {
+                diag.tableWarnings.push(`p. ${p}: a table with neither row numbering nor recognisable question text; its cells are read but the rows are not labelled`);
+            }
         }
 
         const lines = ordered.map(l => l.text).filter(Boolean);
@@ -3436,7 +3767,9 @@ async function extractDocument(fileUrl, log, docLang) {
            read by the coder is the whole paragraph the sentence sits in.        */
 
         const numbered = ordered.map((l, i) => ({ y: l.y, h: l.h, text: l.text, no: i + 1,
-                                                  col: l.col || 0, table: !!l.table, region: l.region || 0 }));
+                                                  col: l.col || 0, table: !!l.table, region: l.region || 0,
+                                                  cellId: l.cellId || "", template: !!l.template,
+                                                  prompt: l.prompt || "", rowLabel: l.rowLabel || "" }));
         diag.funnel.lines += numbered.length;
 
         const gaps = [];
@@ -3454,7 +3787,8 @@ async function extractDocument(fileUrl, log, docLang) {
         const openBlock = line => {
             cur = { text: "", offsets: [], lineStart: line.no, lineEnd: line.no,
                     heading: currentHeading, section: currentSection,
-                    table: !!line.table, col: line.col || 0 };
+                    table: !!line.table, col: line.col || 0, cellId: line.cellId || "",
+                    template: !!line.template, prompt: line.prompt || "", rowLabel: line.rowLabel || "" };
         };
         const addLine = line => {
             let sep = cur.text ? " " : "";
@@ -3490,7 +3824,8 @@ async function extractDocument(fileUrl, log, docLang) {
             const prevClosed = prev ? /[.!?:;\u3002\uff01\uff1f\u061f]["'\u201d\u2019\u00bb)\]]*\s*$/.test(prev.text) : true;
             const prevShort = prev ? prev.text.length < medLen * 0.72 : true;
             const bigGap = prev ? gap > medGap * 1.55 : false;
-            const cellChange = prev && (line.col !== prev.col || line.table !== prev.table || line.region !== prev.region);
+            const cellChange = prev && (line.cellId !== prev.cellId || line.col !== prev.col
+                                     || line.table !== prev.table || line.region !== prev.region);
             if (!cur || startsList || bigGap || cellChange || (prevClosed && prevShort)) { closeBlock(); openBlock(line); }
             addLine(line);
         });
@@ -3506,6 +3841,18 @@ async function extractDocument(fileUrl, log, docLang) {
         const pageUnits = [];
         blocks.forEach(b => {
             if (b.text.trim().length < 2) return;
+            /* The question column of an ICTU table is the same text in every
+               NDC. It is recorded as the prompt on the answer cell rather than
+               coded as though the country had written it. */
+            /* Two ways UNFCCC wording reaches the page: as the question column
+               of a table, and as a full-width heading row above one. The second
+               is not in any column, so the column logic never sees it. Either
+               way it is the Secretariat's text, not the country's. */
+            if (b.template || isTemplateText(b.text)) {
+                diag.funnel.templateSkipped++;
+                if (diag.templateSamples.length < 4) diag.templateSamples.push(b.text.slice(0, 140));
+                return;
+            }
             diag.funnel.paragraphs++;
             const paraId = `p${p}-b${blockIndex++}`;
             const segs = segmentSentences(b.text);
@@ -3526,7 +3873,8 @@ async function extractDocument(fileUrl, log, docLang) {
                     paraLocator: `p. ${p}, ` + (b.lineEnd > b.lineStart ? `lines ${b.lineStart}\u2013${b.lineEnd}` : `line ${b.lineStart}`),
                     sentIndex: si, sentCount: segs.length,
                     heading: b.heading, section: b.section, column: twoCol, lang: docLang || "Unknown",
-                    table: !!b.table, cellColumn: b.col || 0
+                    table: !!b.table, cellColumn: b.col || 0, cellId: b.cellId || "",
+                    prompt: b.prompt || "", rowLabel: b.rowLabel || ""
                 });
             });
         });
@@ -3605,6 +3953,8 @@ function analyseUnits(units) {
             text: u.text, sentStart: u.sentStart, sentEnd: u.sentEnd,
             excerpt: para, context: para, before: u.before || "", after: u.after || "",
             lang: u.lang || "Unknown", heading: u.heading, section: u.section,
+            table: !!u.table, cellColumn: u.cellColumn || 0, cellId: u.cellId || "",
+            prompt: u.prompt || "", rowLabel: u.rowLabel || "",
             dimension: dim.dimension, dimScore: dim.score, alternates: dim.alternates,
             needsReview: dim.needsReview, dimReason: dim.reason,
             matched: dim.dimension ? dim.evidence[dim.dimension] : { core: [], supporting: [], patterns: 0 },
@@ -4034,6 +4384,8 @@ async function runFullCountryEvaluation() {
         diagBox.innerHTML += `<div class="diag-ok"><b>Retrieval funnel.</b> ${diag.pages} pages, ${diag.skipped.length} skipped (${diag.skipped.map(s => s.page + ": " + s.reason).join("; ") || "none"}), ${diag.columns} page(s) read as two columns, ${f.headings} headings used to tag sections.
         ${f.lines} text lines were rebuilt into <b>${f.paragraphs} paragraphs</b>, rejoining ${f.rejoined} words broken across a line break. Of ${f.sentencesSeen} sentence candidates: ${f.tooShort} merged into a neighbouring sentence or discarded as fragments, ${f.numericTable} discarded as table rows, <b>${f.kept} carried forward as coding units</b>.
         The coding unit is the sentence; the excerpt and the tier evidence are the paragraph it sits in (RULES.EVIDENCE_SCOPE = ${RULES.EVIDENCE_SCOPE}). Line numbers count text lines top to bottom on the page as the parser rebuilt it, left column first where a page is read as two columns. Document language recorded as ${esc(diag.lang)}.</div>`;
+        if (f.tableRegions) diagBox.innerHTML += `<div class="diag-ok"><b>Tables.</b> ${f.tableRegions} table region(s) read cell by cell rather than line by line, giving ${f.tableCells} cells. ${f.templateSkipped} cell(s) were the standard UNFCCC question text and were kept as the prompt on the answer beside them rather than coded as the country's own words${diag.templateSamples.length ? ", for example: " + esc(diag.templateSamples[0]) + "…" : ""}.</div>`;
+        (diag.tableWarnings || []).forEach(w => { diagBox.innerHTML += `<div class="diag-warn"><b>Check this table.</b> ${esc(w)}.</div>`; });
 
         lastEvaluation = evaluateCountry(cfg.c, units, diag);
         renderEvaluation();
@@ -4217,9 +4569,11 @@ async function translateLedger() {
 /* ---------- Ledger with coder overrides ---------- */
 
 function setLedgerFilter(kind, value) {
-    if (kind === 'review') ledgerFilter.review = !ledgerFilter.review;
+    if (kind === 'all') ledgerFilter = { dimension: "All", tier: "All", review: false, pending: false, recall: false, excluded: false, sort: ledgerFilter.sort };
+    else if (kind === 'review') ledgerFilter.review = !ledgerFilter.review;
     else if (kind === 'pending') ledgerFilter.pending = !ledgerFilter.pending;
     else if (kind === 'recall') ledgerFilter.recall = !ledgerFilter.recall;
+    else if (kind === 'excluded') ledgerFilter.excluded = !ledgerFilter.excluded;
     else ledgerFilter[kind] = value;
     renderLedger();
 }
@@ -4286,7 +4640,8 @@ function renderLedger() {
         ${["All", "Embedded", "Partial", "Tokenistic"].map(t => `<button class="lf-btn ${ledgerFilter.tier === t ? 'lf-on' : ''}" onclick="setLedgerFilter('tier','${t}')">${t}</button>`).join("")}</div>
         <div class="lf-group"><span>Order:</span>
         ${[["document", "Document order"], ["tier", "Strongest first"], ["dimension", "Dimension"]].map(([k, lbl]) => `<button class="lf-btn ${ledgerFilter.sort === k ? 'lf-on' : ''}" onclick="setLedgerFilter('sort','${k}')">${lbl}</button>`).join("")}</div>
-        <div class="lf-group"><button class="lf-btn ${ledgerFilter.review ? 'lf-on' : ''}" onclick="setLedgerFilter('review')">Needs manual check only</button>
+        <div class="lf-group"><button class="lf-btn ${(!ledgerFilter.review && !ledgerFilter.pending && !ledgerFilter.recall && !ledgerFilter.excluded && ledgerFilter.dimension === 'All' && ledgerFilter.tier === 'All') ? 'lf-on' : ''}" onclick="setLedgerFilter('all')" title="clear every filter and show the whole ledger again">All</button>
+        <button class="lf-btn ${ledgerFilter.review ? 'lf-on' : ''}" onclick="setLedgerFilter('review')">Needs manual check only</button>
         ${pending ? `<button class="lf-btn ${ledgerFilter.pending ? 'lf-on' : ''}" onclick="setLedgerFilter('pending')">Justice named, dimension not assigned (${pending})</button>` : ''}
         ${(R.screened && R.screened.length) ? `<button class="lf-btn ${ledgerFilter.recall ? 'lf-on' : ''}" onclick="setLedgerFilter('recall')">Recall net, unplaced (${R.screened.length})</button>` : ''}
         ${R.statements.some(s => s.excluded) ? `<button class="lf-btn ${ledgerFilter.excluded ? 'lf-on' : ''}" onclick="setLedgerFilter('excluded')">Excluded (${R.statements.filter(s => s.excluded).length})</button>` : ''}
@@ -4325,6 +4680,7 @@ function renderLedger() {
                 <div class="ex-chips">${chips}</div>
             </div>
             <div class="ex-content">
+                ${s.prompt ? `<div class="ex-prompt"><b>Answering${s.rowLabel ? " item " + esc(s.rowLabel) : ""}:</b> ${esc(s.prompt)}</div>` : ""}
                 <p class="ex-quote">${excerptHtml(s)}</p>
                 ${renderTranslation(s)}
             </div>
@@ -4505,8 +4861,18 @@ async function overrideStatement(id, field, value) {
     }
 }
 
+function findLedgerRecord(id) {
+    if (!lastEvaluation) return null;
+    return lastEvaluation.statements.find(x => x.id === id)
+        || (lastEvaluation.screened || []).find(x => x.id === id)
+        || null;
+}
+
 function excludeStatement(id) {
-    const s = lastEvaluation && lastEvaluation.statements.find(x => x.id === id);
+    /* recall-net passages live in a different array from coded statements, and
+       excluding one used to look up only the coded array and silently do
+       nothing */
+    const s = findLedgerRecord(id);
     if (!s) return;
     const why = prompt("Why is this statement being taken out of the assessment?\n\nIt stays in the ledger and in the export, marked excluded with this reason.", s.excludedReason || "");
     if (why === null) return;
@@ -4518,7 +4884,7 @@ function excludeStatement(id) {
 }
 
 function restoreStatement(id) {
-    const s = lastEvaluation && lastEvaluation.statements.find(x => x.id === id);
+    const s = findLedgerRecord(id);
     if (!s) return;
     s.excluded = false;
     recomputeEvaluation(`Restored ${s.locator || s.id}`);
@@ -4547,9 +4913,9 @@ function fileStatementAsExample(id, quiet) {
         level: e.tier, dimension: e.dimension,
         statement: s.excerpt || s.text,
         analysis,
-        page: s.paraLocator || s.locator || ("p. " + s.page),
+        locator: s.paraLocator || s.locator || ("p. " + s.page),
         section: sectionLabel(s.section), scope: s.scope,
-        conditional: s.conditional ? "Yes" : "No",
+        conditionality: s.conditional ? "Yes" : "No",
         cluster: s.cluster,
         source: "ledger", statementId: s.id,
         engine: ENGINE_VERSION, lexicon: (typeof lexiconStamp === "function" ? lexiconStamp() : LEXICON_VERSION),
@@ -4563,7 +4929,10 @@ function fileStatementAsExample(id, quiet) {
     s.filed = true;
     s.exampleId = (idx >= 0 ? codingExamples[idx].id : row.id);
 
-    persistExamples();
+    persistExamples(codingExamples[idx >= 0 ? idx : codingExamples.length - 1]);
+    /* show the country that was just filed to, or the coder presses the button
+       and nothing appears because the examples page is gated on a country */
+    if (typeof exampleFilter !== "undefined") exampleFilter.country = row.country;
     if (typeof renderExamples === "function") renderExamples();
     if (!quiet) {
         renderLedger();
@@ -4583,10 +4952,41 @@ function fileAllCoded() {
     if (box) box.innerHTML = `<span class="rc-what">${todo.length} statement(s) filed to coding examples.</span>`;
 }
 
-function persistExamples() {
+/* The server table has these columns and no others. Sending the extra fields
+   the tool keeps locally made every insert fail, which is why nothing a coder
+   filed ever reached the rest of the team. */
+const EXAMPLE_COLUMNS = ["country", "level", "dimension", "statement", "analysis",
+                         "locator", "section", "scope", "conditionality", "coder", "engine", "lexicon"];
+const toServerExample = ex => {
+    const row = {};
+    EXAMPLE_COLUMNS.forEach(k => { row[k] = ex[k] != null ? ex[k] : ""; });
+    row.locator = ex.locator || ex.page || "";
+    row.conditionality = ex.conditionality || ex.conditional || "";
+    row.engine = ex.engine || ENGINE_VERSION;
+    row.lexicon = ex.lexicon || (typeof lexiconStamp === "function" ? lexiconStamp() : LEXICON_VERSION);
+    return row;
+};
+
+async function persistExamples(changed) {
     try { localStorage.setItem('codingExamplesState', JSON.stringify(codingExamples)); } catch (e) {}
-    if (typeof supabaseClient !== "undefined" && supabaseClient) {
-        try { supabaseClient.from('coding_examples').upsert(codingExamples.slice(-1)[0]); } catch (e) {}
+    if (typeof supabaseClient === "undefined" || !supabaseClient) return;
+    const rows = changed ? [changed] : [];
+    for (const ex of rows) {
+        try {
+            if (ex.id && String(ex.id).match(/^\d+$/)) {
+                await supabaseClient.from('coding_examples').update(toServerExample(ex)).eq('id', ex.id);
+            } else {
+                const { data, error } = await supabaseClient.from('coding_examples')
+                    .insert([toServerExample(ex)]).select();
+                if (error) throw error;
+                if (data && data[0] && data[0].id) ex.id = data[0].id;
+            }
+            if (typeof logActivity === "function") logActivity(`filed a ${ex.level} example for ${ex.country}`);
+        } catch (err) {
+            console.error("coding example did not reach the server", err);
+            const box = document.getElementById('recompute-note');
+            if (box) box.innerHTML = `<span class="rc-what">Saved locally, but the server refused it.</span> ${esc(err.message || err)}`;
+        }
     }
 }
 
@@ -4713,6 +5113,7 @@ function exportEvaluationCsv() {
     const head = ["country", "doc_order", "statement_id", "paragraph_id", "page", "line_start", "line_end",
         "paragraph_line_start", "paragraph_line_end", "locator",
         "section", "heading", "cluster", "scope", "conditional", "structural",
+        "from_table", "table_column", "table_row_label", "template_prompt",
         "machine_dimension", "machine_tier", "tier_sentence_only", "tier_paragraph", "evidence_scope", "tier_raised_by_paragraph",
         "coder_dimension", "coder_tier", "coder_note", "coder",
         "needs_review", "awaiting_dimension", "implicit_match", "justice_frame_terms",
@@ -4723,7 +5124,8 @@ function exportEvaluationCsv() {
     const rows = R.statements.slice().sort((a, b) => (a.order - b.order) || (a.page - b.page)).map(s => [
         R.country, s.order, s.id, s.paraId, s.page, s.lineStart, s.lineEnd,
         s.paraLineStart, s.paraLineEnd, s.locator,
-        s.section.type, s.heading, s.cluster, s.scope, s.conditional, s.structural,
+        sectionLabel(s.section), s.heading, s.cluster, s.scope, s.conditional, s.structural,
+        !!s.table, s.table ? (s.cellColumn || 0) + 1 : "", s.rowLabel || "", s.prompt || "",
         s.dimension, s.tier, s.tierSentence, s.tierParagraph, s.evidenceScope, s.scopeLift,
         s.override && s.override.dimension, s.override && s.override.tier,
         s.override && s.override.note, s.override && s.override.coder,
@@ -4866,6 +5268,21 @@ function recordAssessment(quiet) {
         statements: R.statements.length,
         overrides: R.statements.filter(s => s.override && (s.override.dimension || s.override.tier)).length,
         awaitingDimension: R.descriptive.awaitingDimension,
+        /* enough detail to redraw the dimension profile and the rubric from the
+           record alone, so a coder never has to re-run an assessment and lose
+           the manual recoding done on top of it */
+        profileDetail: DIMS4.reduce((o, d) => {
+            const pf = R.profile[d] || {};
+            o[d] = { tier: pf.tier, score: pf.score, confidence: pf.confidence, note: pf.note,
+                     ceiling: pf.ceiling, consolidated: pf.consolidated, consolidation: pf.consolidation,
+                     distribution: pf.distribution, total: pf.total, borderline: pf.borderline,
+                     confidenceWhy: pf.confidenceWhy || [], parts: pf.parts || [] };
+            return o;
+        }, {}),
+        rubricDetail: { band: R.rubric.band, verdict: R.rubric.verdict, countryScore: R.rubric.countryScore,
+                        scoreMean: R.rubric.scoreMean, scoreFloor: R.rubric.scoreFloor,
+                        criteria: (R.rubric.criteria || []).map(c => ({ id: c.id, name: c.name, result: c.result, detail: c.detail })),
+                        reasoning: R.rubric.reasoning || [], flags: R.rubric.flags || [] },
         source: "analysis", engine: R.engine, lexicon: R.lexicon, rules: R.rules,
         coder: R.coder, at: new Date().toISOString()
     };
@@ -4879,7 +5296,8 @@ function recordAssessment(quiet) {
         mirror('country_assessments', {
             country: row.country, verdict: row.verdict, axis_rp: row.axisRP, axis_dr: row.axisDR,
             tiers: JSON.stringify(row.tiers), confidence: JSON.stringify(row.confidence),
-            sensitive_to_rule: row.sensitiveToRule, engine: row.engine, lexicon: row.lexicon, coder: row.coder
+            sensitive_to_rule: row.sensitiveToRule, engine: row.engine, lexicon: row.lexicon, coder: row.coder,
+            profile_detail: JSON.stringify(row.profileDetail), rubric_detail: JSON.stringify(row.rubricDetail)
         }, 'country');
         const c = ndcData.find(x => x.c === R.country);
         if (c && c.s !== 1) { c.s = 1; try { localStorage.setItem('ndcTrackerState', JSON.stringify(ndcData.map(i => ({ c: i.c, s: i.s })))); } catch (e) {} loadTables(); }
@@ -5364,11 +5782,13 @@ function renderCountryIndex() {
         const mine = codes.filter(c => (c.country || "").trim().toLowerCase() === n.toLowerCase());
         const a = assessed[n];
         const byDim = DIMS4.map(d => mine.filter(c => c.dimension === d).length);
-        return `<button class="ci-card" onclick="openCountryRecord('${esc(n).replace(/'/g, "\\'")}')">
+        const q = esc(n).replace(/'/g, "\\'");
+        return `<button class="ci-card${exampleFilter && exampleFilter.country === n ? ' ci-on' : ''}" onclick="setExampleCountry('${q}')" title="show only this country's coding examples">
             <span class="ci-name">${esc(n)}</span>
             <span class="ci-meta">${mine.length} code${mine.length === 1 ? "" : "s"}${a ? " &middot; assessed" : ""}</span>
             <span class="ci-bars">${byDim.map((v, i) => `<span title="${DIMS4[i]}: ${v}" style="height:${Math.min(100, v * 18) + 6}%"></span>`).join("")}</span>
             ${a ? `<span class="ci-verdict" style="background:${VERDICT_COLOR[normaliseVerdict(a.verdict)] || '#ccc'}"></span>` : ""}
+            <span class="ci-record" onclick="event.stopPropagation();openCountryRecord('${q}')" title="open the full country record">record</span>
         </button>`;
     }).join("")}</div>`;
 }
