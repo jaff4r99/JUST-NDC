@@ -361,8 +361,8 @@
         details.dim-card > summary h4 { margin:0 0 6px; }
         .dim-score { font-size:0.8rem; color:#555; margin-top:2px; }
         .dim-more { position:absolute; top:0; right:0; font-size:0.68rem; color:var(--text-muted); border:1px solid #e0e0e0; border-radius:10px; padding:2px 9px; }
-        details.dim-card[open] .dim-more::after { content:" \\2013 hide"; }
-        details.dim-card:not([open]) .dim-more::after { content:" \\002B"; }
+        details.dim-card[open] .dim-more::after { content:"hide"; }
+        details.dim-card:not([open]) .dim-more::after { content:"details +"; }
         .dim-body { margin-top:12px; padding-top:11px; border-top:1px solid #eee; }
         .dscale { position:relative; height:7px; background:#f0f0f2; border-radius:4px; margin:8px 0 6px; overflow:visible; }
         .dscale-fill { position:absolute; left:0; top:0; height:100%; border-radius:4px; }
@@ -405,6 +405,54 @@
         .rub-pass { color:#1f6b33; font-weight:600; }
         .rub-partial { color:#a06000; font-weight:600; }
         .rub-fail { color:#a3261f; font-weight:600; }
+        /* --- v2.10 matrix ---------------------------------------------------- */
+        .mx-wrap { display:flex; gap:10px; align-items:stretch; }
+        .mx-ylab { writing-mode:vertical-rl; transform:rotate(180deg); display:flex; align-items:center; justify-content:center;
+                   font-size:0.7rem; font-weight:700; letter-spacing:.08em; color:#4a4a52; padding:0 2px; }
+        .mx-body { flex:1; min-width:0; }
+        .mx-row { display:grid; grid-template-columns:88px repeat(3,1fr); gap:7px; margin-bottom:7px; }
+        .mx-tick { display:flex; align-items:center; justify-content:flex-end; font-size:0.72rem; color:#6a6a72; padding-right:4px; }
+        .mx-cell { min-height:104px; border-radius:10px; padding:9px 10px; border:1px solid rgba(0,0,0,.06); }
+        .mx-corner { box-shadow:inset 0 0 0 2px rgba(31,107,51,.45); }
+        .mx-head { display:flex; align-items:baseline; gap:8px; margin-bottom:6px; }
+        .mx-n { font-size:1.15rem; font-weight:700; color:#2a2a32; }
+        .mx-flag { font-size:0.6rem; text-transform:uppercase; letter-spacing:.05em; color:#2f5d3a; background:rgba(255,255,255,.75); border-radius:9px; padding:2px 7px; }
+        .mx-flag-w { color:#8a5a00; }
+        .mx-list { display:flex; flex-wrap:wrap; gap:4px; }
+        .mx-chip { font-size:0.72rem; line-height:1.5; background:rgba(255,255,255,.82); border:1px solid rgba(0,0,0,.08);
+                   border-radius:11px; padding:1px 8px; color:#2a2a32; white-space:nowrap; }
+        .mx-rs { color:#b00; font-style:normal; margin-left:2px; }
+        .mx-axisrow { margin-top:2px; }
+        .mx-xt { text-align:center; font-size:0.72rem; color:#6a6a72; }
+        .mx-xlab { text-align:center; font-size:0.7rem; font-weight:700; letter-spacing:.08em; color:#4a4a52; margin-top:6px; }
+        .mx-s0 { background:#c8543f; } .mx-s1 { background:#d9c04a; } .mx-s2 { background:#dfe5d2; }
+        .mx-s3 { background:#a8c69a; } .mx-s4 { background:#4f8f52; }
+        .mx-s0 .mx-n, .mx-s4 .mx-n { color:#fff; }
+        .mx-s0 .mx-chip, .mx-s4 .mx-chip { background:rgba(255,255,255,.9); }
+        .mx-legend { display:flex; align-items:center; gap:6px; margin-top:12px; font-size:0.72rem; color:var(--text-muted); flex-wrap:wrap; }
+        .mx-key { width:22px; height:11px; border-radius:3px; display:inline-block; border:1px solid rgba(0,0,0,.08); }
+        .mx-note { margin-left:10px; }
+        .mx-open { margin-top:14px; display:flex; align-items:flex-end; gap:10px; }
+        .mx-open label { font-size:0.78rem; color:#4a4a52; display:flex; flex-direction:column; gap:4px; }
+        /* --- sortable table + rubric list ------------------------------------ */
+        th.sortable { cursor:pointer; user-select:none; white-space:nowrap; }
+        th.sortable:hover { color:var(--primary); }
+        th.sorted { color:var(--primary); }
+        .sort-ar { font-size:0.62rem; opacity:.55; }
+        .cr-open { background:none; border:none; font:inherit; font-weight:700; color:var(--primary); cursor:pointer; padding:0; text-align:left; }
+        .cr-open:hover { text-decoration:underline; }
+        .rub-list { margin-top:8px; }
+        .rub-item { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid #f0f0f0; }
+        .rub-badge { flex:0 0 76px; text-align:center; font-size:0.64rem; font-weight:700; letter-spacing:.05em;
+                     text-transform:uppercase; border-radius:5px; padding:4px 0; color:#fff; }
+        .rub-badge.rub-pass { background:#2e7d32; } .rub-badge.rub-partial { background:#e6a700; } .rub-badge.rub-fail { background:#c62828; }
+        .rub-body { flex:1; min-width:0; font-size:0.85rem; }
+        .rub-q { color:#444; margin-top:2px; }
+        .rub-detail { color:var(--text-muted); font-style:italic; font-size:0.8rem; margin-top:3px; }
+        .sync-note { font-size:0.76rem; color:var(--text-muted); margin-top:8px; }
+        .sync-warn { color:#a3261f; }
+        details.dim-card > summary h4 { margin:0 0 6px; padding-right:64px; }
+        .dim-more { top:2px; }
         .ex-quote { font-family: Georgia, serif; font-style: italic; margin: 10px 0; line-height: 1.6; color: #222; }
         .ex-why { font-size: 0.78rem; color: #555; background: #fafafa; border-radius: 8px; padding: 9px 12px; line-height: 1.6; }
         .ex-override { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
@@ -836,6 +884,7 @@
 
                     <div class="ui-box">
                         <div id="report-summary"></div>
+                        <div id="sync-note" class="sync-note"></div>
                     </div>
 
                     <div class="ui-box">
@@ -852,6 +901,7 @@
                                     <option value="019">Americas</option>
                                 </select>
                                 <button class="download-btn" onclick="exportAssessmentsCsv()">Export record (CSV)</button>
+                                <button class="download-btn" onclick="pullProject()">Sync with the team</button>
                                 <button class="download-btn" onclick="exportProjectJson()" title="assessments, notes, coding examples, overrides and local terms in one file">Back up everything (JSON)</button>
                                 <label class="download-btn" style="cursor:pointer;">Restore
                                     <input type="file" accept="application/json" style="display:none" onchange="importProjectJson(this, 'merge')">
@@ -1218,7 +1268,7 @@
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.9.0";
+const ENGINE_VERSION = "2.10.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -3289,8 +3339,8 @@ function deleteExample(id) {
             }
             
             if(pageId === 'dashboard' && googleChartsLoaded) { drawGantt(); }
-            if(pageId === 'reporting') { renderReporting(); if (googleChartsLoaded) setTimeout(drawVerdictMap, 50); }
-            if(pageId === 'notes') { renderNotes(); }
+            if(pageId === 'reporting') { renderReporting(); if (typeof pullProject === 'function') pullProject(true); if (googleChartsLoaded) setTimeout(drawVerdictMap, 50); }
+            if(pageId === 'notes') { renderNotes(); if (typeof pullProject === 'function') pullProject(true); }
             if(pageId === 'settings') { renderSettings(); }
             if(pageId === 'repository' && typeof renderCountryIndex === 'function') { renderCountryIndex(); }
             
@@ -5281,7 +5331,7 @@ function recordAssessment(quiet) {
         }, {}),
         rubricDetail: { band: R.rubric.band, verdict: R.rubric.verdict, countryScore: R.rubric.countryScore,
                         scoreMean: R.rubric.scoreMean, scoreFloor: R.rubric.scoreFloor,
-                        criteria: (R.rubric.criteria || []).map(c => ({ id: c.id, name: c.name, result: c.result, detail: c.detail })),
+                        criteria: (R.rubric.criteria || []).map(c => ({ id: c.id, name: c.name, question: c.question, result: c.result, detail: c.detail })),
                         reasoning: R.rubric.reasoning || [], flags: R.rubric.flags || [] },
         source: "analysis", engine: R.engine, lexicon: R.lexicon, rules: R.rules,
         coder: R.coder, at: new Date().toISOString()
@@ -5297,7 +5347,8 @@ function recordAssessment(quiet) {
             country: row.country, verdict: row.verdict, axis_rp: row.axisRP, axis_dr: row.axisDR,
             tiers: JSON.stringify(row.tiers), confidence: JSON.stringify(row.confidence),
             sensitive_to_rule: row.sensitiveToRule, engine: row.engine, lexicon: row.lexicon, coder: row.coder,
-            profile_detail: JSON.stringify(row.profileDetail), rubric_detail: JSON.stringify(row.rubricDetail)
+            profile_detail: JSON.stringify(row.profileDetail), rubric_detail: JSON.stringify(row.rubricDetail),
+            axis_rp: row.axisRP, axis_dr: row.axisDR, source: row.source, recorded_at: row.at
         }, 'country');
         const c = ndcData.find(x => x.c === R.country);
         if (c && c.s !== 1) { c.s = 1; try { localStorage.setItem('ndcTrackerState', JSON.stringify(ndcData.map(i => ({ c: i.c, s: i.s })))); } catch (e) {} loadTables(); }
@@ -5428,6 +5479,94 @@ function exportNotesMd() {
         });
     });
     download("JUSTNDC_notes.md", md, "text/markdown");
+}
+
+
+/* ============================================================================
+   Reading the project record back off the server, v2.10
+
+   Writing to the shared database was already happening; nothing ever read it
+   back, so a colleague opening the site saw an empty Reporting page and no
+   notes. Both are now pulled on load and merged with whatever is in this
+   browser, keeping the newer of the two where a country or a note appears in
+   both. Nothing is deleted by a sync.
+
+   The two tables this needs are country_assessments and project_notes. If they
+   do not exist the pull fails, the failure is reported on screen rather than
+   swallowed, and the tool goes on working from browser storage.
+   ========================================================================== */
+
+const safeParse = (v, fallback) => {
+    if (v == null) return fallback;
+    if (typeof v === "object") return v;
+    try { return JSON.parse(v); } catch (e) { return fallback; }
+};
+
+async function pullProject(quiet) {
+    const note = document.getElementById('sync-note');
+    const say = html => { if (note) note.innerHTML = html; };
+    if (typeof supabaseClient === "undefined" || !supabaseClient) {
+        say(`<span class="sync-warn">This build has no shared database. The project record stays in this browser; use Back up everything to move it.</span>`);
+        return;
+    }
+    say(`<span class="muted-note">Syncing\u2026</span>`);
+    const report = [];
+
+    try {
+        const { data, error } = await supabaseClient.from('country_assessments').select('*');
+        if (error) throw error;
+        const local = getAssessments();
+        let n = 0;
+        (data || []).forEach(r => {
+            const at = r.recorded_at || r.at || r.created_at || new Date(0).toISOString();
+            const cur = local[r.country];
+            if (cur && new Date(cur.at || 0) > new Date(at)) return;    // ours is newer, keep it
+            local[r.country] = {
+                country: r.country, verdict: r.verdict, tone: r.tone || "",
+                axisRP: r.axis_rp, axisDR: r.axis_dr,
+                tiers: safeParse(r.tiers, {}), confidence: safeParse(r.confidence, {}),
+                ceiling: safeParse(r.ceiling, {}), consolidated: safeParse(r.consolidated, {}),
+                counts: safeParse(r.counts, {}),
+                profileDetail: safeParse(r.profile_detail, null),
+                rubricDetail: safeParse(r.rubric_detail, null),
+                sensitiveToRule: !!r.sensitive_to_rule, altVerdict: r.alt_verdict || "",
+                source: r.source || "analysis", engine: r.engine, lexicon: r.lexicon,
+                coder: r.coder, at
+            };
+            n++;
+        });
+        storeSet(STORE_KEYS.assessments, local);
+        report.push(`${n} assessment(s) pulled`);
+    } catch (e) {
+        report.push(`<span class="sync-warn">assessments not synced (${esc(e.message || e)})</span>`);
+    }
+
+    try {
+        const { data, error } = await supabaseClient.from('project_notes').select('*');
+        if (error) throw error;
+        const notes = getNotes();
+        const byId = new Map(notes.map(x => [x.id, x]));
+        let n = 0;
+        (data || []).forEach(r => {
+            const id = r.id != null ? String(r.id) : ("note-" + Math.random());
+            if (byId.has(id)) return;
+            notes.push({ id, title: r.title, body: r.body, category: r.category || "Methodology",
+                         country: r.country || "", coder: r.coder || "", pinned: false,
+                         at: r.at || r.created_at || new Date().toISOString() });
+            n++;
+        });
+        storeSet(STORE_KEYS.notes, notes);
+        report.push(`${n} note(s) pulled`);
+    } catch (e) {
+        report.push(`<span class="sync-warn">notes not synced (${esc(e.message || e)})</span>`);
+    }
+
+    say(report.join(" &middot; ") + ` <span class="muted-note">at ${new Date().toLocaleTimeString()}</span>`);
+    if (typeof renderReporting === "function") renderReporting();
+    if (typeof renderNotes === "function") renderNotes();
+    if (!quiet && report.some(x => x.includes("sync-warn"))) {
+        console.warn("Create the missing tables with the SQL in the methods note to share these across the team.");
+    }
 }
 
 
@@ -5648,46 +5787,84 @@ function drawVerdictMap() {
     });
 }
 
+/* The matrix as the policy brief draws it: shaded by distance from the
+   intersection of the two axes, countries as separated chips with a count, and
+   nothing clickable. The names were running together into an unreadable block
+   and were also the only way to open a record, which meant hunting for a
+   two-pixel target. Records are opened from the picker below and from the
+   table underneath instead. */
+const MX_SHADE = ["mx-s0", "mx-s1", "mx-s2", "mx-s3", "mx-s4"];
+
 function renderMatrix(rows) {
     const el = document.getElementById('report-matrix');
     if (!el) return;
     const idx = t => Math.max(0, tierRank(t) - 1);
-    let cells = "";
+    const tick = ["tokenistic", "partial", "embedded"];
+    let grid = "";
     for (let r = 2; r >= 0; r--) {
+        grid += `<div class="mx-row"><div class="mx-tick">${tick[r]}</div>`;
         for (let c = 0; c < 3; c++) {
-            const here = rows.filter(a => idx(a.axisRP) === r && idx(a.axisDR) === c);
-            const corner = (r === 2 && c === 2);
-            const washing = (r >= 1 && c === 0);
-            cells += `<div class="m-cell ${corner ? 'm-corner' : ''} ${washing ? 'm-wash' : ''}">
-                <div class="m-count">${here.length || ""}</div>
-                <div class="m-list">${here.map(a => `<span class="m-chip" style="border-color:${VERDICT_COLOR[normaliseVerdict(a.verdict)] || '#ccc'}"
-                    title="${esc(a.verdict)}" onclick="openCountryRecord('${esc(a.country).replace(/'/g, "\\'")}')">${esc(a.country)}</span>`).join("")}</div>
+            const here = rows.filter(a => idx(a.axisRP) === r && idx(a.axisDR) === c)
+                             .sort((a, b) => a.country.localeCompare(b.country));
+            const corner = (r === 2 && c === 2), washing = (r >= 1 && c === 0);
+            grid += `<div class="mx-cell ${MX_SHADE[r + c]}${corner ? ' mx-corner' : ''}">
+                <div class="mx-head"><span class="mx-n">${here.length}</span>
+                    ${corner ? '<span class="mx-flag">approaching transformative</span>' : ''}
+                    ${washing && here.length ? '<span class="mx-flag mx-flag-w">justice-washing</span>' : ''}</div>
+                <div class="mx-list">${here.map(a => `<span class="mx-chip" title="${esc(a.verdict)}">${esc(a.country)}${a.sensitiveToRule ? '<i class="mx-rs">*</i>' : ''}</span>`).join("")}</div>
             </div>`;
         }
+        grid += `</div>`;
     }
-    el.innerHTML = `<div class="q-wrap m-wrap">
-        <div class="q-ylab">RECOGNITIONAL + PROCEDURAL</div>
-        <div class="q-yticks"><span>embedded</span><span>partial</span><span>tokenistic</span></div>
-        <div class="q-grid m-grid">${cells}</div>
-        <div class="q-xticks"><span>tokenistic</span><span>partial</span><span>embedded</span></div>
-        <div class="q-xlab">DISTRIBUTIVE + RESTORATIVE</div>
-    </div>
+    const names = rows.map(a => a.country).sort((a, b) => a.localeCompare(b));
+    el.innerHTML = `<div class="mx-wrap">
+        <div class="mx-ylab"><span>RECOGNITIONAL + PROCEDURAL</span></div>
+        <div class="mx-body">${grid}
+            <div class="mx-row mx-axisrow"><div class="mx-tick"></div><div class="mx-xt">tokenistic</div><div class="mx-xt">partial</div><div class="mx-xt">embedded</div></div>
+            <div class="mx-xlab">DISTRIBUTIVE + RESTORATIVE</div></div></div>
+    <div class="mx-legend"><span>further from the intersection</span>
+        ${MX_SHADE.map(s => `<i class="mx-key ${s}"></i>`).join("")}<span>closer</span>
+        ${rows.some(a => a.sensitiveToRule) ? '<span class="mx-note">* verdict changes under the other roll-up rule</span>' : ''}</div>
+    <div class="mx-open"><label>Open a country record
+        <select class="search-box" style="margin-bottom:0;" onchange="if(this.value) openCountryRecord(this.value)">
+            <option value="">Select a country\u2026</option>
+            ${names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}</select></label></div>
     <p class="q-note">Each axis takes the <b>weaker</b> of its two dimensions (rule: ${RULES.AXIS_RULE}), following the
-    intersection logic in the policy brief rather than flattering a country for one strong dimension. The upper-right cell
-    is the region the brief describes as approaching transformative climate justice. The shaded left column is the
-    justice-washing pattern of insight 2: recognition and process developed, distribution and repair not.</p>`;
+    intersection logic in the policy brief. The upper-right cell is the region the brief describes as approaching
+    transformative climate justice; the left column is the justice-washing pattern of insight 2.</p>`;
+}
+
+let reportSort = { key: "verdict", dir: -1 };
+function setReportSort(key) {
+    if (reportSort.key === key) reportSort.dir *= -1;
+    else reportSort = { key, dir: key === "country" ? 1 : -1 };
+    renderReporting();
 }
 
 function renderRecordTable(rows) {
     const el = document.getElementById('report-table');
     if (!el) return;
     if (!rows.length) { el.innerHTML = `<p class="muted-note">Nothing recorded yet.</p>`; return; }
-    const sorted = rows.slice().sort((a, b) => verdictValue(b.verdict) - verdictValue(a.verdict) || a.country.localeCompare(b.country));
+    const val = (a, k) => {
+        if (k === "verdict") return verdictValue(a.verdict);
+        if (k === "country" || k === "source" || k === "coder") return String(a[k] || "").toLowerCase();
+        if (k === "at") return new Date(a.at || 0).getTime();
+        if (k === "axisRP" || k === "axisDR") return tierRank(a[k]);
+        return tierRank((a.tiers || {})[k]);
+    };
+    const sorted = rows.slice().sort((a, b) => {
+        const x = val(a, reportSort.key), y = val(b, reportSort.key);
+        return ((x > y ? 1 : x < y ? -1 : 0) * reportSort.dir) || a.country.localeCompare(b.country);
+    });
+    const arrow = k => reportSort.key === k ? (reportSort.dir > 0 ? "\u25b2" : "\u25bc") : "\u21c5";
+    const th = (k, label, title) => `<th class="sortable${reportSort.key === k ? ' sorted' : ''}" onclick="setReportSort('${k}')"${title ? ` title="${esc(title)}"` : ''}>${label} <span class="sort-ar">${arrow(k)}</span></th>`;
     el.innerHTML = `<div class="table-container"><table class="sticky-th"><thead><tr>
-        <th>Country</th><th>Verdict</th>${DIMS4.map(d => `<th>${d.slice(0, 4)}</th>`).join("")}
-        <th>R+P</th><th>D+R</th><th>Source</th><th>Coder</th><th>Recorded</th><th></th></tr></thead><tbody>
+        ${th("country", "Country")}${th("verdict", "Verdict")}
+        ${DIMS4.map(d => th(d, d.slice(0, 4), d + " justice")).join("")}
+        ${th("axisRP", "R+P")}${th("axisDR", "D+R")}
+        ${th("source", "Source")}${th("coder", "Coder")}${th("at", "Recorded")}<th></th></tr></thead><tbody>
         ${sorted.map(a => `<tr>
-            <td><b>${esc(a.country)}</b>${a.sensitiveToRule ? ' <span class="chip chip-review" title="The verdict changes under the other roll-up rule">rule-sensitive</span>' : ''}</td>
+            <td><button class="cr-open" onclick="openCountryRecord('${esc(a.country).replace(/'/g, "\\'")}')" title="open this country's record">${esc(a.country)}</button>${a.sensitiveToRule ? ' <span class="chip chip-review">rule-sensitive</span>' : ''}</td>
             <td><span class="vdot" style="background:${VERDICT_COLOR[normaliseVerdict(a.verdict)] || '#ccc'}"></span> ${esc(VERDICT_SHORT[normaliseVerdict(a.verdict)] || a.verdict)}</td>
             ${DIMS4.map(d => `<td style="color:${TIER_COLOR[a.tiers[d]]};font-weight:600;">${(a.tiers[d] || "?").slice(0, 4)}</td>`).join("")}
             <td>${(a.axisRP || "").slice(0, 4)}</td><td>${(a.axisDR || "").slice(0, 4)}</td>
@@ -5765,7 +5942,49 @@ function openCountryRecord(country) {
         }).join("") || `<p class="muted-note">Coding examples exist for this country but carry no dimension.</p>`;
     }
 
-    el.innerHTML = head + `<h4 class="cr-h">Coding examples filed for this country</h4>` + body;
+    /* The dimension profile and the rubric, rebuilt from the record so a coder
+       who recoded statements by hand can read the result without re-running the
+       assessment, which would discard that work. Each dimension opens to the
+       same arithmetic the assessment page shows. */
+    let detail = "";
+    if (a && a.profileDetail) {
+        detail = `<h4 class="cr-h">Dimension profile as recorded</h4>
+        <p class="muted-note">Each dimension is scored from the evidence its statements carry, then banded. Open a card for the arithmetic.</p>
+        <div class="cr-profile">${DIMS4.map(d => {
+            const pf = a.profileDetail[d] || {};
+            return `<details class="dim-card" style="border-top:4px solid ${TIER_COLOR[pf.tier] || '#ccc'};">
+                <summary><h4>${d} justice</h4>
+                    <div class="dim-tier" style="color:${TIER_COLOR[pf.tier] || '#666'}">${esc(pf.tier || "?")}</div>
+                    <div class="dim-score">${typeof pf.score === "number" ? `<b>${pf.score}</b>/100` : ""}${pf.total ? ` &middot; ${pf.total} statement${pf.total === 1 ? "" : "s"}` : ""}</div>
+                    <div class="dim-conf">confidence: ${esc(pf.confidence || "?")}${pf.borderline ? " &middot; borderline" : ""}</div>
+                    <span class="dim-more"></span></summary>
+                <div class="dim-body">
+                    ${pf.distribution ? `<div class="dbar-key">${pf.distribution.Embedded} embedded &middot; ${pf.distribution.Partial} partial &middot; ${pf.distribution.Tokenistic} tokenistic</div>` : ""}
+                    ${(pf.parts && pf.parts.length) ? `<table class="dcalc"><thead><tr><th>statement</th><th>tier</th><th>features</th><th>value</th><th>decay</th><th>adds</th></tr></thead><tbody>${
+                        pf.parts.map(x => `<tr><td>${esc(x.locator || "")}${(x.penalties && x.penalties.length) ? `<div class="dcalc-pen">${esc(x.penalties.join("; "))}</div>` : ""}</td><td>${esc(x.tier || "")}</td><td>${x.fired}</td><td>${x.value}</td><td>&times;${x.decay}</td><td><b>${x.contribution}</b></td></tr>`).join("")}</tbody></table>` : ""}
+                    ${(pf.confidenceWhy && pf.confidenceWhy.length) ? `<ul class="dim-why">${pf.confidenceWhy.map(w => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}
+                    ${(pf.ceiling && (pf.ceiling !== pf.tier || pf.consolidated !== pf.tier)) ? `<div class="dim-alt">Ceiling rule reads <b>${esc(pf.ceiling)}</b>, consolidated rule reads <b>${esc(pf.consolidated)}</b>.</div>` : ""}
+                    <p class="dim-note">${esc(pf.note || "")}</p>
+                </div></details>`;
+        }).join("")}</div>`;
+    } else if (a) {
+        detail = `<p class="muted-note">This assessment was recorded before the profile detail was stored. Re-record it from the Assessment tab to capture the scoring.</p>`;
+    }
+    if (a && a.rubricDetail && a.rubricDetail.criteria && a.rubricDetail.criteria.length) {
+        const rb = a.rubricDetail;
+        detail += `<h4 class="cr-h">Transformative justice rubric as recorded</h4>
+        <p class="muted-note">Transformative climate justice is not a fifth dimension and is never coded on a statement.
+        It is the judgement made once all four dimensions have been assessed. Country score <b>${rb.countryScore}</b> of 100
+        (mean ${rb.scoreMean}, floor ${rb.scoreFloor}) &middot; band ${rb.band}: <b>${esc(rb.verdict)}</b>.</p>
+        <div class="rub-list">${rb.criteria.map(c => `<div class="rub-item">
+            <span class="rub-badge rub-${String(c.result).toLowerCase()}">${esc(c.result)}</span>
+            <div class="rub-body"><b>${c.id}. ${esc(c.name)}</b>
+                ${c.question ? `<div class="rub-q">${esc(c.question)}</div>` : ""}
+                <div class="rub-detail">${esc(c.detail)}</div></div></div>`).join("")}</div>
+        ${(rb.flags && rb.flags.length) ? rb.flags.map(f => `<div class="flag-row"><span class="flag-tag">${esc(f.label)}</span><span>${esc(f.detail)}</span></div>`).join("") : ""}`;
+    }
+
+    el.innerHTML = head + detail + `<h4 class="cr-h">Coding examples filed for this country</h4>` + body;
     box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
