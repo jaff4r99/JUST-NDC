@@ -553,6 +553,38 @@
         .dbar-key { font-size:0.74rem; color:var(--text-muted); margin-bottom:6px; }
         .dim-conf-low { color:#b06000; }
         .dim-conf-high { color:#3a7a45; }
+
+        /* ---- matrix: a chip that can be dragged, and one that was ---------- */
+        .mx-chip[draggable="true"] { cursor: grab; }
+        .mx-chip[draggable="true"]:active { cursor: grabbing; }
+        .mx-chip-hand { border-style: dashed; }
+        .mx-hand { font-style: normal; font-size: 0.68rem; margin-left: 4px; opacity: .75; }
+        .mx-cell { transition: box-shadow .12s; }
+        .mx-hands { font-size: 0.78rem; color: var(--text-muted); margin: 10px 0 2px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .mx-hand-item { background: #f4f6f8; border: 1px solid #e2e7ec; border-radius: 14px; padding: 2px 4px 2px 10px; display: inline-flex; align-items: center; gap: 6px; }
+        .sql-box { margin-top: 10px; border: 1px solid #e3e3e6; border-radius: 10px; padding: 10px 12px; background: #fff; }
+        .sql-box summary { cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #33465c; }
+        .sql-box pre { background: #0f2233; color: #e8eef4; border-radius: 8px; padding: 12px 14px; font-size: 0.72rem;
+                       line-height: 1.5; overflow-x: auto; white-space: pre; margin: 8px 0; }
+
+        /* ---- Framework and Method: one section open at a time -------------- */
+        .m-sec { border: 1px solid #e3e3e6; border-radius: 12px; background: #fff; margin: 10px 0; overflow: hidden; }
+        .m-sec > summary { cursor: pointer; list-style: none; padding: 14px 18px; display: flex; align-items: center;
+                           justify-content: space-between; gap: 12px; }
+        .m-sec > summary::-webkit-details-marker { display: none; }
+        .m-sec > summary:hover { background: #f7f9fb; }
+        .m-sec > summary h2, .m-sec > summary h3 { margin: 0; font-size: 1.15rem; }
+        .m-sec > summary .m-sec-hint { font-size: 0.74rem; color: var(--text-muted); font-weight: 400; flex: 1; }
+        .m-sec > summary::after { content: "open"; font-size: 0.7rem; color: var(--text-muted);
+                                  border: 1px solid #e0e0e0; border-radius: 10px; padding: 2px 9px; flex: none; }
+        .m-sec[open] > summary::after { content: "close"; }
+        .m-sec[open] > summary { border-bottom: 1px solid #eef0f2; }
+        .m-sec-body { padding: 4px 18px 18px; }
+        .m-sec-body > h2:first-child, .m-sec-body > h3:first-child { margin-top: 6px; }
+        .m-allbtn { display: flex; gap: 8px; margin: 8px 0 2px; }
+        .m-allbtn button { font-size: 0.74rem; background: #eef3f8; border: 1px solid #d7e2ec; border-radius: 20px;
+                           padding: 5px 12px; cursor: pointer; color: #2a4a6a; }
+        .m-allbtn button:hover { background: #dce8f3; }
     </style>
 </head>
 <body>
@@ -632,18 +664,28 @@
                     <h1 class="header-light-blue" style="font-size: 2.1rem; margin-bottom: 10px;">Framework and Methodology</h1>
                     <p style="margin-top: 0;">This page is the working manual for the JUST-NDC analysis. It sets out why the project exists, the framework we apply, how a statement is coded, what the tool does on its own, and where its judgement stops and yours begins. If you are joining the team, read it end to end before you code anything.</p>
                     <div class="m-toc">
-                        <a href="#m-ladder">The four steps</a>
-                        <a href="#m-tiers">Grading a statement</a>
-                        <a href="#m-score">Scoring a dimension</a>
-                        <a href="#m-matrix">The axes and the matrix</a>
-                        <a href="#m-rubric">The country score and checks</a>
-                        <a href="#m-bands">The six bands</a>
-                        <a href="#m-worked">Worked examples</a>
-                        <a href="#m-qa">FAQ</a>
+                        <a href="#m-ladder" onclick="openMethodSection('m-ladder');return false;">The four steps</a>
+                        <a href="#m-tiers" onclick="openMethodSection('m-tiers');return false;">Grading a statement</a>
+                        <a href="#m-score" onclick="openMethodSection('m-score');return false;">Scoring a dimension</a>
+                        <a href="#m-matrix" onclick="openMethodSection('m-matrix');return false;">The axes and the matrix</a>
+                        <a href="#m-rubric" onclick="openMethodSection('m-rubric');return false;">The country score and checks</a>
+                        <a href="#m-bands" onclick="openMethodSection('m-bands');return false;">The six bands</a>
+                        <a href="#m-worked" onclick="openMethodSection('m-worked');return false;">Worked examples</a>
+                        <a href="#m-qa" onclick="openMethodSection('m-qa');return false;">FAQ</a>
                     </div>
                     <p class="panel-sub" style="margin-top:6px;">Sections 4 to 11 set out the scoring method from end to end: how a sentence becomes a tier, how tiers become a dimension score, and how four dimension scores become a band.</p>
 
-                    <h2 class="header-light-blue">1. Why this project exists</h2>
+                    <div class="m-allbtn">
+                        <button type="button" onclick="setAllMethodSections(true)">Open every section</button>
+                        <button type="button" onclick="setAllMethodSections(false)">Close them all</button>
+                    </div>
+
+                    <details class="m-sec" id="m-sec-1">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">1. Why this project exists</h2>
+                            <span class="m-sec-hint">why the project exists and what it is testing</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top: 15px;">
                         <p style="margin-top: 0;">Climate change is a lived experience that magnifies existing inequalities within and between countries. Nationally Determined Contributions are the core vehicle through which states set out what they will do about it. Under the Paris Agreement each Party is expected to prepare, communicate and maintain successive NDCs, to do so in the light of equity, and to make each one represent a progression beyond the last and reflect its highest possible ambition.</p>
                         <p>The expectation is not only that countries cut emissions but that they explain how their plans are fair. The technical dialogue of the first global stocktake states that all countries are expected to explain in their NDCs how those NDCs are fair and ambitious. The UAE Consensus agreed at COP28 went further, urging governments to embed inclusive, multilevel and gender-responsive governance in their new plans. Civil society has framed the test more bluntly: whether governments move beyond tokenistic mentions of inclusive language towards operationalising measures that make climate action equitable.</p>
@@ -651,7 +693,15 @@
                         <p style="margin-bottom: 0; font-size: 0.9rem; color: var(--text-muted);">Framework source: Abbas, S. M. J., Sandholz, S. and van Schie, D. (2025). <em>Tokenistic or transformative? Evaluating transformative climate justice in NDC 3.0 submissions.</em> UNU-EHS Policy Brief No. 16. The framework builds on IPCC (2022) and EEA (2024), the transformative justice agenda set out by Newell and others (2021), and earlier justice coding work by Juhola and others (2022) and Jones and others (2024).</p>
                     </div>
 
-                    <h2 class="header-light-blue">2. The four dimensions of climate justice</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-sec-2">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">2. The four dimensions of climate justice</h2>
+                            <span class="m-sec-hint">recognitional, procedural, distributive, restorative</span>
+                        </summary>
+                        <div class="m-sec-body">
 
                     <div class="framework-grid">
                         <div class="framework-box box-recognitional">
@@ -686,7 +736,15 @@
                         <p style="margin-top:0;"><strong>Transformative climate justice is not a fifth dimension and is never coded on a statement.</strong> The four dimensions together establish a baseline. Transformative justice is reached at their intersection, when a country shifts power, rules and resource flows rather than adding stand-alone measures. Every statement in this project is coded to one of the four. The transformative judgement is made once, at country level, after all four have been assessed. Section 6 sets out exactly how.</p>
                     </div>
 
-                    <h2 class="header-light-blue">3. The line-by-line coding guide</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-sec-3">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">3. The line-by-line coding guide</h2>
+                            <span class="m-sec-hint">the five steps a coder follows</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top: 15px;">
                         <p style="margin-top: 0;">We process 120 NDC documents while keeping qualitative standards. The workflow is hybrid: the tool retrieves and proposes, you decide.</p>
                         <ol style="line-height: 1.8; margin-bottom: 0;">
@@ -698,7 +756,15 @@
                         </ol>
                     </div>
 
-                    <h2 class="header-light-blue" id="m-ladder">4. The four steps: from one sentence to one verdict</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-ladder">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">4. The four steps: from one sentence to one verdict</h2>
+                            <span class="m-sec-hint">sentence, dimension, axis, country</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top:15px; background:#fff;">
                         <p style="margin-top:0;">The assessment runs in four steps. Each step decides one thing and passes its result to the next. No step skips ahead. A single sentence never produces a country verdict, and a country verdict is never read back onto a single sentence.</p>
 
@@ -734,7 +800,15 @@
                         </div>
                     </div>
 
-                    <h2 class="header-light-blue" id="m-tiers">5. Step 1: grading a single statement</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-tiers">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">5. Step 1: grading a single statement</h2>
+                            <span class="m-sec-hint">tokenistic, partial, embedded, with examples</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top:15px; background:#fff;">
                         <p style="margin-top:0;">Each coded sentence receives one of three tiers. A fourth label, <em>absent</em>, applies to a dimension the document never mentions.</p>
                         <p>The tier describes how a claim is written and what it is attached to. It does not describe whether the policy behind it is a good one. A broad promise with nothing behind it is tokenistic. A modest measure written into law with a budget line is embedded.</p>
@@ -805,7 +879,15 @@
                     </div>
                     <p class="panel-sub" style="margin-top:12px;">One caveat applies to every cell above. The assessment is qualitative and text-based. We evaluate the content and commitments of the NDCs on paper, not the implementation of those commitments or the intent of whoever drafted them.</p>
 
-                    <h2 class="header-light-blue" id="m-score">6. Step 2: scoring a dimension</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-score">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">6. Step 2: scoring a dimension</h2>
+                            <span class="m-sec-hint">the formula, worked through</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top:15px; background:#fff;">
                         <p style="margin-top:0;"><strong>Why a dimension is scored rather than read off its strongest sentence.</strong> A dimension could be graded by taking the highest tier that any one of its sentences reached. That method is simple to explain, and imprecise in practice. One anchored sentence among twenty mentions would grade the whole dimension embedded, and the grade would rest on whichever sentence happened to be strongest. Scoring the dimension instead gives a reading that reflects how much of the document stands behind the grade. Several commitments count for more than one. Repetition counts for nothing.</p>
 
@@ -865,7 +947,15 @@ order the statements by <i>v</i>, strongest first, then:<br>
                         <p style="margin-top:16px;"><strong>Confidence is derived, not assigned.</strong> Each dimension reports high, medium or low confidence. It begins at high and drops one level for each of the following: the score rests on a single statement; the score sits within 5 points of a threshold; every statement carrying the grade is flagged for manual confirmation of its dimension; every one of them is conditional on external support; every one of them sits in a framing section rather than an operational one. The dimension card lists whichever of these applied. A tokenistic dimension is reported at high confidence, because a finding that nothing in it is actionable leaves little room for doubt.</p>
                     </div>
 
-                    <h2 class="header-light-blue" id="m-matrix">7. Step 3: the two axes and the matrix</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-matrix">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">7. Step 3: the two axes and the matrix</h2>
+                            <span class="m-sec-hint">pairing the four dimensions into two axes</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top:15px; background:#fff;">
                         <p style="margin-top:0;">The four dimensions are paired into two axes:</p>
                         <ul style="line-height:1.75;">
@@ -897,7 +987,15 @@ order the statements by <i>v</i>, strongest first, then:<br>
                         <p style="margin-top:14px;"><strong>The left-hand column.</strong> Countries in the left column with a developed vertical axis have built recognition and participation while distributive and restorative commitments stay at or below tokenistic. The 2025 policy brief identifies this pattern as a justice-washing risk. The tool records it as a flag on the country record, described as process-heavy and outcome-light. It is not printed as a label on the matrix, because a label over a cell would apply to every country in that cell on the basis of position alone, and because the pattern occurs at more than one level of commitment.</p>
                     </div>
 
-                    <h2 class="header-light-blue" id="m-rubric">8. Step 4: the country score and the six checks</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-rubric">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">8. Step 4: the country score and the six checks</h2>
+                            <span class="m-sec-hint">half the mean, half the floor, and six checks</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top:15px; background:#fff;">
                         <p style="margin-top:0;">Two things happen at country level. An arithmetic score proposes a band, and six qualitative checks decide whether the country keeps it.</p>
 
@@ -924,7 +1022,15 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                         <p style="margin-top:16px;"><strong>Three flags travel alongside the band</strong> rather than inside it: process-heavy and outcome-light, band not stable (a dimension sits within 5 points of a threshold, so small coding changes could move the country), and low confidence in at least one dimension. A flag is a prompt to read the record.</p>
                     </div>
 
-                    <h2 class="header-light-blue" id="m-bands">9. The six bands</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-bands">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">9. The six bands</h2>
+                            <span class="m-sec-hint">the ladder from absent to approaching transformative</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <p style="margin-top:6px;">Six bands describe a document as a whole. Each band describes what the document does. None of them describes the country behind it.</p>
 
                     <div style="margin-top:16px;">
@@ -982,7 +1088,15 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                         <b>Tier or band?</b> The two scales are easy to confuse in writing. A <b>tier</b> (absent, tokenistic, partial, embedded) describes a statement or a dimension. A <b>band</b> (0 to 5, the ladder above) describes a country. A country in band 3 may contain several embedded statements, and a dimension graded embedded does not place its country in band 5.
                     </div>
 
-                    <h2 class="header-light-blue" id="m-worked">10. Three worked examples</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-worked">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">10. Three worked examples</h2>
+                            <span class="m-sec-hint">three countries, from scores to a band</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top:15px; background:#fff;">
                         <p style="margin-top:0;">Three constructed examples, so that the arithmetic can be followed from dimension scores through to a band. No real country is described here. Recorded results are on the Reporting page.</p>
 
@@ -1020,7 +1134,15 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                         <p style="margin-bottom:0;"><strong>Country C</strong> shows what the six checks are for. A score of 72.5 clears the top band on the arithmetic. Whether the country keeps that band depends on the checks. If the anchored commitments all sit in the vision chapter, integration fails. If the NDC addresses symptoms only, structural engagement fails. With four or fewer checks passing, the country is held at band 4, substantive but uneven, and the record names the checks that failed. Two countries can reach the same score and end in different bands, and the record states why.</p>
                     </div>
 
-                    <h2 class="header-light-blue" id="m-qa">11. Frequently asked questions</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-qa">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">11. Frequently asked questions</h2>
+                            <span class="m-sec-hint">the questions that come up most</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top:15px; background:#fff;">
                         <div class="m-qa">
                             <h4>Why is transformative climate justice not a fifth dimension?</h4>
@@ -1052,7 +1174,15 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                         </div>
                     </div>
 
-                    <h2 class="header-light-blue">12. What the 2025 policy brief found</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-sec-12">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">12. What the 2025 policy brief found</h2>
+                            <span class="m-sec-hint">the findings the tool has to reproduce</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top: 15px; background:#fff;">
                         <p style="margin-top:0;">The brief coded 27 NDCs submitted to the UNFCCC as of July 2025, line by line, by hand. Four were in Spanish and one in French; those were handled with professional translation software and secondary manual verification by fluent speakers, with discrepancies resolved through blind cross-review. Content was also organised into nine thematic clusters, guided by prevalent topics in the texts and the CAN Guidelines for NDCs, to see where justice is integrated and where it is neglected. The findings that the tool now has to reproduce at scale are these.</p>
                         <ul style="line-height:1.8;">
@@ -1068,7 +1198,15 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                         <p style="margin-bottom:0;">The brief's three recommendations shape what the tool looks for. Pair commitments with the law or policy they attach to, the responsible institution, a budget line, a timeline and a monitoring indicator. Translate participation commitments into outcomes on distribution and remediation. Adapt the drafting patterns of the countries already close to transformative justice.</p>
                     </div>
 
-                    <h2 class="header-light-blue">13. How the tool works</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-sec-13">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">13. How the tool works</h2>
+                            <span class="m-sec-hint">retrieval, classification, and what is recorded</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="margin-top: 15px; background:#fff;">
                         <p style="margin-top:0;"><strong>What kind of AI this is.</strong> It is a natural language processing pipeline, not a large language model. Nothing is sent to an external model and nothing is generated. Every decision is made by rules you can read in the page source, so the same document produces the same result every time, and any grade can be traced to the exact words that produced it. That is a deliberate choice: a black box cannot be defended in a methods section, and a generated summary cannot be checked against the text it came from. The trade-off is that the tool has no understanding. It reads patterns. That is why every output is a proposal for a human coder rather than a result.</p>
 
@@ -1091,7 +1229,15 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                         <p style="margin-bottom:0;"><strong>What the tool never does.</strong> It never applies a transformative label to a statement. It never counts mentions to reach a conclusion. It never decides that a country is doing well because it repeats a phrase.</p>
                     </div>
 
-                    <h2 class="header-light-blue">14. What the tool cannot do</h2>
+                        </div>
+                    </details>
+
+                    <details class="m-sec" id="m-sec-14">
+                        <summary>
+                            <h2 class="header-light-blue" style="margin:0;">14. What the tool cannot do</h2>
+                            <span class="m-sec-hint">the limits, stated plainly</span>
+                        </summary>
+                        <div class="m-sec-body">
                     <div class="ui-box" style="background:#fff;">
                         <ul style="line-height:1.75;">
                             <li><strong>It reads what is written, not what will happen.</strong> A well-drafted commitment scores the same whether or not it is ever delivered. This limitation is stated in the policy brief and has not changed.</li>
@@ -1103,7 +1249,10 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                         </ul>
                     </div>
 
-                </div>
+                
+                        </div>
+                    </details>
+</div>
 
                 <!-- PAGE 3: GLOBAL MAP -->
                 <div id="map" class="page">
@@ -1312,7 +1461,8 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                                     <option value="019">Americas</option>
                                 </select>
                                 <button class="download-btn" onclick="exportAssessmentsCsv()">Export record (CSV)</button>
-                                <button class="download-btn" onclick="pullProject()">Sync with the team</button>
+                                <button class="download-btn" onclick="syncProject()" title="send this browser's record to the shared database, then read back everyone else's">Sync with the team</button>
+                                <button class="download-btn" onclick="checkSharedDatabase()" title="test each shared table for read and write access">Check the shared database</button>
                                 <button class="download-btn" onclick="exportProjectJson()" title="assessments, notes, coding examples, overrides and local terms in one file">Back up everything (JSON)</button>
                                 <label class="download-btn" style="cursor:pointer;">Restore
                                     <input type="file" accept="application/json" style="display:none" onchange="importProjectJson(this, 'merge')">
@@ -1663,7 +1813,7 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.10.0";
+const ENGINE_VERSION = "2.11.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -3670,7 +3820,21 @@ function deleteExample(id) {
 
         
 
-        function showPage(pageId, btnElement) {
+        
+/* ---------- Framework and Method: the collapsible sections ---------------- */
+function openMethodSection(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === "DETAILS") el.open = true;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function setAllMethodSections(open) {
+    const page = document.getElementById('methodology');
+    if (!page) return;
+    page.querySelectorAll('details.m-sec').forEach(d => { d.open = !!open; });
+}
+
+function showPage(pageId, btnElement) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-btn'));
             document.getElementById(pageId).classList.add('active');
@@ -5554,7 +5718,8 @@ const STORE_KEYS = {
     notes: "justndc_notes",
     settings: "justndc_settings",
     customTerms: "justndc_custom_terms",
-    audit: "justndc_recall_audit"
+    audit: "justndc_recall_audit",
+    placements: "justndc_placements"
 };
 
 function storeGet(key, fallback) {
@@ -5568,10 +5733,289 @@ function storeSet(key, value) {
         return false;
     }
 }
+/* ============================================================================
+   Writing to the shared database, v2.11
+
+   supabase-js RETURNS its errors, it does not throw them. The old mirror()
+   wrapped the call in try/catch, looked no further, and returned. A rejected
+   write left no trace anywhere on screen: the record saved to this browser,
+   the page still looked right, and a colleague opening the site saw an empty
+   Reporting page and no notes. Every write now reads the error off the
+   response and reports it.
+
+   Two failures are recoverable without anyone touching the database, so they
+   are handled rather than reported. Where the server names a column it does
+   not have, the row is sent again without that column. Where the table has no
+   unique constraint for the conflict target, the row is sent again as a plain
+   insert. Anything else is reported with the server's own words, because a
+   guess about someone else's schema is worth less than the message it sent.
+   ========================================================================== */
+
+let syncProblems = [];
+
+function noteSyncProblem(table, message) {
+    const line = table + ": " + message;
+    if (!syncProblems.includes(line)) syncProblems.push(line);
+    while (syncProblems.length > 20) syncProblems.shift();
+    console.warn("[JUST-NDC sync]", line);
+}
+
 async function mirror(table, row, conflict) {
-    if (typeof supabaseClient === "undefined" || !supabaseClient) return;
-    try { await supabaseClient.from(table).upsert(row, conflict ? { onConflict: conflict } : undefined); }
-    catch (e) { console.warn("not synced to the shared database:", table, e); }
+    if (typeof supabaseClient === "undefined" || !supabaseClient) {
+        return { ok: false, reason: "this build has no shared database" };
+    }
+    let payload = Object.assign({}, row), dropped = [], useConflict = conflict;
+    for (let attempt = 0; attempt < 10; attempt++) {
+        let res;
+        try {
+            res = await supabaseClient.from(table).upsert(payload, useConflict ? { onConflict: useConflict } : undefined);
+        } catch (e) {
+            const m = e && e.message ? e.message : String(e);
+            noteSyncProblem(table, m);
+            return { ok: false, reason: m, dropped };
+        }
+        const err = res && res.error;
+        if (!err) return { ok: true, dropped };
+        const msg = [err.message, err.details, err.hint].filter(Boolean).join(" ");
+        const named = msg.match(/'([A-Za-z0-9_]+)' column/) || msg.match(/column "([A-Za-z0-9_]+)"/);
+        if (named && Object.prototype.hasOwnProperty.call(payload, named[1])) {
+            delete payload[named[1]];
+            dropped.push(named[1]);
+            continue;
+        }
+        if (useConflict && /on conflict|42P10|unique or exclusion/i.test(msg)) { useConflict = null; continue; }
+        noteSyncProblem(table, msg);
+        return { ok: false, reason: msg, dropped };
+    }
+    return { ok: false, reason: "too many unknown columns; the table does not match what this build sends", dropped };
+}
+
+/* the shapes sent to the server, kept in one place so the push, the pull and
+   the setup SQL below cannot drift apart */
+function assessmentRow(r) {
+    return {
+        country: r.country, verdict: r.verdict, tone: r.tone || "",
+        axis_rp: r.axisRP, axis_dr: r.axisDR,
+        tiers: JSON.stringify(r.tiers || {}), confidence: JSON.stringify(r.confidence || {}),
+        ceiling: JSON.stringify(r.ceiling || {}), consolidated: JSON.stringify(r.consolidated || {}),
+        counts: JSON.stringify(r.counts || {}),
+        profile_detail: JSON.stringify(r.profileDetail || null),
+        rubric_detail: JSON.stringify(r.rubricDetail || null),
+        sensitive_to_rule: !!r.sensitiveToRule, alt_verdict: r.altVerdict || "",
+        statements: r.statements || 0, overrides: r.overrides || 0,
+        source: r.source || "analysis", engine: r.engine || "", lexicon: r.lexicon || "",
+        coder: r.coder || "", recorded_at: r.at || new Date().toISOString()
+    };
+}
+function noteRow(n) {
+    return { id: String(n.id), title: n.title || "", body: n.body || "", category: n.category || "Methodology",
+             country: n.country || "", coder: n.coder || "", at: n.at || new Date().toISOString() };
+}
+function placementRow(country, p) {
+    return { country, axis_rp: p.axisRP, axis_dr: p.axisDR, moved_by: p.by || "", moved_at: p.at || "",
+             from_rp: p.fromRP || "", from_dr: p.fromDR || "" };
+}
+
+/* Everything in this browser, sent up. Until v2.11 the only way a record
+   reached the server was the single write made at the moment it was recorded,
+   so anything recorded while the write was failing stayed here for good. */
+async function pushProject(quiet) {
+    const say = html => { const n = document.getElementById('sync-note'); if (n) n.innerHTML = html; };
+    if (typeof supabaseClient === "undefined" || !supabaseClient) {
+        say(`<span class="sync-warn">This build has no shared database. The project record stays in this browser; use Back up everything to move it.</span>`);
+        return { assessments: 0, notes: 0, placements: 0, failed: 1 };
+    }
+    const assessments = Object.values(getAssessments());
+    const notes = getNotes();
+    const placements = Object.entries(getPlacements());
+    const total = assessments.length + notes.length + placements.length;
+    let done = 0, ok = { a: 0, n: 0, p: 0 }, failed = [], dropped = new Set();
+
+    const step = () => { done++; if (!quiet) say(`<span class="muted-note">Sending ${done} of ${total}\u2026</span>`); };
+
+    for (const r of assessments) {
+        const res = await mirror('country_assessments', assessmentRow(r), 'country');
+        if (res.ok) ok.a++; else failed.push("assessments: " + res.reason);
+        (res.dropped || []).forEach(c => dropped.add("country_assessments." + c));
+        step();
+    }
+    for (const n of notes) {
+        const res = await mirror('project_notes', noteRow(n), 'id');
+        if (res.ok) ok.n++; else failed.push("notes: " + res.reason);
+        (res.dropped || []).forEach(c => dropped.add("project_notes." + c));
+        step();
+    }
+    for (const [country, p] of placements) {
+        const res = await mirror('country_placements', placementRow(country, p), 'country');
+        if (res.ok) ok.p++; else failed.push("placements: " + res.reason);
+        (res.dropped || []).forEach(c => dropped.add("country_placements." + c));
+        step();
+    }
+
+    const parts = [`${ok.a} of ${assessments.length} assessment(s) sent`, `${ok.n} of ${notes.length} note(s) sent`];
+    if (placements.length) parts.push(`${ok.p} of ${placements.length} hand placement(s) sent`);
+    if (dropped.size) parts.push(`<span class="sync-warn">columns the server does not have were left out: ${esc([...dropped].join(", "))}</span>`);
+    if (failed.length) {
+        const first = failed[0];
+        parts.push(`<span class="sync-warn">${failed.length} write(s) refused. First reason: ${esc(first)}. Press <b>Check the shared database</b> for the full picture.</span>`);
+    }
+    say(parts.join(" &middot; ") + ` <span class="muted-note">at ${new Date().toLocaleTimeString()}</span>`);
+    return { assessments: ok.a, notes: ok.n, placements: ok.p, failed: failed.length };
+}
+
+/* the button: send first, then read back, so a colleague pressing it gets
+   their own work up as well as everyone else's down */
+async function syncProject() {
+    await pushProject(true);
+    const before = document.getElementById('sync-note');
+    const sent = before ? before.innerHTML : "";
+    await pullProject(true);
+    const after = document.getElementById('sync-note');
+    if (after) after.innerHTML = sent + "<br>" + after.innerHTML;
+}
+
+/* A named test for each table, so "nothing syncs" becomes a specific sentence
+   about a specific table. Read and write are tested separately: row-level
+   security commonly allows one and not the other, and the symptom of that is
+   exactly what this project saw, a page that looks fine and shares nothing. */
+async function checkSharedDatabase() {
+    const el = document.getElementById('sync-note');
+    const say = html => { if (el) el.innerHTML = html; };
+    if (typeof supabaseClient === "undefined" || !supabaseClient) {
+        say(`<span class="sync-warn">This build has no shared database.</span>`);
+        return;
+    }
+    say(`<span class="muted-note">Testing the shared database\u2026</span>`);
+    const probe = "__justndc_probe__";
+    const tables = [
+        { name: 'country_assessments', key: 'country', row: { country: probe, verdict: "probe" } },
+        { name: 'project_notes', key: 'id', row: { id: probe, title: "probe", body: "probe" } },
+        { name: 'country_placements', key: 'country', row: { country: probe, axis_rp: "Tokenistic", axis_dr: "Tokenistic" } },
+        { name: 'coding_examples', key: 'id', row: null },
+        { name: 'ndc_status', key: 'country', row: null }
+    ];
+    const lines = [];
+    for (const t of tables) {
+        let read = "", write = "";
+        try {
+            const { error } = await supabaseClient.from(t.name).select('*').limit(1);
+            read = error ? "read refused (" + (error.message || error.code) + ")" : "read ok";
+        } catch (e) { read = "read failed (" + (e.message || e) + ")"; }
+
+        if (t.row && read === "read ok") {
+            const res = await mirror(t.name, t.row, t.key);
+            write = res.ok ? "write ok" : "write refused (" + res.reason + ")";
+            if (res.ok) {
+                try { await supabaseClient.from(t.name).delete().eq(t.key, probe); } catch (e) {}
+            }
+        } else if (t.row) {
+            write = "write not tested";
+        } else {
+            write = "not written by this page";
+        }
+        const bad = /refused|failed/.test(read + write);
+        lines.push(`<div class="${bad ? 'sync-warn' : ''}"><b>${t.name}</b>: ${esc(read)}, ${esc(write)}</div>`);
+    }
+    const allOk = !lines.some(l => l.includes('sync-warn'));
+    say(lines.join("") +
+        (allOk
+            ? `<div class="muted-note">Every table this page uses is readable and writable. If a colleague still sees nothing, press Sync with the team on this machine first.</div>`
+            : `<div class="muted-note">A refused write is usually a row-level security policy, and a missing table is usually a table that was never created. The setup SQL below creates both, and can be run more than once safely.</div>`) +
+        showSetupSql());
+}
+
+function showSetupSql() {
+    const sql = [
+        "-- JUST-NDC shared tables. Safe to run more than once.",
+        "create table if not exists country_assessments (",
+        "  country text primary key, verdict text, tone text, axis_rp text, axis_dr text,",
+        "  tiers text, confidence text, ceiling text, consolidated text, counts text,",
+        "  profile_detail text, rubric_detail text, sensitive_to_rule boolean, alt_verdict text,",
+        "  statements int, overrides int, source text, engine text, lexicon text, coder text,",
+        "  recorded_at timestamptz default now());",
+        "",
+        "create table if not exists project_notes (",
+        "  id text primary key, title text, body text, category text,",
+        "  country text, coder text, at timestamptz default now());",
+        "",
+        "create table if not exists country_placements (",
+        "  country text primary key, axis_rp text, axis_dr text,",
+        "  moved_by text, moved_at text, from_rp text, from_dr text);",
+        "",
+        "alter table country_assessments enable row level security;",
+        "alter table project_notes        enable row level security;",
+        "alter table country_placements   enable row level security;",
+        "",
+        "-- the team shares one anonymous key, so the policies are open to it",
+        "drop policy if exists ca_all on country_assessments;",
+        "drop policy if exists pn_all on project_notes;",
+        "drop policy if exists cp_all on country_placements;",
+        "create policy ca_all on country_assessments for all using (true) with check (true);",
+        "create policy pn_all on project_notes        for all using (true) with check (true);",
+        "create policy cp_all on country_placements   for all using (true) with check (true);"
+    ].join("\n");
+    return `<details class="sql-box"><summary>Database setup SQL</summary>
+        <p class="muted-note">Paste this into the Supabase SQL editor for this project and run it. It creates the three tables this page writes to and opens them to the key the site uses.</p>
+        <pre id="setup-sql">${esc(sql)}</pre>
+        <button class="download-btn" onclick="copySetupSql()">Copy the SQL</button></details>`;
+}
+function copySetupSql() {
+    const el = document.getElementById('setup-sql');
+    if (!el) return;
+    const t = el.textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => alert("SQL copied."), () => alert("Select the text and copy it by hand."));
+    else alert("Select the text and copy it by hand.");
+}
+
+/* ---------- where a country sits on the matrix, when a coder has moved it ----
+   A placement is a position and nothing else. It is stored apart from the
+   assessment, it never touches the tiers, the score, the confidence or the
+   verdict, and removing it puts the country back where the analysis put it.
+   Before v2.11 the only way to place a country by hand overwrote its whole
+   record with a stub, which is the opposite of what a coder disagreeing with
+   one position wants. */
+function getPlacements() { return storeGet(STORE_KEYS.placements, {}); }
+
+function setPlacement(country, axisRP, axisDR, fromRP, fromDR) {
+    const all = getPlacements();
+    all[country] = {
+        axisRP, axisDR, fromRP: fromRP || "", fromDR: fromDR || "",
+        by: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"),
+        at: new Date().toISOString()
+    };
+    if (!storeSet(STORE_KEYS.placements, all)) return;
+    mirror('country_placements', placementRow(country, all[country]), 'country');
+    renderReporting();
+}
+
+function clearPlacement(country) {
+    const all = getPlacements();
+    delete all[country];
+    storeSet(STORE_KEYS.placements, all);
+    if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        try { supabaseClient.from('country_placements').delete().eq('country', country); } catch (e) {}
+    }
+    renderReporting();
+}
+
+let mxDragging = null;
+function mxDragStart(ev, country) {
+    mxDragging = country;
+    try { ev.dataTransfer.setData("text/plain", country); ev.dataTransfer.effectAllowed = "move"; } catch (e) {}
+}
+function mxDragOver(ev) { ev.preventDefault(); try { ev.dataTransfer.dropEffect = "move"; } catch (e) {} }
+function mxDrop(ev, rp, dr) {
+    ev.preventDefault();
+    let country = mxDragging;
+    try { country = ev.dataTransfer.getData("text/plain") || country; } catch (e) {}
+    mxDragging = null;
+    if (!country) return;
+    const a = getAssessments()[country];
+    if (!a) return;
+    const cur = getPlacements()[country];
+    const nowRP = cur ? cur.axisRP : a.axisRP, nowDR = cur ? cur.axisDR : a.axisDR;
+    if (nowRP === rp && nowDR === dr) return;
+    setPlacement(country, rp, dr, a.axisRP, a.axisDR);
 }
 
 /* ---------- settings ---------- */
@@ -5730,20 +6174,29 @@ function removeAssessment(country) {
 function exportAssessmentsCsv() {
     const rows = Object.values(getAssessments());
     if (!rows.length) { alert("Nothing recorded yet."); return; }
+    const placed = getPlacements();
     const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
     const head = ["country", "verdict", "axis_rp", "axis_dr",
         ...DIMS4.map(d => d.toLowerCase() + "_tier"), ...DIMS4.map(d => d.toLowerCase() + "_ceiling"),
         ...DIMS4.map(d => d.toLowerCase() + "_consolidated"), ...DIMS4.map(d => d.toLowerCase() + "_confidence"),
         ...DIMS4.map(d => d.toLowerCase() + "_statements"),
         "sensitive_to_rollup_rule", "verdict_under_other_rule", "statements", "coder_overrides",
-        "awaiting_dimension", "source", "engine", "lexicon", "rules", "coder", "recorded_utc"];
+        "awaiting_dimension", "source", "engine", "lexicon", "rules", "coder", "recorded_utc",
+        "matrix_axis_rp_analysis", "matrix_axis_dr_analysis",
+        "matrix_axis_rp_shown", "matrix_axis_dr_shown", "moved_by_hand", "moved_by", "moved_at"];
     const csv = [head.join(",")].concat(rows.map(r => [
         r.country, r.verdict, r.axisRP, r.axisDR,
         ...DIMS4.map(d => r.tiers[d]), ...DIMS4.map(d => (r.ceiling || {})[d]),
         ...DIMS4.map(d => (r.consolidated || {})[d]), ...DIMS4.map(d => (r.confidence || {})[d]),
         ...DIMS4.map(d => (r.counts || {})[d]),
         r.sensitiveToRule, r.altVerdict, r.statements, r.overrides, r.awaitingDimension,
-        r.source, r.engine, r.lexicon, JSON.stringify(r.rules || {}), r.coder, r.at
+        r.source, r.engine, r.lexicon, JSON.stringify(r.rules || {}), r.coder, r.at,
+        r.axisRP, r.axisDR,
+        (placed[r.country] ? placed[r.country].axisRP : r.axisRP),
+        (placed[r.country] ? placed[r.country].axisDR : r.axisDR),
+        placed[r.country] ? "yes" : "no",
+        placed[r.country] ? (placed[r.country].by || "") : "",
+        placed[r.country] ? (placed[r.country].at || "") : ""
     ].map(q).join(","))).join("\n");
     download("JUSTNDC_project_record.csv", csv, "text/csv");
 }
@@ -5929,6 +6382,7 @@ function exportProjectJson() {
         notes: getNotes(),
         codingExamples: (typeof codingExamples !== "undefined" ? codingExamples : []),
         overrides: storeGet('justndc_overrides', {}),
+        placements: getPlacements(),
         customTerms: storeGet(STORE_KEYS.customTerms, []),
         audit: storeGet(STORE_KEYS.audit, [])
     };
@@ -5980,6 +6434,12 @@ function importProjectJson(input, mode) {
             Object.assign(cur, b.overrides);
             storeSet('justndc_overrides', cur);
         }
+        if (b.placements) {
+            const cur = replace ? {} : getPlacements();
+            Object.assign(cur, b.placements);
+            storeSet(STORE_KEYS.placements, cur);
+            report.push(`${Object.keys(b.placements).length} hand placement(s)`);
+        }
         if (b.customTerms) storeSet(STORE_KEYS.customTerms, b.customTerms);
         if (b.audit) storeSet(STORE_KEYS.audit, b.audit);
 
@@ -5988,6 +6448,11 @@ function importProjectJson(input, mode) {
         if (typeof renderNotes === "function") renderNotes();
         if (typeof renderExamples === "function") renderExamples();
         input.value = "";
+        /* a restored record is still only in this browser until it is sent */
+        if (typeof supabaseClient !== "undefined" && supabaseClient &&
+            confirm("Send the restored record to the shared database now, so the rest of the team can see it?")) {
+            pushProject();
+        }
     };
     reader.readAsText(file);
 }
@@ -6143,28 +6608,49 @@ function drawVerdictMap() {
    more than its position. */
 const MX_SHADE = ["mx-s0", "mx-s1", "mx-s2", "mx-s3", "mx-s4"];
 
+const TIER_ORDER_UI = ["Tokenistic", "Partial", "Embedded"];
+
 function renderMatrix(rows) {
     const el = document.getElementById('report-matrix');
     if (!el) return;
     const idx = t => Math.max(0, tierRank(t) - 1);
     const tick = ["tokenistic", "partial", "embedded"];
+    const placed = getPlacements();
+    /* a hand placement changes where the chip sits and nothing else: the
+       verdict, the tiers and the profile behind the chip are the ones the
+       analysis produced */
+    const posOf = a => {
+        const p = placed[a.country];
+        return p ? { rp: idx(p.axisRP), dr: idx(p.axisDR), byHand: true, from: p }
+                 : { rp: idx(a.axisRP), dr: idx(a.axisDR), byHand: false };
+    };
     let grid = "";
     for (let r = 2; r >= 0; r--) {
         grid += `<div class="mx-row"><div class="mx-tick">${tick[r]}</div>`;
         for (let c = 0; c < 3; c++) {
-            const here = rows.filter(a => idx(a.axisRP) === r && idx(a.axisDR) === c)
+            const here = rows.filter(a => { const p = posOf(a); return p.rp === r && p.dr === c; })
                              .sort((a, b) => a.country.localeCompare(b.country));
             const corner = (r === 2 && c === 2);
-            grid += `<div class="mx-cell ${MX_SHADE[r + c]}${corner ? ' mx-corner' : ''}">
+            grid += `<div class="mx-cell ${MX_SHADE[r + c]}${corner ? ' mx-corner' : ''}"
+                ondragover="mxDragOver(event)" ondrop="mxDrop(event,'${TIER_ORDER_UI[r]}','${TIER_ORDER_UI[c]}')">
                 <div class="mx-head"><span class="mx-n">${here.length}</span>
                     ${corner ? '<span class="mx-flag">approaching transformative</span>' : ''}</div>
-                <div class="mx-list">${here.map(a => `<button type="button" class="mx-chip"
-                    title="${esc(a.verdict)} \u2014 open this country's justice dimension profile"
-                    onclick="openCountryRecord('${esc(a.country).replace(/'/g, "\\'")}')">${esc(a.country)}${a.sensitiveToRule ? '<i class="mx-rs">*</i>' : ''}</button>`).join("")}</div>
+                <div class="mx-list">${here.map(a => {
+                    const p = posOf(a);
+                    const safe = esc(a.country).replace(/'/g, "\\'");
+                    const title = p.byHand
+                        ? esc(a.country) + " was moved here by " + esc(p.from.by || "a coder") + ". The recorded verdict is unchanged: " + esc(a.verdict) + ". Click to open the profile."
+                        : esc(a.verdict) + " \u2014 click to open this country's justice dimension profile, or drag it to another cell";
+                    return `<button type="button" class="mx-chip${p.byHand ? ' mx-chip-hand' : ''}" draggable="true"
+                        ondragstart="mxDragStart(event,'${safe}')"
+                        title="${title}"
+                        onclick="openCountryRecord('${safe}')">${esc(a.country)}${a.sensitiveToRule ? '<i class="mx-rs">*</i>' : ''}${p.byHand ? '<i class="mx-hand">\u270b</i>' : ''}</button>`;
+                }).join("")}</div>
             </div>`;
         }
         grid += `</div>`;
     }
+    const handList = Object.keys(placed).filter(c => rows.some(a => a.country === c)).sort();
     const names = rows.map(a => a.country).sort((a, b) => a.localeCompare(b));
     el.innerHTML = `<div class="mx-wrap">
         <div class="mx-ylab"><span>RECOGNITIONAL + PROCEDURAL</span></div>
@@ -6178,11 +6664,21 @@ function renderMatrix(rows) {
         <select class="search-box" style="margin-bottom:0;" onchange="if(this.value) openCountryRecord(this.value)">
             <option value="">Select a country\u2026</option>
             ${names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}</select></label></div>
+    ${handList.length ? `<div class="mx-hands"><b>Moved by hand:</b> ${handList.map(c => {
+        const p = placed[c];
+        return `<span class="mx-hand-item" title="analysis placed it at ${esc(p.fromRP || "?")} / ${esc(p.fromDR || "?")}">${esc(c)}
+            <button class="lf-btn" onclick="clearPlacement('${esc(c).replace(/'/g, "\\'")}')">put back</button></span>`;
+    }).join("")}</div>` : ""}
     <p class="q-note">Each axis takes the <b>weaker</b> of its two dimensions (rule: ${RULES.AXIS_RULE}), following the
     intersection logic in the policy brief. The upper-right cell is the region the brief describes as approaching
     transformative climate justice. Countries in the left column with a developed vertical axis show the
     process-heavy, outcome-light pattern of insight 2; it is reported as a flag on each country's own record,
-    with the evidence beside it, rather than as a label over the cell. Select a country to open its profile.</p>`;
+    with the evidence beside it, rather than as a label over the cell.</p>
+    <p class="q-note"><b>Drag a country to another cell</b> to place it by hand. A hand placement moves the chip and
+    nothing else: the tiers, the score, the confidence and the verdict on that country's record are the ones the
+    analysis produced, and they are what the CSV and the JSON backup carry. A moved country is marked \u270b, is
+    listed above the note so it can be put back in one click, and is exported with the position the analysis gave it
+    alongside the one it was moved to.</p>`;
 }
 
 let reportSort = { key: "verdict", dir: -1 };
@@ -6433,7 +6929,7 @@ function renderNotes() {
     all.forEach(n => { counts[n.category] = (counts[n.category] || 0) + 1; });
     document.getElementById('notes-controls').innerHTML =
         `<div class="lf-group"><span>Category:</span>
-        ${["All"].concat(NOTE_CATEGORIES).map(c => `<button class="lf-btn ${noteFilter.category === c ? 'lf-on' : ''}" onclick="setNoteFilter('category','${c}')">${c}${c !== "All" && counts[c] ? " (" + counts[c] + ")" : ""}</button>`).join("")}
+        ${["All"].concat(NOTE_CATEGORIES, Object.keys(counts).filter(c => NOTE_CATEGORIES.indexOf(c) < 0)).map(c => `<button class="lf-btn ${noteFilter.category === c ? 'lf-on' : ''}" onclick="setNoteFilter('category','${c}')">${c}${c !== "All" && counts[c] ? " (" + counts[c] + ")" : ""}</button>`).join("")}
         <span class="lf-count">${list.length} of ${all.length}</span></div>`;
 
     el.innerHTML = list.length ? list.map(n => `
