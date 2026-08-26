@@ -587,6 +587,23 @@
         .m-allbtn button { font-size: 0.74rem; background: #eef3f8; border: 1px solid #d7e2ec; border-radius: 20px;
                            padding: 5px 12px; cursor: pointer; color: #2a4a6a; }
         .m-allbtn button:hover { background: #dce8f3; }
+
+        /* ---- Reporting: what is shared, and the tools that change things --- */
+        .rep-outbox { flex-basis:100%; font-size:0.82rem; margin-top:10px; padding:9px 12px; border-radius:9px;
+                      background:#f4f6f8; border:1px solid #e2e7ec; color:#3a4a5a; display:flex; flex-wrap:wrap;
+                      gap:8px; align-items:center; }
+        .rep-outbox-ok { background:#eef7f0; border-color:#cfe6d5; color:#2c5c39; }
+        .rep-outbox-warn { background:#fff4e5; border-color:#f0dcb8; color:#7a5200; }
+        .rep-explain { flex-basis:100%; margin-top:8px; }
+        .rep-explain summary { cursor:pointer; font-size:0.78rem; color:var(--text-muted); }
+        .rep-explain p { font-size:0.85rem; line-height:1.6; color:#444; margin:8px 0; }
+        .rep-tools { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px; margin-top:16px;
+                     padding-top:14px; border-top:1px solid #eef0f2; }
+        .rep-tool { display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+        .rep-tool span { font-size:0.76rem; line-height:1.5; color:var(--text-muted); }
+        .rep-danger { margin-top:14px; border:1px solid #f0dcb8; background:#fffaf2; border-radius:10px; padding:10px 14px; }
+        .rep-danger summary { cursor:pointer; font-size:0.82rem; font-weight:600; color:#7a5200; }
+        .rep-danger p { font-size:0.8rem; line-height:1.55; color:#5c4a2a; margin:8px 0; }
     </style>
 </head>
 <body>
@@ -1462,29 +1479,46 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                     <div class="ui-box">
                         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
                             <h3 style="margin:0;">Verdict map</h3>
-                            <div style="display:flex;gap:10px;align-items:center;">
-                                <select id="verdictRegionSelect" class="search-box" style="width:auto;margin-bottom:0;padding:6px 12px;" onchange="drawVerdictMap()">
-                                    <option value="world">World</option>
-                                    <option value="029">Caribbean</option>
-                                    <option value="009">Oceania / Pacific</option>
-                                    <option value="150">Europe</option>
-                                    <option value="002">Africa</option>
-                                    <option value="142">Asia</option>
-                                    <option value="019">Americas</option>
-                                </select>
-                                <button class="download-btn" onclick="exportAssessmentsCsv()">Export record (CSV)</button>
-                                <button class="download-btn" onclick="syncProject()" title="send this browser's record to the shared database, then read back everyone else's">Sync with the team</button>
-                                <button class="download-btn" onclick="checkSharedDatabase()" title="test each shared table for read and write access">Check the shared database</button>
-                                <button class="download-btn" onclick="exportProjectJson()" title="assessments, notes, coding examples, overrides and local terms in one file">Back up everything (JSON)</button>
-                                <label class="download-btn" style="cursor:pointer;">Restore
-                                    <input type="file" accept="application/json" style="display:none" onchange="importProjectJson(this, 'merge')">
-                                </label>
-                            </div>
+                            <select id="verdictRegionSelect" class="search-box" style="width:auto;margin-bottom:0;padding:6px 12px;" onchange="drawVerdictMap()">
+                                <option value="world">World</option>
+                                <option value="029">Caribbean</option>
+                                <option value="009">Oceania / Pacific</option>
+                                <option value="150">Europe</option>
+                                <option value="002">Africa</option>
+                                <option value="142">Asia</option>
+                                <option value="019">Americas</option>
+                            </select>
                         </div>
                         <div style="width:100%;overflow-x:auto;">
                             <div id="verdict_map_div" style="width:100%;min-width:600px;height:420px;"></div>
                         </div>
                         <div id="report-verdicts"></div>
+                        <div class="rep-tools">
+                            <div class="rep-tool">
+                                <button class="download-btn" onclick="syncProject()">Sync with the team</button>
+                                <span>Sends everything in this browser to the shared database, then reads back what everyone else has recorded. Nothing is deleted or overwritten: where the same country is in both, the newer one is kept.</span>
+                            </div>
+                            <div class="rep-tool">
+                                <button class="download-btn" onclick="checkSharedDatabase()">Check the shared database</button>
+                                <span>Tests each shared table for reading and for writing, and reports what it finds. Changes nothing. Start here if a colleague cannot see your work.</span>
+                            </div>
+                            <div class="rep-tool">
+                                <button class="download-btn" onclick="exportAssessmentsCsv()">Export record (CSV)</button>
+                                <span>Downloads the recorded assessments as a spreadsheet, one row per country. For analysis and for the paper. Changes nothing.</span>
+                            </div>
+                            <div class="rep-tool">
+                                <button class="download-btn" onclick="exportProjectJson()">Back up everything (JSON)</button>
+                                <span>Downloads one file holding the assessments, notes, coding examples, coder overrides and hand placements. Keep one before any large change. Changes nothing.</span>
+                            </div>
+                        </div>
+                        <details class="rep-danger">
+                            <summary>Restore from a backup file</summary>
+                            <p>Reads a JSON backup back into this browser. It <b>adds and updates</b>: where the same country or note is in both, the newer one wins, and nothing already here is deleted. Use it to move a record to another machine, or to recover after clearing browser data.</p>
+                            <p>It cannot un-restore, so keep a fresh backup first if the current record matters.</p>
+                            <label class="download-btn" style="cursor:pointer;">Choose a backup file
+                                <input type="file" accept="application/json" style="display:none" onchange="confirmRestore(this)">
+                            </label>
+                        </details>
                     </div>
 
                     <div class="ui-box">
@@ -1841,7 +1875,7 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.11.0";
+const ENGINE_VERSION = "2.12.0";
 const LEXICON_VERSION = "2026-08-14";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -3937,8 +3971,8 @@ function showPage(pageId, btnElement) {
             }
             
             if(pageId === 'dashboard' && googleChartsLoaded) { drawGantt(); }
-            if(pageId === 'reporting') { renderReporting(); if (typeof pullProject === 'function') pullProject(true); if (googleChartsLoaded) setTimeout(drawVerdictMap, 50); }
-            if(pageId === 'notes') { renderNotes(); if (typeof pullProject === 'function') pullProject(true); }
+            if(pageId === 'reporting') { renderReporting(); if (typeof autoSync === 'function') autoSync(); if (googleChartsLoaded) setTimeout(drawVerdictMap, 50); }
+            if(pageId === 'notes') { renderNotes(); if (typeof autoSync === 'function') autoSync(); }
             if(pageId === 'settings') { renderSettings(); }
             if(pageId === 'repository' && typeof renderCountryIndex === 'function') { renderCountryIndex(); }
             
@@ -6221,21 +6255,44 @@ function recordAssessment(quiet) {
     });
     all[R.country] = row;
     if (storeSet(STORE_KEYS.assessments, all)) {
-        mirror('country_assessments', {
-            country: row.country, verdict: row.verdict, axis_rp: row.axisRP, axis_dr: row.axisDR,
-            tiers: JSON.stringify(row.tiers), confidence: JSON.stringify(row.confidence),
-            sensitive_to_rule: row.sensitiveToRule, engine: row.engine, lexicon: row.lexicon, coder: row.coder,
-            profile_detail: JSON.stringify(row.profileDetail), rubric_detail: JSON.stringify(row.rubricDetail),
-            axis_rp: row.axisRP, axis_dr: row.axisDR, source: row.source, recorded_at: row.at
-        }, 'country');
         const c = ndcData.find(x => x.c === R.country);
         if (c && c.s !== 1) { c.s = 1; try { localStorage.setItem('ndcTrackerState', JSON.stringify(ndcData.map(i => ({ c: i.c, s: i.s })))); } catch (e) {} loadTables(); }
         renderEvaluation();
         renderReporting();
-        if (!quiet) alert("Recorded. " + R.country + " now appears on the reporting map and in the matrix.");
         const note = document.getElementById('record-assessment-note');
-        if (note) note.textContent = "Recorded " + new Date().toLocaleTimeString() + (R.edited ? ", following your edits" : "") + ".";
+        if (note) note.textContent = "Recorded " + new Date().toLocaleTimeString() + (R.edited ? ", following your edits" : "") + ". Sending to the shared database\u2026";
+
+        /* The write is waited for and its answer read, so "Recorded" means
+           recorded where the team can see it, or says plainly that it is not.
+           Until v2.12 the write was started and abandoned, and a refusal left
+           the coder with a success message and a record only this browser had. */
+        sendOneAssessment(row).then(res => {
+            const stamp = "Recorded " + new Date().toLocaleTimeString() + (R.edited ? ", following your edits" : "");
+            if (note) {
+                note.textContent = res.ok
+                    ? stamp + ". Sent to the shared database."
+                    : (res.reason === "this build has no shared database"
+                        ? stamp + ". This build keeps the record in this browser."
+                        : stamp + ", but the shared database refused it: " + res.reason);
+                note.className = res.ok || res.reason === "this build has no shared database" ? "muted-note" : "sync-warn";
+            }
+            renderReporting();
+            if (!quiet) {
+                alert(res.ok
+                    ? "Recorded and sent.\n\n" + R.country + " now appears on the reporting map and in the matrix, and the rest of the team will see it."
+                    : (res.reason === "this build has no shared database"
+                        ? "Recorded.\n\n" + R.country + " now appears on the reporting map and in the matrix. This build has no shared database, so the record stays in this browser."
+                        : "Recorded in this browser, but NOT sent to the shared database.\n\nReason: " + res.reason + "\n\nOpen Reporting and press Check the shared database. Nothing is lost meanwhile: the record is safe here and will be sent as soon as the database accepts it."));
+            }
+        });
     }
+}
+
+/* one assessment, sent and accounted for */
+async function sendOneAssessment(row) {
+    const res = await mirror('country_assessments', assessmentRow(row), 'country');
+    if (res.ok) serverIndex.assessments.set(row.country, row.at);
+    return res;
 }
 
 function recordManualPlacement() {
@@ -6321,7 +6378,14 @@ function saveNote() {
     if (idx >= 0) { row.pinned = notes[idx].pinned; row.created = notes[idx].created || notes[idx].at; notes[idx] = row; }
     else { row.created = row.at; notes.unshift(row); }
     storeSet(STORE_KEYS.notes, notes);
-    mirror('project_notes', { id: row.id, title: row.title, body: row.body, category: row.category, country: row.country, coder: row.coder }, 'id');
+    mirror('project_notes', noteRow(row), 'id').then(res => {
+        if (res.ok) serverIndex.notes.add(String(row.id));
+        else if (res.reason && res.reason !== "this build has no shared database") {
+            alert("The note is saved in this browser, but the shared database refused it:\n\n" + res.reason +
+                  "\n\nOpen Reporting and press Check the shared database.");
+        }
+        renderNotes();
+    });
     document.getElementById('note-title').value = "";
     document.getElementById('note-body').value = "";
     document.getElementById('note-country').value = "";
@@ -6389,6 +6453,65 @@ const safeParse = (v, fallback) => {
     try { return JSON.parse(v); } catch (e) { return fallback; }
 };
 
+/* What the server already holds, as of the last read. Kept so that the page
+   can tell the difference between "sent" and "saved here only" without asking
+   the server about every row each time. */
+let serverIndex = { assessments: new Map(), notes: new Set(), placements: new Set(), reachable: false, at: 0 };
+
+/* Anything in this browser that the server does not have, or has an older copy
+   of. Before v2.12 nothing computed this, so a record that failed to send
+   looked exactly like one that had. */
+function pendingRecords() {
+    const out = { assessments: [], notes: [], placements: [] };
+    if (!serverIndex.reachable) return out;
+    Object.values(getAssessments()).forEach(r => {
+        const at = serverIndex.assessments.get(r.country);
+        if (!at || new Date(r.at || 0) > new Date(at)) out.assessments.push(r);
+    });
+    getNotes().forEach(n => { if (!serverIndex.notes.has(String(n.id))) out.notes.push(n); });
+    Object.entries(getPlacements()).forEach(([c, p]) => { if (!serverIndex.placements.has(c)) out.placements.push([c, p]); });
+    return out;
+}
+
+async function sendPending(quiet) {
+    const p = pendingRecords();
+    const n = p.assessments.length + p.notes.length + p.placements.length;
+    if (!n) return { sent: 0, failed: 0, reason: "" };
+    let sent = 0, failed = 0, reason = "";
+    for (const r of p.assessments) {
+        const res = await mirror('country_assessments', assessmentRow(r), 'country');
+        if (res.ok) { sent++; serverIndex.assessments.set(r.country, r.at); } else { failed++; reason = reason || res.reason; }
+    }
+    for (const nt of p.notes) {
+        const res = await mirror('project_notes', noteRow(nt), 'id');
+        if (res.ok) { sent++; serverIndex.notes.add(String(nt.id)); } else { failed++; reason = reason || res.reason; }
+    }
+    for (const [country, pl] of p.placements) {
+        const res = await mirror('country_placements', placementRow(country, pl), 'country');
+        if (res.ok) { sent++; serverIndex.placements.add(country); } else { failed++; reason = reason || res.reason; }
+    }
+    return { sent, failed, reason };
+}
+
+/* Opening Reporting or Notes reads the shared record and sends up anything
+   this browser has that the server does not. Until v2.12 it only read, so a
+   coder could work for a week and share none of it without ever seeing a
+   warning. */
+async function autoSync() {
+    await pullProject(true);
+    const r = await sendPending(true);
+    if (r.sent || r.failed) {
+        const note = document.getElementById('sync-note');
+        if (note) {
+            note.innerHTML += (note.innerHTML ? " &middot; " : "") +
+                (r.sent ? `${r.sent} record(s) sent up` : "") +
+                (r.failed ? `<span class="sync-warn">${r.sent ? " &middot; " : ""}${r.failed} refused: ${esc(r.reason)}</span>` : "");
+        }
+    }
+    renderReporting();
+    if (typeof renderNotes === "function") renderNotes();
+}
+
 async function pullProject(quiet) {
     const note = document.getElementById('sync-note');
     const say = html => { if (note) note.innerHTML = html; };
@@ -6423,6 +6546,9 @@ async function pullProject(quiet) {
             n++;
         });
         storeSet(STORE_KEYS.assessments, local);
+        serverIndex.assessments = new Map((data || []).map(r => [r.country, r.recorded_at || r.at || r.created_at || ""]));
+        serverIndex.reachable = true;
+        serverIndex.at = Date.now();
         report.push(`${n} assessment(s) pulled`);
     } catch (e) {
         report.push(`<span class="sync-warn">assessments not synced (${esc(e.message || e)})</span>`);
@@ -6443,6 +6569,7 @@ async function pullProject(quiet) {
             n++;
         });
         storeSet(STORE_KEYS.notes, notes);
+        serverIndex.notes = new Set((data || []).map(r => String(r.id)));
         report.push(`${n} note(s) pulled`);
     } catch (e) {
         report.push(`<span class="sync-warn">notes not synced (${esc(e.message || e)})</span>`);
@@ -6482,6 +6609,25 @@ function exportProjectJson() {
     };
     download(`JUSTNDC_project_${new Date().toISOString().slice(0, 10)}.json`,
              JSON.stringify(bundle, null, 2), 'application/json');
+}
+
+
+/* A file chooser that fires straight into a merge is a heavy action behind a
+   light click. The step below states what will happen before anything is read. */
+function confirmRestore(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const n = Object.keys(getAssessments()).length;
+    const ok = confirm(
+        "Restore from " + file.name + "?\n\n" +
+        "This adds the file's records to the ones already in this browser" +
+        (n ? " (" + n + " assessment(s) here now)" : "") + ".\n" +
+        "Where the same country or note is in both, the newer one is kept.\n" +
+        "Nothing already here is deleted.\n\n" +
+        "Press OK to go ahead, or Cancel to stop."
+    );
+    if (!ok) { input.value = ""; return; }
+    importProjectJson(input, 'merge');
 }
 
 function importProjectJson(input, mode) {
@@ -6606,12 +6752,48 @@ function renderReporting() {
     rows.forEach(r => { const nv = normaliseVerdict(r.verdict); byVerdict[nv] = (byVerdict[nv] || 0) + 1; });
     const total = Math.max(ndcData.length, rows.length);
 
+    const pend = pendingRecords();
+    const nPend = pend.assessments.length + pend.notes.length + pend.placements.length;
+    const noCloud = (typeof supabaseClient === "undefined" || !supabaseClient);
+    const shared = noCloud
+        ? `<div class="rep-outbox">This copy keeps everything in this browser. Use <b>Back up everything (JSON)</b> to move it to another machine or to the team workspace.</div>`
+        : serverIndex.reachable
+        ? (nPend
+            ? `<div class="rep-outbox rep-outbox-warn"><b>${nPend} record(s) are in this browser only.</b>
+               The shared database does not have them, so nobody else can see them yet.
+               <button class="lf-btn" onclick="pushProject()">Send them now</button>
+               <button class="lf-btn" onclick="checkSharedDatabase()">Why not?</button></div>`
+            : `<div class="rep-outbox rep-outbox-ok">Everything in this browser is on the shared database. The rest of the team sees what you see.</div>`)
+        : `<div class="rep-outbox">The shared database has not been read yet this session.
+           <button class="lf-btn" onclick="syncProject()">Sync with the team</button></div>`;
+
     box.innerHTML = `
-        <div class="rep-stat"><span class="rep-n">${rows.length}</span><span class="rep-l">assessments recorded</span></div>
-        <div class="rep-stat"><span class="rep-n">${total - rows.length}</span><span class="rep-l">documents still to grade</span></div>
-        <div class="rep-stat"><span class="rep-n">${rows.filter(r => r.source === "analysis").length}</span><span class="rep-l">from the analyser</span></div>
-        <div class="rep-stat"><span class="rep-n">${rows.filter(r => r.sensitiveToRule).length}</span><span class="rep-l">verdicts that flip under the other roll-up rule</span></div>
-        <div class="rep-stat"><span class="rep-n">${rows.filter(r => r.awaitingDimension > 0).length}</span><span class="rep-l">with justice framing still unassigned</span></div>`;
+        <div class="rep-stat" title="Countries with an assessment saved in this project record.">
+            <span class="rep-n">${rows.length}</span><span class="rep-l">assessments recorded</span></div>
+        <div class="rep-stat" title="Documents in the corpus with no assessment recorded yet.">
+            <span class="rep-n">${total - rows.length}</span><span class="rep-l">documents still to grade</span></div>
+        <div class="rep-stat" title="Recorded by running the document through the analyser, rather than entered by hand.">
+            <span class="rep-n">${rows.filter(r => r.source === "analysis").length}</span><span class="rep-l">from the analyser</span></div>
+        <div class="rep-stat" title="A dimension grade can be reached three ways: by the score (the rule in force), by the strongest single statement, or by the strongest tier reached at least twice. This counts the countries whose band would change if the rule were switched. Zero means no verdict in this record depends on that choice.">
+            <span class="rep-n">${rows.filter(r => r.sensitiveToRule).length}</span><span class="rep-l">verdicts that would change under a different roll-up rule</span></div>
+        <div class="rep-stat" title="Countries where the screener pulled in passages that no dimension has been assigned to yet. They are waiting for a coder on the Assessment page, and they affect no score until they are assigned.">
+            <span class="rep-n">${rows.filter(r => r.awaitingDimension > 0).length}</span><span class="rep-l">countries with passages still to assign</span></div>
+        ${shared}
+        <details class="rep-explain"><summary>What these five numbers mean</summary>
+            <p><b>Assessments recorded</b> is how many countries have a result saved in the project record.
+            <b>Documents still to grade</b> is the rest of the corpus.
+            <b>From the analyser</b> separates results produced by running a document from results typed in by hand.</p>
+            <p><b>Verdicts that would change under a different roll-up rule.</b> A dimension can be graded three ways:
+            by its score out of 100 (the rule this project uses), by the strongest single statement in it, or by the
+            strongest tier that at least two statements reach. This number counts the countries whose band would move
+            if the project switched rule. A zero is the good case: it means no verdict in the record rests on a
+            methods choice rather than on the documents. Any country it does count is marked with an asterisk on the
+            matrix, and its record names the verdict it would receive instead.</p>
+            <p><b>Countries with passages still to assign.</b> The screener casts a wide net and pulls in passages that
+            sit near justice language without clearly belonging to one of the four dimensions. Those wait for a coder
+            to assign them to a dimension or exclude them, on the Assessment page. They change no score while they
+            wait, so this number is a queue of work rather than a fault.</p>
+        </details>`;
 
     // verdict distribution
     document.getElementById('report-verdicts').innerHTML = VERDICT_ORDER.concat(["Recorded by hand"]).map(v => {
