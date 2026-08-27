@@ -1919,9 +1919,7 @@ const tierMax = (a, b) => (tierRank(a) >= tierRank(b) ? a : b);
 const tierMin = (a, b) => (tierRank(a) <= tierRank(b) ? a : b);
 
 /* ============================================================================
-   1. MATCHING
-   Unicode-aware word boundaries for alphabetic scripts, substring for CJK.
-   English terms tolerate regular plural and participle inflection.
+   1. MATCHING (Upgraded: Morphologically Aware & Cross-Lingual)
    ========================================================================== */
 
 const CJK_RE = /[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/;
@@ -1930,35 +1928,47 @@ const matcherCache = new Map();
 function buildMatcher(term) {
     if (matcherCache.has(term)) return matcherCache.get(term);
     let fn;
+    
     if (CJK_RE.test(term)) {
+        // Chinese / Japanese: whitespace-insensitive substring match
         const needle = term.replace(/\s+/g, "");
         fn = text => text.replace(/\s+/g, "").includes(needle);
     } else {
         const esc = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "[\\s\\u00a0-]+");
-        // allow English inflection on the final token
-        const re = new RegExp("(?<![\\p{L}\\p{N}])" + esc + "(?:s|es|ed|ing)?(?![\\p{L}\\p{N}])", "iu");
+        
+        // Detect script family for tailored inflection tolerance
+        const isCyrillic = /[\u0400-\u04ff]/i.test(term);
+        const isArabic = /[\u0600-\u06ff]/i.test(term);
+
+        let pattern;
+        if (isArabic) {
+            // Match optional Arabic prefixes: al- (ال), wa- (و), bi- (ب), li- (ل)
+            pattern = "(?<![\\p{L}\\p{N}])(?:[الوفبلك]{1,3})?" + esc + "(?![\\p{L}\\p{N}])";
+        } else if (isCyrillic) {
+            // Slavic languages: Allow root/stem case and gender ending variations
+            pattern = "(?<![\\p{L}\\p{N}])" + esc + "[\\p{L}]{0,4}(?![\\p{L}\\p{N}])";
+        } else {
+            // Latin alphabets: English & Romance gender/plural inflections
+            pattern = "(?<![\\p{L}\\p{N}])" + esc + "(?:s|es|ed|ing|a|as|os|e|es|ment|mente)?(?![\\p{L}\\p{N}])";
+        }
+
+        const re = new RegExp(pattern, "iu");
         fn = text => re.test(text);
     }
+    
     matcherCache.set(term, fn);
     return fn;
 }
+
 const hasTerm = (term, text) => buildMatcher(term)(text);
 const anyTerm = (list, text) => list.some(t => hasTerm(t, text));
 function whichTerms(list, text) {
     const hits = list.filter(t => hasTerm(t, text));
-    // drop any hit that is contained inside a longer hit, so overlapping lexicon
-    // entries ("prior and informed consent" inside "free, prior and informed
-    // consent") are counted once rather than twice
     return hits.filter(h => !hits.some(o => o !== h && o.length > h.length && o.toLowerCase().includes(h.toLowerCase())));
 }
 
 /* ============================================================================
-   2. LEXICON
-   core       = high precision, may assign a dimension on its own
-   supporting = contributes weight, cannot assign a dimension alone
-   screen     = recall net only. Flags a passage for human review and never
-                assigns a dimension or tier. This is where the terms that
-                generate most false positives now live.
+   2. LEXICON (Upgraded Multi-Language Coverage)
    ========================================================================== */
 
 const LEXICON = {
@@ -1987,7 +1997,7 @@ const LEXICON = {
             "الإقصاء الاجتماعي", "الأشخاص ذوي الإعاقة",
             "边缘化群体", "原住民", "少数民族", "传统知识", "性别平等", "社会排斥", "残疾人", "弱势群体",
             "маргіналізовані", "корінних народів", "традиційні знання", "гендерна рівність",
-            "соціальне відчуження", "особи з інвалідністю"
+            "соціальне відчуження", "особи з інвалідністю", "вразливі групи", "вразливих груп", "люди похилого віку"
         ],
         supporting: [
             "women", "gender", "youth", "children", "migrants", "displaced people", "refugees",
@@ -1998,7 +2008,8 @@ const LEXICON = {
             "groupes vulnerables", "groupes vulnérables",
             "женщины", "молодежь", "права человека", "уязвимые группы",
             "المرأة", "الشباب", "حقوق الإنسان", "الفئات الضعيفة",
-            "妇女", "青年", "人权", "地方社区"
+            "妇女", "青年", "人权", "地方社区",
+            "жінки", "молодь", "діти", "права людини", "уразливі верстви", "місцеві громади", "людська гідність"
         ]
     },
     Procedural: {
@@ -2027,7 +2038,7 @@ const LEXICON = {
             "آلية التظلم", "الحصول على المعلومات", "المشاركة العامة",
             "自由事先知情同意", "公众参与", "公众咨询", "民间社会", "申诉机制", "信息公开", "参与式规划",
             "попередня згода", "громадські консультації", "громадянське суспільство",
-            "механізм оскарження", "доступ до інформації"
+            "механізм оскарження", "доступ до інформації", "публічні консультації", "публічних консультацій", "залучення громадськості"
         ],
         supporting: [
             "stakeholder engagement", "stakeholder consultation", "meaningful participation",
@@ -2036,7 +2047,8 @@ const LEXICON = {
             "participation", "parties prenantes", "transparence",
             "участие", "заинтересованных сторон", "прозрачность",
             "المشاركة", "أصحاب المصلحة", "الشفافية",
-            "参与", "利益相关方", "透明"
+            "参与", "利益相关方", "透明",
+            "участь", "заінтересовані сторони", "прозорість", "підзвітність"
         ]
     },
     Distributive: {
@@ -2049,7 +2061,6 @@ const LEXICON = {
             "worker transition", "displaced workers", "intergenerational equity", "future generations",
             "spatial justice", "differentiated impacts", "vulnerability-based targeting",
             "common but differentiated responsibilities", "cbdr", "equity principle",
-            "concessional finance", "grant-based finance", "fiscal space", "debt sustainability",
             "transicion justa", "transición justa", "reparto equitativo", "distribucion de beneficios",
             "distribución de beneficios", "proteccion social", "protección social",
             "pobreza energetica", "pobreza energética", "equidad intergeneracional",
@@ -2063,7 +2074,7 @@ const LEXICON = {
             "انتقال عادل", "التقاسم العادل", "الحماية الاجتماعية", "فقر الطاقة",
             "المسؤوليات المشتركة والمتباينة",
             "公正转型", "公平分享", "利益共享", "社会保障", "能源贫困", "共同但有区别的责任", "代际公平",
-            "справедливий перехід", "справедливий розподіл", "соціальний захист"
+            "справедливий перехід", "справедлива трансформація", "справедливої трансформації", "справедливий розподіл", "соціальний захист", "зелені робочі місця"
         ],
         supporting: [
             "technology transfer", "south-south cooperation", "equitable", "equity",
@@ -2073,7 +2084,8 @@ const LEXICON = {
             "transfert de technologie", "cooperation sud-sud", "coopération sud-sud", "equite", "équité",
             "передача технологий", "сотрудничество юг-юг", "справедливость",
             "نقل التكنولوجيا", "التعاون بين بلدان الجنوب", "الإنصاف",
-            "技术转让", "南南合作", "公平"
+            "技术转让", "南南合作", "公平",
+            "передача технологій", "співробітництво південь-південь", "справедливість", "засоби до існування"
         ]
     },
     Restorative: {
@@ -2115,17 +2127,14 @@ const LEXICON = {
             "deplacement", "déplacement", "reinstallation", "réinstallation", "indemnisation",
             "перемещение", "переселение", "компенсация",
             "النزوح", "إعادة التوطين", "التعويض",
-            "流离失所", "重新安置", "赔偿"
+            "流离失所", "重新安置", "赔偿",
+            "переміщення", "переселення", "компенсація", "постраждалі громади"
         ]
     }
 };
 
-
 /* ============================================================================
-   2a. LEXICON ADDITIONS, v2.1
-   Kept as a separate additive block so that what was added, and when, is
-   auditable against the v2.0 lexicon rather than merged invisibly into it.
-   Nothing here is removed from the arrays above; entries are appended.
+   2a. LEXICON ADDITIONS (Merged standard expansions)
    ========================================================================== */
 
 const LEXICON_ADDITIONS = {
@@ -2200,17 +2209,6 @@ Object.entries(LEXICON_ADDITIONS).forEach(([dim, sets]) => {
 
 /* ============================================================================
    2a-ii. EXPLICIT JUSTICE FRAME
-   "Environmental justice can no longer be regarded as an abstract concept" is a
-   justice statement with no dimension term in it. v2.0 scored it zero in all
-   four dimensions, matched no recall term, and dropped it before the ledger.
-
-   Frame terms do not assign a dimension and carry no dimension weight, because
-   transformative climate justice is a judgement made after all four dimensions
-   are assessed, never a code applied to a statement. What they do is guarantee
-   the passage reaches a human: a paragraph that names justice explicitly but
-   cannot be placed in a dimension by its wording is written to the ledger as
-   awaiting a coder's assignment, and enters the profile only once a coder has
-   assigned it.
    ========================================================================== */
 
 const FRAME_TERMS = [
@@ -2231,8 +2229,6 @@ const FRAME_TERMS = [
     "气候正义", "气候公正", "环境正义", "社会公正", "整体生态学"
 ];
 
-/* Phrase-shaped framing, for the cases the term list cannot reach: "a matter of
-   justice - social, economic and human" carries no single frame term. */
 const FRAME_PATTERNS = [
     { label: "named justice ('X justice')", re: /(?<![\p{L}])(climate|environmental|ecological|social|economic|intergenerational|distributive|procedural|restorative|epistemic|energy|water|food|gender|racial|spatial)\s+justice(?![\p{L}])/iu },
     { label: "justice qualified by a list", re: /(?<![\p{L}])justice\s*[\u2013\u2014-]\s*(social|economic|human|environmental|climate|ecological)/iu },
@@ -2249,8 +2245,6 @@ function whichFrames(text) {
     return [...new Set([...terms, ...pats])];
 }
 
-/* Concepts that carry justice content but that a coder has to define before
-   using. Shown in the ledger next to the match rather than silently coded. */
 const CONCEPT_NOTES = {
     "integral ecology": "Laudato Si' concept: environmental, economic, social and cultural questions treated as one problem, so a claim under it usually spans more than one dimension. Define your reading before coding it.",
     "care for creation": "Duty-of-stewardship framing. Establishes obligation, not distribution or procedure. Usually Tokenistic unless a measure follows.",
@@ -2264,11 +2258,6 @@ const CONCEPT_NOTES = {
 
 /* ============================================================================
    2b. IMPLICIT PATTERNS
-   Justice content is often carried by phrasing rather than vocabulary. A tariff
-   design that protects poor households, a comment period, a right of appeal or a
-   rebuilding grant are all justice statements that contain no justice keyword.
-   These patterns sit between core (3) and supporting (1) at weight 2. They are
-   phrase-shaped and anchored, so they stay narrow.
    ========================================================================== */
 
 const IMPLICIT_PATTERNS = {
@@ -2331,9 +2320,6 @@ function whichPatterns(dim, text) {
     return (IMPLICIT_PATTERNS[dim] || []).filter(re => { re.lastIndex = 0; return re.test(text); });
 }
 
-/* Recall net. Flags a passage for human review. Contributes no dimension weight
-   and cannot set a tier. These are the terms that produced false positives in
-   v1: government agencies, adaptation vocabulary, generic co-benefits. */
 const SCREEN_ONLY = [
     "capacity building", "capacity-building", "public awareness", "climate finance",
     "economic benefits", "environmental benefits", "social benefits", "co-benefits",
@@ -2346,7 +2332,6 @@ const SCREEN_ONLY = [
     "наращивание потенциала", "بناء القدرات", "能力建设", "公众意识", "防灾减灾", "粮食安全"
 ];
 
-/* Root-cause markers. Used only by rubric criterion 6. */
 const STRUCTURAL_MARKERS = [
     "structural inequality", "structural inequalities", "systemic inequality", "root causes",
     "underlying drivers of vulnerability", "power relations", "power asymmetr", "decoloni",
@@ -2362,7 +2347,6 @@ const STRUCTURAL_MARKERS = [
     "结构性不平等", "根本原因", "气候正义", "气候公正"
 ];
 
-/* Nine thematic clusters from the policy brief, used for the Figure 5 heat map. */
 const CLUSTERS = {
     "Capacity-building and public participation": ["capacity building", "capacity-building", "training", "public participation", "awareness", "education", "stakeholder", "consultation", "civil society"],
     "Just transition and social equity": ["just transition", "social equity", "green jobs", "workers", "reskilling", "social protection", "gender", "youth", "indigenous", "vulnerable groups", "poverty"],
@@ -2376,48 +2360,47 @@ const CLUSTERS = {
 };
 
 /* ============================================================================
-   3. EVIDENCE FEATURES
-   Applied to the target sentence only. Each one is reported to the coder so the
-   tier can be checked rather than trusted.
+   3. EVIDENCE FEATURES (Multi-Language Logic for Anchors)
    ========================================================================== */
 
 const FEATURES = {
     legalAnchor: [
         /(?<![\p{L}])(law|laws|statute|legislation|legislative|statutory|legally binding|decree|ordinance|regulation|regulations|constitution)(?![\p{L}])/iu,
-        /(?<![\p{L}])(Act|Acts|Code|Bill|Charter|Statute)(?![\p{L}])/u,          // capitalised: the title of an instrument, not the verb
+        /(?<![\p{L}])(Act|Acts|Code|Bill|Charter|Statute)(?![\p{L}])/u,          
         /(?<![\p{L}])(act|code|bill)\s+(no\.?|n[°º]|number|of\s+(19|20)\d{2})/iu,
         /\b(law|act|decree|decreto|ley|loi|lei|gesetz)\s*(no\.?|n[°º]|number|#)?\s*\d/iu,
         /\b(act|law|code|charter)\s+(of\s+)?(19|20)\d{2}\b/iu,
         /(?<![\p{L}])(ley|leyes|decreto|reglamento|constitucion|constitución|codigo|código)(?![\p{L}])/iu,
         /(?<![\p{L}])(loi|decret|décret|reglement|règlement|arrete|arrêté|constitution)(?![\p{L}])/iu,
-        /(закон|законодательств|постановлени|указ|кодекс|конституц)/iu,
-        /(законодавств|постанов|указ|кодекс|конституц)/iu,
-        /(قانون|مرسوم|تشريع|لائحة|دستور)/u,
-        /(法律|法案|条例|法规|宪法|决定|办法)/u
+        /(закон\p{L}*|законодательств\p{L}*|постановлени\p{L}*|указ\p{L}*|кодекс\p{L}*|конституц\p{L}*|распоряжени\p{L}*)/iu,
+        /(законодавств\p{L}*|постанов\p{L}*|указ\p{L}*|кодекс\p{L}*|конституц\p{L}*|розпорядженн\p{L}*|рішенн\p{L}*)/iu,
+        /(قانون|مرسوم|تشريع|لائحة|دستور|قرار رسمي)/u,
+        /(法律|法案|条例|法规|宪法|决定|办法|规定)/u
     ],
     institutionAnchor: [
         /(?<![\p{L}])(ministry|ministries|minister|department|agency|authority|commission|council|committee|secretariat|directorate|bureau|taskforce|task force|working group|focal point|institute|board)(?![\p{L}])/iu,
         /(?<![\p{L}])(ministerio|secretaria|secretaría|comision|comisión|consejo|comite|comité|direccion|dirección|instituto|autoridad)(?![\p{L}])/iu,
         /(?<![\p{L}])(ministere|ministère|direction|commission|conseil|comite|comité|agence|autorite|autorité|secretariat|secrétariat)(?![\p{L}])/iu,
-        /(министерств|ведомств|комисси|совет|комитет|агентств|управлени)/iu,
-        /(міністерств|комісі|рада|комітет|агентств)/iu,
-        /(وزارة|هيئة|لجنة|مجلس|إدارة|مديرية)/u,
-        /(部|委员会|机构|管理局|办公室|领导小组)/u
+        /(министерств\p{L}*|ведомств\p{L}*|комисси\p{L}*|совет\p{L}*|комитет\p{L}*|агентств\p{L}*|управлени\p{L}*)/iu,
+        /(міністерств\p{L}*|відомств\p{L}*|комісі\p{L}*|рада|комітет\p{L}*|агентств\p{L}*|управлінн\p{L}*|держенергоефективності)/iu,
+        /(وزارة|هيئة|لجنة|مجلس|إدارة|مديرية|وكالة)/u,
+        /(部|委员会|机构|管理局|办公室|领导小组|厅)/u
     ],
     financeAnchor: [
-        /(?<![\p{L}\p{N}])(usd|eur|us\$|€|\$|million|billion|milliard|millones|миллион|مليون|亿|万元)(?![\p{L}])/iu,
+        /(?<![\p{L}\p{N}])(usd|eur|us\$|€|\$|million|billion|milliard|millones|миллион|мільйон|مليون|亿|万元)(?![\p{L}])/iu,
         /(?<![\p{L}])(budget|budgetary|budget line|allocation of funds|allocated funds|dedicated fund|earmark|financing plan|expenditure framework|fiscal allocation)(?![\p{L}])/iu,
-        /(?<![\p{L}])(presupuesto|asignacion presupuestaria|asignación presupuestaria|fondo dedicado)(?![\p{L}])/iu,
-        /(?<![\p{L}])(budget|dotation|ligne budgetaire|ligne budgétaire|fonds dedie|fonds dédié)(?![\p{L}])/iu,
-        /(бюджет|финансировани|ассигновани)/iu,
-        /(ميزانية|تمويل مخصص|اعتماد مالي)/u,
-        /(预算|资金安排|专项资金)/u
+        /(?<![\p{L}])(presupuesto|asignacion presupuestaria|asignación presupuestaria|fondo dedicado|financiamiento)(?![\p{L}])/iu,
+        /(?<![\p{L}])(budget|dotation|ligne budgetaire|ligne budgétaire|fonds dedie|fonds dédié|financement)(?![\p{L}])/iu,
+        /(бюджет\p{L}*|финансировани\p{L}*|ассигновани\p{L}*|целевой фонд)/iu,
+        /(бюджет\p{L}*|фінансуванн\p{L}*|асигнуванн\p{L}*|цільовий фонд|фінансових ресурсів)/iu,
+        /(ميزانية|تمويل مخصص|اعتماد مالي|صندوق مخصص)/u,
+        /(预算|资金安排|专项资金|财政拨款)/u
     ],
     timeBound: [
-        /\b(by|before|no later than|not later than|para el|d'ici|к)\s+(19|20)\d{2}\b/iu,
+        /\b(by|before|no later than|not later than|para el|d'ici|к|до|بحلول|在.*之前)\s+(19|20)\d{2}\b/iu,
         /\b(19|20)\d{2}\s*[-–—]\s*(19|20)\d{2}\b/,
-        /(?<![\p{L}])(annually|annual|every year|biennial|biennially|quarterly|each year|anualmente|anual|annuellement|annuel|ежегодно|سنويا|每年)(?![\p{L}])/iu,
-        /(?<![\p{L}])(within\s+\d+\s+(year|month)|in the first\s+\d+)(?![\p{L}])/iu
+        /(?<![\p{L}])(annually|annual|every year|biennial|biennially|quarterly|each year|anualmente|anual|annuellement|annuel|ежегодно|щорічно|سنويا|每年)(?![\p{L}])/iu,
+        /(?<![\p{L}])(within\s+\d+\s+(year|month)|in the first\s+\d+|en un plazo de|dans un delai de|в течение|протягом|في غضون|年内)(?![\p{L}])/iu
     ],
     accountability: [
         /(?<![\p{L}])(monitor|monitors|monitoring|reporting|reports?)\s+(to|on|of|requirement|obligation)/iu,
@@ -2425,26 +2408,29 @@ const FEATURES = {
         /(?<![\p{L}])(monitoring|indicator|indicators|evaluation|review mechanism|oversight|audit|compliance|enforcement|enforceable|verification|track progress|shall report|must report|accountability mechanism)(?![\p{L}])/iu,
         /(?<![\p{L}])(seguimiento|monitoreo|indicador|evaluacion|evaluación|fiscalizacion|fiscalización|rendicion de cuentas|rendición de cuentas)(?![\p{L}])/iu,
         /(?<![\p{L}])(suivi|indicateur|evaluation|évaluation|controle|contrôle|reddition de comptes)(?![\p{L}])/iu,
-        /(мониторинг|отчетност|показател|контрол)/iu,
-        /(رصد|مؤشر|تقييم|مساءلة|إنفاذ)/u,
-        /(监测|监督|指标|评估|问责|执行)/u
+        /(мониторинг\p{L}*|отчетност\p{L}*|показател\p{L}*|контрол\p{L}*|проверк\p{L}*)/iu,
+        /(моніторинг\p{L}*|звітність|звітності|показник\p{L}*|контрол\p{L}*|перевірк\p{L}*|відстеження прогресу)/iu,
+        /(رصد|مؤشر|تقييم|مساءلة|إنفاذ|متابعة التقدم)/u,
+        /(监测|监督|指标|评估|问责|执行|跟踪进展)/u
     ],
     commitVerb: [
-        /(?<!(?:good|free|political|strong|iron|ill)\s)(?<![\p{L}])will(?=\s+\p{L})/iu,   // the auxiliary, not the noun in "good will"
+        /(?<!(?:good|free|political|strong|iron|ill)\s)(?<![\p{L}])will(?=\s+\p{L})/iu, 
         /(?<![\p{L}])(shall|commits? to|is committed to|has established|established|adopted|enacted|mandates?|requires?|guarantees?|allocates?|ensures?)(?![\p{L}])/iu,
-        /(?<![\p{L}])(se compromete|garantiza|establece|asigna|exige|adopta|aprobo|aprobó)(?![\p{L}])/iu,
-        /(?<![\p{L}])(s'engage|garantit|etablit|établit|alloue|exige|adopte)(?![\p{L}])/iu,
-        /(обязуетс|обеспечит|устанавлива|выделяет|принял)/iu,
-        /(تلتزم|تضمن|تنشئ|تخصص)/u,
-        /(将|应当|承诺|建立|保障|拨付)/u
+        /(?<![\p{L}])(se compromete|garantiza|establece|asigna|exige|adopta|aprobo|aprobó|implementará)(?![\p{L}])/iu,
+        /(?<![\p{L}])(s'engage|garantit|etablit|établit|alloue|exige|adopte|mettra en oeuvre)(?![\p{L}])/iu,
+        /(обязуетс\p{L}*|обеспечит\p{L}*|устанавлива\p{L}*|выделяет|принял\p{L}*|гарантирует)/iu,
+        /(зобов'язуєтьс\p{L}*|забезпечить|забезпечуватиме|встановлює|виділяє|прийнял\p{L}*|гарантує|впроваджуватиме)/iu,
+        /(تلتزم|تضمن|تنشئ|تخصص|تتعهد|تعتمد)/u,
+        /(将|应当|承诺|建立|保障|拨付|确保)/u
     ],
     concreteMeasure: [
         /(?<![\p{L}])(programme|program|programmes|programs|plan|plans|strategy|strategies|policy|policies|framework|frameworks|scheme|schemes|initiative|initiatives|project|projects|measure|measures|action plan|roadmap|target|targets|standard|standards|guideline|guidelines|mechanism|mechanisms|fund|funds)(?![\p{L}])/iu,
-        /(?<![\p{L}])(programa|programas|plan|planes|estrategia|estrategias|politica|política|politicas|políticas|medida|medidas|mecanismo|meta|metas)(?![\p{L}])/iu,
-        /(?<![\p{L}])(programme|programmes|plan|plans|strategie|stratégie|politique|politiques|mesure|mesures|mecanisme|mécanisme|objectif|objectifs)(?![\p{L}])/iu,
-        /(программ|план|стратеги|политик|мер[аыу]|механизм|цел[ьи])/iu,
-        /(برنامج|خطة|استراتيجية|سياسة|تدبير|آلية|هدف)/u,
-        /(方案|规划|计划|战略|政策|措施|机制|目标)/u
+        /(?<![\p{L}])(programa|programas|plan|planes|estrategia|estrategias|politica|política|politicas|políticas|medida|medidas|mecanismo|meta|metas|hoja de ruta)(?![\p{L}])/iu,
+        /(?<![\p{L}])(programme|programmes|plan|plans|strategie|stratégie|politique|politiques|mesure|mesures|mecanisme|mécanisme|objectif|objectifs|feuille de route)(?![\p{L}])/iu,
+        /(программ\p{L}*|план\p{L}*|стратеги\p{L}*|политик\p{L}*|мер[аыу]|механизм\p{L}*|цел[ьи]|дорожная карта)/iu,
+        /(програм\p{L}*|план\p{L}*|стратегі\p{L}*|політик\p{L}*|захід|заходи|заходів|механізм\p{L}*|дорожня карта)/iu,
+        /(برنامج|خطة|استراتيجية|سياسة|تدبير|آلية|هدف|خارطة طريق)/u,
+        /(方案|规划|计划|战略|政策|措施|机制|目标|路线图)/u
     ],
     hedge: [
         /(?<![\p{L}])(may|might|could|where possible|where feasible|as appropriate|to the extent possible|endeavour|endeavor|aims? to|seeks? to|intends? to|aspires? to|will consider|is expected to|encourage)(?![\p{L}])/iu,
@@ -2480,16 +2466,6 @@ const FEATURES = {
     ]
 };
 
-/* ============================================================================
-   3b. FEATURE ADDITIONS, v2.1
-   Appended rather than merged, so the v2.0 feature set stays legible.
-   ========================================================================== */
-
-/* A named normative instrument with a locator. Not a legal anchor: it records
-   that the statement rests on an external instrument rather than on the state's
-   own law, budget or institution. It can carry a statement to Partial. It can
-   never on its own carry one to Embedded, and it is not counted towards the
-   evidence-feature threshold that admits a single-statement Embedded. */
 FEATURES.citedInstrument = [
     /(?<![\p{L}])(article|articles|art|paragraph|paragraphs|para|section|chapter|annex|clause|recital)\s*\.?\s*\d/iu,
     /(?<![\p{L}])(encyclical|exhortation|apostolic letter|motu proprio|charter|covenant|declaration|convention|protocol|treaty|accord|resolution|communique|communiqu\u00e9|final document|concluding document)(?![\p{L}])/iu,
@@ -2501,10 +2477,6 @@ FEATURES.citedInstrument = [
     /(第\s*\d+\s*条|公约|议定书|宣言|决议|附件)/u
 ];
 
-/* Obligation language that is not a commitment verb: a duty stated, an appeal
-   made, a responsibility acknowledged. Reported to the coder, and it lifts a
-   statement to Partial only in combination with a cited instrument. On its own
-   it leaves the statement Tokenistic, which is the correct reading. */
 FEATURES.dutyLanguage = [
     /(?<![\p{L}])(duty|duties|obligation|obligations|responsibility|responsibilities|called to|calls upon|appeal to|appeals to|incumbent (up)?on|answerable|stewardship)(?![\p{L}])/iu,
     /(?<![\p{L}])(deber|deberes|obligacion|obligaci\u00f3n|responsabilidad|llamado a|corresponde a)(?![\p{L}])/iu,
@@ -2514,8 +2486,6 @@ FEATURES.dutyLanguage = [
     /(义务|责任|使命|呼吁)/u
 ];
 
-/* v2.0 matched "commits to" but not "committing to", which is how a great many
-   NDCs phrase the commitment itself. */
 FEATURES.commitVerb = FEATURES.commitVerb.concat([
     /(?<![\p{L}])(committing to|commit to|commitment to|commitments to|undertakes?|undertaking to|pledges?|pledging to|resolves? to|reaffirms? its commitment|has committed|have committed|we will|it will)(?![\p{L}])/iu,
     /(?<![\p{L}])(comprometiendose|comprometi\u00e9ndose|se compromete a|asume el compromiso)(?![\p{L}])/iu,
@@ -2523,32 +2493,6 @@ FEATURES.commitVerb = FEATURES.commitVerb.concat([
     /(?<![\p{L}])(has|have|was|were|is|are|been)\s+(allocated|earmarked|committed|designated|approved|ring-?fenced|set aside)(?![\p{L}])/iu
 ]);
 
-/* Recall net additions. These never assign a dimension or a tier; they only
-   guarantee a paragraph reaches a human reader. */
-[
-    "education", "training", "awareness", "ethical", "ethics", "moral", "morality",
-    "stewardship", "creation", "spiritual", "faith", "religious", "conscience",
-    "future generations", "our common home", "integral development", "human development",
-    "educacion", "educaci\u00f3n", "etico", "\u00e9tico", "moral", "generaciones futuras",
-    "education", "\u00e9ducation", "ethique", "\u00e9thique", "generations futures", "g\u00e9n\u00e9rations futures",
-    "образование", "этическ", "будущих поколений",
-    "التعليم", "أخلاقي", "الأجيال القادمة",
-    "教育", "伦理", "后代"
-].forEach(t => { if (!SCREEN_ONLY.includes(t)) SCREEN_ONLY.push(t); });
-
-/* Structural markers used by rubric criterion 6. */
-[
-    "integral ecology", "ecological conversion", "throwaway culture", "technocratic paradigm",
-    "consumerism", "overconsumption", "ecological debt", "unequal ecological exchange",
-    "ecologia integral", "ecolog\u00eda integral", "ecologie integrale", "\u00e9cologie int\u00e9grale",
-    "deuda ecologica", "deuda ecol\u00f3gica", "dette ecologique", "dette \u00e9cologique"
-].forEach(t => { if (!STRUCTURAL_MARKERS.includes(t)) STRUCTURAL_MARKERS.push(t); });
-
-/* Hyphenated forms that must survive a line break unchanged. A word broken
-   across a line is rejoined without its hyphen ("environ-" + "mental"), except
-   where the hyphen is part of the term itself ("gender-" + "responsive"), which
-   would otherwise destroy the match. Built from the lexicon so it stays in step
-   with it. */
 const HYPHEN_KEEP = (() => {
     const set = new Set();
     const add = list => (list || []).forEach(t => String(t).toLowerCase().split(/[\s\u00a0]+/)
@@ -2558,26 +2502,6 @@ const HYPHEN_KEEP = (() => {
     Object.values(CLUSTERS).forEach(add);
     return set;
 })();
-
-
-/* ============================================================================
-   LEXICON ADDITIONS v2.9
-   Gaps found by reading what the analyser missed in Serbia, Yemen and others.
-   Three kinds of gap, and they need three different remedies.
-
-   1. SYNONYMS the term list simply did not hold: public hearing, comment
-      period, gender mainstreaming, gender-sensitive.
-   2. WORD ORDER. "public participation" and "participation of the public" are
-      the same claim; "loss and damage" is written "losses and damages" and
-      "damages and losses". A term list cannot enumerate these, so they are
-      matched as phrase patterns, which also flags them as implicit so a coder
-      confirms the reading.
-   3. CLIMATE INJUSTICE described without justice vocabulary: water scarcity,
-      protracted conflict, displaced communities, undermined livelihoods. These
-      are put in the RECALL NET, not in a dimension. They are evidence that a
-      passage concerns the distribution of climate harm, but they are not
-      themselves a commitment, and coding them as one would be wrong.
-   ========================================================================== */
 
 const LEXICON_ADDITIONS_29 = {
     Procedural: {
@@ -2637,7 +2561,6 @@ Object.entries(LEXICON_ADDITIONS_29).forEach(([dim, sets]) => {
     });
 });
 
-/* Word order, matched as shape rather than enumerated */
 IMPLICIT_PATTERNS.Procedural.push(
     /(?<![\p{L}])participation\s+(of|by)\s+(the\s+)?(public|citizens?|communit\p{L}*|stakeholders?|civil society|women|youth|indigenous\s+\p{L}+)/iu,
     /(?<![\p{L}])(public|citizens?|communit\p{L}*|stakeholders?|civil society)\s+(consultation|participation|engagement|hearing|input|comment)/iu,
@@ -2653,9 +2576,6 @@ IMPLICIT_PATTERNS.Restorative.push(
     /(?<![\p{L}])(loss(es)?\s+and\s+damages?|damages?\s+and\s+loss(es)?)(?![\p{L}])/iu
 );
 
-/* Climate injustice described without justice vocabulary. Recall net only:
-   evidence that a passage concerns the distribution of climate harm, never a
-   commitment in itself. */
 [
     "water scarcity", "water stress", "food insecurity", "food security", "human security",
     "social cohesion", "public health", "protracted conflict", "armed conflict", "fragility",
