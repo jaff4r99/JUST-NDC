@@ -1669,6 +1669,13 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                     </div>
 
                     <div class="ui-box">
+                        <h3 style="margin-top:0;">Recover unfiled work</h3>
+                        <p class="panel-sub">Every reassignment, note and exclusion is written to this browser as it is made, even when filing to the shared database did not happen. If a country shows fewer saved codes than you coded, rebuild them from those stored decisions here. Nothing is deleted and anything already on the server is skipped.</p>
+                        <button class="download-btn" style="background:var(--primary);color:#fff;" onclick="recoverExamplesFromDecisions()">Rebuild coding examples from my decisions</button>
+                        <div id="recover-note" class="sync-note"></div>
+                    </div>
+
+                    <div class="ui-box">
                         <h3 style="margin-top:0;">Recall audit</h3>
                         <p class="panel-sub">Recall cannot be claimed from what the screener returned; it can only be measured by reading what the screener passed over. Draw a sample of unflagged paragraphs from the document currently loaded in the Assessment tab, read them, and mark any that should have been caught. The tally is the basis for a recall statement in the paper.</p>
                         <button class="download-btn" onclick="sampleUnflagged()">Draw 10 unflagged paragraphs</button>
@@ -1746,7 +1753,7 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
                                     <button onclick="exportEvaluationDocx()" class="download-btn" style="background-color: var(--accent); color: #fff;">Export report (.doc)</button>
                                     <button onclick="exportEvaluationCsv()" class="download-btn" style="background-color: var(--primary); color: #fff;">Export ledger (.csv)</button>
-                                    <button onclick="recordAssessment()" class="download-btn" style="background-color:#14614f;color:#fff;">Record to project</button>
+                                    <button onclick="saveEverything()" class="download-btn" style="background-color:#14614f;color:#fff;" title="record the assessment and file every coded statement to the shared database in one go">Save everything</button>
                                     <span id="record-assessment-note" class="muted-note"></span>
                                 </div>
                             </div>
@@ -1875,8 +1882,8 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.12.0";
-const LEXICON_VERSION = "2026-08-14";
+const ENGINE_VERSION = "2.13.0";
+const LEXICON_VERSION = "2026-09-03";
 
 /* Rule constants exposed so the method is stated, not buried. */
 const RULES = {
@@ -1925,40 +1932,67 @@ const tierMin = (a, b) => (tierRank(a) <= tierRank(b) ? a : b);
 const CJK_RE = /[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/;
 const matcherCache = new Map();
 
+/* ---------------------------------------------------------------------------
+   Script-aware matching, v2.13
+
+   Arabic attaches its prefixes to the word: التراث becomes بالتراث, وللتراث,
+   للتراث. Matching the surface form fails on all but the first. Iraq's NDC also
+   writes الأهوار where another document writes الاهوار, because the hamza is
+   optional in practice. Both are handled by folding the text and the term to a
+   common form and matching the STEM with the prefixes and the definite article
+   made optional.
+
+   Latin scripts get the same treatment for accents, so a French NDC that writes
+   "developpement" is not missed by a lexicon that writes "développement".
+------------------------------------------------------------------------------ */
+let _foldCache = { src: null, out: null };
+function foldForMatch(t) {
+    if (_foldCache.src === t) return _foldCache.out;
+    let o = String(t)
+        .replace(/[\u064B-\u0652\u0640\u0670]/g, "")          // Arabic diacritics and tatweel
+        .replace(/[\u0622\u0623\u0625\u0671\u0672]/g, "\u0627") // alef forms -> bare alef
+        .replace(/\u0649/g, "\u064A")                          // alef maqsura -> yaa
+        .replace(/\u0629/g, "\u0647");                         // taa marbuta -> haa
+    o = o.normalize("NFD").replace(/[\u0300-\u036f]/g, "").normalize("NFC"); // Latin accents
+    _foldCache = { src: t, out: o };
+    return o;
+}
+
 function buildMatcher(term) {
     if (matcherCache.has(term)) return matcherCache.get(term);
     let fn;
-    
+
     if (CJK_RE.test(term)) {
-        // Chinese / Japanese: whitespace-insensitive substring match
         const needle = term.replace(/\s+/g, "");
         fn = text => text.replace(/\s+/g, "").includes(needle);
     } else {
-        const esc = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "[\\s\\u00a0-]+");
-        
-        // Detect script family for tailored inflection tolerance
-        const isCyrillic = /[\u0400-\u04ff]/i.test(term);
-        const isArabic = /[\u0600-\u06ff]/i.test(term);
-
+        const isArabic = /[\u0600-\u06ff]/.test(term);
+        const isCyrillic = /[\u0400-\u04ff]/.test(term);
+        let folded = foldForMatch(term);
         let pattern;
+
         if (isArabic) {
-            // Match optional Arabic prefixes: al- (ال), wa- (و), bi- (ب), li- (ل)
-            pattern = "(?<![\\p{L}\\p{N}])(?:[الوفبلك]{1,3})?" + esc + "(?![\\p{L}\\p{N}])";
+            /* strip the definite article from the term so the stem can be found
+               under any prefix, then allow the common proclitics back */
+            const stem = folded.replace(/^ال/, "");
+            const esc = stem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "[\\s\\u00a0]+");
+            pattern = "(?<![\\p{L}\\p{N}])[\u0648\u0641\u0628\u0643\u0644]{0,3}(?:\u0627\u0644)?" + esc + "(?![\\p{L}\\p{N}])";
         } else if (isCyrillic) {
-            // Slavic languages: Allow root/stem case and gender ending variations
+            const esc = folded.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "[\\s\\u00a0-]+");
             pattern = "(?<![\\p{L}\\p{N}])" + esc + "[\\p{L}]{0,4}(?![\\p{L}\\p{N}])";
         } else {
-            // Latin alphabets: English & Romance gender/plural inflections
-            pattern = "(?<![\\p{L}\\p{N}])" + esc + "(?:s|es|ed|ing|a|as|os|e|es|ment|mente)?(?![\\p{L}\\p{N}])";
+            const esc = folded.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "[\\s\\u00a0-]+");
+            pattern = "(?<![\\p{L}\\p{N}])" + esc + "(?:s|es|ed|ing|a|as|os|e|ment|mente)?(?![\\p{L}\\p{N}])";
         }
 
         const re = new RegExp(pattern, "iu");
-        fn = text => re.test(text);
+        fn = text => re.test(foldForMatch(text));
     }
-    
+
     matcherCache.set(term, fn);
     return fn;
 }
+
 
 const hasTerm = (term, text) => buildMatcher(term)(text);
 const anyTerm = (list, text) => list.some(t => hasTerm(t, text));
@@ -2255,6 +2289,57 @@ const CONCEPT_NOTES = {
     "environmental education": "Capability and participation framing. Sits in cluster 1 of the brief. Procedural only where it enables participation in decisions, not where it is public awareness alone.",
     "fair share": "A distributive claim about the state's own effort. Check scope: a fair-share claim addressed to other states is an international claim, not a domestic commitment."
 };
+
+
+
+/* ============================================================================
+   ARABIC AND FRENCH LEXICON, v2.13
+   Read off the Iraqi NDC, which puts its justice content in registers the
+   English-first lexicon had no equivalent for: the draining of the marshes as
+   a loss of cultural identity, drought-driven internal displacement, and the
+   exposure of rural women. Stems are given without the definite article where
+   Arabic attaches it, because the matcher restores it.
+   ========================================================================== */
+const LEXICON_AR_FR = {
+    Recognitional: {
+        core: ["النساء في الريف", "النساء الريفيات", "المرأة الريفية", "الفئات الهشة", "الفئات الضعيفة",
+               "المجتمعات المحلية", "السكان الأصليين", "ذوي الإعاقة", "الفئات المهمشة",
+               "femmes rurales", "femmes en milieu rural", "populations vulnérables", "groupes vulnérables",
+               "communautés locales", "peuples autochtones", "personnes handicapées", "groupes marginalisés",
+               "droits des générations futures"],
+        supporting: ["rural women", "marshdwellers", "marsh dwellers", "الأهوار", "سكان الأهوار",
+                     "التنوع الثقافي", "الهوية الثقافية", "identité culturelle", "savoirs traditionnels",
+                     "connaissances traditionnelles"]
+    },
+    Procedural: {
+        core: ["المشاركة المجتمعية", "إشراك المجتمعات", "التشاور المجتمعي", "الحوار المجتمعي",
+               "participation communautaire", "concertation", "consultation des parties prenantes",
+               "processus participatif", "enquête publique"],
+        supporting: ["أصحاب المصلحة", "parties prenantes", "société civile", "المجتمع المدني"]
+    },
+    Distributive: {
+        core: ["التوزيع العادل", "الوصول العادل", "الانتقال العادل", "العدالة في التوزيع",
+               "répartition équitable", "accès équitable", "transition juste", "transition équitable",
+               "précarité énergétique", "pauvreté énergétique"],
+        supporting: ["الفقر", "انعدام المساواة", "précarité", "vulnérabilité socio-économique"]
+    },
+    Restorative: {
+        core: ["النزوح والهجرة", "النزوح المناخي", "النزوح الداخلي", "الهجرة القسرية", "التراث الثقافي",
+               "الخسائر غير الاقتصادية", "الخسائر والأضرار", "التعويض",
+               "déplacements forcés", "déplacement climatique", "migrations forcées",
+               "pertes immatérielles", "pertes non économiques", "patrimoine culturel",
+               "préjudice", "réparation", "indemnisation"],
+        supporting: ["النزوح", "الهجرة", "التراث", "الأضرار", "déplacement", "patrimoine", "dommages"]
+    }
+};
+Object.entries(LEXICON_AR_FR).forEach(([dim, sets]) => {
+    Object.entries(sets).forEach(([bucket, list]) => {
+        const target = LEXICON[dim][bucket];
+        list.forEach(x => { if (!target.includes(x)) target.push(x); });
+    });
+});
+
+
 
 /* ============================================================================
    2b. IMPLICIT PATTERNS
@@ -2736,6 +2821,13 @@ IMPLICIT_PATTERNS.Restorative.push(
     "нехватка воды", "продовольственная безопасность", "перемещение", "неравенство",
     "ندرة المياه", "الأمن الغذائي", "النزوح", "عدم المساواة",
     "缺水", "粮食安全", "流离失所", "不平等"
+].forEach(x => { if (!SCREEN_ONLY.includes(x)) SCREEN_ONLY.push(x); });
+
+/* Climate harm named without justice vocabulary, in the same two languages */
+["الجفاف", "التصحر", "شح المياه", "ندرة المياه", "الأمن المائي", "العواصف الترابية",
+ "تدهور الأراضي", "الأمن الغذائي", "سبل العيش", "النازحين", "الهشاشة", "النزاع",
+ "sécheresse", "désertification", "stress hydrique", "dégradation des terres",
+ "insécurité alimentaire", "moyens de subsistance", "fragilité", "conflit"
 ].forEach(x => { if (!SCREEN_ONLY.includes(x)) SCREEN_ONLY.push(x); });
 
 function detectFeatures(sentence) {
@@ -5617,18 +5709,55 @@ function findLedgerRecord(id) {
         || null;
 }
 
+function persistDecision(s, why) {
+    /* Every coder decision goes to browser storage AND to the shared database
+       the moment it is made. An exclusion used to live only in the page's
+       memory: reload the tab and it was gone, which is how excluded statements
+       kept reappearing in scores and exports. */
+    if (!lastEvaluation) return;
+    try {
+        const key = 'justndc_overrides';
+        const store = JSON.parse(localStorage.getItem(key) || '{}');
+        store[lastEvaluation.country + '::' + s.id] = {
+            country: lastEvaluation.country, statement_id: s.id, page: s.page,
+            machine_dimension: s.dimension, machine_tier: s.tier,
+            coder_dimension: (s.override && s.override.dimension) || null,
+            coder_tier: (s.override && s.override.tier) || null,
+            note: (s.override && s.override.note) || "",
+            coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"),
+            at: new Date().toISOString(),
+            excluded: !!s.excluded, excluded_reason: s.excludedReason || "",
+            statement: s.text, locator: s.locator || "",
+            engine: ENGINE_VERSION, lexicon: LEXICON_VERSION
+        };
+        localStorage.setItem(key, JSON.stringify(store));
+    } catch (e) { console.warn("local decision store unavailable", e); }
+
+    if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        supabaseClient.from('statement_overrides').upsert({
+            country: lastEvaluation.country, statement_id: s.id, page: s.page,
+            machine_dimension: s.dimension, machine_tier: s.tier,
+            coder_dimension: (s.override && s.override.dimension) || null,
+            coder_tier: (s.override && s.override.tier) || null,
+            note: (s.override && s.override.note) || (why || ""),
+            coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"),
+            statement: s.text, engine: ENGINE_VERSION, lexicon: LEXICON_VERSION
+        }, { onConflict: 'country,statement_id' }).then(r => {
+            if (r && r.error) console.warn("decision not synced", r.error);
+        });
+    }
+}
+
 function excludeStatement(id) {
-    /* recall-net passages live in a different array from coded statements, and
-       excluding one used to look up only the coded array and silently do
-       nothing */
     const s = findLedgerRecord(id);
     if (!s) return;
-    const why = prompt("Why is this statement being taken out of the assessment?\n\nIt stays in the ledger and in the export, marked excluded with this reason.", s.excludedReason || "");
+    const why = prompt("Why is this statement being taken out of the assessment?\n\nIt stays in the ledger, is written to the shared database, and is exported to a separate file with this reason.", s.excludedReason || "");
     if (why === null) return;
     s.excluded = true;
     s.excludedReason = why.trim() || "no reason given";
     s.excludedBy = (typeof currentUser !== "undefined" ? currentUser : "Anonymous");
     s.excludedAt = new Date().toISOString();
+    persistDecision(s, "excluded: " + s.excludedReason);
     recomputeEvaluation(`Excluded ${s.locator || s.id}`);
 }
 
@@ -5636,6 +5765,8 @@ function restoreStatement(id) {
     const s = findLedgerRecord(id);
     if (!s) return;
     s.excluded = false;
+    s.excludedReason = "";
+    persistDecision(s, "restored");
     recomputeEvaluation(`Restored ${s.locator || s.id}`);
 }
 
@@ -5812,6 +5943,204 @@ function screenItemHtml(s) {
         <br><span class="scr-terms">${esc([...(s.matched ? s.matched.core : []), ...(s.matched ? s.matched.supporting : []), ...(s.frameHits || []), ...s.screenHits].join(", ")) || "matched on phrasing"}</span></p>`;
 }
 
+/* ============================================================================
+   Saving the whole ledger, v2.13
+
+   Filing examples one at a time is how a 400-statement country ends up with 200
+   saved: every press was a separate network call, any one of them could fail
+   quietly, and closing the tab in between lost the rest. The whole ledger now
+   goes up in one action, in chunks, with a count of what landed and what did
+   not, and the button refuses to pretend it finished.
+
+   Duplicates are avoided without a schema change: what is already on the server
+   for this country is read first and matched on locator plus the opening of the
+   statement, so pressing the button twice does not double the rows.
+   ========================================================================== */
+
+let cloudSaveBusy = false;
+
+function ledgerRowsForCloud(R) {
+    return R.statements.filter(s => !s.excluded && effective(s).dimension).map(s => {
+        const e = effective(s);
+        const why = [
+            s.override && s.override.note ? "Coder: " + s.override.note : "",
+            "Machine reading: " + ((s.tierWhy || []).join("; ") || "n/a") + ".",
+            (s.override && (s.override.dimension || s.override.tier))
+                ? "Reassigned by " + (s.override.coder || "coder") + " from " + s.dimension + " / " + s.tier + "." : "",
+            s.prompt ? "Answering: " + s.prompt : ""
+        ].filter(Boolean).join(" ");
+        return {
+            country: R.country, level: e.tier, dimension: e.dimension,
+            statement: s.excerpt || s.text, analysis: why,
+            locator: s.paraLocator || s.locator || ("p. " + s.page),
+            section: sectionLabel(s.section), scope: s.scope || "",
+            conditionality: s.conditional ? "Yes" : "No",
+            coder: (typeof currentUser !== "undefined" ? currentUser : "Anonymous"),
+            engine: ENGINE_VERSION,
+            lexicon: (typeof lexiconStamp === "function" ? lexiconStamp() : LEXICON_VERSION),
+            _statementId: s.id
+        };
+    });
+}
+
+const cloudKey = r => (r.locator || "") + "||" + String(r.statement || "").slice(0, 90);
+
+async function saveLedgerToCloud(R, onProgress) {
+    const rows = ledgerRowsForCloud(R);
+    const result = { total: rows.length, inserted: 0, already: 0, failed: 0, errors: [] };
+    if (!rows.length) return result;
+
+    if (typeof supabaseClient === "undefined" || !supabaseClient) {
+        rows.forEach(r => {
+            const row = { id: 'ex-' + r._statementId + '-' + Date.now(), ...r, source: "ledger", statementId: r._statementId };
+            delete row._statementId;
+            if (!codingExamples.some(x => cloudKey(x) === cloudKey(row) && x.country === row.country)) codingExamples.push(row);
+        });
+        try { localStorage.setItem('codingExamplesState', JSON.stringify(codingExamples)); } catch (e) {}
+        result.inserted = rows.length;
+        return result;
+    }
+
+    let existing = new Set();
+    try {
+        const { data, error } = await supabaseClient.from('coding_examples')
+            .select('id,locator,statement').eq('country', R.country);
+        if (error) throw error;
+        (data || []).forEach(d => existing.add(cloudKey(d)));
+    } catch (e) {
+        result.errors.push("could not read what is already saved: " + (e.message || e));
+    }
+
+    const todo = rows.filter(r => { const k = cloudKey(r); if (existing.has(k)) { result.already++; return false; } existing.add(k); return true; });
+    const CHUNK = 40;
+    for (let i = 0; i < todo.length; i += CHUNK) {
+        const slice = todo.slice(i, i + CHUNK).map(r => { const c = { ...r }; delete c._statementId; return c; });
+        try {
+            const { data, error } = await supabaseClient.from('coding_examples').insert(slice).select();
+            if (error) throw error;
+            result.inserted += slice.length;
+            (data || slice).forEach((d, k) => {
+                const local = { ...slice[k], ...d, source: "ledger", statementId: todo[i + k]._statementId };
+                if (!codingExamples.some(x => String(x.id) === String(local.id))) codingExamples.push(local);
+            });
+        } catch (e) {
+            result.failed += slice.length;
+            result.errors.push((e.message || String(e)));
+        }
+        if (onProgress) onProgress(Math.min(i + CHUNK, todo.length), todo.length);
+        await new Promise(r2 => setTimeout(r2, 20));
+    }
+    try { localStorage.setItem('codingExamplesState', JSON.stringify(codingExamples)); } catch (e) {}
+    return result;
+}
+
+async function saveEverything() {
+    if (cloudSaveBusy) return;
+    if (!lastEvaluation) { alert("Run an assessment first."); return; }
+    const R = lastEvaluation;
+    const btn = document.querySelector('button[onclick="saveEverything()"]');
+    const note = document.getElementById('record-assessment-note');
+    const say = html => { if (note) note.innerHTML = html; };
+    cloudSaveBusy = true;
+    if (btn) { btn.disabled = true; btn.dataset.label = btn.innerText; btn.innerText = "Saving…"; }
+    window.onbeforeunload = () => "A save is still running. Leaving now could lose it.";
+    say('<span class="rc-what">Saving. Do not close this tab.</span>');
+
+    let out;
+    try {
+        recordAssessment(true);
+        out = await saveLedgerToCloud(R, (done, total) => {
+            say(`<span class="rc-what">Saving ${done} of ${total} statements…</span> Do not close this tab.`);
+            if (btn) btn.innerText = `Saving ${done}/${total}…`;
+        });
+        if (typeof renderExamples === "function") { if (typeof exampleFilter !== "undefined") exampleFilter.country = R.country; renderExamples(); }
+        if (typeof renderLedger === "function") renderLedger();
+    } catch (e) {
+        out = { total: 0, inserted: 0, already: 0, failed: 0, errors: [e.message || String(e)] };
+    } finally {
+        cloudSaveBusy = false;
+        window.onbeforeunload = null;
+        if (btn) { btn.disabled = false; btn.innerText = btn.dataset.label || "Save everything"; }
+    }
+
+    const ok = out.failed === 0 && !out.errors.length;
+    say(`<span class="rc-what" style="color:${ok ? '#1f6b33' : '#a3261f'}">`
+        + `${ok ? "Saved." : "Saved with problems."}</span> `
+        + `${out.inserted} statement(s) written, ${out.already} already on the server`
+        + (out.failed ? `, <b>${out.failed} failed</b>` : "")
+        + `. The assessment itself is recorded.`
+        + (out.errors.length ? ` <span class="sync-warn">${esc(out.errors[0])}</span>` : ""));
+    if (typeof logActivity === "function") logActivity(`saved ${out.inserted} statement(s) for ${R.country}`);
+}
+
+/* ============================================================================
+   Recovering filed examples from coder decisions
+
+   Every reassignment, note and exclusion a coder makes is written to
+   justndc_overrides, and has been since v2.4. That store survived even where
+   the filing to coding_examples did not, so a country showing zero saved codes
+   is usually not lost work: it is unfiled work. This rebuilds the coding
+   examples from those decisions and pushes them up.
+   ========================================================================== */
+async function recoverExamplesFromDecisions() {
+    let store = {};
+    try { store = JSON.parse(localStorage.getItem('justndc_overrides') || '{}'); } catch (e) {}
+    const all = Object.values(store).filter(d => d && d.statement && d.country);
+    const usable = all.filter(d => !d.excluded && (d.coder_dimension || d.machine_dimension));
+    const box = document.getElementById('recover-note');
+    const say = h => { if (box) box.innerHTML = h; };
+    if (!usable.length) { say(`<span class="muted-note">No stored coder decisions were found in this browser. If you have a project backup file, restore it first and press this again.</span>`); return; }
+
+    const byCountry = {};
+    usable.forEach(d => { (byCountry[d.country] = byCountry[d.country] || []).push(d); });
+    const names = Object.keys(byCountry).sort();
+    if (!confirm(`Rebuild coding examples from ${usable.length} stored coder decision(s) across ${names.length} country/countries?\n\n`
+        + names.slice(0, 12).map(n => `  ${n}: ${byCountry[n].length}`).join("\n")
+        + (names.length > 12 ? `\n  …and ${names.length - 12} more` : "")
+        + `\n\nNothing is deleted. Anything already on the server is skipped.`)) return;
+
+    let inserted = 0, already = 0, failed = 0;
+    for (const country of names) {
+        say(`<span class="rc-what">Rebuilding ${esc(country)}…</span> ${inserted} written so far. Do not close this tab.`);
+        const rows = byCountry[country].map(d => ({
+            country, level: d.coder_tier || d.machine_tier || "Tokenistic",
+            dimension: d.coder_dimension || d.machine_dimension || "",
+            statement: d.statement,
+            analysis: (d.note ? "Coder: " + d.note + " " : "")
+                + (d.coder_dimension || d.coder_tier ? `Reassigned from ${d.machine_dimension} / ${d.machine_tier}.` : "Machine reading, confirmed.")
+                + " Recovered from the stored coder decision.",
+            locator: d.locator || ("p. " + (d.page || "?")),
+            section: "", scope: "", conditionality: "",
+            coder: d.coder || "Anonymous", engine: d.engine || ENGINE_VERSION, lexicon: d.lexicon || LEXICON_VERSION
+        }));
+
+        if (typeof supabaseClient === "undefined" || !supabaseClient) {
+            rows.forEach(r => { if (!codingExamples.some(x => cloudKey(x) === cloudKey(r) && x.country === country)) { codingExamples.push({ id: 'rec-' + Math.random().toString(36).slice(2), source: "recovered", ...r }); inserted++; } });
+            continue;
+        }
+        let existing = new Set();
+        try {
+            const { data } = await supabaseClient.from('coding_examples').select('id,locator,statement').eq('country', country);
+            (data || []).forEach(d => existing.add(cloudKey(d)));
+        } catch (e) {}
+        const todo = rows.filter(r => { const k = cloudKey(r); if (existing.has(k)) { already++; return false; } existing.add(k); return true; });
+        for (let i = 0; i < todo.length; i += 40) {
+            const slice = todo.slice(i, i + 40);
+            try {
+                const { data, error } = await supabaseClient.from('coding_examples').insert(slice).select();
+                if (error) throw error;
+                inserted += slice.length;
+                (data || slice).forEach(d => codingExamples.push({ source: "recovered", ...d }));
+            } catch (e) { failed += slice.length; }
+            await new Promise(r2 => setTimeout(r2, 20));
+        }
+    }
+    try { localStorage.setItem('codingExamplesState', JSON.stringify(codingExamples)); } catch (e) {}
+    if (typeof renderExamples === "function") renderExamples();
+    say(`<span class="rc-what" style="color:${failed ? '#a3261f' : '#1f6b33'}">Recovery finished.</span> `
+        + `${inserted} example(s) rebuilt, ${already} already present${failed ? `, <b>${failed} failed</b>` : ""}.`);
+}
+
 /* ---------- Exports ---------- */
 
 function download(name, content, mime) {
@@ -5841,7 +6170,7 @@ function exportEvaluationDocx() {
     ${R.rubric.criteria.map(c => `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.result}</td><td>${esc(c.detail)}</td></tr>`).join("")}</table>
     <p>Composite axes: recognitional and procedural = ${R.rubric.axisRP}; distributive and restorative = ${R.rubric.axisDR}.</p>
     <h2>Statement ledger, in document order</h2>`;
-    R.statements.slice().sort((a, b) => (a.order - b.order) || (a.page - b.page)).forEach(s => {
+    R.statements.filter(s => !s.excluded).sort((a, b) => (a.order - b.order) || (a.page - b.page)).forEach(s => {
         const e = effective(s);
         h += `<p><b>[${esc(s.paraLocator || s.locator || ("p. " + s.page))}] ${e.dimension || "dimension not assigned"} / ${e.tier}</b>${s.override ? " (coder override by " + esc(s.override.coder) + ")" : ""}<br>
         <i>${esc(s.excerpt || s.text)}</i><br>
@@ -5851,6 +6180,13 @@ function exportEvaluationDocx() {
         Reason: ${esc(s.tierWhy.join("; "))}. Evidence read over the ${esc(s.evidenceScope || "sentence")}${s.tierSentence !== s.tierParagraph ? " (sentence alone: " + s.tierSentence + ")" : ""}.
         Features: ${esc(s.featureSet.join(", ") || "none")}.${(s.frameHits && s.frameHits.length) ? " Justice framing: " + esc(s.frameHits.join(", ")) + "." : ""}</small></p>`;
     });
+    const droppedS = R.statements.filter(s => s.excluded);
+    if (droppedS.length) {
+        h += `<h2>Excluded from this assessment</h2><p><i>${droppedS.length} statement(s) were taken out by the coder and contributed to no score. They are listed so the decision stays on the record.</i></p>`;
+        droppedS.forEach(s => {
+            h += `<p><b>[${esc(s.locator || ("p. " + s.page))}]</b> ${esc(s.excludedReason || "no reason given")}${s.excludedBy ? " &mdash; " + esc(s.excludedBy) : ""}<br><i>${esc(s.text)}</i></p>`;
+        });
+    }
     h += `<h2>Extraction diagnostics</h2><p>${R.diag.pages} pages, ${R.diag.skipped.length} skipped, ${R.diag.lowTextPages} sparse pages${R.diag.scannedRisk ? ", <b>scanned-PDF risk flagged</b>" : ""}. ${R.diag.funnel.paragraphs} paragraphs rebuilt from ${R.diag.funnel.lines} lines.</p></body></html>`;
     download(`JUSTNDC_${R.country.replace(/[^a-zA-Z0-9]/g, '_')}.doc`, h, 'application/msword');
 }
@@ -5858,6 +6194,14 @@ function exportEvaluationDocx() {
 function exportEvaluationCsv() {
     if (!lastEvaluation) { alert("Run an evaluation first."); return; }
     const R = lastEvaluation;
+    /* The ledger is the archive of what produced the score. A statement the
+       coder took out did not produce the score, so it does not belong in it.
+       The exclusions are not thrown away: they go to a second file with the
+       reason each was given, so the decision stays auditable. */
+    const active = R.statements.filter(s => !s.excluded);
+    const dropped = R.statements.filter(s => s.excluded);
+    if (!active.length) { alert("Every statement in this ledger is excluded, so there is nothing to export."); return; }
+
     const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
     const head = ["country", "doc_order", "statement_id", "paragraph_id", "page", "line_start", "line_end",
         "paragraph_line_start", "paragraph_line_end", "locator",
@@ -5869,24 +6213,36 @@ function exportEvaluationCsv() {
         "evidence_features", "evidence_features_from_paragraph", "matched_terms", "screen_terms", "tier_reason",
         "sentences_matched_in_paragraph", "sentence", "paragraph", "preceding_sentence", "following_sentence",
         "language", "english_machine_translation", "translation_source",
+        "final_dimension", "final_tier", "excluded", "excluded_reason",
         "engine", "lexicon", "run_utc"];
-    const rows = R.statements.slice().sort((a, b) => (a.order - b.order) || (a.page - b.page)).map(s => [
-        R.country, s.order, s.id, s.paraId, s.page, s.lineStart, s.lineEnd,
-        s.paraLineStart, s.paraLineEnd, s.locator,
-        sectionLabel(s.section), s.heading, s.cluster, s.scope, s.conditional, s.structural,
-        !!s.table, s.table ? (s.cellColumn || 0) + 1 : "", s.rowLabel || "", s.prompt || "",
-        s.dimension, s.tier, s.tierSentence, s.tierParagraph, s.evidenceScope, s.scopeLift,
-        s.override && s.override.dimension, s.override && s.override.tier,
-        s.override && s.override.note, s.override && s.override.coder,
-        s.needsReview, !!s.pendingDimension, s.implicit > 0, (s.frameHits || []).join("|"),
-        s.featureSet.join("|"),
-        s.featureSet.filter(f => s.featureSource && s.featureSource[f] === "paragraph").join("|"),
-        [...(s.matched.core || []), ...(s.matched.supporting || [])].join("|"), (s.screenHits || []).join("|"),
-        s.tierWhy.join("; "), s.sentencesMatched, s.text, s.excerpt || s.text, s.before, s.after,
-        s.lang, s.translation || "", s.translationSource || "",
-        R.engine, R.lexicon, R.run
-    ].map(q).join(","));
-    download(`JUSTNDC_${R.country.replace(/[^a-zA-Z0-9]/g, '_')}_ledger.csv`, [head.join(","), ...rows].join("\n"), 'text/csv');
+    const line = s => {
+        const e = effective(s);
+        return [
+            R.country, s.order, s.id, s.paraId, s.page, s.lineStart, s.lineEnd,
+            s.paraLineStart, s.paraLineEnd, s.locator,
+            sectionLabel(s.section), s.heading, s.cluster, s.scope, s.conditional, s.structural,
+            !!s.table, s.table ? (s.cellColumn || 0) + 1 : "", s.rowLabel || "", s.prompt || "",
+            s.dimension, s.tier, s.tierSentence, s.tierParagraph, s.evidenceScope, s.scopeLift,
+            s.override && s.override.dimension, s.override && s.override.tier,
+            s.override && s.override.note, s.override && s.override.coder,
+            s.needsReview, !!s.pendingDimension, s.implicit > 0, (s.frameHits || []).join("|"),
+            (s.featureSet || []).join("|"),
+            (s.featureSet || []).filter(f => s.featureSource && s.featureSource[f] === "paragraph").join("|"),
+            [...(s.matched.core || []), ...(s.matched.supporting || [])].join("|"), (s.screenHits || []).join("|"),
+            (s.tierWhy || []).join("; "), s.sentencesMatched, s.text, s.excerpt || s.text, s.before, s.after,
+            s.lang, s.translation || "", s.translationSource || "",
+            e.dimension || "", e.tier || "", !!s.excluded, s.excludedReason || "",
+            R.engine, R.lexicon, R.run
+        ].map(q).join(",");
+    };
+    const stem = R.country.replace(/[^a-zA-Z0-9]/g, '_');
+    download(`JUSTNDC_${stem}_ledger.csv`, [head.join(","), ...active.map(line)].join("\n"), 'text/csv');
+    if (dropped.length) {
+        download(`JUSTNDC_${stem}_excluded.csv`, [head.join(","), ...dropped.map(line)].join("\n"), 'text/csv');
+    }
+    const box = document.getElementById('recompute-note');
+    if (box) box.innerHTML = `<span class="rc-what">Ledger exported.</span> ${active.length} statement(s) that produced the score`
+        + (dropped.length ? `, and ${dropped.length} excluded one(s) in a separate file so the decision stays on the record.` : `.`);
 }
 
 function exportScrapedDocx() {
@@ -7218,7 +7574,30 @@ function openCountryRecord(country) {
         ${(rb.flags && rb.flags.length) ? rb.flags.map(f => `<div class="flag-row"><span class="flag-tag">${esc(f.label)}</span><span>${esc(f.detail)}</span></div>`).join("") : ""}`;
     }
 
-    el.innerHTML = head + detail + `<h4 class="cr-h">Coding examples filed for this country</h4>` + body;
+    /* Reporting and Coding Examples are written by the same action now, but a
+       coder can still edit an example afterwards. Rather than silently
+       recomputing a score from data that does not carry the evidence features
+       the score needs, the record says plainly when the two have drifted. */
+    let drift = "";
+    if (a) {
+        const filed = codes.length;
+        const scored = a.statements || 0;
+        const disagree = codes.filter(c => c.source === "ledger" && a.tiers && c.dimension && a.tiers[c.dimension]
+            && tierRank(c.level) > tierRank(a.tiers[c.dimension])).length;
+        if (filed === 0 && scored > 0) {
+            drift = `<div class="flag-row"><span class="flag-tag">not filed</span><span>This assessment scored
+                ${scored} statement(s) but none are filed as coding examples. Settings &rarr; <b>Recover unfiled work</b>
+                rebuilds them from your stored decisions, or open the country in Assessment and press <b>Save everything</b>.</span></div>`;
+        } else if (scored && filed && filed < scored * 0.5) {
+            drift = `<div class="flag-row"><span class="flag-tag">partly filed</span><span>${filed} example(s) filed
+                against ${scored} scored statement(s). Press <b>Save everything</b> on the assessment to file the rest.</span></div>`;
+        }
+        if (disagree) drift += `<div class="flag-row"><span class="flag-tag">edited since</span><span>${disagree}
+            example(s) now sit above the tier recorded for their dimension. The recorded score still reflects the
+            assessment as it stood; re-record it to bring the two back in line.</span></div>`;
+    }
+
+    el.innerHTML = head + drift + detail + `<h4 class="cr-h">Coding examples filed for this country</h4>` + body;
     box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
