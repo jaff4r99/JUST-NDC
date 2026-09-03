@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JUST-NDC (Team Edition): Assessing Transformative Climate Justice in NDC 3.0</title>
+    <title>JUST-NDC Sandbox (Team Edition): Assessing Transformative Climate Justice in NDC 3.0</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
     <!-- PDF.js for Client-Side AI Analyzer Text Extraction -->
@@ -622,7 +622,7 @@
                 <span class="dot dot-minimize"></span>
                 <span class="dot dot-maximize"></span>
             </div>
-            <div class="window-title">JUST-NDC — Team Workspace (Live Sync)</div>
+            <div class="window-title">JUST-NDC — Personal Sandbox (local only)</div>
             <div class="connection-status" id="db-status"><div class="status-dot"></div> Connecting to Cloud...</div>
         </div>
 
@@ -1810,7 +1810,10 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
         
         try {
             if (typeof window.supabase !== 'undefined') {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                /* personal sandbox: the shared database is deliberately not connected,
+                   so nothing here can touch the team's record. Everything is kept in
+                   this browser and moved with Back up everything. */
+                supabaseClient = null;
             } else {
                 console.warn("Supabase CDN failed to load.");
             }
