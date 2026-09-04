@@ -604,6 +604,8 @@
         .rep-danger { margin-top:14px; border:1px solid #f0dcb8; background:#fffaf2; border-radius:10px; padding:10px 14px; }
         .rep-danger summary { cursor:pointer; font-size:0.82rem; font-weight:600; color:#7a5200; }
         .rep-danger p { font-size:0.8rem; line-height:1.55; color:#5c4a2a; margin:8px 0; }
+            .build-stamp { font-size:0.62rem; font-weight:600; letter-spacing:.04em; color:#8a8a90;
+                       border:1px solid #e0e0e6; border-radius:9px; padding:1px 7px; margin-left:8px; vertical-align:middle; }
     </style>
 </head>
 <body>
@@ -622,7 +624,7 @@
                 <span class="dot dot-minimize"></span>
                 <span class="dot dot-maximize"></span>
             </div>
-            <div class="window-title">JUST-NDC — Personal Sandbox (local only)</div>
+            <div class="window-title">JUST-NDC — Personal Sandbox (local only) <span id="build-stamp" class="build-stamp"></span></div>
             <div class="connection-status" id="db-status"><div class="status-dot"></div> Connecting to Cloud...</div>
         </div>
 
@@ -1863,8 +1865,8 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
             { c: "Comoros", l: "French", s: 0, p: 135, mapTarget: "KM", f: "135 Comoros FR.pdf" }, { c: "Congo", l: "French", s: 0, p: 100, mapTarget: "CG", f: "100 Congo FR.pdf" }, { c: "Côte d'Ivoire", l: "French", s: 0, p: 132, mapTarget: "CI", f: "132 COTE D'IVOIRE FR.pdf" }, 
             { c: "Gabon", l: "French", s: 0, p: 110, mapTarget: "GA", f: "110 Gabon FR.pdf" }, { c: "Guinea", l: "French", s: 0, p: 37, mapTarget: "GN", f: "37 Guinea FR.pdf" }, { c: "Mauritania", l: "French", s: 0, p: 137, mapTarget: "MR", f: "137 Mauritania FR.pdf" }, 
             { c: "Morocco", l: "French", s: 0, p: 110, mapTarget: "MA", f: "110 Morocco FR.pdf" }, { c: "Tunisia", l: "French", s: 0, p: 67, mapTarget: "TN", f: "67 Tunisia FR.pdf" },
-            { c: "Kazakhstan", l: "Russian", s: 0, p: 102, mapTarget: "KZ", f: "102 NDC Kazakhstan 3.0 RUSS.pdf" }, { c: "Kyrgyzstan", l: "Russian", s: 0, p: 99, mapTarget: "KG", f: "99 Kyrgyzstan RUSS.pdf" }, { c: "Russia", l: "Russian", s: 0, p: 48, mapTarget: "RU", f: "48 RUSSIA RUSS.pdf" }, { c: "Uzbekistan", l: "Russian", s: 0, p: 68, mapTarget: "UZ", f: "68 Uzbekistan Third NDC RUSS.pdf" },
-            { c: "Iraq", l: "Arabic", s: 0, p: 50, mapTarget: "IQ", f: "50 IRAQ ARB.pdf" }, { c: "China", l: "Chinese", s: 0, p: 35, mapTarget: "CN", f: "35 China CN.pdf" }, { c: "Ukraine", l: "Ukrainian", s: 0, p: 24, mapTarget: "UA", f: "24 Ukraine UKR.pdf" }
+            { c: "Kazakhstan", l: "English", s: 0, p: 93, mapTarget: "KZ", f: "NDC_Kazakhstan 3.0 eng.pdf", altLang: "Russian", altFile: "102 NDC Kazakhstan 3.0 RUSS.pdf", altPages: 102 }, { c: "Kyrgyzstan", l: "English", s: 0, p: 94, mapTarget: "KG", f: "NDC3.0_Kyrgyzstan_English_30-09-2025 (2).pdf", altLang: "Russian", altFile: "99 Kyrgyzstan RUSS.pdf", altPages: 99 }, { c: "Russia", l: "Russian", s: 0, p: 48, mapTarget: "RU", f: "48 RUSSIA RUSS.pdf" }, { c: "Uzbekistan", l: "English", s: 0, p: 60, mapTarget: "UZ", f: "Uzbekistan Third NDC.pdf", altLang: "Russian", altFile: "68 Uzbekistan Third NDC RUSS.pdf", altPages: 68 },
+            { c: "Iraq", l: "English", s: 0, p: 52, mapTarget: "IQ", f: "Iraq NDC English.pdf", altLang: "Arabic", altFile: "50 IRAQ ARB.pdf", altPages: 50 }, { c: "China", l: "Chinese", s: 0, p: 35, mapTarget: "CN", f: "35 China CN.pdf" }, { c: "Ukraine", l: "Ukrainian", s: 0, p: 24, mapTarget: "UA", f: "24 Ukraine UKR.pdf" }
         ];
 
         const defaultAnnexData = [
@@ -1885,7 +1887,7 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
    Country verdict is rubric-based (component presence), never frequency-based.
    ========================================================================== */
 
-const ENGINE_VERSION = "2.13.0";
+const ENGINE_VERSION = "2.14.0";
 const LEXICON_VERSION = "2026-09-03";
 
 /* Rule constants exposed so the method is stated, not buried. */
@@ -3840,6 +3842,8 @@ function buildRubric(profile, statements) {
                 }
             }
         }
+
+        window.addEventListener('DOMContentLoaded', () => { try { stampBuild(); } catch (e) {} });
 
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
@@ -5825,14 +5829,10 @@ function fileStatementAsExample(id, quiet) {
 }
 
 function fileAllCoded() {
-    if (!lastEvaluation) return;
-    const todo = includedStatements().filter(s => effective(s).dimension && !s.filed);
-    if (!todo.length) { alert("Every coded statement in this ledger has already been filed."); return; }
-    if (!confirm(`File ${todo.length} coded statement(s) from this ledger into the coding examples for ${lastEvaluation.country}?`)) return;
-    todo.forEach(s => fileStatementAsExample(s.id, true));
-    renderLedger();
-    const box = document.getElementById('recompute-note');
-    if (box) box.innerHTML = `<span class="rc-what">${todo.length} statement(s) filed to coding examples.</span>`;
+    /* the old version fired one request per statement, all at once and none of
+       them awaited, then announced success regardless: that is how a
+       400-statement country ended up with 5 rows on the server */
+    saveEverything();
 }
 
 /* The server table has these columns and no others. Sending the extra fields
@@ -5960,6 +5960,31 @@ function screenItemHtml(s) {
    statement, so pressing the button twice does not double the rows.
    ========================================================================== */
 
+/* One place that redraws every view that depends on the project record, so
+   recording a country updates the tracker, the map, the counters, the country
+   index and the reporting page at once instead of only the page you are on. */
+function stampBuild() {
+    const el = document.getElementById('build-stamp');
+    if (el) el.textContent = "build " + ENGINE_VERSION;
+    console.log("JUST-NDC engine " + ENGINE_VERSION + ", lexicon " + LEXICON_VERSION);
+}
+
+function refreshEverything() {
+    stampBuild();
+    const call = fn => { try { if (typeof window[fn] === "function") window[fn](); } catch (e) { console.warn(fn, e); } };
+    call("loadTables");
+    call("updateProgressMetrics");
+    call("renderCountryIndex");
+    call("renderExamples");
+    call("renderReporting");
+    if (typeof googleChartsLoaded !== "undefined" && googleChartsLoaded) {
+        const on = id => { const el = document.getElementById(id); return el && el.classList.contains("active"); };
+        if (on("map")) call("drawRegionsMap");
+        if (on("reporting")) call("drawVerdictMap");
+        if (on("dashboard")) call("drawGantt");
+    }
+}
+
 let cloudSaveBusy = false;
 
 function ledgerRowsForCloud(R) {
@@ -6066,12 +6091,25 @@ async function saveEverything() {
         if (btn) { btn.disabled = false; btn.innerText = btn.dataset.label || "Save everything"; }
     }
 
+    /* Read the count back off the server. A save that reports what it hoped to
+       write is what let 400 statements become 5 without anyone noticing. */
+    let confirmed = null;
+    if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        try {
+            const { count } = await supabaseClient.from('coding_examples')
+                .select('id', { count: 'exact', head: true }).eq('country', R.country);
+            confirmed = count;
+        } catch (e) { /* the count is a courtesy, not the save */ }
+    }
+    refreshEverything();
+
     const ok = out.failed === 0 && !out.errors.length;
     say(`<span class="rc-what" style="color:${ok ? '#1f6b33' : '#a3261f'}">`
         + `${ok ? "Saved." : "Saved with problems."}</span> `
         + `${out.inserted} statement(s) written, ${out.already} already on the server`
         + (out.failed ? `, <b>${out.failed} failed</b>` : "")
         + `. The assessment itself is recorded.`
+        + (confirmed !== null ? ` <b>The server now holds ${confirmed} example(s) for ${esc(R.country)}.</b>` : "")
         + (out.errors.length ? ` <span class="sync-warn">${esc(out.errors[0])}</span>` : ""));
     if (typeof logActivity === "function") logActivity(`saved ${out.inserted} statement(s) for ${R.country}`);
 }
@@ -6682,7 +6720,18 @@ function recordAssessment(quiet) {
     all[R.country] = row;
     if (storeSet(STORE_KEYS.assessments, all)) {
         const c = ndcData.find(x => x.c === R.country);
-        if (c && c.s !== 1) { c.s = 1; try { localStorage.setItem('ndcTrackerState', JSON.stringify(ndcData.map(i => ({ c: i.c, s: i.s })))); } catch (e) {} loadTables(); }
+        if (c && c.s !== 1) {
+            c.s = 1;
+            try { localStorage.setItem('ndcTrackerState', JSON.stringify(ndcData.map(i => ({ c: i.c, s: i.s })))); } catch (e) {}
+            /* the status used to be set only in this tab, so the next reload
+               pulled 0 back from the server and the country looked unanalysed
+               again everywhere except Reporting */
+            if (typeof supabaseClient !== "undefined" && supabaseClient) {
+                supabaseClient.from('ndc_status').upsert({ country: c.c, status: 1 })
+                    .then(r => { if (r && r.error) console.warn("status not synced", r.error); });
+            }
+        }
+        refreshEverything();
         renderEvaluation();
         renderReporting();
         const note = document.getElementById('record-assessment-note');
