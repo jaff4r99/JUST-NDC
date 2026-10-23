@@ -1889,7 +1889,7 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
             { c: "Panama", l: "Spanish", s: 0, p: 39, mapTarget: "PA", f: "39 PANAMA ESP.pdf" }, 
             { c: "Paraguay", l: "Spanish", s: 0, p: 138, mapTarget: "PY", f: "138 Paraguay NDC 3.0 ESP.pdf" }, { c: "Peru", l: "Spanish", s: 0, p: 87, mapTarget: "PE", f: "87 PERU ESP.pdf" }, { c: "Venezuela", l: "Spanish", s: 0, p: 302, mapTarget: "VE", f: "302 Venezuela ESP.pdf" },
             { c: "Algeria", l: "French", s: 0, p: 45, mapTarget: "DZ", f: "45 Algeria FR.pdf" }, { c: "Benin", l: "French", s: 0, p: 179, mapTarget: "BJ", f: "179 BENIN FR.pdf" }, { c: "Burkina Faso", l: "French", s: 0, p: 91, mapTarget: "BF", f: "91BKF-CDN 3.0_BURKINA FASO FR.pdf" }, 
-            { c: "Burundi", l: "French", s: 0, p: 92, mapTarget: "BI", f: "92 CDN3.0 BURUNDI FR.pdf" }, { c: "Cameroon", l: "French", s: 0, p: 65, mapTarget: "CM", f: "65 Cameroon FR.pdf" }, { c: "Central African Republic", l: "French", s: 0, p: 66, mapTarget: "CF", f: "66 Central African Republic FR.pdf" }, 
+            { c: "Burundi", l: "French", s: 0, p: 92, mapTarget: "BI", f: "92 CDN3.0  BURUNDI FR.pdf" }, { c: "Cameroon", l: "French", s: 0, p: 65, mapTarget: "CM", f: "65 Cameroon FR.pdf" }, { c: "Central African Republic", l: "French", s: 0, p: 66, mapTarget: "CF", f: "66 Central African Republic FR.pdf" }, 
             { c: "Comoros", l: "French", s: 0, p: 135, mapTarget: "KM", f: "135 Comoros FR.pdf" }, { c: "Congo", l: "French", s: 0, p: 100, mapTarget: "CG", f: "100 Congo FR.pdf" }, { c: "Côte d'Ivoire", l: "French", s: 0, p: 132, mapTarget: "CI", f: "132 COTE D'IVOIRE FR.pdf" }, 
             { c: "Gabon", l: "French", s: 0, p: 110, mapTarget: "GA", f: "110 Gabon FR.pdf" }, { c: "Guinea", l: "French", s: 0, p: 37, mapTarget: "GN", f: "37 Guinea FR.pdf" }, { c: "Mauritania", l: "French", s: 0, p: 137, mapTarget: "MR", f: "137 Mauritania FR.pdf" }, 
             { c: "Morocco", l: "French", s: 0, p: 110, mapTarget: "MA", f: "110 Morocco FR.pdf" }, { c: "Tunisia", l: "French", s: 0, p: 67, mapTarget: "TN", f: "67 Tunisia FR.pdf" },
@@ -4311,6 +4311,41 @@ function showPage(pageId, btnElement) {
    so a scanned PDF cannot masquerade as "no justice found".
    ========================================================================== */
 
+/* Filename-variant fallback.
+   Hugging Face paths are literal: a double space, an underscore and a single
+   space are three different files. If the manifest spelling 404s, retry the
+   plausible variants before reporting the document missing. */
+async function openPdfWithNameVariants(url, log) {
+    const tries = [url];
+    if (/^https?:/.test(url) && url.indexOf('huggingface.co') !== -1) {
+        const cut = url.lastIndexOf('/');
+        const base = url.slice(0, cut + 1);
+        const name = decodeURIComponent(url.slice(cut + 1));
+        const variants = [
+            name.replace(/ /g, '  '),
+            name.replace(/\s{2,}/g, ' '),
+            name.replace(/_/g, ' '),
+            name.replace(/_/g, '  '),
+            name.replace(/ /g, '_')
+        ];
+        variants.forEach(v => {
+            const u = base + encodeURIComponent(v);
+            if (tries.indexOf(u) === -1) tries.push(u);
+        });
+    }
+    let lastErr = null;
+    for (let i = 0; i < tries.length; i++) {
+        try {
+            const pdf = await pdfjsLib.getDocument(tries[i]).promise;
+            if (i > 0) log && log('Manifest filename did not match the repository. Loaded "'
+                + decodeURIComponent(tries[i].slice(tries[i].lastIndexOf('/') + 1))
+                + '" instead. Correct the manifest entry.', 'warn');
+            return pdf;
+        } catch (e) { lastErr = e; }
+    }
+    throw lastErr;
+}
+
 async function extractDocument(fileUrl, log, docLang) {
     let finalUrl = fileUrl;
     if (fileUrl.startsWith('http') && !fileUrl.includes('huggingface.co')) {
@@ -4327,7 +4362,7 @@ async function extractDocument(fileUrl, log, docLang) {
     }
 
     if (typeof applyCustomTerms === "function") applyCustomTerms();
-    const pdf = await pdfjsLib.getDocument(finalUrl).promise;
+    const pdf = await openPdfWithNameVariants(finalUrl, log);
     log && log(`PDF loaded: ${pdf.numPages} pages. Rebuilding page layout.`);
 
     const units = [];
