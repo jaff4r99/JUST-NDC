@@ -1871,6 +1871,14 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
            CORS headers, so pdf.js can read these files without a proxy. */
         const ghBaseUrl = "https://raw.githubusercontent.com/jaff4r99/just-ndc/main/";
         const ghFile = f => ghBaseUrl + encodeURIComponent(f);
+        /* raw.githubusercontent.com sends PDFs as application/octet-stream, so a
+           browser downloads them. The same files are deployed on the Vercel site,
+           which serves them as application/pdf, so the Download link points there
+           and the PDF opens in the browser. Extraction still reads from GitHub raw. */
+        const siteBaseUrl = "https://just-ndc.vercel.app/";
+        const viewUrl = item => (item.url && item.url.indexOf(ghBaseUrl) === 0)
+            ? siteBaseUrl + item.url.slice(ghBaseUrl.length)
+            : (item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f));
         const BUILD_VERSION = "2.15.1";
 
         const defaultNdcData = [
@@ -4042,7 +4050,7 @@ function buildRubric(profile, statements) {
                 const badgeClass = item.s === 1 ? 'badge-done' : 'badge-pending';
                 const badgeText = item.s === 1 ? 'Analyzed ✓' : 'Pending ⟳';
                 const badge = `<span class="status-badge ${badgeClass}" onclick="toggleStatus('${item.c}')">${badgeText}</span>`;
-                const fileUrl = item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f);
+                const fileUrl = viewUrl(item);
                 const dlBtn = item.awaitingUpload
                     ? `<span class="download-btn" style="opacity:.55;cursor:default;" title="${item.f} is not yet in the GitHub repository">Upload pending</span>`
                     : `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>`;
