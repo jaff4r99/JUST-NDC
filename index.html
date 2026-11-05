@@ -96,6 +96,13 @@
         .lang-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-bottom: 25px; }
         .lang-card { padding: 16px; border-radius: 10px; background: #fff; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid var(--border-light); transition: transform 0.2s; }
         .lang-card:hover { transform: translateY(-2px); }
+        .dl-card { padding: 16px 18px; border-radius: 10px; background: #fff; border: 1px solid var(--border-light); }
+        .dl-card .dl-when { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; color: var(--text-muted); }
+        .dl-card .dl-what { font-size: 1.05rem; font-weight: 700; margin: 4px 0 8px 0; }
+        .dl-card .dl-num { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
+        .dl-card .dl-bar { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 8px 0 6px 0; }
+        .dl-card .dl-bar > div { height: 100%; background: #0066cc; }
+        .dl-card .dl-note { font-size: 0.85rem; color: var(--text-muted); }
         .lang-card h2 { margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 700; }
         .lang-card p { margin: 3px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
 
@@ -677,7 +684,7 @@
                 <div id="dashboard" class="page active">
                     <div id="db-note" class="diag-ok" style="margin-bottom:14px;"></div>
                     <h1 style="color: #1d1d1f;">JUST-NDC Project Roadmap</h1>
-                    <p>Evaluating transformative climate justice across 120 NDC submissions (+2 Annexes). Corpus locked 1 August 2026. Coverage and cut-off are recorded on the Global Map page.</p>
+                    <p>Evaluating transformative climate justice across <b id="dash-corpus">the NDC 3.0 corpus</b>, plus 2 annexes. Corpus first locked in August 2026 and extended on 5 November 2026 to submissions received up to 3 November 2026. Coverage and cut-off are recorded on the Global Map page.</p>
                     
                     <div class="ui-box" style="border-left: 5px solid var(--primary); background: rgba(0,102,204,0.03);">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
@@ -693,8 +700,20 @@
                         </div>
                     </div>
 
+
+                    <div class="ui-box" id="deadline-box" style="border-left: 5px solid #ff9500;">
+                        <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                            <h3 style="margin:0;">Deadlines</h3>
+                            <span style="font-size:0.85rem; color:var(--text-muted);">COP31, Antalya, Türkiye · 9–20 November 2026</span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+                            <div id="dl-interim" class="dl-card"></div>
+                            <div id="dl-cop" class="dl-card"></div>
+                        </div>
+                    </div>
+
                     <div class="ui-box" style="overflow-x: auto;">
-                        <div id="gantt_chart" style="width: 100%; min-width: 600px; height: 310px;"></div>
+                        <div id="gantt_chart" style="width: 100%; min-width: 600px; height: 380px;"></div>
                     </div>
                     
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
@@ -705,6 +724,8 @@
                                 <li><span class="timeline-date">August 1 – August 31: Data Execution and Mapping</span>Corpus locked at <b>121 NDC documents covering 147 countries</b>, snapshot taken from the UNFCCC registry on 1 August 2026. Running the corpus through the screener and the assessment, then mapping results onto the two-axis matrix.</li>
                                 <li><span class="timeline-date">September 1 – September 30: Paternity Leave</span>Human verification of machine-assessed documents continues, led by the student assistant. <span id="verify-backlog" class="verify-backlog">Verification queue loading...</span></li>
                                 <li><span class="timeline-date">October 1 – October 31: Synthesis and Drafting</span>Synthesizing results, drafting core findings, and evaluating justice-washing risks.</li>
+                                <li><span class="timeline-date">November 1 – November 6: Interim deadline</span>Complete assessments for <b>142 countries</b> by <b>6 November</b>. On 5 November the corpus was extended with 18 submissions received up to 3 November 2026.</li>
+                                <li><span class="timeline-date">November 9 – November 20: COP31, Antalya</span>Complete every remaining country by the close of COP31 on <b>20 November</b>.</li>
                             </ul>
                         </div>
                         
@@ -1317,7 +1338,9 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                 <!-- PAGE 3: GLOBAL MAP -->
                 <div id="map" class="page">
                     <h1 style="color: #1d1d1f;">Global Analysis Status</h1>
-                    <p>121 NDC documents covering 147 countries. The European Union submits a single NDC on behalf of its 27 member states, so 120 single-country documents plus 1 EU document equals 147 countries. Iraq, Kazakhstan, Kyrgyzstan and Uzbekistan are analysed from their official English editions; the original Arabic and Russian files are listed in the supplemental annex. Corpus snapshot: UNFCCC NDC registry, retrieved 1 August 2026. Submissions received after that date are outside this dataset. Countries yet to submit are not a random sample, so global claims must be qualified.</p>
+                    <p id="corpus-summary">Corpus loading...</p>
+                    <p>Iraq, Kazakhstan, Kyrgyzstan and Uzbekistan are analysed from their official English editions; the original Arabic and Russian files are listed in the supplemental annex. Countries yet to submit are not a random sample, so global claims must be qualified.</p>
+                    <p><b>Submission window.</b> The earliest submission in the corpus is the United Arab Emirates' NDC 3.0, submitted on 6 November 2024; the most recent is North Macedonia's, dated 3 November 2026.</p>
 
                     <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
@@ -1335,15 +1358,7 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                         </div>
                     </div>
 
-                    <div class="lang-container" style="margin-top: 25px;">
-                        <div class="lang-card"><h2>82</h2><p>English</p></div>
-                        <div class="lang-card"><h2>16</h2><p>Spanish</p></div>
-                        <div class="lang-card"><h2>15</h2><p>French</p></div>
-                        <div class="lang-card"><h2>4</h2><p>Russian</p></div>
-                        <div class="lang-card"><h2>1</h2><p>Arabic</p></div>
-                        <div class="lang-card"><h2>1</h2><p>Chinese</p></div>
-                        <div class="lang-card"><h2>1</h2><p>Ukrainian</p></div>
-                    </div>
+                    <div class="lang-container" id="lang-cards" style="margin-top: 25px;"></div>
 
                     <div class="ui-box">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
@@ -1855,6 +1870,12 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
         }
 
         const hfBaseUrl = "https://huggingface.co/spaces/jaff4r/Climate-Justice-in-NDCs/resolve/main/ndcs/";
+        /* Submissions added on 5 November 2026 are served from the GitHub repository,
+           because the Hugging Face space is full. raw.githubusercontent.com sends
+           CORS headers, so pdf.js can read these files without a proxy. */
+        const ghBaseUrl = "https://raw.githubusercontent.com/jaff4r99/just-ndc/main/";
+        const ghFile = f => ghBaseUrl + encodeURIComponent(f);
+        const BUILD_VERSION = "2.15.1";
 
         const defaultNdcData = [
             { c: "Andorra", l: "Spanish", s: 1, p: 18, mapTarget: "AD", f: "18 ANDORRA ESP.pdf" }, { c: "Belize", l: "English", s: 1, p: 128, mapTarget: "BZ", f: "128 BELIZE.pdf" }, { c: "Brazil", l: "English", s: 1, p: 44, mapTarget: "BR", f: "44 Brazil.pdf" }, 
@@ -1893,12 +1914,35 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
             { c: "Panama", l: "Spanish", s: 0, p: 39, mapTarget: "PA", f: "39 PANAMA ESP.pdf" }, 
             { c: "Paraguay", l: "Spanish", s: 0, p: 138, mapTarget: "PY", f: "138 Paraguay NDC 3.0 ESP.pdf" }, { c: "Peru", l: "Spanish", s: 0, p: 87, mapTarget: "PE", f: "87 PERU ESP.pdf" }, { c: "Venezuela", l: "Spanish", s: 0, p: 302, mapTarget: "VE", f: "302 Venezuela ESP.pdf" },
             { c: "Algeria", l: "French", s: 0, p: 45, mapTarget: "DZ", f: "45 Algeria FR.pdf" }, { c: "Benin", l: "French", s: 0, p: 179, mapTarget: "BJ", f: "179 BENIN FR.pdf" }, { c: "Burkina Faso", l: "French", s: 0, p: 91, mapTarget: "BF", f: "91BKF-CDN 3.0_BURKINA FASO FR.pdf" }, 
-            { c: "Burundi", l: "French", s: 0, p: 92, mapTarget: "BI", f: "92 CDN3.0 BURUNDI FR.pdf" }, { c: "Cameroon", l: "French", s: 0, p: 65, mapTarget: "CM", f: "65 Cameroon FR.pdf" }, { c: "Central African Republic", l: "French", s: 0, p: 66, mapTarget: "CF", f: "66 Central African Republic FR.pdf" }, 
+            { c: "Burundi", l: "French", s: 0, p: 92, mapTarget: "BI", f: "92 CDN3.0  BURUNDI FR.pdf" }, { c: "Cameroon", l: "French", s: 0, p: 65, mapTarget: "CM", f: "65 Cameroon FR.pdf" }, { c: "Central African Republic", l: "French", s: 0, p: 66, mapTarget: "CF", f: "66 Central African Republic FR.pdf" }, 
             { c: "Comoros", l: "French", s: 0, p: 135, mapTarget: "KM", f: "135 Comoros FR.pdf" }, { c: "Congo", l: "French", s: 0, p: 100, mapTarget: "CG", f: "100 Congo FR.pdf" }, { c: "Côte d'Ivoire", l: "French", s: 0, p: 132, mapTarget: "CI", f: "132 COTE D'IVOIRE FR.pdf" }, 
             { c: "Gabon", l: "French", s: 0, p: 110, mapTarget: "GA", f: "110 Gabon FR.pdf" }, { c: "Guinea", l: "French", s: 0, p: 37, mapTarget: "GN", f: "37 Guinea FR.pdf" }, { c: "Mauritania", l: "French", s: 0, p: 137, mapTarget: "MR", f: "137 Mauritania FR.pdf" }, 
             { c: "Morocco", l: "French", s: 0, p: 110, mapTarget: "MA", f: "110 Morocco FR.pdf" }, { c: "Tunisia", l: "French", s: 0, p: 67, mapTarget: "TN", f: "67 Tunisia FR.pdf" },
             { c: "Kazakhstan", l: "English", s: 0, p: 93, mapTarget: "KZ", f: "NDC_Kazakhstan 3.0 eng.pdf", altLang: "Russian", altFile: "102 NDC Kazakhstan 3.0 RUSS.pdf", altPages: 102 }, { c: "Kyrgyzstan", l: "English", s: 0, p: 94, mapTarget: "KG", f: "NDC3.0_Kyrgyzstan_English_30-09-2025 (2).pdf", altLang: "Russian", altFile: "99 Kyrgyzstan RUSS.pdf", altPages: 99 }, { c: "Russia", l: "Russian", s: 0, p: 48, mapTarget: "RU", f: "48 RUSSIA RUSS.pdf" }, { c: "Uzbekistan", l: "English", s: 0, p: 60, mapTarget: "UZ", f: "Uzbekistan Third NDC.pdf", altLang: "Russian", altFile: "68 Uzbekistan Third NDC RUSS.pdf", altPages: 68 },
-            { c: "Iraq", l: "English", s: 0, p: 52, mapTarget: "IQ", f: "Iraq NDC English.pdf", altLang: "Arabic", altFile: "50 IRAQ ARB.pdf", altPages: 50 }, { c: "China", l: "Chinese", s: 0, p: 35, mapTarget: "CN", f: "35 China CN.pdf" }, { c: "Ukraine", l: "Ukrainian", s: 0, p: 24, mapTarget: "UA", f: "24 Ukraine UKR.pdf" }
+            { c: "Iraq", l: "English", s: 0, p: 52, mapTarget: "IQ", f: "Iraq NDC English.pdf", altLang: "Arabic", altFile: "50 IRAQ ARB.pdf", altPages: 50 }, { c: "China", l: "Chinese", s: 0, p: 35, mapTarget: "CN", f: "35 China CN.pdf" }, { c: "Ukraine", l: "Ukrainian", s: 0, p: 24, mapTarget: "UA", f: "24 Ukraine UKR.pdf" },
+            /* --- Corpus extension, 5 November 2026 -------------------------------
+               Submissions received after the August snapshot, up to North Macedonia
+               (3 November 2026), checked against the UNFCCC NDC registry. Page counts and languages checked against the files.
+               Lesotho is excluded: the file (166 MB) exceeds the hosting limit.
+               awaitingUpload marks entries whose PDF is not yet in the repository. */
+            { c: "Albania", l: "English", s: 0, p: 70, mapTarget: "AL", f: "70Albania.pdf", url: ghFile("70Albania.pdf") },
+            { c: "Botswana", l: "English", s: 0, p: 48, mapTarget: "BW", f: "48BOTSWANA.pdf", url: ghFile("48BOTSWANA.pdf") },
+            { c: "Chad", l: "French", s: 0, p: 104, mapTarget: "TD", f: "104TchadFR.pdf", url: ghFile("104TchadFR.pdf") },
+            { c: "Chile", l: "Spanish", s: 0, p: 82, mapTarget: "CL", f: "82ChileESP.pdf", url: ghFile("82ChileESP.pdf") },
+            { c: "Djibouti", l: "French", s: 0, p: 71, mapTarget: "DJ", f: "71DjiboutiFR.pdf", url: ghFile("71DjiboutiFR.pdf") },
+            { c: "Equatorial Guinea", l: "Spanish", s: 0, p: 84, mapTarget: "GQ", f: "84deGuineaEcuatorialESP.pdf", url: ghFile("84deGuineaEcuatorialESP.pdf") },
+            { c: "Gambia", l: "English", s: 0, p: 211, mapTarget: "GM", f: "211Gambia.pdf", url: ghFile("211Gambia.pdf") },
+            { c: "Grenada", l: "English", s: 0, p: 36, mapTarget: "GD", f: "36Grenada.pdf", url: ghFile("36Grenada.pdf") },
+            { c: "Guinea-Bissau", l: "English", s: 0, p: 112, mapTarget: "GW", f: "112Guinea Bissau.pdf", url: ghFile("112Guinea Bissau.pdf") },
+            { c: "Jordan", l: "English", s: 0, p: 12, mapTarget: "JO", f: "12Jordan.pdf", url: ghFile("12Jordan.pdf") },
+            { c: "Madagascar", l: "French", s: 0, p: 227, mapTarget: "MG", f: "227MADAGASCARFR.pdf", url: ghFile("227MADAGASCARFR.pdf") },
+            { c: "Namibia", l: "English", s: 0, p: 133, mapTarget: "NA", f: "133Namibia.pdf", url: ghFile("133Namibia.pdf") },
+            { c: "Niger", l: "French", s: 0, p: 75, mapTarget: "NE", f: "75NigerFR.pdf", url: ghFile("75NigerFR.pdf") },
+            { c: "North Macedonia", l: "English", s: 0, p: 56, mapTarget: "MK", f: "56NorthMacedonia.pdf", url: ghFile("56NorthMacedonia.pdf") },
+            { c: "Papua New Guinea", l: "English", s: 0, p: 131, mapTarget: "PG", f: "131PapuaNewGuinea.pdf", url: ghFile("131PapuaNewGuinea.pdf") },
+            { c: "Philippines", l: "English", s: 0, p: 16, mapTarget: "PH", f: "16Philippines.pdf", url: ghFile("16Philippines.pdf") },
+            { c: "Saint Vincent and the Grenadines", l: "English", s: 0, p: 46, mapTarget: "VC", f: "46StVincent.pdf", url: ghFile("46StVincent.pdf") },
+            { c: "Togo", l: "French", s: 0, p: 122, mapTarget: "TG", f: "122TOGOFR.pdf", url: ghFile("122TOGOFR.pdf") }
         ];
 
         const defaultAnnexData = [
@@ -3805,7 +3849,7 @@ function buildRubric(profile, statements) {
                     if (selectAi) {
                         let opt1 = document.createElement('option');
                         opt1.value = targetUrl;
-                        opt1.textContent = `${ndc.c} (${ndc.l})`;
+                        opt1.textContent = `${ndc.c} (${ndc.l})` + (ndc.awaitingUpload ? ' · file not yet uploaded' : '');
                         opt1.setAttribute('data-lang', ndc.l || 'Unknown');
                         selectAi.appendChild(opt1);
                     }
@@ -3813,7 +3857,7 @@ function buildRubric(profile, statements) {
                     if (selectEval) {
                         let opt2 = document.createElement('option');
                         opt2.value = JSON.stringify({ c: ndc.c, url: targetUrl, l: ndc.l || 'Unknown' });
-                        opt2.textContent = `${ndc.c} (${ndc.l})`;
+                        opt2.textContent = `${ndc.c} (${ndc.l})` + (ndc.awaitingUpload ? ' · file not yet uploaded' : '');
                         selectEval.appendChild(opt2);
                     }
                 });
@@ -3895,6 +3939,76 @@ function buildRubric(profile, statements) {
             }
         }
 
+        /* ---- corpus counts, deadlines and COP31 phase (build 2.15.1) ---------- */
+        const INTERIM_TARGET = 142;
+        const DEADLINE_INTERIM = new Date(2026, 10, 6, 23, 59, 59);
+        const COP_START = new Date(2026, 10, 9);
+        const COP_END = new Date(2026, 10, 20, 23, 59, 59);
+
+        function corpusCounts() {
+            let countries = 0, countriesDone = 0;
+            ndcData.forEach(i => { const w = (i.c === "European Union") ? 27 : 1; countries += w; if (i.s === 1) countriesDone += w; });
+            const docs = ndcData.length, docsDone = ndcData.filter(i => i.s === 1).length;
+            return {
+                docs, docsDone, countries, countriesDone,
+                interimPct: Math.min(100, Math.round(100 * countriesDone / INTERIM_TARGET)),
+                allPct: countries ? Math.round(100 * countriesDone / countries) : 0
+            };
+        }
+
+        /* calendar days, so a deadline tomorrow reads "1 day left" at any hour today */
+        function daysUntil(d) {
+            const a = new Date(); a.setHours(0, 0, 0, 0);
+            const b = new Date(d); b.setHours(0, 0, 0, 0);
+            return Math.round((b - a) / 86400000);
+        }
+
+        function renderCorpusText() {
+            const cc = corpusCounts();
+            const sum = document.getElementById('corpus-summary');
+            if (sum) sum.innerHTML = `<b>${cc.docs} NDC documents covering ${cc.countries} countries.</b> The European Union submits a single NDC on behalf of its 27 member states, so ${cc.docs - 1} single-country documents plus 1 EU document equals ${cc.countries} countries. Corpus source: UNFCCC NDC registry, first snapshot August 2026, extended on 5 November 2026 to include submissions received up to 3 November 2026. Lesotho's NDC is on the registry but excluded because the file (166 MB) exceeds the hosting limit.`;
+            const dash = document.getElementById('dash-corpus');
+            if (dash) dash.textContent = `${cc.docs} NDC documents covering ${cc.countries} countries`;
+            const cards = document.getElementById('lang-cards');
+            if (cards) {
+                const by = {};
+                ndcData.forEach(i => { by[i.l] = (by[i.l] || 0) + 1; });
+                cards.innerHTML = Object.entries(by).sort((a, b) => b[1] - a[1])
+                    .map(([l, n]) => `<div class="lang-card"><h2>${n}</h2><p>${l}</p></div>`).join('');
+            }
+        }
+
+        function renderDeadlines() {
+            const cc = corpusCounts();
+            const card = (when, what, done, target, due, met) => {
+                const pct = Math.min(100, Math.round(100 * done / target));
+                const left = Math.max(0, target - done);
+                const d = daysUntil(due);
+                let note;
+                if (done >= target) note = `Target met: ${done} of ${target} countries.`;
+                else if (d < 0) note = `Deadline passed with ${left} countries outstanding.`;
+                else if (d === 0) note = `Due today. ${left} countries to go.`;
+                else note = `${d} day${d === 1 ? '' : 's'} left. ${left} countries to go.`;
+                return `<div class="dl-when">${when}</div><div class="dl-what">${what}</div>
+                        <span class="dl-num">${done}</span> <span class="dl-note">/ ${target} countries assessed</span>
+                        <div class="dl-bar"><div style="width:${pct}%"></div></div>
+                        <div class="dl-note">${note}</div>`;
+            };
+            const a = document.getElementById('dl-interim');
+            if (a) a.innerHTML = card('Interim · 6 November 2026', `${INTERIM_TARGET} countries assessed`, cc.countriesDone, INTERIM_TARGET, DEADLINE_INTERIM);
+            const b = document.getElementById('dl-cop');
+            if (b) b.innerHTML = card('Close of COP31 · 20 November 2026', `All ${cc.countries} countries assessed`, cc.countriesDone, cc.countries, COP_END);
+
+            const phase = document.getElementById('current-phase-display');
+            if (phase) {
+                const now = new Date();
+                phase.textContent = now <= DEADLINE_INTERIM ? `Interim push: ${INTERIM_TARGET} countries by 6 November`
+                    : now < COP_START ? 'Completing the remaining countries before COP31'
+                    : now <= COP_END ? 'COP31, Antalya: completing the remaining countries'
+                    : 'Post-COP31 synthesis';
+            }
+        }
+
         function updateProgressMetrics() {
             let total = 0, analyzed = 0;
             ndcData.forEach(item => {
@@ -3919,6 +4033,7 @@ function buildRubric(profile, statements) {
                     ? `Verification queue: nothing marked analysed yet. All <b>${docsTotal} documents</b> (${total} countries) are still to be run and verified.`
                     : `Verification queue: <b>${docsDone} of ${docsTotal} documents</b> marked analysed and awaiting or undergoing human verification, covering ${analyzed} of ${total} countries. <b>${docsLeft}</b> documents not yet analysed. Toggle status on the Global Map page to update this.`;
             }
+            try { renderCorpusText(); renderDeadlines(); } catch (e) { console.warn('deadlines', e); }
             const corpusLine = document.getElementById('corpus-count');
             if (corpusLine) corpusLine.innerHTML = `<b>${docsTotal}</b> NDC documents in the corpus, covering <b>${total}</b> countries. <b>${docsDone}</b> analysed, <b>${docsLeft}</b> remaining.`;
         }
@@ -3932,7 +4047,9 @@ function buildRubric(profile, statements) {
                 const badgeText = item.s === 1 ? 'Analyzed ✓' : 'Pending ⟳';
                 const badge = `<span class="status-badge ${badgeClass}" onclick="toggleStatus('${item.c}')">${badgeText}</span>`;
                 const fileUrl = item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f);
-                const dlBtn = `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>`;
+                const dlBtn = item.awaitingUpload
+                    ? `<span class="download-btn" style="opacity:.55;cursor:default;" title="${item.f} is not yet in the GitHub repository">Upload pending</span>`
+                    : `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>`;
                 html += `<tr><td>${item.c}</td><td>${item.l}</td><td>${item.p}</td><td>${badge}</td><td>${dlBtn}</td></tr>`;
             });
             tbody.innerHTML = html;
@@ -4220,6 +4337,7 @@ function showPage(pageId, btnElement) {
             data.addColumn('string', 'Task ID'); data.addColumn('string', 'Task Name'); data.addColumn('string', 'Resource');
             data.addColumn('date', 'Start Date'); data.addColumn('date', 'End Date'); data.addColumn('number', 'Duration');
             data.addColumn('number', 'Percent Complete'); data.addColumn('string', 'Dependencies');
+            const cc = corpusCounts();
 
             data.addRows([
                 ['Setup', 'Project Setup & Calibration', 'Phase', new Date(2026, 6, 20), new Date(2026, 6, 31), null, 100, null],
@@ -4229,13 +4347,15 @@ function showPage(pageId, btnElement) {
                 ['Verify', 'Human Verification', 'Verification', new Date(2026, 8, 1), new Date(2026, 8, 30), null, 0, null],
                 ['Synth', 'Synthesis & Drafting', 'Phase', new Date(2026, 9, 1), new Date(2026, 9, 31), null, 0, null],
                 ['Final', 'Final Dissemination', 'Phase', new Date(2026, 10, 1), new Date(2026, 10, 8), null, 0, null],
-                ['COP', 'COP 31 Begins', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 10), null, 0, null]
+                ['Interim', 'Interim deadline: 142 countries', 'Deadline', new Date(2026, 10, 1), new Date(2026, 10, 7), null, cc.interimPct, null],
+                ['COP', 'COP31, Antalya (9–20 Nov)', 'Milestone', new Date(2026, 10, 9), new Date(2026, 10, 21), null, 0, null],
+                ['Remaining', 'Remaining countries, by close of COP31', 'Deadline', new Date(2026, 10, 7), new Date(2026, 10, 21), null, cc.allPct, 'Interim']
             ]);
 
             chartContainer.innerHTML = '';
             var chart = new google.visualization.Gantt(chartContainer);
             chart.draw(data, { 
-                height: 310, 
+                height: 380, 
                 gantt: { 
                     trackHeight: 32, 
                     palette: [
@@ -4315,9 +4435,19 @@ function showPage(pageId, btnElement) {
    so a scanned PDF cannot masquerade as "no justice found".
    ========================================================================== */
 
+/* Hosts that serve the PDFs with CORS headers, or the page's own origin, are
+   fetched directly. Anything else still goes through the proxy chain. */
+function directFetchOk(url) {
+    try {
+        const u = new URL(url, location.href);
+        if (u.origin === location.origin) return true;
+        return ["huggingface.co", "raw.githubusercontent.com"].includes(u.hostname);
+    } catch (e) { return false; }
+}
+
 async function extractDocument(fileUrl, log, docLang) {
     let finalUrl = fileUrl;
-    if (fileUrl.startsWith('http') && !fileUrl.includes('huggingface.co')) {
+    if (fileUrl.startsWith('http') && !directFetchOk(fileUrl)) {
         try {
             const r = await fetch('https://corsproxy.io/?' + encodeURIComponent(fileUrl));
             if (!r.ok) throw new Error('proxy');
@@ -6032,8 +6162,8 @@ async function fetchAllRows(table, columns, filter) {
 
 function stampBuild() {
     const el = document.getElementById('build-stamp');
-    if (el) el.textContent = "build " + ENGINE_VERSION;
-    console.log("JUST-NDC engine " + ENGINE_VERSION + ", lexicon " + LEXICON_VERSION);
+    if (el) el.textContent = "build " + (typeof BUILD_VERSION !== "undefined" ? BUILD_VERSION : ENGINE_VERSION) + " · engine " + ENGINE_VERSION;
+    console.log("JUST-NDC build " + (typeof BUILD_VERSION !== "undefined" ? BUILD_VERSION : "?") + ", engine " + ENGINE_VERSION + ", lexicon " + LEXICON_VERSION);
 }
 
 function refreshEverything() {
@@ -7356,6 +7486,7 @@ const VERDICT_SHORT = {
     "Approaching transformative climate justice": "5 Approaching transformative",
     "Recorded by hand": "By hand"
 };
+const AWAITING_COLOR = '#c9c6bd';
 const VERDICT_COLOR = {
     "Justice largely absent": "#9e9e9e",
     "Tokenistic": "#c62828",
@@ -7441,7 +7572,16 @@ function renderReporting() {
             <div class="vbar"><span style="width:${pct}%;background:${VERDICT_COLOR[v]}"></span></div>
             <div class="vn">${n}</div>
         </div>`;
-    }).join("");
+    }).join("") + (() => {
+        const waiting = ndcData.filter(i => !rows.some(r => r.country === i.c)).length;
+        if (!waiting) return "";
+        const pct = Math.round(100 * waiting / ndcData.length);
+        return `<div class="vrow" title="Documents in the corpus with no recorded assessment yet">
+            <div class="vlab"><span class="vdot" style="background:${AWAITING_COLOR}"></span>Awaiting analysis</div>
+            <div class="vbar"><span style="width:${pct}%;background:${AWAITING_COLOR}"></span></div>
+            <div class="vn">${waiting}</div>
+        </div>`;
+    })();
 
     // dimension tier distribution across the recorded corpus
     document.getElementById('report-dims').innerHTML = DIMS4.map(d => {
@@ -7480,22 +7620,31 @@ function drawVerdictMap() {
     data.addColumn('number', 'Verdict');
     data.addColumn({ type: 'string', role: 'tooltip' });
 
+    let assessedRows = 0;
     ndcData.forEach(item => {
         const a = rows[item.c];
-        if (!a) return;
+        if (!a) {
+            /* in the corpus but not yet assessed: drawn in mid grey, so it reads
+               differently from a country outside the corpus */
+            const t = `${item.c}\nAwaiting analysis` + (item.awaitingUpload ? " (file not yet uploaded)" : "");
+            if (item.mapTarget === "EU_EXPAND") euCountries.forEach(c => data.addRow([c, 0, t]));
+            else if (item.mapTarget) data.addRow([item.mapTarget, 0, t]);
+            return;
+        }
+        assessedRows++;
         const tip = `${item.c}\n${a.verdict}\nR:${a.tiers.Recognitional} P:${a.tiers.Procedural} D:${a.tiers.Distributive} Rest:${a.tiers.Restorative}`;
         if (item.mapTarget === "EU_EXPAND") euCountries.forEach(c => data.addRow([c, verdictValue(a.verdict), tip]));
         else if (item.mapTarget) data.addRow([item.mapTarget, verdictValue(a.verdict), tip]);
     });
 
-    if (!data.getNumberOfRows()) {
+    if (!assessedRows) {
         el.innerHTML = `<p class="muted-note">No assessment has been recorded yet. Run one on the Assessment page and press <b>Record in project</b>.</p>`;
         return;
     }
     const chart = new google.visualization.GeoChart(el);
     chart.draw(data, {
         region: (document.getElementById('verdictRegionSelect') || {}).value || 'world',
-        colorAxis: { values: [1, 2, 3, 4, 5, 6], colors: VERDICT_ORDER.map(v => VERDICT_COLOR[v]) },
+        colorAxis: { values: [0, 1, 2, 3, 4, 5, 6], colors: [AWAITING_COLOR].concat(VERDICT_ORDER.map(v => VERDICT_COLOR[v])) },
         datalessRegionColor: '#f0f0f2',
         defaultColor: '#f0f0f2',
         legend: 'none',
