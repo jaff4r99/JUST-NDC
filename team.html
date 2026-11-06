@@ -684,7 +684,7 @@
                 <div id="dashboard" class="page active">
                     <div id="db-note" class="diag-ok" style="margin-bottom:14px;"></div>
                     <h1 style="color: #1d1d1f;">JUST-NDC Project Roadmap</h1>
-                    <p>Evaluating transformative climate justice across <b id="dash-corpus">the NDC 3.0 corpus</b>, plus 2 annexes. Corpus first locked in August 2026 and extended on 5 November 2026 to submissions received up to 3 November 2026. Coverage and cut-off are recorded on the Global Map page.</p>
+                    <p>Evaluating transformative climate justice across <b id="dash-corpus">the NDC 3.0 corpus</b>, plus 2 annexes. Corpus first locked in August 2026 and extended on 5 and 6 November 2026 to submissions received up to 6 November 2026. Coverage and cut-off are recorded on the Global Map page.</p>
                     
                     <div class="ui-box" style="border-left: 5px solid var(--primary); background: rgba(0,102,204,0.03);">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
@@ -1339,7 +1339,7 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                 <div id="map" class="page">
                     <h1 style="color: #1d1d1f;">Global Analysis Status</h1>
                     <p id="corpus-summary">Corpus loading...</p>
-                    <p><b>Submission window.</b> The earliest submission in the corpus is the United Arab Emirates' NDC 3.0, submitted on 6 November 2024; the most recent is North Macedonia's, dated 3 November 2026.</p>
+                    <p><b>Submission window.</b> The earliest submission in the corpus is the United Arab Emirates' NDC 3.0, submitted on 6 November 2024; the most recent is Argentina's, submitted on 6 November 2026.</p>
 
                     <div class="ui-box" style="background: linear-gradient(135deg, #0066cc 0%, #004d80 100%); color: white; border: none;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
@@ -1879,7 +1879,7 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
         const viewUrl = item => (item.url && item.url.indexOf(ghBaseUrl) === 0)
             ? siteBaseUrl + item.url.slice(ghBaseUrl.length)
             : (item.url ? item.url : hfBaseUrl + encodeURIComponent(item.f));
-        const BUILD_VERSION = "2.15.1";
+        const BUILD_VERSION = "2.15.2";
 
         const defaultNdcData = [
             { c: "Andorra", l: "Spanish", s: 1, p: 18, mapTarget: "AD", f: "18 ANDORRA ESP.pdf" }, { c: "Belize", l: "English", s: 1, p: 128, mapTarget: "BZ", f: "128 BELIZE.pdf" }, { c: "Brazil", l: "English", s: 1, p: 44, mapTarget: "BR", f: "44 Brazil.pdf" }, 
@@ -1929,6 +1929,7 @@ country score = 0.5 &times; <em>average</em> of the four dimension scores<br>
                (3 November 2026), checked against the UNFCCC NDC registry. Page counts and languages checked against the files.
                Lesotho is excluded: the file (166 MB) exceeds the hosting limit.
                awaitingUpload marks entries whose PDF is not yet in the repository. */
+            { c: "Argentina", l: "Spanish", s: 0, p: 41, mapTarget: "AR", f: "41ArgentinaESP.pdf", url: ghFile("41ArgentinaESP.pdf") },
             { c: "Albania", l: "English", s: 0, p: 70, mapTarget: "AL", f: "70Albania.pdf", url: ghFile("70Albania.pdf") },
             { c: "Botswana", l: "English", s: 0, p: 48, mapTarget: "BW", f: "48BOTSWANA.pdf", url: ghFile("48BOTSWANA.pdf") },
             { c: "Chad", l: "French", s: 0, p: 104, mapTarget: "TD", f: "104TchadFR.pdf", url: ghFile("104TchadFR.pdf") },
@@ -3970,7 +3971,7 @@ function buildRubric(profile, statements) {
         function renderCorpusText() {
             const cc = corpusCounts();
             const sum = document.getElementById('corpus-summary');
-            if (sum) sum.innerHTML = `<b>${cc.docs} NDC documents covering ${cc.countries} countries.</b> The European Union submits a single NDC on behalf of its 27 member states, so ${cc.docs - 1} single-country documents plus 1 EU document equals ${cc.countries} countries. Corpus source: UNFCCC NDC registry, first snapshot August 2026, extended on 5 November 2026 to include submissions received up to 3 November 2026. Lesotho's NDC is on the registry but excluded because the file (166 MB) exceeds the hosting limit.`;
+            if (sum) sum.innerHTML = `<b>${cc.docs} NDC documents covering ${cc.countries} countries.</b> The European Union submits a single NDC on behalf of its 27 member states, so ${cc.docs - 1} single-country documents plus 1 EU document equals ${cc.countries} countries. Corpus source: UNFCCC NDC registry, first snapshot August 2026, extended on 5 and 6 November 2026 to include submissions received up to 6 November 2026. Lesotho's NDC is on the registry but excluded because the file (166 MB) exceeds the hosting limit.`;
             const dash = document.getElementById('dash-corpus');
             if (dash) dash.textContent = `${cc.docs} NDC documents covering ${cc.countries} countries`;
             const cards = document.getElementById('lang-cards');
